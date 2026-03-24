@@ -5,7 +5,7 @@
 **Free tools for building robust, clustered server infrastructure**
 
 [![Rust](https://img.shields.io/badge/rust-1.70%2B-orange.svg)](https://www.rust-lang.org/)
-[![License](https://img.shields.io/badge/license-FSL--1.1-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Sponsor](https://img.shields.io/badge/Sponsor-❤-ea4aaa.svg)](https://github.com/sponsors/wolfsoftwaresystemsltd)
 
 **[wolfscale.org](https://wolfscale.org)** • **[wolf.uk.com](https://wolf.uk.com)** • **[Discord](https://discord.gg/q9qMjHjUQY)** • **[Reddit](https://www.reddit.com/r/WolfStack/)**
@@ -371,7 +371,7 @@ name = "home-server"
 
 ## License
 
-[Functional Source License (FSL-1.1-Apache-2.0)](LICENSE) — Free to use for any purpose except competing with Wolf Software Systems Ltd. Converts to Apache 2.0 after two years.
+[MIT License](LICENSE) — Free to use, modify, and distribute without restriction.
 
 © 2024-2026 [Wolf Software Systems Ltd](https://wolf.uk.com/)
 

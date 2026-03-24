@@ -1,6 +1,6 @@
 <?php
-$page_title = '📜 Licensing — WolfStack Docs';
-$page_desc = 'WolfStack is licensed under FSL-1.1 (Functional Source License)';
+$page_title = 'MIT License — WolfStack Docs';
+$page_desc = 'WolfStack is licensed under the MIT License — fully free and open source';
 $active = 'licensing.php';
 include 'includes/head.php';
 ?>
@@ -12,15 +12,14 @@ include 'includes/head.php';
 
                 <div class="content-section">
                     <h1>License</h1>
-                    <p>WolfStack and related Wolf Software tools are released under the <strong>FSL-1.1</strong>
-                        (Functional Source License, Version 1.1).</p>
+                    <p>WolfStack and related Wolf Software tools are released under the <strong>MIT License</strong>.</p>
                     <h3>What This Means</h3>
                     <ul>
                         <li>✅ Free to use for any purpose</li>
                         <li>✅ Source code is publicly available</li>
                         <li>✅ You can modify and distribute</li>
                         <li>✅ Commercial use is permitted</li>
-                        <li>⚠️ Cannot be used to compete with the licensor</li>
+                        <li>✅ No restrictions — use it however you like</li>
                     </ul>
                     <h3>Full License Text</h3>
                     <p>See the <a href="https://github.com/wolfsoftwaresystemsltd/WolfScale/blob/master/LICENSE"
@@ -34,7 +33,7 @@ include 'includes/head.php';
                 </div>
 
                 <div class="page-nav"><a href="glossary.php" class="prev">&larr; Glossary</a><a href="support.php"
-                        class="next">Support Us &rarr;</a></div>
-            
+                        class="next">Fund Open Source &rarr;</a></div>
+
     </main>
 <?php include 'includes/footer.php'; ?>
