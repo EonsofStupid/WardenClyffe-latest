@@ -1347,7 +1347,7 @@ include 'includes/head.php';
                                 <tr><td>Web Terminal</td><td class="hl">Yes</td><td>Yes</td><td>No</td><td>Yes</td><td>No</td><td>Yes</td></tr>
                                 <tr><td>File Manager</td><td class="hl">Yes</td><td>No</td><td>No</td><td>No</td><td>Yes</td><td>No</td></tr>
                                 <tr><td>App Store</td><td class="hl">500+ apps</td><td>No</td><td>Helm</td><td>Yes</td><td>Yes</td><td>No</td></tr>
-                                <tr><td>AI Infrastructure Agent</td><td class="hl">CodeWolf &amp; Gemini</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
+                                <tr><td>AI Infrastructure Agent</td><td class="hl">Claude &amp; Gemini</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
                                 <tr><td>Status Pages &amp; Alerting</td><td class="hl">Built in</td><td>No</td><td>Add-ons</td><td>No</td><td>No</td><td>No</td></tr>
                                 <tr><td>Workflow Automation</td><td class="hl">WolfFlow</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
                                 <tr><td>Database Editor</td><td class="hl">MySQL &amp; PostgreSQL</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
