@@ -1144,7 +1144,7 @@ include 'includes/head.php';
                             <li>HTTP, TCP, ping, and container health monitors</li>
                             <li>Public status pages with custom branding and themes</li>
                             <li>Alerts via Discord, Slack, Telegram, and email</li>
-                            <li>AI-powered health monitoring with CodeWolf or Gemini</li>
+                            <li>AI-powered health monitoring with Claude or Gemini</li>
                         </ul>
                     </div>
                     <div class="hp2-spot-visual">

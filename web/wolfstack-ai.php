@@ -21,9 +21,9 @@ include 'includes/head.php';
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>CodeWolf</strong></td>
-                            <td>CodeWolf (Claude Opus, Sonnet, Haiku)</td>
-                            <td>Built-in &mdash; no API key required</td>
+                            <td><strong>Anthropic Claude</strong></td>
+                            <td>Claude Sonnet, Opus, Haiku</td>
+                            <td>API key from <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></td>
                         </tr>
                         <tr>
                             <td><strong>Google Gemini</strong></td>
@@ -60,7 +60,7 @@ include 'includes/head.php';
                 <h2>Configuration</h2>
                 <p>Set up the AI Agent in <strong>Settings &rarr; AI Agent</strong>:</p>
                 <ol>
-                    <li>Choose your AI provider (CodeWolf or Gemini)</li>
+                    <li>Choose your AI provider (Claude or Gemini)</li>
                     <li>Enter your API key</li>
                     <li>Select the model to use</li>
                     <li>Optionally configure health monitoring email alerts</li>

@@ -31,7 +31,7 @@ include 'includes/head.php';
                     </div>
                     <div class="feature-card">
                         <h4>AI Assistant</h4>
-                        <p>Chat bubble with CodeWolf, Google Gemini, or local Ollama. Web search grounding to reduce hallucinations. Meeting notes to todo list extraction.</p>
+                        <p>Chat bubble with Claude, Google Gemini, or local Ollama. Web search grounding to reduce hallucinations. Meeting notes to todo list extraction.</p>
                     </div>
                     <div class="feature-card">
                         <h4>Time Tracking &amp; Billing</h4>
@@ -96,7 +96,7 @@ cargo run</code></pre>
                         <tr><td><code>SSL_KEY</code></td><td>Path to SSL private key file</td><td><em>auto</em></td></tr>
                     </tbody>
                 </table>
-                <p>AI provider keys (CodeWolf, Gemini, Ollama) are configured through the admin Settings UI.</p>
+                <p>AI provider keys (Claude, Gemini, Ollama) are configured through the admin Settings UI.</p>
 
                 <h3>Systemd Service</h3>
                 <div class="code-block">
@@ -123,7 +123,7 @@ WantedBy=multi-user.target</code></pre>
                     <li><strong>Backend:</strong> Rust + Axum 0.8 (async, fast, safe)</li>
                     <li><strong>Database:</strong> SQLite via SQLx (zero-config, embedded)</li>
                     <li><strong>Auth:</strong> bcrypt + JWT (30-day tokens)</li>
-                    <li><strong>AI:</strong> CodeWolf / Google Gemini / Ollama (configurable)</li>
+                    <li><strong>AI:</strong> Claude / Google Gemini / Ollama (configurable)</li>
                     <li><strong>TLS:</strong> rustls + ring (pure Rust, no OpenSSL)</li>
                     <li><strong>Frontend:</strong> Vanilla HTML/CSS/JS + Three.js (no build step, no node_modules)</li>
                     <li><strong>Binary:</strong> Static MUSL build, single file, ~13MB</li>
