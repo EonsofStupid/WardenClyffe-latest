@@ -4,12 +4,14 @@
  * Returns true on success, error string on failure.
  */
 function smtp_send(string $to, string $subject, string $body, string $reply_to): string|bool {
-    $host = 'smtp.stackmail.com';
-    $port = 587;
-    $user = 'noreply@wolfstack.org';
-    $pass = 'REDACTED';
-    $from = 'noreply@wolfstack.org';
+    $host = getenv('SMTP_HOST') ?: 'smtp.stackmail.com';
+    $port = (int)(getenv('SMTP_PORT') ?: 587);
+    $user = getenv('SMTP_USER') ?: '';
+    $pass = getenv('SMTP_PASS') ?: '';
+    $from = getenv('SMTP_FROM') ?: $user;
     $from_name = 'WolfStack';
+
+    if ($user === '' || $pass === '') return 'SMTP credentials not configured (set SMTP_USER and SMTP_PASS env vars)';
 
     $sock = @fsockopen($host, $port, $errno, $errstr, 10);
     if (!$sock) return "Connection failed: $errstr ($errno)";
