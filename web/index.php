@@ -906,6 +906,57 @@ $page_css = '
 @media (min-width: 769px) and (max-width: 900px) {
     .hp2-features { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* Custom dev promo banner */
+.promo-banner {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.promo-half {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 6px 20px;
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 500;
+}
+.promo-half--dev {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+.promo-half-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+.promo-half-text {
+    line-height: 1.4;
+}
+.promo-half-text strong {
+    font-weight: 700;
+}
+.promo-half .promo-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+    border-radius: 5px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.promo-half .promo-cta:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: #fff;
+}
+@media (max-width: 768px) {
+    .promo-half { font-size: 0.72rem; padding: 6px 14px; gap: 8px; flex-wrap: wrap; justify-content: center; text-align: center; }
+    .promo-half-text { white-space: normal !important; }
+}
 ';
 
 include 'includes/head.php';
@@ -917,12 +968,14 @@ include 'includes/head.php';
     <main class="wiki-main">
         <div class="wiki-content" style="max-width:100%;padding-left:0;padding-right:0;">
 
-            <!-- Top sponsor banner -->
-            <div class="support-banner" id="support-banner">
-                Every feature ships free to everyone. No VC funding, no ads &mdash; community funded.
-                <a href="https://github.com/sponsors/wolfsoftwaresystemsltd" target="_blank" class="banner-cta">Back This Project</a>
-                <a href="enterprise.php" class="banner-cta">Enterprise Licensing</a>
-                <button class="banner-close" onclick="this.parentElement.style.display='none'" aria-label="Close">&times;</button>
+            <!-- Custom dev banner -->
+            <div class="promo-banner">
+                <div class="promo-half promo-half--dev" style="flex-wrap:nowrap;">
+                    <span class="promo-half-icon">&#128187;</span>
+                    <span class="promo-half-text" style="white-space:nowrap;">Custom Software Development? Have the authors of <strong>WolfStack</strong> &amp; <strong>WolfNote</strong> develop your project.</span>
+                    <a href="https://wolf.uk.com" target="_blank" rel="noopener" class="promo-cta">wolf.uk.com &rarr;</a>
+                    <a href="mailto:sales@wolf.uk.com" class="promo-cta">sales@wolf.uk.com</a>
+                </div>
             </div>
 
             <!-- ============================================ -->
