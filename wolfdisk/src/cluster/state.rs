@@ -235,7 +235,7 @@ impl ClusterManager {
                 self.node_id.clone(),
                 self.config.node.bind.clone(),
                 self.config.node.role,
-            );
+            ).with_peers(self.config.cluster.peers.clone());
             discovery.start()?;
             
             // Start a sync thread to copy discovered peers to our peer map

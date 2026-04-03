@@ -54,6 +54,7 @@ pub struct Discovery {
     node_id: String,
     bind_address: String,
     role: DiscoveryRole,
+    configured_peers: Vec<String>,
     peers: Arc<RwLock<HashMap<String, DiscoveredPeer>>>,
     is_leader: Arc<RwLock<bool>>,
     running: Arc<RwLock<bool>>,
@@ -66,10 +67,17 @@ impl Discovery {
             node_id,
             bind_address,
             role: role.into(),
+            configured_peers: Vec::new(),
             peers: Arc::new(RwLock::new(HashMap::new())),
             is_leader: Arc::new(RwLock::new(false)),
             running: Arc::new(RwLock::new(false)),
         }
+    }
+
+    /// Create with configured peers for direct unicast discovery
+    pub fn with_peers(mut self, peers: Vec<String>) -> Self {
+        self.configured_peers = peers;
+        self
     }
 
     /// Set leader status
@@ -100,9 +108,10 @@ impl Discovery {
         let role = self.role;
         let is_leader = Arc::clone(&self.is_leader);
         let running = Arc::clone(&self.running);
+        let configured_peers = self.configured_peers.clone();
 
         thread::spawn(move || {
-            if let Err(e) = run_broadcaster(node_id, bind_address, role, is_leader, running) {
+            if let Err(e) = run_broadcaster(node_id, bind_address, role, is_leader, running, configured_peers) {
                 warn!("Discovery broadcaster error: {}", e);
             }
         });
@@ -177,16 +186,17 @@ fn run_broadcaster(
     role: DiscoveryRole,
     is_leader: Arc<RwLock<bool>>,
     running: Arc<RwLock<bool>>,
+    configured_peers: Vec<String>,
 ) -> std::io::Result<()> {
     // Create UDP socket for broadcasting
     let socket = UdpSocket::bind("0.0.0.0:0")?;
     socket.set_broadcast(true)?;
-    
+
     // Broadcast destinations: 255.255.255.255 for LAN, plus subnet broadcast for WolfNet
     let mut broadcast_addrs: Vec<SocketAddr> = vec![
         format!("255.255.255.255:{}", DISCOVERY_PORT).parse().unwrap(),
     ];
-    
+
     // If bind address is on a specific IP (not 0.0.0.0), also broadcast to its /24 subnet
     // e.g. bind 10.10.10.3:8550 → broadcast to 10.10.10.255:8551
     if let Ok(bind_sock) = bind_address.parse::<SocketAddr>() {
@@ -202,7 +212,22 @@ fn run_broadcaster(
         }
     }
 
-    info!("Discovery broadcaster started for node {}", node_id);
+    // Also send discovery directly to configured peers (unicast) — critical for
+    // cross-subnet and WolfNet connectivity where broadcast doesn't work
+    for peer in &configured_peers {
+        // Peer address is host:port for the data port — discovery uses DISCOVERY_PORT
+        if let Some(host) = peer.rsplit_once(':').map(|(h, _)| h) {
+            let discovery_addr = format!("{}:{}", host, DISCOVERY_PORT);
+            if let Ok(addr) = discovery_addr.parse::<SocketAddr>() {
+                if !broadcast_addrs.contains(&addr) {
+                    broadcast_addrs.push(addr);
+                    info!("Added direct peer discovery target: {}", addr);
+                }
+            }
+        }
+    }
+
+    info!("Discovery broadcaster started for node {} ({} targets)", node_id, broadcast_addrs.len());
 
     while *running.read().unwrap() {
         let is_server = matches!(role, DiscoveryRole::Server);
