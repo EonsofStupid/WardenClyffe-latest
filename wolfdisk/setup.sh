@@ -270,7 +270,7 @@ if [ ! -f "/etc/wolfdisk/config.toml" ]; then
     case $DISCOVERY_CHOICE in
         2)
             echo ""
-            echo -n "  Enter peer addresses (comma-separated, e.g. 192.168.1.10:9500,192.168.1.11:9500): "
+            echo -n "  Enter peer addresses (comma-separated, e.g. 192.168.1.10:8550,192.168.1.11:8550): "
             read PEERS_INPUT < /dev/tty
             if [ -n "$PEERS_INPUT" ]; then
                 # Convert comma-separated to TOML array format
@@ -282,7 +282,7 @@ if [ ! -f "/etc/wolfdisk/config.toml" ]; then
             # Standalone - no discovery, no peers
             ;;
         *)
-            DISCOVERY_CONFIG="discovery = \"udp://$BIND_IP:9501\""
+            DISCOVERY_CONFIG="discovery = \"udp://$BIND_IP:8551\""
             ;;
     esac
     
@@ -302,7 +302,7 @@ if [ ! -f "/etc/wolfdisk/config.toml" ]; then
 [node]
 id = "$NODE_ID"
 role = "$NODE_ROLE"
-bind = "$BIND_IP:9500"
+bind = "$BIND_IP:8550"
 data_dir = "/var/lib/wolfdisk"
 
 [cluster]
@@ -323,7 +323,7 @@ EOF
     echo "  Configuration Summary:"
     echo "    Node ID:    $NODE_ID"
     echo "    Role:       $NODE_ROLE"
-    echo "    Bind:       $BIND_IP:9500"
+    echo "    Bind:       $BIND_IP:8550"
     echo "    Mount:      $MOUNT_PATH"
     if [ -n "$DISCOVERY_CONFIG" ]; then
         echo "    Discovery:  UDP multicast (auto)"

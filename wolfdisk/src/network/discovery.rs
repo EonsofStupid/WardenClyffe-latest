@@ -14,7 +14,7 @@ use tracing::{debug, info, warn};
 use crate::config::NodeRole;
 
 /// Discovery port
-pub const DISCOVERY_PORT: u16 = 9501;
+pub const DISCOVERY_PORT: u16 = 8551;
 
 /// Discovery message prefix
 const DISCOVERY_PREFIX: &str = "WOLFDISK";
@@ -188,7 +188,7 @@ fn run_broadcaster(
     ];
     
     // If bind address is on a specific IP (not 0.0.0.0), also broadcast to its /24 subnet
-    // e.g. bind 10.10.10.3:9500 → broadcast to 10.10.10.255:9501
+    // e.g. bind 10.10.10.3:8550 → broadcast to 10.10.10.255:8551
     if let Ok(bind_sock) = bind_address.parse::<SocketAddr>() {
         let ip = bind_sock.ip();
         if let std::net::IpAddr::V4(v4) = ip {
@@ -261,7 +261,7 @@ fn run_listener(
                         // If the advertised address uses 0.0.0.0 (wildcard bind),
                         // replace with the actual source IP from the UDP packet
                         let actual_address = if msg_address.starts_with("0.0.0.0:") {
-                            let port = msg_address.strip_prefix("0.0.0.0:").unwrap_or("9500");
+                            let port = msg_address.strip_prefix("0.0.0.0:").unwrap_or("8550");
                             let fixed = format!("{}:{}", src.ip(), port);
                             info!("Peer {} advertised 0.0.0.0, using actual IP: {}", msg_node_id, fixed);
                             fixed

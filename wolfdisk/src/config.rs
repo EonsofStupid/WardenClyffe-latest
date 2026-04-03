@@ -50,7 +50,7 @@ fn default_role() -> NodeRole {
 }
 
 fn default_bind() -> String {
-    "0.0.0.0:9500".to_string()
+    "0.0.0.0:8550".to_string()
 }
 
 fn default_data_dir() -> PathBuf {
