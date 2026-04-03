@@ -1526,13 +1526,14 @@ fn main() {
                     
                     let mut leader_found = false;
                     let mut wait_count = 0u64;
+                    let sync_peers = sync_cluster.config().cluster.peers.clone();
                     loop {
                         if wait_count >= max_wait_iterations {
                             break;
                         }
                         std::thread::sleep(std::time::Duration::from_millis(500));
                         wait_count += 1;
-                        
+
                         if let Some(lid) = sync_cluster.leader_id() {
                             // Don't try to sync from ourselves
                             if lid != sync_node_id {
@@ -1540,7 +1541,68 @@ fn main() {
                                 break;
                             }
                         }
-                        
+
+                        // After 15s with no leader from UDP discovery, try direct TCP probe to configured peers
+                        if wait_count == 30 && !sync_peers.is_empty() {
+                            info!("UDP discovery hasn't found leader — trying direct TCP probe to {} configured peers", sync_peers.len());
+                            for peer_addr in &sync_peers {
+                                info!("Probing peer at {} via TCP...", peer_addr);
+                                match wolfdisk::network::peer::PeerConnection::connect("probe".to_string(), peer_addr) {
+                                    Ok(conn) => {
+                                        // Try a SyncRequest — if this peer is the leader, it'll respond
+                                        let msg = Message::SyncRequest(SyncRequestMsg { from_version: 0 });
+                                        match conn.request(&msg) {
+                                            Ok(Message::SyncResponse(response)) => {
+                                                info!("Direct TCP probe to {} succeeded! Got {} entries — this peer is the leader", peer_addr, response.entries.len());
+                                                // Apply the sync response directly
+                                                let mut added = 0usize;
+                                                {
+                                                    let mut index = sync_file_index.write().unwrap();
+                                                    let mut inode_tbl = sync_inode_table.write().unwrap();
+                                                    let mut next_ino = sync_next_inode.write().unwrap();
+                                                    for entry_msg in &response.entries {
+                                                        let path = std::path::PathBuf::from(&entry_msg.path);
+                                                        let chunk_refs: Vec<ChunkRef> = entry_msg.chunks.iter()
+                                                            .map(|c| ChunkRef { hash: c.hash, offset: c.offset, size: c.size })
+                                                            .collect();
+                                                        let entry = FileEntry {
+                                                            size: entry_msg.size,
+                                                            is_dir: entry_msg.is_dir,
+                                                            permissions: entry_msg.permissions,
+                                                            uid: 0, gid: 0,
+                                                            modified: std::time::UNIX_EPOCH + std::time::Duration::from_millis(entry_msg.modified_ms),
+                                                            created: std::time::SystemTime::now(),
+                                                            accessed: std::time::SystemTime::now(),
+                                                            chunks: chunk_refs,
+                                                            symlink_target: None,
+                                                        };
+                                                        if !index.contains(&path) {
+                                                            if inode_tbl.get_inode(&path).is_none() {
+                                                                let ino = *next_ino;
+                                                                *next_ino += 1;
+                                                                inode_tbl.insert(ino, path.clone());
+                                                            }
+                                                            added += 1;
+                                                        }
+                                                        index.insert(path, entry);
+                                                    }
+                                                }
+                                                info!("Direct TCP sync complete: {} entries added from {}", added, peer_addr);
+                                                // Store the peer address as leader so future ops can find it
+                                                sync_cluster.add_peer_as_leader(peer_addr);
+                                                leader_found = true;
+                                                break;
+                                            }
+                                            Ok(_) => info!("Peer {} responded but is not leader", peer_addr),
+                                            Err(e) => info!("Peer {} SyncRequest failed: {} (may not be leader)", peer_addr, e),
+                                        }
+                                    }
+                                    Err(e) => info!("TCP connect to {} failed: {}", peer_addr, e),
+                                }
+                            }
+                            if leader_found { break; }
+                        }
+
                         // Log progress for clients waiting a long time
                         if sync_is_client && wait_count % 20 == 0 {
                             info!("Client waiting for leader... ({}s elapsed)", wait_count / 2);

@@ -115,6 +115,24 @@ impl ClusterManager {
         self.peers.read().unwrap().values().cloned().collect()
     }
 
+    /// Get config reference
+    pub fn config(&self) -> &crate::Config {
+        &self.config
+    }
+
+    /// Add a peer address as the known leader (used when TCP probe finds leader directly)
+    pub fn add_peer_as_leader(&self, address: &str) {
+        let peer_id = format!("leader@{}", address);
+        *self.leader_id.write().unwrap() = Some(peer_id.clone());
+        self.peers.write().unwrap().insert(peer_id.clone(), PeerInfo {
+            node_id: peer_id,
+            address: address.to_string(),
+            is_leader: true,
+            is_client: false,
+            last_seen: std::time::Instant::now(),
+        });
+    }
+
     /// Get current index version
     pub fn index_version(&self) -> u64 {
         *self.index_version.read().unwrap()
