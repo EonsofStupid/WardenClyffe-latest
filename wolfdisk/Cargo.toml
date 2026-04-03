@@ -9,7 +9,7 @@ repository = "https://github.com/wolfsoftwaresystemsltd/wolfdisk"
 
 [dependencies]
 # FUSE filesystem
-fuser = "0.14"
+fuser = { version = "0.14", default-features = false }
 
 # Async runtime
 tokio = { version = "1", features = ["full"] }
