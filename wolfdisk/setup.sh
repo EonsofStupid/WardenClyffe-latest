@@ -26,6 +26,59 @@ if [ "$EUID" -ne 0 ]; then
     fi
 fi
 
+BRANCH="main"
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --beta) BRANCH="beta" ;;
+    esac
+    shift
+done
+
+# Allow git to operate on repos owned by other users
+export GIT_CONFIG_COUNT=1
+export GIT_CONFIG_KEY_0=safe.directory
+export GIT_CONFIG_VALUE_0="*"
+
+# ─── Architecture detection for prebuilt binaries ──────────────────────────
+HOST_ARCH=$(uname -m)
+case "$HOST_ARCH" in
+    x86_64)  BINARY_ARCH="x86_64" ;;
+    aarch64) BINARY_ARCH="aarch64" ;;
+    *)       BINARY_ARCH="" ;;  # unsupported — will build from source
+esac
+
+# Download a prebuilt binary from GitHub Releases.
+# Queries the API to find the correct release asset (monorepo-safe).
+# Usage: download_prebuilt <binary_name> <dest_path>
+# Returns 0 on success, 1 on failure (caller should fall back to source build)
+download_prebuilt() {
+    local binary="$1" dest="$2"
+    if [ -z "$BINARY_ARCH" ]; then
+        return 1
+    fi
+    local asset="${binary}-${BINARY_ARCH}"
+    echo "  Downloading prebuilt ${binary} for ${BINARY_ARCH}..."
+    # Find download URL from the latest WolfScale release containing this asset
+    local url
+    url=$(curl -sSL "https://api.github.com/repos/wolfsoftwaresystemsltd/WolfScale/releases" \
+        | grep "browser_download_url.*${asset}" | head -1 | cut -d'"' -f4)
+    if [ -z "$url" ]; then
+        echo "  ⚠ Prebuilt binary not available — will build from source"
+        return 1
+    fi
+    local tmpfile="${dest}.download"
+    if curl -fSL --connect-timeout 15 --max-time 300 --retry 2 -o "$tmpfile" "$url" 2>&1; then
+        mv "$tmpfile" "$dest"
+        chmod +x "$dest"
+        echo "  ✓ Downloaded prebuilt ${binary} (${BINARY_ARCH})"
+        return 0
+    else
+        echo "  ⚠ Prebuilt binary download failed — will build from source"
+        rm -f "$tmpfile"
+        return 1
+    fi
+}
+
 echo ""
 echo "  🐺 WolfDisk Installer"
 echo "  ─────────────────────────────────────"
@@ -48,60 +101,20 @@ else
     exit 1
 fi
 
-# Install dependencies
+# Install runtime dependencies (fuse3 is always needed)
 echo ""
 echo "  Installing system dependencies..."
 
 if [ "$PKG_MANAGER" = "apt" ]; then
     apt update
-    apt install -y git curl build-essential pkg-config libssl-dev libfuse3-dev fuse3
+    apt install -y curl fuse3
 elif [ "$PKG_MANAGER" = "dnf" ]; then
-    dnf install -y git curl gcc gcc-c++ make openssl-devel pkg-config fuse3-devel fuse3
+    dnf install -y curl fuse3
 elif [ "$PKG_MANAGER" = "yum" ]; then
-    yum install -y git curl gcc gcc-c++ make openssl-devel pkgconfig fuse3-devel fuse3
+    yum install -y curl fuse3
 fi
 
 echo "  ✓ System dependencies installed"
-
-# Determine the real user (even when running under sudo)
-REAL_USER="${SUDO_USER:-$USER}"
-REAL_HOME=$(eval echo "~$REAL_USER")
-
-# Install Rust if not present (for the real user)
-if ! su - "$REAL_USER" -c 'command -v rustc' &> /dev/null; then
-    echo ""
-    echo "  Installing Rust for user $REAL_USER..."
-    su - "$REAL_USER" -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y'
-    echo "  ✓ Rust installed"
-else
-    RUST_VER=$(su - "$REAL_USER" -c 'rustc --version' 2>/dev/null)
-    echo "  ✓ Rust already installed ($RUST_VER)"
-fi
-
-# Clone or update repository
-INSTALL_DIR="/opt/wolfscale-src"
-echo ""
-echo "  Cloning WolfScale repository..."
-
-if [ -d "$INSTALL_DIR" ]; then
-    echo "    Updating existing installation..."
-    cd "$INSTALL_DIR"
-    git fetch origin
-    git reset --hard origin/main
-else
-    git clone https://github.com/wolfsoftwaresystemsltd/WolfScale.git "$INSTALL_DIR"
-    cd "$INSTALL_DIR"
-fi
-
-chown -R "$REAL_USER:$REAL_USER" "$INSTALL_DIR"
-echo "  ✓ Repository cloned to $INSTALL_DIR"
-
-# Build WolfDisk (as the real user so cargo/rustup are available)
-echo ""
-echo "  Building WolfDisk (this may take a few minutes)..."
-cd "$INSTALL_DIR/wolfdisk"
-su - "$REAL_USER" -c "cd $INSTALL_DIR/wolfdisk && source \$HOME/.cargo/env && cargo build --release"
-echo "  ✓ Build complete"
 
 # Stop service if running (for upgrades)
 if systemctl is-active --quiet wolfdisk 2>/dev/null; then
@@ -115,22 +128,78 @@ else
     RESTART_SERVICE=false
 fi
 
-# Install binary
+# --- Try prebuilt binaries first, fall back to source build ---
 echo ""
-if [ -f "/usr/local/bin/wolfdisk" ]; then
-    echo "  Upgrading WolfDisk..."
-    rm -f /usr/local/bin/wolfdisk
-else
-    echo "  Installing WolfDisk..."
+WOLFDISK_PREBUILT=false
+if download_prebuilt "wolfdisk" "/usr/local/bin/wolfdisk"; then
+    download_prebuilt "wolfdiskctl" "/usr/local/bin/wolfdiskctl" || true
+    WOLFDISK_PREBUILT=true
 fi
-cp "$INSTALL_DIR/wolfdisk/target/release/wolfdisk" /usr/local/bin/wolfdisk
-chmod +x /usr/local/bin/wolfdisk
-echo "  ✓ wolfdisk installed to /usr/local/bin/wolfdisk"
 
-# Install wolfdiskctl control utility
-cp "$INSTALL_DIR/wolfdisk/target/release/wolfdiskctl" /usr/local/bin/wolfdiskctl
-chmod +x /usr/local/bin/wolfdiskctl
-echo "  ✓ wolfdiskctl installed to /usr/local/bin/wolfdiskctl"
+if [ "$WOLFDISK_PREBUILT" = "false" ]; then
+    echo ""
+    echo "  Building from source..."
+
+    # Install build dependencies
+    if [ "$PKG_MANAGER" = "apt" ]; then
+        apt install -y git build-essential pkg-config libssl-dev libfuse3-dev
+    elif [ "$PKG_MANAGER" = "dnf" ]; then
+        dnf install -y git gcc gcc-c++ make openssl-devel pkg-config fuse3-devel
+    elif [ "$PKG_MANAGER" = "yum" ]; then
+        yum install -y git gcc gcc-c++ make openssl-devel pkgconfig fuse3-devel
+    fi
+
+    # Determine the real user (even when running under sudo)
+    REAL_USER="${SUDO_USER:-$USER}"
+    REAL_HOME=$(eval echo "~$REAL_USER")
+
+    # Install Rust if not present (for the real user)
+    if ! su - "$REAL_USER" -c 'command -v rustc' &> /dev/null; then
+        echo ""
+        echo "  Installing Rust for user $REAL_USER..."
+        su - "$REAL_USER" -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y'
+        echo "  ✓ Rust installed"
+    else
+        RUST_VER=$(su - "$REAL_USER" -c 'rustc --version' 2>/dev/null)
+        echo "  ✓ Rust already installed ($RUST_VER)"
+    fi
+
+    # Clone or update repository
+    INSTALL_DIR="/opt/wolfscale-src"
+    echo ""
+    echo "  Cloning WolfScale repository..."
+
+    if [ -d "$INSTALL_DIR" ]; then
+        echo "    Updating existing installation..."
+        cd "$INSTALL_DIR"
+        git fetch origin
+        git reset --hard origin/$BRANCH
+    else
+        git clone -b "$BRANCH" https://github.com/wolfsoftwaresystemsltd/WolfScale.git "$INSTALL_DIR"
+        cd "$INSTALL_DIR"
+    fi
+
+    chown -R "$REAL_USER:$REAL_USER" "$INSTALL_DIR"
+    echo "  ✓ Repository cloned to $INSTALL_DIR"
+
+    # Build WolfDisk (as the real user so cargo/rustup are available)
+    echo ""
+    echo "  Building WolfDisk (this may take a few minutes)..."
+    cd "$INSTALL_DIR/wolfdisk"
+    su - "$REAL_USER" -c "cd $INSTALL_DIR/wolfdisk && source \$HOME/.cargo/env && cargo build --release"
+    echo "  ✓ Build complete"
+
+    # Install binaries
+    echo ""
+    echo "  Installing WolfDisk..."
+    cp "$INSTALL_DIR/wolfdisk/target/release/wolfdisk" /usr/local/bin/wolfdisk
+    chmod +x /usr/local/bin/wolfdisk
+    echo "  ✓ wolfdisk installed to /usr/local/bin/wolfdisk"
+
+    cp "$INSTALL_DIR/wolfdisk/target/release/wolfdiskctl" /usr/local/bin/wolfdiskctl
+    chmod +x /usr/local/bin/wolfdiskctl
+    echo "  ✓ wolfdiskctl installed to /usr/local/bin/wolfdiskctl"
+fi
 
 # Create data directory
 echo ""
@@ -269,15 +338,51 @@ else
     echo "    (Upgrade mode - skipping configuration prompts)"
 fi
 
-# Run service installer only for new installations
+# Service setup
 if [ ! -f "/etc/systemd/system/wolfdisk.service" ]; then
     echo ""
     echo "  ─────────────────────────────────────"
-    echo "  Running service setup..."
+    echo "  Creating systemd service..."
     echo "  ─────────────────────────────────────"
-    echo ""
-    
-    bash "$INSTALL_DIR/wolfdisk/install_service.sh"
+
+    # Get mount point from config or use default
+    SVC_MOUNT="/mnt/wolfdisk"
+    SVC_CONFIG="/etc/wolfdisk/config.toml"
+    if [ -f "$SVC_CONFIG" ]; then
+        SVC_MOUNT_CFG=$(grep -E "^path\s*=" "$SVC_CONFIG" | cut -d'"' -f2 | head -1)
+        [ -n "$SVC_MOUNT_CFG" ] && SVC_MOUNT="$SVC_MOUNT_CFG"
+    fi
+
+    # Enable user_allow_other in /etc/fuse.conf
+    if ! grep -q "^user_allow_other" /etc/fuse.conf 2>/dev/null; then
+        echo "user_allow_other" >> /etc/fuse.conf
+        echo "  ✓ Enabled user_allow_other in /etc/fuse.conf"
+    fi
+
+    cat << SVCEOF > /etc/systemd/system/wolfdisk.service
+[Unit]
+Description=WolfDisk Distributed File System
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/wolfdisk --config $SVC_CONFIG mount --mountpoint $SVC_MOUNT
+ExecStop=/usr/local/bin/wolfdisk unmount --mountpoint $SVC_MOUNT
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+NoNewPrivileges=false
+ProtectSystem=false
+PrivateTmp=false
+
+[Install]
+WantedBy=multi-user.target
+SVCEOF
+
+    systemctl daemon-reload
+    echo "  ✓ Created wolfdisk.service"
 else
     echo ""
     echo "  ✓ Service already installed - reloading systemd"

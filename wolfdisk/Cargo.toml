@@ -1,6 +1,6 @@
 [package]
 name = "wolfdisk"
-version = "2.6.0"
+version = "2.7.0"
 edition = "2021"
 authors = ["Wolf Software Systems Ltd"]
 description = "Distributed file system with replicated and shared storage modes"
@@ -66,3 +66,8 @@ path = "src/main.rs"
 [[bin]]
 name = "wolfdiskctl"
 path = "src/bin/wolfdiskctl.rs"
+
+[profile.release]
+strip = "debuginfo"
+codegen-units = 1
+lto = "thin"
