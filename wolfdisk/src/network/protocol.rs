@@ -152,15 +152,9 @@ pub enum IndexOperation {
     /// File or directory deleted
     Delete { path: String },
     /// Directory created
-    Mkdir {
-        path: String,
-        permissions: u32,
-    },
+    Mkdir { path: String, permissions: u32 },
     /// File or directory renamed
-    Rename {
-        from_path: String,
-        to_path: String,
-    },
+    Rename { from_path: String, to_path: String },
 }
 
 /// Chunk reference in protocol
@@ -175,6 +169,15 @@ pub struct ChunkRefMsg {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SyncRequestMsg {
     pub from_version: u64,
+    /// Sender's node ID (so leader can register the peer for push replication)
+    #[serde(default)]
+    pub node_id: Option<String>,
+    /// Sender's bind address (so leader can connect back for push replication)
+    #[serde(default)]
+    pub bind_address: Option<String>,
+    /// Whether the sender is a client (read-only, no chunk storage)
+    #[serde(default)]
+    pub is_client: bool,
 }
 
 /// Full index sync response
@@ -365,9 +368,11 @@ pub fn encode_message(msg: &Message) -> Result<Vec<u8>, bincode::Error> {
 
 /// Decompress and deserialize a message from bytes
 pub fn decode_message(data: &[u8]) -> Result<Message, bincode::Error> {
-    let decompressed = lz4_flex::decompress_size_prepended(data)
-        .map_err(|e| bincode::Error::from(bincode::ErrorKind::Custom(
-            format!("LZ4 decompression failed: {}", e)
-        )))?;
+    let decompressed = lz4_flex::decompress_size_prepended(data).map_err(|e| {
+        bincode::Error::from(bincode::ErrorKind::Custom(format!(
+            "LZ4 decompression failed: {}",
+            e
+        )))
+    })?;
     bincode::deserialize(&decompressed)
 }

@@ -9,8 +9,8 @@ use std::sync::{Arc, RwLock};
 use std::time::{Duration, Instant, SystemTime};
 
 use fuser::{
-    FileAttr, FileType, Filesystem, ReplyAttr, ReplyData, ReplyDirectory, ReplyEntry,
-    ReplyOpen, ReplyWrite, Request,
+    FileAttr, FileType, Filesystem, ReplyAttr, ReplyData, ReplyDirectory, ReplyEntry, ReplyOpen,
+    ReplyWrite, Request,
 };
 use tracing::{debug, info, warn};
 
@@ -18,8 +18,12 @@ use crate::cluster::ClusterManager;
 use crate::config::Config;
 use crate::error::Result;
 use crate::network::peer::PeerManager;
-use crate::network::protocol::{Message, CreateFileMsg, CreateDirMsg, DeleteFileMsg, DeleteDirMsg, IndexUpdateMsg, IndexOperation, ChunkRefMsg, FileSyncMsg, WriteRequestMsg, RenameFileMsg, CreateSymlinkMsg, ReadRequestMsg, SetAttrMsg};
-use crate::storage::{ChunkStore, FileIndex, FileEntry, InodeTable};
+use crate::network::protocol::{
+    ChunkRefMsg, CreateDirMsg, CreateFileMsg, CreateSymlinkMsg, DeleteDirMsg, DeleteFileMsg,
+    FileSyncMsg, IndexOperation, IndexUpdateMsg, Message, ReadRequestMsg, RenameFileMsg,
+    SetAttrMsg, WriteRequestMsg,
+};
+use crate::storage::{ChunkStore, FileEntry, FileIndex, InodeTable};
 
 /// Messages for the async replication queue
 enum ReplicationMsg {
@@ -115,10 +119,13 @@ impl WolfDiskFS {
         // Create chunk store and file index for standalone mode
         std::fs::create_dir_all(config.chunks_dir())?;
         std::fs::create_dir_all(config.index_dir())?;
-        
-        let chunk_store = Arc::new(ChunkStore::new(config.chunks_dir(), config.replication.chunk_size)?);
+
+        let chunk_store = Arc::new(ChunkStore::new(
+            config.chunks_dir(),
+            config.replication.chunk_size,
+        )?);
         let file_index = Arc::new(RwLock::new(FileIndex::load_or_create(&config.index_dir())?));
-        
+
         // Build inode table from index
         let (inode_table, max_inode) = {
             let index = file_index.read().unwrap();
@@ -126,8 +133,16 @@ impl WolfDiskFS {
         };
         let inode_table = Arc::new(RwLock::new(inode_table));
         let next_inode = Arc::new(RwLock::new(max_inode + 1));
-        
-        Self::with_cluster(config, None, None, file_index, chunk_store, inode_table, next_inode)
+
+        Self::with_cluster(
+            config,
+            None,
+            None,
+            file_index,
+            chunk_store,
+            inode_table,
+            next_inode,
+        )
     }
 
     /// Create a new WolfDisk filesystem with cluster support
@@ -149,7 +164,7 @@ impl WolfDiskFS {
         // Start async replication thread if we have a peer manager
         let replication_tx = if let Some(ref pm) = peer_manager {
             // Use a bounded channel to prevent unlimited memory growth during fast writes
-            // 500 chunks * 1MB = ~500MB max buffer. 
+            // 500 chunks * 1MB = ~500MB max buffer.
             // If full, we drop chunks (lossy) but block on metadata (reliable).
             let (tx, rx) = std::sync::mpsc::sync_channel::<ReplicationMsg>(500);
             let pm_clone = pm.clone();
@@ -245,9 +260,10 @@ impl WolfDiskFS {
         let leader_addr = cluster.leader_address().ok_or(libc::ENOENT)?;
 
         // First attempt
-        let conn = peer_manager.get_or_connect_leader(&leader_id, &leader_addr)
+        let conn = peer_manager
+            .get_or_connect_leader(&leader_id, &leader_addr)
             .map_err(|_| libc::EIO)?;
-        
+
         match conn.request(msg) {
             Ok(response) => return Ok(response),
             Err(e) => {
@@ -257,12 +273,13 @@ impl WolfDiskFS {
         }
 
         // Retry with fresh connection
-        let conn = peer_manager.get_or_connect_leader(&leader_id, &leader_addr)
+        let conn = peer_manager
+            .get_or_connect_leader(&leader_id, &leader_addr)
             .map_err(|e| {
                 tracing::error!("Failed to reconnect to leader: {}", e);
                 libc::EIO
             })?;
-        
+
         conn.request(msg).map_err(|e| {
             tracing::error!("Leader request failed after reconnect: {}", e);
             peer_manager.disconnect_leader(&leader_id);
@@ -271,7 +288,12 @@ impl WolfDiskFS {
     }
 
     /// Forward a read to the leader (for client mode)
-    fn forward_read_to_leader(&self, path: &str, offset: u64, size: u32) -> std::result::Result<Vec<u8>, i32> {
+    fn forward_read_to_leader(
+        &self,
+        path: &str,
+        offset: u64,
+        size: u32,
+    ) -> std::result::Result<Vec<u8>, i32> {
         let msg = Message::ReadRequest(ReadRequestMsg {
             path: path.to_string(),
             offset,
@@ -279,9 +301,7 @@ impl WolfDiskFS {
         });
 
         match self.request_leader(&msg)? {
-            Message::ClientResponse(resp) if resp.success => {
-                Ok(resp.data.unwrap_or_default())
-            }
+            Message::ClientResponse(resp) if resp.success => Ok(resp.data.unwrap_or_default()),
             Message::ClientResponse(resp) => {
                 warn!("Read forward failed: {:?}", resp.error);
                 Err(libc::EIO)
@@ -291,7 +311,13 @@ impl WolfDiskFS {
     }
 
     /// Forward a file creation to the leader
-    fn forward_create_to_leader(&self, path: &str, mode: u32, uid: u32, gid: u32) -> std::result::Result<(), i32> {
+    fn forward_create_to_leader(
+        &self,
+        path: &str,
+        mode: u32,
+        uid: u32,
+        gid: u32,
+    ) -> std::result::Result<(), i32> {
         let msg = Message::CreateFile(CreateFileMsg {
             path: path.to_string(),
             mode,
@@ -308,11 +334,20 @@ impl WolfDiskFS {
             _ => Err(libc::EIO),
         }
     }
-    
+
     /// Forward a write operation to the leader
-    fn forward_write_to_leader(&self, path: &str, offset: u64, data: &[u8]) -> std::result::Result<u32, i32> {
-        info!("Forwarding write to leader for path: {} (offset: {}, size: {})", 
-            path, offset, data.len());
+    fn forward_write_to_leader(
+        &self,
+        path: &str,
+        offset: u64,
+        data: &[u8],
+    ) -> std::result::Result<u32, i32> {
+        info!(
+            "Forwarding write to leader for path: {} (offset: {}, size: {})",
+            path,
+            offset,
+            data.len()
+        );
 
         let msg = Message::WriteRequest(WriteRequestMsg {
             path: path.to_string(),
@@ -321,9 +356,7 @@ impl WolfDiskFS {
         });
 
         match self.request_leader(&msg)? {
-            Message::ClientResponse(resp) if resp.success => {
-                Ok(data.len() as u32)
-            }
+            Message::ClientResponse(resp) if resp.success => Ok(data.len() as u32),
             Message::ClientResponse(resp) => {
                 warn!("Leader rejected write: {:?}", resp.error);
                 Err(libc::EIO)
@@ -333,7 +366,13 @@ impl WolfDiskFS {
     }
 
     /// Forward a directory creation to the leader
-    fn forward_mkdir_to_leader(&self, path: &str, mode: u32, uid: u32, gid: u32) -> std::result::Result<(), i32> {
+    fn forward_mkdir_to_leader(
+        &self,
+        path: &str,
+        mode: u32,
+        uid: u32,
+        gid: u32,
+    ) -> std::result::Result<(), i32> {
         let msg = Message::CreateDir(CreateDirMsg {
             path: path.to_string(),
             mode,
@@ -357,7 +396,10 @@ impl WolfDiskFS {
         gid: Option<u32>,
         modified_ms: Option<u64>,
     ) -> std::result::Result<(), i32> {
-        info!("Forwarding setattr to leader for path: {} (size={:?})", path, size);
+        info!(
+            "Forwarding setattr to leader for path: {} (size={:?})",
+            path, size
+        );
 
         let msg = Message::SetAttr(SetAttrMsg {
             path: path.to_string(),
@@ -395,7 +437,7 @@ impl WolfDiskFS {
         if !self.is_leader() {
             return;
         }
-        
+
         if let Some(ref cluster) = self.cluster {
             let op_path = match &operation {
                 IndexOperation::Upsert { path, .. } => std::path::PathBuf::from(path),
@@ -409,11 +451,8 @@ impl WolfDiskFS {
             } else {
                 cluster.increment_index_version(op_path)
             };
-            let msg = Message::IndexUpdate(IndexUpdateMsg {
-                version,
-                operation,
-            });
-            
+            let msg = Message::IndexUpdate(IndexUpdateMsg { version, operation });
+
             // Queue for async broadcast
             if let Some(ref tx) = self.replication_tx {
                 let _ = tx.send(ReplicationMsg::Broadcast(msg));
@@ -423,11 +462,18 @@ impl WolfDiskFS {
 
     /// Queue a single chunk for async replication to followers.
     /// Non-blocking: just pushes to the channel, the background thread handles sends.
-    fn stream_chunk_to_followers(&self, _path: &std::path::Path, hash: &[u8; 32], data: &[u8], _offset: u64, _size: u32) {
+    fn stream_chunk_to_followers(
+        &self,
+        _path: &std::path::Path,
+        hash: &[u8; 32],
+        data: &[u8],
+        _offset: u64,
+        _size: u32,
+    ) {
         if !self.is_leader() {
             return;
         }
-        
+
         if let Some(ref tx) = self.replication_tx {
             let msg = Message::StoreChunk(crate::network::protocol::StoreChunkMsg {
                 hash: *hash,
@@ -436,9 +482,11 @@ impl WolfDiskFS {
             // Try to send non-blocking. If queue is full, drop the chunk.
             // Followers will fetch missing chunks on-demand via GetChunk.
             match tx.try_send(ReplicationMsg::Broadcast(msg)) {
-                Ok(_) => {},
+                Ok(_) => {}
                 Err(std::sync::mpsc::TrySendError::Full(_)) => {
-                    tracing::debug!("Replication queue full, dropping chunk push (follower will fetch later)");
+                    tracing::debug!(
+                        "Replication queue full, dropping chunk push (follower will fetch later)"
+                    );
                 }
                 Err(e) => {
                     tracing::warn!("Failed to queue replication chunk: {}", e);
@@ -460,7 +508,11 @@ impl WolfDiskFS {
     }
 
     /// Forward a file rename to the leader
-    fn forward_rename_to_leader(&self, from_path: &str, to_path: &str) -> std::result::Result<(), i32> {
+    fn forward_rename_to_leader(
+        &self,
+        from_path: &str,
+        to_path: &str,
+    ) -> std::result::Result<(), i32> {
         let msg = Message::RenameFile(RenameFileMsg {
             from_path: from_path.to_string(),
             to_path: to_path.to_string(),
@@ -473,7 +525,11 @@ impl WolfDiskFS {
     }
 
     /// Forward a symlink creation to the leader
-    fn forward_symlink_to_leader(&self, link_path: &str, target: &str) -> std::result::Result<(), i32> {
+    fn forward_symlink_to_leader(
+        &self,
+        link_path: &str,
+        target: &str,
+    ) -> std::result::Result<(), i32> {
         let msg = Message::CreateSymlink(CreateSymlinkMsg {
             link_path: link_path.to_string(),
             target: target.to_string(),
@@ -624,16 +680,21 @@ impl WolfDiskFS {
         }
 
         if let Some(ref tx) = self.replication_tx {
-            let modified_ms = entry.modified
+            let modified_ms = entry
+                .modified
                 .duration_since(std::time::UNIX_EPOCH)
                 .unwrap_or_default()
                 .as_millis() as u64;
 
-            let chunk_refs: Vec<_> = entry.chunks.iter().map(|c| ChunkRefMsg {
-                hash: c.hash,
-                offset: c.offset,
-                size: c.size,
-            }).collect();
+            let chunk_refs: Vec<_> = entry
+                .chunks
+                .iter()
+                .map(|c| ChunkRefMsg {
+                    hash: c.hash,
+                    offset: c.offset,
+                    size: c.size,
+                })
+                .collect();
 
             let msg = Message::FileSync(FileSyncMsg {
                 path: path.to_string_lossy().to_string(),
@@ -647,8 +708,12 @@ impl WolfDiskFS {
                 chunk_data: Vec::new(),
             });
 
-            debug!("Queuing FileSync for {} ({} bytes, {} chunks)",
-                path.display(), entry.size, entry.chunks.len());
+            debug!(
+                "Queuing FileSync for {} ({} bytes, {} chunks)",
+                path.display(),
+                entry.size,
+                entry.chunks.len()
+            );
             let _ = tx.send(ReplicationMsg::Broadcast(msg));
         }
     }
@@ -705,8 +770,14 @@ impl WolfDiskFS {
             None => return Ok(()), // Nothing buffered for this inode
         };
 
-        info!("Draining client write cache for ino={} path={} ({} segments, {} bytes, truncate={:?})",
-            ino, entry.path, entry.segments.len(), entry.size, entry.pending_truncate);
+        info!(
+            "Draining client write cache for ino={} path={} ({} segments, {} bytes, truncate={:?})",
+            ino,
+            entry.path,
+            entry.segments.len(),
+            entry.size,
+            entry.pending_truncate
+        );
 
         // Step 1: Forward pending truncation to leader first
         if let Some(trunc_size) = entry.pending_truncate {
@@ -718,7 +789,10 @@ impl WolfDiskFS {
                 None,
                 None,
             ) {
-                warn!("Failed to forward truncation to leader for {}: {}", entry.path, e);
+                warn!(
+                    "Failed to forward truncation to leader for {}: {}",
+                    entry.path, e
+                );
                 return Err(e);
             }
         }
@@ -758,13 +832,19 @@ impl WolfDiskFS {
         // Step 3: Forward each coalesced segment to the leader
         for (offset, data) in &coalesced {
             if let Err(e) = self.forward_write_to_leader(&entry.path, *offset, data) {
-                warn!("Failed to forward write to leader for {} at offset {}: {}", entry.path, offset, e);
+                warn!(
+                    "Failed to forward write to leader for {} at offset {}: {}",
+                    entry.path, offset, e
+                );
                 return Err(e);
             }
         }
 
-        info!("Successfully drained {} write segments to leader for {}",
-            coalesced.len(), entry.path);
+        info!(
+            "Successfully drained {} write segments to leader for {}",
+            coalesced.len(),
+            entry.path
+        );
         Ok(())
     }
 
@@ -794,12 +874,16 @@ impl WolfDiskFS {
         FileAttr {
             ino: inode,
             size: entry.size,
-            blocks: (entry.size + 511) / 512,
+            blocks: entry.size.div_ceil(512),
             atime: entry.accessed,
             mtime: entry.modified,
             ctime: entry.modified,
             crtime: entry.created,
-            kind: if entry.is_dir { FileType::Directory } else { FileType::RegularFile },
+            kind: if entry.is_dir {
+                FileType::Directory
+            } else {
+                FileType::RegularFile
+            },
             perm: entry.permissions as u16,
             nlink: if entry.is_dir { 2 } else { 1 },
             uid: entry.uid,
@@ -832,28 +916,24 @@ impl Filesystem for WolfDiskFS {
                 return;
             }
         };
-        
+
         let mut stat: libc::statvfs = unsafe { std::mem::zeroed() };
         let ret = unsafe { libc::statvfs(c_path.as_ptr(), &mut stat) };
-        
+
         if ret == 0 {
             reply.statfs(
-                stat.f_blocks,   // total blocks
-                stat.f_bfree,    // free blocks
-                stat.f_bavail,   // available blocks (non-root)
-                stat.f_files,    // total inodes
-                stat.f_ffree,    // free inodes
-                stat.f_bsize as u32,  // block size
+                stat.f_blocks,         // total blocks
+                stat.f_bfree,          // free blocks
+                stat.f_bavail,         // available blocks (non-root)
+                stat.f_files,          // total inodes
+                stat.f_ffree,          // free inodes
+                stat.f_bsize as u32,   // block size
                 stat.f_namemax as u32, // max name length
-                stat.f_frsize as u32, // fragment size
+                stat.f_frsize as u32,  // fragment size
             );
         } else {
             // Fallback: report large virtual filesystem
-            reply.statfs(
-                1 << 30, 1 << 30, 1 << 30,
-                0, 1 << 20,
-                4096, 255, 4096,
-            );
+            reply.statfs(1 << 30, 1 << 30, 1 << 30, 0, 1 << 20, 4096, 255, 4096);
         }
     }
 
@@ -874,11 +954,12 @@ impl Filesystem for WolfDiskFS {
         };
 
         // Build child path
-        let child_path = if parent_path.as_os_str().is_empty() || parent_path == std::path::Path::new("/") {
-            std::path::PathBuf::from(name)
-        } else {
-            parent_path.join(name)
-        };
+        let child_path =
+            if parent_path.as_os_str().is_empty() || parent_path == std::path::Path::new("/") {
+                std::path::PathBuf::from(name)
+            } else {
+                parent_path.join(name)
+            };
 
         // Look up in index
         if let Some(entry) = file_index.get(&child_path) {
@@ -986,7 +1067,9 @@ impl Filesystem for WolfDiskFS {
                         fuser::TimeOrNow::SpecificTime(t) => t,
                         fuser::TimeOrNow::Now => SystemTime::now(),
                     };
-                    t.duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_millis() as u64
+                    t.duration_since(std::time::UNIX_EPOCH)
+                        .unwrap_or_default()
+                        .as_millis() as u64
                 });
 
                 if let Err(e) = self.forward_setattr_to_leader(
@@ -1015,9 +1098,15 @@ impl Filesystem for WolfDiskFS {
                     }
                     entry.size = new_size;
                 }
-                if let Some(m) = mode { entry.permissions = m; }
-                if let Some(u) = uid { entry.uid = u; }
-                if let Some(g) = gid { entry.gid = g; }
+                if let Some(m) = mode {
+                    entry.permissions = m;
+                }
+                if let Some(u) = uid {
+                    entry.uid = u;
+                }
+                if let Some(g) = gid {
+                    entry.gid = g;
+                }
                 let now = SystemTime::now();
                 if let Some(a) = atime {
                     entry.accessed = match a {
@@ -1068,9 +1157,15 @@ impl Filesystem for WolfDiskFS {
             }
         }
 
-        if let Some(m) = mode { entry.permissions = m; }
-        if let Some(u) = uid { entry.uid = u; }
-        if let Some(g) = gid { entry.gid = g; }
+        if let Some(m) = mode {
+            entry.permissions = m;
+        }
+        if let Some(u) = uid {
+            entry.uid = u;
+        }
+        if let Some(g) = gid {
+            entry.gid = g;
+        }
 
         let now = SystemTime::now();
         if let Some(a) = atime {
@@ -1168,30 +1263,44 @@ impl Filesystem for WolfDiskFS {
                 }
                 // If chunk is missing locally, fetch from leader
                 if !self.chunk_store.exists(&chunk.hash) {
-                    debug!("Chunk {} missing locally, fetching from leader", hex::encode(&chunk.hash));
+                    debug!(
+                        "Chunk {} missing locally, fetching from leader",
+                        hex::encode(chunk.hash)
+                    );
                     let msg = crate::network::protocol::Message::GetChunk(
-                        crate::network::protocol::GetChunkMsg { hash: chunk.hash }
+                        crate::network::protocol::GetChunkMsg { hash: chunk.hash },
                     );
                     match self.request_leader(&msg) {
                         Ok(crate::network::protocol::Message::ChunkData(resp)) => {
                             if let Some(data) = resp.data {
-                                if let Err(e) = self.chunk_store.store_with_hash(&chunk.hash, &data) {
+                                if let Err(e) = self.chunk_store.store_with_hash(&chunk.hash, &data)
+                                {
                                     warn!("Failed to cache fetched chunk: {}", e);
                                 } else {
-                                    debug!("Fetched and cached chunk {} from leader ({} bytes)", 
-                                        hex::encode(&chunk.hash), data.len());
+                                    debug!(
+                                        "Fetched and cached chunk {} from leader ({} bytes)",
+                                        hex::encode(chunk.hash),
+                                        data.len()
+                                    );
                                 }
                             }
                         }
-                        Ok(_) => { warn!("Unexpected response fetching chunk from leader"); }
-                        Err(e) => { warn!("Failed to fetch chunk from leader: errno {}", e); }
+                        Ok(_) => {
+                            warn!("Unexpected response fetching chunk from leader");
+                        }
+                        Err(e) => {
+                            warn!("Failed to fetch chunk from leader: errno {}", e);
+                        }
                     }
                 }
             }
         }
 
         // Read data from chunks
-        match self.chunk_store.read(&entry.chunks, offset as u64, size as usize) {
+        match self
+            .chunk_store
+            .read(&entry.chunks, offset as u64, size as usize)
+        {
             Ok(mut data) => {
                 // Overlay any buffered-but-unflushed write data for read-after-write consistency
                 let buffers = self.write_buffers.read().unwrap();
@@ -1216,8 +1325,9 @@ impl Filesystem for WolfDiskFS {
                                 data.resize(result_offset + overlap_len, 0);
                             }
 
-                            data[result_offset..result_offset + overlap_len]
-                                .copy_from_slice(&buffer.data[buf_offset..buf_offset + overlap_len]);
+                            data[result_offset..result_offset + overlap_len].copy_from_slice(
+                                &buffer.data[buf_offset..buf_offset + overlap_len],
+                            );
                         }
                     }
                 }
@@ -1336,7 +1446,12 @@ impl Filesystem for WolfDiskFS {
                                         size: chunk_len,
                                     });
                                     // Queue for streaming replication
-                                    flushed_chunks.push((hash, chunk_data.to_vec(), off, chunk_len));
+                                    flushed_chunks.push((
+                                        hash,
+                                        chunk_data.to_vec(),
+                                        off,
+                                        chunk_len,
+                                    ));
                                 }
                                 Err(e) => {
                                     warn!("Failed to flush non-contiguous buffer: {}", e);
@@ -1501,7 +1616,10 @@ impl Filesystem for WolfDiskFS {
         reply: ReplyEntry,
     ) {
         let name_str = name.to_string_lossy();
-        debug!("mkdir: parent={}, name={}, mode={:o}", parent, name_str, mode);
+        debug!(
+            "mkdir: parent={}, name={}, mode={:o}",
+            parent, name_str, mode
+        );
 
         // Get parent path first (needed for forwarding)
         let parent_path = {
@@ -1524,7 +1642,12 @@ impl Filesystem for WolfDiskFS {
         // If not leader, forward to leader
         if !self.is_leader() {
             info!("Forwarding mkdir to leader: {:?}", dir_path);
-            match self.forward_mkdir_to_leader(&dir_path.to_string_lossy(), mode, req.uid(), req.gid()) {
+            match self.forward_mkdir_to_leader(
+                &dir_path.to_string_lossy(),
+                mode,
+                req.uid(),
+                req.gid(),
+            ) {
                 Ok(()) => {
                     // Create local entry to reflect the change (will be synced properly later)
                     let now = SystemTime::now();
@@ -1541,8 +1664,14 @@ impl Filesystem for WolfDiskFS {
                         symlink_target: None,
                     };
                     let inode = self.allocate_inode();
-                    self.inode_table.write().unwrap().insert(inode, dir_path.clone());
-                    self.file_index.write().unwrap().insert(dir_path, entry.clone());
+                    self.inode_table
+                        .write()
+                        .unwrap()
+                        .insert(inode, dir_path.clone());
+                    self.file_index
+                        .write()
+                        .unwrap()
+                        .insert(dir_path, entry.clone());
                     let attr = self.entry_to_attr(&entry, inode);
                     reply.entry(&TTL, &attr, 0);
                 }
@@ -1581,19 +1710,19 @@ impl Filesystem for WolfDiskFS {
         let dir_path_str = dir_path.to_string_lossy().to_string();
         inode_table.insert(inode, dir_path.clone());
         file_index.insert(dir_path, entry.clone());
-        
+
         // Drop locks before broadcast
         drop(inode_table);
         drop(file_index);
 
         let attr = self.entry_to_attr(&entry, inode);
-        
+
         // Broadcast mkdir to followers
         self.broadcast_index_update(IndexOperation::Mkdir {
             path: dir_path_str,
             permissions: mode,
         });
-        
+
         reply.entry(&TTL, &attr, 0);
     }
 
@@ -1608,7 +1737,10 @@ impl Filesystem for WolfDiskFS {
         reply: fuser::ReplyCreate,
     ) {
         let name_str = name.to_string_lossy();
-        debug!("create: parent={}, name={}, mode={:o}", parent, name_str, mode);
+        debug!(
+            "create: parent={}, name={}, mode={:o}",
+            parent, name_str, mode
+        );
 
         // Get parent path first (needed for forwarding)
         let parent_path = {
@@ -1631,7 +1763,12 @@ impl Filesystem for WolfDiskFS {
         // If not leader, forward to leader
         if !self.is_leader() {
             info!("Forwarding create to leader: {:?}", file_path);
-            match self.forward_create_to_leader(&file_path.to_string_lossy(), mode, req.uid(), req.gid()) {
+            match self.forward_create_to_leader(
+                &file_path.to_string_lossy(),
+                mode,
+                req.uid(),
+                req.gid(),
+            ) {
                 Ok(()) => {
                     // Create local entry to reflect the change
                     let now = SystemTime::now();
@@ -1648,8 +1785,14 @@ impl Filesystem for WolfDiskFS {
                         symlink_target: None,
                     };
                     let inode = self.allocate_inode();
-                    self.inode_table.write().unwrap().insert(inode, file_path.clone());
-                    self.file_index.write().unwrap().insert(file_path, entry.clone());
+                    self.inode_table
+                        .write()
+                        .unwrap()
+                        .insert(inode, file_path.clone());
+                    self.file_index
+                        .write()
+                        .unwrap()
+                        .insert(file_path, entry.clone());
                     let fh = self.allocate_fh();
                     self.open_files.write().unwrap().insert(fh, inode);
                     let attr = self.entry_to_attr(&entry, inode);
@@ -1690,7 +1833,7 @@ impl Filesystem for WolfDiskFS {
         let file_path_str = file_path.to_string_lossy().to_string();
         inode_table.insert(inode, file_path.clone());
         file_index.insert(file_path, entry.clone());
-        
+
         // Drop locks before broadcast
         drop(inode_table);
         drop(file_index);
@@ -1700,16 +1843,19 @@ impl Filesystem for WolfDiskFS {
         self.open_files.write().unwrap().insert(fh, inode);
 
         let attr = self.entry_to_attr(&entry, inode);
-        
+
         // Broadcast file creation to followers
         self.broadcast_index_update(IndexOperation::Upsert {
             path: file_path_str,
             size: 0,
-            modified_ms: now.duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_millis() as u64,
+            modified_ms: now
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_millis() as u64,
             permissions: mode,
             chunks: vec![],
         });
-        
+
         reply.created(&TTL, &attr, 0, fh, 0);
     }
 
@@ -1775,14 +1921,14 @@ impl Filesystem for WolfDiskFS {
 
         // Look up the inode for this file BEFORE removing it (needed to clear write buffers)
         let file_ino = inode_table.get_inode(&file_path);
-        
+
         // Clear any pending write buffers and dirty flags for the deleted inode
         // (prevents stale streaming replication data from being sent after delete)
         if let Some(ino) = file_ino {
             self.write_buffers.write().unwrap().remove(&ino);
             self.dirty_inodes.write().unwrap().remove(&ino);
         }
-        
+
         // Remove from index and inode table
         if let Some(entry) = file_index.remove(&file_path) {
             // Delete chunks
@@ -1791,7 +1937,7 @@ impl Filesystem for WolfDiskFS {
             }
         }
         inode_table.remove_path(&file_path);
-        
+
         // Drop locks before broadcast
         drop(file_index);
         drop(inode_table);
@@ -1800,22 +1946,25 @@ impl Filesystem for WolfDiskFS {
         self.broadcast_index_update(IndexOperation::Delete {
             path: file_path.to_string_lossy().to_string(),
         });
-        
+
         // Also broadcast FileSync delete signal (size=u64::MAX) to ensure
         // followers clean up even if stale streaming data arrives out of order
         // (non-blocking via replication queue)
-        self.broadcast_file_sync_final(&file_path, &FileEntry {
-            size: u64::MAX,
-            is_dir: false,
-            permissions: 0,
-            uid: 0,
-            gid: 0,
-            modified: SystemTime::now(),
-            created: SystemTime::now(),
-            accessed: SystemTime::now(),
-            chunks: Vec::new(),
-            symlink_target: None,
-        });
+        self.broadcast_file_sync_final(
+            &file_path,
+            &FileEntry {
+                size: u64::MAX,
+                is_dir: false,
+                permissions: 0,
+                uid: 0,
+                gid: 0,
+                modified: SystemTime::now(),
+                created: SystemTime::now(),
+                accessed: SystemTime::now(),
+                chunks: Vec::new(),
+                symlink_target: None,
+            },
+        );
 
         reply.ok();
     }
@@ -1889,7 +2038,7 @@ impl Filesystem for WolfDiskFS {
         // Remove from index and inode table
         file_index.remove(&dir_path);
         inode_table.remove_path(&dir_path);
-        
+
         // Drop locks before broadcast
         drop(file_index);
         drop(inode_table);
@@ -1914,12 +2063,15 @@ impl Filesystem for WolfDiskFS {
     ) {
         let name_str = name.to_string_lossy();
         let newname_str = newname.to_string_lossy();
-        debug!("rename: parent={}, name={}, newparent={}, newname={}", parent, name_str, newparent, newname_str);
+        debug!(
+            "rename: parent={}, name={}, newparent={}, newname={}",
+            parent, name_str, newparent, newname_str
+        );
 
         // Get source and destination paths
         let (from_path, to_path) = {
             let inode_table = self.inode_table.read().unwrap();
-            
+
             let parent_path = if parent == ROOT_INODE {
                 std::path::PathBuf::new()
             } else {
@@ -1931,7 +2083,7 @@ impl Filesystem for WolfDiskFS {
                     }
                 }
             };
-            
+
             let newparent_path = if newparent == ROOT_INODE {
                 std::path::PathBuf::new()
             } else {
@@ -1943,29 +2095,33 @@ impl Filesystem for WolfDiskFS {
                     }
                 }
             };
-            
+
             (parent_path.join(name), newparent_path.join(newname))
         };
 
         // If not leader, forward to leader
         if !self.is_leader() {
-            info!("Forwarding rename to leader: {:?} -> {:?}", from_path, to_path);
-            match self.forward_rename_to_leader(&from_path.to_string_lossy(), &to_path.to_string_lossy()) {
+            info!(
+                "Forwarding rename to leader: {:?} -> {:?}",
+                from_path, to_path
+            );
+            match self
+                .forward_rename_to_leader(&from_path.to_string_lossy(), &to_path.to_string_lossy())
+            {
                 Ok(()) => {
                     // Update local entries
                     let mut inode_table = self.inode_table.write().unwrap();
                     let mut file_index = self.file_index.write().unwrap();
-                    
+
                     if let Some(entry) = file_index.remove(&from_path) {
                         file_index.insert(to_path.clone(), entry);
                     }
-                    
+
                     if let Some(ino) = inode_table.get_inode(&from_path) {
-                        let ino = ino;
                         inode_table.remove_path(&from_path);
                         inode_table.insert(ino, to_path);
                     }
-                    
+
                     reply.ok();
                 }
                 Err(errno) => reply.error(errno),
@@ -1991,29 +2147,29 @@ impl Filesystem for WolfDiskFS {
             if target_entry.is_dir {
                 // Check if directory is empty
                 let has_children = file_index.paths().any(|p| {
-                     if let Some(parent) = p.parent() {
-                         parent == to_path
-                     } else {
-                         false
-                     }
+                    if let Some(parent) = p.parent() {
+                        parent == to_path
+                    } else {
+                        false
+                    }
                 });
-                
+
                 if has_children {
                     reply.error(libc::ENOTEMPTY);
                     return;
                 }
             }
-            
+
             // Delete target chunks
             for chunk in &target_entry.chunks {
                 let _ = self.chunk_store.delete(&chunk.hash);
             }
-            
+
             // Remove target from inode table
             if let Some(target_ino) = inode_table.get_inode(&to_path) {
                 inode_table.remove_inode(target_ino);
             }
-            
+
             // Remove target from index
             file_index.remove(&to_path);
         }
@@ -2024,7 +2180,6 @@ impl Filesystem for WolfDiskFS {
 
         // Update inode table for source
         if let Some(ino) = inode_table.get_inode(&from_path) {
-            let ino = ino;
             inode_table.remove_path(&from_path);
             inode_table.insert(ino, to_path.clone());
         }
@@ -2077,16 +2232,16 @@ impl Filesystem for WolfDiskFS {
                 // The error was logged and the data is lost (same as NFS async error).
             }
         }
-        
+
         // Flush any pending write buffer for this inode
         self.flush_write_buffer(ino);
-        
+
         // Replicate to followers if this inode was modified (deferred from write)
         self.replicate_dirty(ino);
-        
+
         // Debounced index save (only saves if enough time has passed)
         self.maybe_save_index();
-        
+
         reply.ok();
     }
 
@@ -2100,7 +2255,10 @@ impl Filesystem for WolfDiskFS {
     ) {
         let link_name_str = link_name.to_string_lossy();
         let target_str = target.to_string_lossy();
-        debug!("symlink: parent={}, name={}, target={}", parent, link_name_str, target_str);
+        debug!(
+            "symlink: parent={}, name={}, target={}",
+            parent, link_name_str, target_str
+        );
 
         // Get parent path
         let parent_path = {
@@ -2122,7 +2280,10 @@ impl Filesystem for WolfDiskFS {
 
         // If not leader, forward to leader
         if !self.is_leader() {
-            info!("Forwarding symlink to leader: {:?} -> {}", link_path, target_str);
+            info!(
+                "Forwarding symlink to leader: {:?} -> {}",
+                link_path, target_str
+            );
             match self.forward_symlink_to_leader(&link_path.to_string_lossy(), &target_str) {
                 Ok(()) => {
                     // Create local entry
@@ -2140,9 +2301,15 @@ impl Filesystem for WolfDiskFS {
                         symlink_target: Some(target_str.to_string()),
                     };
                     let inode = self.allocate_inode();
-                    self.inode_table.write().unwrap().insert(inode, link_path.clone());
-                    self.file_index.write().unwrap().insert(link_path, entry.clone());
-                    
+                    self.inode_table
+                        .write()
+                        .unwrap()
+                        .insert(inode, link_path.clone());
+                    self.file_index
+                        .write()
+                        .unwrap()
+                        .insert(link_path, entry.clone());
+
                     // Return symlink attributes with FileType::Symlink
                     let attr = FileAttr {
                         ino: inode,
@@ -2184,8 +2351,14 @@ impl Filesystem for WolfDiskFS {
         };
 
         let inode = self.allocate_inode();
-        self.inode_table.write().unwrap().insert(inode, link_path.clone());
-        self.file_index.write().unwrap().insert(link_path.clone(), entry.clone());
+        self.inode_table
+            .write()
+            .unwrap()
+            .insert(inode, link_path.clone());
+        self.file_index
+            .write()
+            .unwrap()
+            .insert(link_path.clone(), entry.clone());
 
         info!("Created symlink: {:?} -> {}", link_path, target_str);
 
@@ -2245,7 +2418,10 @@ impl Filesystem for WolfDiskFS {
         reply: ReplyEntry,
     ) {
         let newname_str = newname.to_string_lossy();
-        debug!("link: ino={}, newparent={}, newname={}", ino, newparent, newname_str);
+        debug!(
+            "link: ino={}, newparent={}, newname={}",
+            ino, newparent, newname_str
+        );
 
         // Get source path
         let source_path = {
@@ -2311,8 +2487,14 @@ impl Filesystem for WolfDiskFS {
         };
 
         let inode = self.allocate_inode();
-        self.inode_table.write().unwrap().insert(inode, link_path.clone());
-        self.file_index.write().unwrap().insert(link_path.clone(), new_entry.clone());
+        self.inode_table
+            .write()
+            .unwrap()
+            .insert(inode, link_path.clone());
+        self.file_index
+            .write()
+            .unwrap()
+            .insert(link_path.clone(), new_entry.clone());
 
         info!("Created hard link: {:?} -> {:?}", link_path, source_path);
 
@@ -2331,7 +2513,10 @@ impl Filesystem for WolfDiskFS {
         reply: ReplyEntry,
     ) {
         let name_str = name.to_string_lossy();
-        debug!("mknod: parent={}, name={}, mode={:o}", parent, name_str, mode);
+        debug!(
+            "mknod: parent={}, name={}, mode={:o}",
+            parent, name_str, mode
+        );
 
         // Get parent path
         let parent_path = {
@@ -2361,10 +2546,10 @@ impl Filesystem for WolfDiskFS {
         }
 
         // Extract file type from mode
-        let file_type = mode & libc::S_IFMT as u32;
-        
+        let file_type = mode & libc::S_IFMT;
+
         // We only support regular files via mknod (same as create)
-        if file_type != libc::S_IFREG as u32 && file_type != 0 {
+        if file_type != libc::S_IFREG && file_type != 0 {
             warn!("mknod: unsupported file type {:o}", file_type);
             reply.error(libc::ENOTSUP);
             return;
@@ -2387,8 +2572,14 @@ impl Filesystem for WolfDiskFS {
         };
 
         let inode = self.allocate_inode();
-        self.inode_table.write().unwrap().insert(inode, file_path.clone());
-        self.file_index.write().unwrap().insert(file_path.clone(), entry.clone());
+        self.inode_table
+            .write()
+            .unwrap()
+            .insert(inode, file_path.clone());
+        self.file_index
+            .write()
+            .unwrap()
+            .insert(file_path.clone(), entry.clone());
 
         info!("Created file via mknod: {:?}", file_path);
 
@@ -2463,13 +2654,7 @@ impl Filesystem for WolfDiskFS {
     }
 
     /// Remove an extended attribute.
-    fn removexattr(
-        &mut self,
-        _req: &Request,
-        ino: u64,
-        name: &OsStr,
-        reply: fuser::ReplyEmpty,
-    ) {
+    fn removexattr(&mut self, _req: &Request, ino: u64, name: &OsStr, reply: fuser::ReplyEmpty) {
         debug!("removexattr: ino={}, name={:?}", ino, name);
         reply.error(libc::ENOSYS);
     }
@@ -2487,7 +2672,10 @@ impl Filesystem for WolfDiskFS {
         mode: i32,
         reply: fuser::ReplyEmpty,
     ) {
-        debug!("fallocate: ino={}, offset={}, length={}, mode={}", ino, offset, length, mode);
+        debug!(
+            "fallocate: ino={}, offset={}, length={}, mode={}",
+            ino, offset, length, mode
+        );
 
         // Mode 0 = allocate space, which we can just accept as no-op
         // FALLOC_FL_KEEP_SIZE (1) = allocate but don't change size, also no-op

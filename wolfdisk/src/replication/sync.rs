@@ -2,19 +2,19 @@
 //!
 //! Handles chunk synchronization between leader and followers.
 
-use std::sync::{Arc, RwLock};
 use std::collections::HashSet;
 use std::path::PathBuf;
+use std::sync::{Arc, RwLock};
 use std::time::SystemTime;
 
 use tracing::{debug, info, warn};
 
-use crate::config::{Config, NodeRole};
 use crate::cluster::{ClusterManager, ClusterState};
+use crate::config::{Config, NodeRole};
 use crate::network::peer::PeerManager;
 use crate::network::protocol::*;
 use crate::storage::chunks::ChunkStore;
-use crate::storage::index::{FileIndex, FileEntry, ChunkRef};
+use crate::storage::index::{ChunkRef, FileEntry, FileIndex};
 
 /// Sync state for tracking replication progress
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -67,7 +67,7 @@ impl ReplicationManager {
             NodeRole::Client => SyncState::Synced, // Clients don't replicate
             _ => SyncState::WaitingForLeader,
         };
-        
+
         Self {
             config,
             cluster,
@@ -114,13 +114,20 @@ impl ReplicationManager {
         *self.sync_state.write().unwrap() = SyncState::SyncingIndex;
 
         // Connect to leader and request sync
-        let conn = peer_manager.get_or_connect_leader(&leader_id, &leader_addr)
+        let conn = peer_manager
+            .get_or_connect_leader(&leader_id, &leader_addr)
             .map_err(|e| format!("Failed to connect: {}", e))?;
 
         let my_version = self.cluster.index_version();
-        let msg = Message::SyncRequest(SyncRequestMsg { from_version: my_version });
+        let msg = Message::SyncRequest(SyncRequestMsg {
+            from_version: my_version,
+            node_id: Some(self.config.node.id.clone()),
+            bind_address: Some(self.config.node.bind.clone()),
+            is_client: self.config.node.role == crate::config::NodeRole::Client,
+        });
 
-        let response = conn.request(&msg)
+        let response = conn
+            .request(&msg)
             .map_err(|e| format!("Sync request failed: {}", e))?;
 
         match response {
@@ -136,8 +143,11 @@ impl ReplicationManager {
 
     /// Apply sync response from leader
     fn apply_sync_response(&self, response: SyncResponseMsg) -> Result<(), String> {
-        info!("Applying sync response: {} entries, version {}",
-              response.entries.len(), response.current_version);
+        info!(
+            "Applying sync response: {} entries, version {}",
+            response.entries.len(),
+            response.current_version
+        );
 
         let mut file_index = self.file_index.write().unwrap();
         let mut pending = self.pending_chunks.write().unwrap();
@@ -145,18 +155,22 @@ impl ReplicationManager {
         for entry in response.entries {
             let path = PathBuf::from(&entry.path);
             let now = SystemTime::now();
-            
-            let chunks: Vec<ChunkRef> = entry.chunks.iter().map(|c| {
-                // Track chunks we need to fetch
-                if !self.chunk_store.exists(&c.hash) {
-                    pending.insert(c.hash);
-                }
-                ChunkRef {
-                    hash: c.hash,
-                    offset: c.offset,
-                    size: c.size,
-                }
-            }).collect();
+
+            let chunks: Vec<ChunkRef> = entry
+                .chunks
+                .iter()
+                .map(|c| {
+                    // Track chunks we need to fetch
+                    if !self.chunk_store.exists(&c.hash) {
+                        pending.insert(c.hash);
+                    }
+                    ChunkRef {
+                        hash: c.hash,
+                        offset: c.offset,
+                        size: c.size,
+                    }
+                })
+                .collect();
 
             let file_entry = FileEntry {
                 size: entry.size,
@@ -174,10 +188,10 @@ impl ReplicationManager {
             file_index.insert(path, file_entry);
         }
 
-        // Update our index version  
+        // Update our index version
         self.cluster.set_index_version(response.current_version);
         *self.index_version.write().unwrap() = response.current_version;
-        
+
         // Apply deletions from the leader's changelog
         if !response.deleted_paths.is_empty() {
             let mut removed = 0;
@@ -203,7 +217,7 @@ impl ReplicationManager {
     /// Start the replication manager
     pub fn start(&self) {
         *self.running.write().unwrap() = true;
-        
+
         // Client-only nodes don't participate in replication
         if self.config.node.role == NodeRole::Client {
             info!("Replication disabled in client mode");
@@ -211,9 +225,10 @@ impl ReplicationManager {
         }
 
         // Check if we're standalone (no peers configured)
-        if self.cluster.peers().is_empty() && 
-           self.config.cluster.discovery.is_none() &&
-           self.config.cluster.peers.is_empty() {
+        if self.cluster.peers().is_empty()
+            && self.config.cluster.discovery.is_none()
+            && self.config.cluster.peers.is_empty()
+        {
             info!("Running in standalone mode (no replication)");
             *self.sync_state.write().unwrap() = SyncState::Standalone;
             return;
@@ -224,16 +239,15 @@ impl ReplicationManager {
 
     /// Handle incoming write operation (from local or forwarded)
     /// Returns Ok if write should proceed local, Err with response if forwarded
-    pub fn handle_write(
-        &self,
-        path: &str,
-        _offset: u64,
-        data: &[u8],
-    ) -> Result<(), String> {
+    pub fn handle_write(&self, path: &str, _offset: u64, data: &[u8]) -> Result<(), String> {
         match self.cluster.state() {
             ClusterState::Leading => {
                 // We are leader - process write locally and replicate
-                debug!("Leader processing write for {} ({} bytes)", path, data.len());
+                debug!(
+                    "Leader processing write for {} ({} bytes)",
+                    path,
+                    data.len()
+                );
                 Ok(())
             }
             ClusterState::Following => {
@@ -311,7 +325,11 @@ impl ReplicationManager {
         let leader_id = self.cluster.leader_id()?;
         let leader_addr = self.cluster.leader_address()?;
 
-        debug!("Fetching chunk {} from leader {}", hex::encode(hash), leader_id);
+        debug!(
+            "Fetching chunk {} from leader {}",
+            hex::encode(hash),
+            leader_id
+        );
 
         let msg = Message::GetChunk(GetChunkMsg { hash: *hash });
 
@@ -354,8 +372,14 @@ impl ReplicationManager {
             return;
         }
 
-        let pending: Vec<[u8; 32]> = self.pending_chunks.read().unwrap().iter().copied().collect();
-        
+        let pending: Vec<[u8; 32]> = self
+            .pending_chunks
+            .read()
+            .unwrap()
+            .iter()
+            .copied()
+            .collect();
+
         if pending.is_empty() {
             return;
         }
@@ -434,11 +458,8 @@ impl ReplicationManager {
         *self.index_version.write().unwrap() = version;
 
         info!("Broadcasting index update v{}: {:?}", version, operation);
-        
-        let msg = Message::IndexUpdate(IndexUpdateMsg {
-            version,
-            operation,
-        });
+
+        let msg = Message::IndexUpdate(IndexUpdateMsg { version, operation });
 
         // Broadcast to all known peers
         let peers = self.cluster.peers();
@@ -458,25 +479,33 @@ impl ReplicationManager {
             return;
         }
 
-        info!("Applying index update v{}: {:?}", update.version, update.operation);
+        info!(
+            "Applying index update v{}: {:?}",
+            update.version, update.operation
+        );
 
         let mut file_index = self.file_index.write().unwrap();
         let mut pending = self.pending_chunks.write().unwrap();
         let now = SystemTime::now();
 
         match update.operation {
-            IndexOperation::Upsert { path, size, chunks, .. } => {
-                let chunk_refs: Vec<ChunkRef> = chunks.iter().map(|c| {
-                    // Track chunks we need to fetch
-                    if !self.chunk_store.exists(&c.hash) {
-                        pending.insert(c.hash);
-                    }
-                    ChunkRef {
-                        hash: c.hash,
-                        offset: c.offset,
-                        size: c.size,
-                    }
-                }).collect();
+            IndexOperation::Upsert {
+                path, size, chunks, ..
+            } => {
+                let chunk_refs: Vec<ChunkRef> = chunks
+                    .iter()
+                    .map(|c| {
+                        // Track chunks we need to fetch
+                        if !self.chunk_store.exists(&c.hash) {
+                            pending.insert(c.hash);
+                        }
+                        ChunkRef {
+                            hash: c.hash,
+                            offset: c.offset,
+                            size: c.size,
+                        }
+                    })
+                    .collect();
 
                 let entry = FileEntry {
                     size,
@@ -554,19 +583,23 @@ impl ReplicationManager {
         if let Some(_leader_id) = self.cluster.leader_id() {
             info!("Requesting index sync from leader");
             *self.sync_state.write().unwrap() = SyncState::SyncingIndex;
-            
+
             // Would send SyncRequestMsg via PeerManager
         }
     }
 
     /// Handle incoming sync response from leader
     pub fn handle_sync_response(&self, response: SyncResponseMsg) {
-        info!("Received sync response: {} entries, {} deletions, version {}",
-              response.entries.len(), response.deleted_paths.len(), response.current_version);
-        
+        info!(
+            "Received sync response: {} entries, {} deletions, version {}",
+            response.entries.len(),
+            response.deleted_paths.len(),
+            response.current_version
+        );
+
         // Update local index version
         *self.index_version.write().unwrap() = response.current_version;
-        
+
         // Track missing chunks
         let mut pending = self.pending_chunks.write().unwrap();
         for entry in response.entries {
@@ -576,7 +609,7 @@ impl ReplicationManager {
                 }
             }
         }
-        
+
         // Apply deletions
         if !response.deleted_paths.is_empty() {
             let mut file_index = self.file_index.write().unwrap();
@@ -591,7 +624,7 @@ impl ReplicationManager {
                 info!("Sync response: removed {} deleted entries", removed);
             }
         }
-        
+
         if pending.is_empty() {
             *self.sync_state.write().unwrap() = SyncState::Synced;
             info!("Sync complete - fully in sync with leader");

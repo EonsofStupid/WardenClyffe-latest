@@ -2,14 +2,14 @@
 
 use std::collections::HashMap;
 use std::io::{Read, Write};
-use std::net::{TcpStream, TcpListener, SocketAddr, ToSocketAddrs};
-use std::sync::{Arc, RwLock, Mutex};
-use std::time::Duration;
+use std::net::{SocketAddr, TcpListener, TcpStream, ToSocketAddrs};
+use std::sync::{Arc, Mutex, RwLock};
 use std::thread;
+use std::time::Duration;
 
 use tracing::{debug, info, warn};
 
-use crate::network::protocol::{Message, encode_message, decode_message};
+use crate::network::protocol::{decode_message, encode_message, Message};
 
 /// Connection to a peer node
 pub struct PeerConnection {
@@ -27,9 +27,9 @@ impl PeerConnection {
         // Resolve address and connect with a 5-second timeout.
         // Over WolfNet tunnels, initial connection should complete in <1s;
         // 5s gives headroom for congested links without freezing Dolphin.
-        let sock_addr: SocketAddr = address.to_socket_addrs()?
-            .next()
-            .ok_or_else(|| std::io::Error::new(std::io::ErrorKind::InvalidInput, "cannot resolve address"))?;
+        let sock_addr: SocketAddr = address.to_socket_addrs()?.next().ok_or_else(|| {
+            std::io::Error::new(std::io::ErrorKind::InvalidInput, "cannot resolve address")
+        })?;
         let stream = TcpStream::connect_timeout(&sock_addr, Duration::from_secs(5))?;
         // 10s read/write timeouts — short enough to keep Dolphin responsive,
         // long enough for WAN round-trips over WolfNet.
@@ -38,7 +38,7 @@ impl PeerConnection {
         // Disable Nagle's algorithm - each FUSE op is a synchronous round-trip,
         // so we want messages sent immediately, not buffered
         stream.set_nodelay(true)?;
-        
+
         Ok(Self {
             node_id,
             address: address.to_string(),
@@ -50,34 +50,37 @@ impl PeerConnection {
     pub fn send(&self, msg: &Message) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         let data = encode_message(msg)?;
         let len = (data.len() as u32).to_le_bytes();
-        
+
         let mut stream = self.stream.lock().unwrap();
         stream.write_all(&len)?;
         stream.write_all(&data)?;
         stream.flush()?;
-        
+
         Ok(())
     }
 
     /// Receive a message from the peer
     pub fn recv(&self) -> Result<Message, Box<dyn std::error::Error + Send + Sync>> {
         let mut stream = self.stream.lock().unwrap();
-        
+
         // Read length prefix
         let mut len_buf = [0u8; 4];
         stream.read_exact(&mut len_buf)?;
         let len = u32::from_le_bytes(len_buf) as usize;
-        
+
         // Read message data
         let mut data = vec![0u8; len];
         stream.read_exact(&mut data)?;
-        
+
         let msg = decode_message(&data)?;
         Ok(msg)
     }
 
     /// Send and wait for response
-    pub fn request(&self, msg: &Message) -> Result<Message, Box<dyn std::error::Error + Send + Sync>> {
+    pub fn request(
+        &self,
+        msg: &Message,
+    ) -> Result<Message, Box<dyn std::error::Error + Send + Sync>> {
         self.send(msg)?;
         self.recv()
     }
@@ -111,24 +114,26 @@ impl PeerManager {
     /// Start listening for peer connections
     pub fn start(&self) -> std::io::Result<()> {
         *self.running.write().unwrap() = true;
-        
-        let bind_addr: SocketAddr = self.bind_address.parse()
+
+        let bind_addr: SocketAddr = self
+            .bind_address
+            .parse()
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidInput, e))?;
         let listener = TcpListener::bind(bind_addr)?;
         listener.set_nonblocking(true)?;
-        
+
         let handler = Arc::clone(&self.message_handler);
         let running = Arc::clone(&self.running);
-        
+
         thread::spawn(move || {
             info!("Peer server listening on {}", bind_addr);
-            
+
             while *running.read().unwrap() {
                 match listener.accept() {
                     Ok((stream, addr)) => {
                         debug!("Accepted connection from {}", addr);
                         let handler = Arc::clone(&handler);
-                        
+
                         thread::spawn(move || {
                             if let Err(e) = handle_peer_connection(stream, addr, handler) {
                                 debug!("Peer connection ended: {}", e);
@@ -144,35 +149,45 @@ impl PeerManager {
                 }
             }
         });
-        
+
         Ok(())
     }
 
     /// Connect to a peer
-    pub fn connect(&self, node_id: &str, address: &str) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    pub fn connect(
+        &self,
+        node_id: &str,
+        address: &str,
+    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         let conn = PeerConnection::connect(node_id.to_string(), address)?;
-        self.connections.write().unwrap().insert(node_id.to_string(), Arc::new(conn));
+        self.connections
+            .write()
+            .unwrap()
+            .insert(node_id.to_string(), Arc::new(conn));
         info!("Connected to peer {} at {}", node_id, address);
         Ok(())
     }
 
     /// Send message to a specific peer
     /// Removes broken connection on failure so it can be re-established
-    pub fn send_to(&self, node_id: &str, msg: &Message) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    pub fn send_to(
+        &self,
+        node_id: &str,
+        msg: &Message,
+    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         let result = {
             let connections = self.connections.read().unwrap();
-            if let Some(conn) = connections.get(node_id) {
-                Some(conn.send(msg))
-            } else {
-                None
-            }
+            connections.get(node_id).map(|conn| conn.send(msg))
         };
-        
+
         match result {
             Some(Err(e)) => {
                 // Remove broken connection so it can be re-established
                 self.connections.write().unwrap().remove(node_id);
-                warn!("Failed to send to {}: {} (removed broken connection)", node_id, e);
+                warn!(
+                    "Failed to send to {}: {} (removed broken connection)",
+                    node_id, e
+                );
                 Err(e)
             }
             Some(Ok(())) => Ok(()),
@@ -183,13 +198,14 @@ impl PeerManager {
     /// Broadcast message to all peers
     /// Automatically removes broken connections so they can be re-established
     pub fn broadcast(&self, msg: &Message) {
-        // specific timeout for broadcast can be handled in send if needed, 
+        // specific timeout for broadcast can be handled in send if needed,
         // but for now relying on connection timeout
 
         // Clone connections to release lock before network I/O
         let peers: Vec<(String, Arc<PeerConnection>)> = {
             let connections = self.connections.read().unwrap();
-            connections.iter()
+            connections
+                .iter()
                 .map(|(id, conn)| (id.clone(), conn.clone()))
                 .collect()
         };
@@ -198,11 +214,14 @@ impl PeerManager {
 
         for (id, conn) in peers {
             if let Err(e) = conn.send(msg) {
-                warn!("Failed to send to {}: {} (removing broken connection)", id, e);
+                warn!(
+                    "Failed to send to {}: {} (removing broken connection)",
+                    id, e
+                );
                 failed_ids.push(id);
             }
         }
-        
+
         // Remove broken connections so broadcast thread can reconnect
         if !failed_ids.is_empty() {
             let mut connections = self.connections.write().unwrap();
@@ -235,7 +254,11 @@ impl PeerManager {
     }
 
     /// Get or create connection to leader by ID and address
-    pub fn get_or_connect_leader(&self, leader_id: &str, leader_addr: &str) -> Result<Arc<PeerConnection>, Box<dyn std::error::Error + Send + Sync>> {
+    pub fn get_or_connect_leader(
+        &self,
+        leader_id: &str,
+        leader_addr: &str,
+    ) -> Result<Arc<PeerConnection>, Box<dyn std::error::Error + Send + Sync>> {
         // Check if already connected
         {
             let connections = self.connections.read().unwrap();
@@ -243,11 +266,14 @@ impl PeerManager {
                 return Ok(conn.clone());
             }
         }
-        
+
         // Connect to leader
         let conn = PeerConnection::connect(leader_id.to_string(), leader_addr)?;
         let conn = Arc::new(conn);
-        self.connections.write().unwrap().insert(leader_id.to_string(), conn.clone());
+        self.connections
+            .write()
+            .unwrap()
+            .insert(leader_id.to_string(), conn.clone());
         Ok(conn)
     }
 
@@ -274,25 +300,25 @@ fn handle_peer_connection(
     stream.set_write_timeout(Some(Duration::from_secs(15)))?;
     // Disable Nagle's algorithm for prompt responses
     stream.set_nodelay(true)?;
-    
+
     loop {
         // Read length prefix
         let mut len_buf = [0u8; 4];
         stream.read_exact(&mut len_buf)?;
         let len = u32::from_le_bytes(len_buf) as usize;
-        
+
         if len > 100 * 1024 * 1024 {
             // Max 100MB message
             return Err("Message too large".into());
         }
-        
+
         // Read message
         let mut data = vec![0u8; len];
         stream.read_exact(&mut data)?;
-        
+
         let msg = decode_message(&data)?;
         let peer_id = addr.to_string(); // Will be replaced with proper handshake
-        
+
         // Handle message and optionally send response
         if let Some(response) = handler(peer_id, msg) {
             let resp_data = encode_message(&response)?;
