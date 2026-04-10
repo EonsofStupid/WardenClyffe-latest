@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     elseif (strlen($form['message']) < 10)   $errors[] = 'Message must be at least 10 characters.';
     elseif (strlen($form['message']) > 5000) $errors[] = 'Message must be under 5000 characters.';
 
-    $valid_plans = ['Basic', 'Standard', 'Premium', 'Not Sure', ''];
+    $valid_plans = ['Enterprise', 'ManagedSetup', 'Not Sure', ''];
     if (!in_array($form['plan'], $valid_plans)) $form['plan'] = '';
 
     if (empty($errors)) {
@@ -167,9 +167,8 @@ include 'includes/head.php';
                         <select id="plan" name="plan"
                             style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border-color);background:var(--bg-secondary);color:var(--text-primary);font-size:0.95rem;font-family:inherit;">
                             <option value="" <?php echo $form['plan'] === '' ? 'selected' : ''; ?>>Not Sure</option>
-                            <option value="Basic" <?php echo $form['plan'] === 'Basic' ? 'selected' : ''; ?>>Basic (£95 / year & socket)</option>
-                            <option value="Standard" <?php echo $form['plan'] === 'Standard' ? 'selected' : ''; ?>>Standard (£450 / year & socket)</option>
-                            <option value="Premium" <?php echo $form['plan'] === 'Premium' ? 'selected' : ''; ?>>Premium (£900 / year & socket)</option>
+                            <option value="Enterprise" <?php echo $form['plan'] === 'Enterprise' ? 'selected' : ''; ?>>Enterprise (&pound;79 / $99 per server/year)</option>
+                            <option value="ManagedSetup" <?php echo $form['plan'] === 'ManagedSetup' ? 'selected' : ''; ?>>Managed Cluster Setup</option>
                         </select>
                     </div>
 

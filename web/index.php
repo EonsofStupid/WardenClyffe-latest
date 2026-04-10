@@ -897,6 +897,7 @@ $page_css = '
     .hp2-replaces-plus { transform: rotate(90deg); }
     .hp2-replaces-equals .eq { transform: rotate(90deg); }
     .hp2-products { grid-template-columns: 1fr; }
+    .hp2-pricing-grid { grid-template-columns: 1fr !important; }
     .hp2-screenshot-wrap { padding: 0 16px; }
     .hp2-funding-grid { grid-template-columns: 1fr; }
 }
@@ -973,8 +974,7 @@ include 'includes/head.php';
                 <div class="promo-half promo-half--dev" style="flex-wrap:nowrap;">
                     <span class="promo-half-icon">&#128187;</span>
                     <span class="promo-half-text" style="white-space:nowrap;">Custom Software Development? Have the authors of <strong>WolfStack</strong> &amp; <strong>WolfNote</strong> develop your project.</span>
-                    <a href="https://wolf.uk.com" target="_blank" rel="noopener" class="promo-cta">wolf.uk.com &rarr;</a>
-                    <a href="mailto:sales@wolf.uk.com" class="promo-cta">sales@wolf.uk.com</a>
+                    <a href="development.php" class="promo-cta">Learn More &rarr;</a>
                 </div>
             </div>
 
@@ -1040,6 +1040,11 @@ include 'includes/head.php';
                         managed from a single dashboard. Install in one command. No database required.
                     </p>
 
+                    <a href="wolfhost.php" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(220,38,38,0.08),rgba(239,68,68,0.04));border:1px solid rgba(220,38,38,0.2);border-radius:8px;padding:8px 16px;margin-bottom:20px;font-size:0.85rem;color:var(--text-primary);text-decoration:none;transition:border-color 0.2s;">
+                        <span style="font-size:1rem;">&#128679;</span>
+                        <span>Now with <strong>WolfHost</strong> &mdash; complete web hosting platform <span style="font-size:0.65rem;background:rgba(220,38,38,0.15);color:#ef4444;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle;">Enterprise</span></span>
+                    </a>
+
                     <div class="hp2-distros-section">
                         <div class="hp2-distros-label">Installs on</div>
                         <div class="hp2-distros">
@@ -1077,7 +1082,7 @@ include 'includes/head.php';
             <section class="hp2-section" style="padding:32px 0 0;">
                 <div style="display:flex;justify-content:center;gap:48px;flex-wrap:wrap;max-width:900px;margin:0 auto;padding:0 20px;">
                     <div style="text-align:center;">
-                        <div style="font-size:2.4rem;font-weight:800;color:var(--accent-primary);line-height:1;">500+</div>
+                        <div style="font-size:2.4rem;font-weight:800;color:var(--accent-primary);line-height:1;">510+</div>
                         <div style="font-size:0.82rem;color:var(--text-secondary);margin-top:4px;">One-Click Apps</div>
                     </div>
                     <div style="text-align:center;">
@@ -1160,8 +1165,8 @@ include 'includes/head.php';
                         <p>Most tools only do Docker. WolfStack manages Docker containers, LXC containers, and virtual machines with the same UI, same clustering, and same orchestration.</p>
                         <ul class="hp2-spot-bullets">
                             <li>Create, clone, migrate, and snapshot containers across nodes</li>
-                            <li>500+ one-click apps in the built-in App Store</li>
-                            <li>Install on top of Proxmox VE &mdash; it auto-detects your cluster</li>
+                            <li>510+ one-click apps in the built-in App Store</li>
+                            <li>Install on Proxmox or libvirt hosts &mdash; it auto-detects and manages existing VMs</li>
                             <li>WolfRun orchestration with automatic container failover</li>
                         </ul>
                     </div>
@@ -1173,7 +1178,7 @@ include 'includes/head.php';
                 <!-- Spotlight 2: App Store -->
                 <div class="hp2-spotlight reverse">
                     <div class="hp2-spot-text">
-                        <h3>App Store with 500+ applications</h3>
+                        <h3>App Store with 510+ applications</h3>
                         <p>The largest self-hosted app store available. Deploy production-ready applications to any node with one click &mdash; every app comes pre-configured with the right ports, volumes, and environment variables.</p>
                         <ul class="hp2-spot-bullets">
                             <li>Media: Plex, Jellyfin, Sonarr, Radarr, Navidrome, and the full Servarr stack</li>
@@ -1256,6 +1261,21 @@ include 'includes/head.php';
                         <div class="hp2-feat-icon">&#9733;</div>
                         <h3>Security &amp; Firewall</h3>
                         <p>Fail2ban management, UFW rules, iptables, SSL certificates via Let&rsquo;s Encrypt, and Nginx/Apache configuration.</p>
+                    </div>
+                    <div class="hp2-feat">
+                        <div class="hp2-feat-icon">&#9107;</div>
+                        <h3>USB/PCI Passthrough</h3>
+                        <p>Pass GPUs, NVMe drives, USB devices, and network cards directly to VMs. IOMMU group detection and conflict checking built in.</p>
+                    </div>
+                    <div class="hp2-feat">
+                        <div class="hp2-feat-icon">&#8644;</div>
+                        <h3>16 Automation Actions</h3>
+                        <p>WolfFlow now includes HTTP requests, Docker image updates, NetBird, TrueNAS, Unifi connectors, conditional branching, and notifications.</p>
+                    </div>
+                    <div class="hp2-feat">
+                        <div class="hp2-feat-icon">&#8635;</div>
+                        <h3>Docker Image Watcher</h3>
+                        <p>Monitors upstream registries for new images. Auto-backup before update with one-click rollback if anything goes wrong.</p>
                     </div>
                 </div>
             </section>
@@ -1399,7 +1419,7 @@ include 'includes/head.php';
                             <tbody>
                                 <tr><td>Web Terminal</td><td class="hl">Yes</td><td>Yes</td><td>No</td><td>Yes</td><td>No</td><td>Yes</td></tr>
                                 <tr><td>File Manager</td><td class="hl">Yes</td><td>No</td><td>No</td><td>No</td><td>Yes</td><td>No</td></tr>
-                                <tr><td>App Store</td><td class="hl">500+ apps</td><td>No</td><td>Helm</td><td>Yes</td><td>Yes</td><td>No</td></tr>
+                                <tr><td>App Store</td><td class="hl">510+ apps</td><td>No</td><td>Helm</td><td>Yes</td><td>Yes</td><td>No</td></tr>
                                 <tr><td>AI Infrastructure Agent</td><td class="hl">Claude &amp; Gemini</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
                                 <tr><td>Status Pages &amp; Alerting</td><td class="hl">Built in</td><td>No</td><td>Add-ons</td><td>No</td><td>No</td><td>No</td></tr>
                                 <tr><td>Workflow Automation</td><td class="hl">WolfFlow</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
@@ -1480,6 +1500,10 @@ include 'includes/head.php';
                         <h3>WolfServe</h3>
                         <p>Apache-compatible web server with PHP. Reads existing vhost configs.</p>
                     </a>
+                    <a href="wolfhost.php" class="hp2-product">
+                        <h3>WolfHost <span class="hp2-tag" style="background:rgba(220,38,38,0.15);color:#ef4444;">Enterprise</span></h3>
+                        <p>Complete web hosting platform. Customers, billing, domains, email, SSL, app installer, and white-label portal.</p>
+                    </a>
                 </div>
             </section>
 
@@ -1496,19 +1520,22 @@ include 'includes/head.php';
                 <div style="max-width:720px;margin:0 auto;">
                     <ol class="hp2-steps">
                         <li>
-                            <strong>Install WolfStack on each server</strong>
-                            <span class="hp2-step-desc">Run the installer on every computer you want to manage &mdash; from a Raspberry Pi to a datacenter server or cloud VPS:</span>
+                            <strong>Install <code>curl</code> and <code>sudo</code> if not already present</strong>
+                            <span class="hp2-step-desc">Most servers have these pre-installed. If yours doesn&rsquo;t, run the command for your distro first (as root):</span>
+                            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:10px 0;">
+                                <div class="code-block" style="margin:0;"><div class="code-header"><span>Debian / Ubuntu</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>apt install -y sudo curl</code></pre></div>
+                                <div class="code-block" style="margin:0;"><div class="code-header"><span>RHEL / Fedora</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>dnf install -y sudo curl</code></pre></div>
+                                <div class="code-block" style="margin:0;"><div class="code-header"><span>Arch Linux</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>pacman -S --noconfirm sudo curl</code></pre></div>
+                                <div class="code-block" style="margin:0;"><div class="code-header"><span>openSUSE</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>zypper install -y sudo curl</code></pre></div>
+                            </div>
+                        </li>
+                        <li>
+                            <strong>Run the WolfStack installer</strong>
+                            <span class="hp2-step-desc">Run this on every computer you want to manage &mdash; from a Raspberry Pi to a datacenter server or cloud VPS:</span>
                             <div class="code-block" style="margin:10px 0;">
                                 <div class="code-header"><span>bash</span><button class="copy-btn" data-track="setup-url" onclick="copyCode(this)">Copy</button></div>
                                 <pre><code>curl -sSL https://raw.githubusercontent.com/wolfsoftwaresystemsltd/WolfStack/master/setup.sh | sudo bash</code></pre>
                             </div>
-                            <span class="hp2-step-hint">
-                                If <code>sudo</code> or <code>curl</code> are not installed:
-                                <strong>Debian/Ubuntu:</strong> <code>apt install sudo curl</code> &middot;
-                                <strong>RHEL/Fedora:</strong> <code>dnf install sudo curl</code> &middot;
-                                <strong>Arch:</strong> <code>pacman -S sudo curl</code> &middot;
-                                <strong>openSUSE:</strong> <code>zypper install sudo curl</code>
-                            </span>
                         </li>
                         <li>
                             <strong>Get the cluster token from each server</strong>
@@ -1542,130 +1569,38 @@ include 'includes/head.php';
                 </div>
             </section>
 
-            <!-- Live USB section hidden until ISO is ready -->
-            </section>
-
-            <!-- ============================================ -->
-            <!--  FUNDING                                      -->
-            <!-- ============================================ -->
-            <section class="hp2-funding">
-                <div class="hp2-section">
-                    <div class="hp2-section-header">
-                        <h2>Support WolfStack</h2>
-                        <p>WolfStack is free and open source, built by a small team. Your support keeps development going.</p>
-                    </div>
-
-                    <div class="hp2-funding-grid">
-                        <!-- Community free -->
-                        <div class="hp2-fund-card">
-                            <div class="hp2-fund-label">Community</div>
-                            <div class="hp2-fund-name">Free</div>
-                            <div class="hp2-fund-price free">Free</div>
-                            <div class="hp2-fund-desc">All features, unlimited servers, forever.</div>
-                            <ul class="hp2-fund-features">
-                                <li>All features included</li>
-                                <li>Unlimited servers</li>
-                                <li>Full source code access</li>
-                                <li>Public Discord community</li>
-                                <li>Regular updates</li>
-                            </ul>
-                            <a href="#quickstart" class="btn btn-secondary" style="width:100%;">Get Started</a>
-                        </div>
-
-                        <!-- GitHub Sponsors -->
-                        <div class="hp2-fund-card hp2-fund-sponsor">
-                            <div class="hp2-fund-label">Backer</div>
-                            <div class="hp2-fund-name">Fund Open Source</div>
-                            <div class="hp2-fund-price" style="color:var(--success);">From &pound;3 <span class="period">/ month</span></div>
-                            <div class="hp2-fund-desc">Keep WolfStack free and independent. Every feature ships to everyone &mdash; backers make that possible.</div>
-                            <ul class="hp2-fund-features">
-                                <li>Everything in Community</li>
-                                <li>Private backers-only Discord channel</li>
-                                <li>Direct support from the dev team</li>
-                                <li>Early access to beta features</li>
-                                <li>Priority bug fixes</li>
-                                <li>Your name on the Supporters page</li>
-                                <li>Vote on the development roadmap</li>
-                            </ul>
-                            <a href="https://github.com/sponsors/wolfsoftwaresystemsltd" target="_blank" class="btn btn-sponsor" style="width:100%;">Back This Project</a>
-                        </div>
-
-                        <!-- Enterprise Standard -->
-                        <div class="hp2-fund-card featured">
-                            <div class="hp2-fund-label">Enterprise</div>
-                            <div class="hp2-fund-name">Standard</div>
-                            <div class="hp2-fund-price">&pound;450 <span class="period">/ year per socket</span></div>
-                            <div class="hp2-fund-desc">Professional services for businesses that need formal support.</div>
-                            <ul class="hp2-fund-features">
-                                <li>Everything in Sponsor</li>
-                                <li>Full installation &amp; onboarding</li>
-                                <li>Migration from Proxmox/Portainer</li>
-                                <li>SLA with 4-hour response time</li>
-                                <li>Monthly check-ins</li>
-                                <li>Team training sessions</li>
-                            </ul>
-                            <a href="enterprise-contact.php?plan=Standard" class="btn btn-primary" style="width:100%;">Contact Sales</a>
-                        </div>
-
-                        <!-- Enterprise Premium -->
-                        <div class="hp2-fund-card">
-                            <div class="hp2-fund-label">Enterprise</div>
-                            <div class="hp2-fund-name">Premium</div>
-                            <div class="hp2-fund-price">&pound;900 <span class="period">/ year per socket</span></div>
-                            <div class="hp2-fund-desc">24/7 support, SLA guarantee, and a dedicated account manager.</div>
-                            <ul class="hp2-fund-features">
-                                <li>Everything in Standard</li>
-                                <li>24/7 support</li>
-                                <li>SLA with 2-hour response time</li>
-                                <li>Dedicated account manager</li>
-                                <li>Custom development requests</li>
-                                <li>On-site or remote training</li>
-                                <li>Architecture consulting</li>
-                            </ul>
-                            <a href="enterprise-contact.php?plan=Premium" class="btn btn-secondary" style="width:100%;">Contact Sales</a>
-                        </div>
-                    </div>
-
-                    <p style="text-align:center;margin-top:16px;font-size:0.8rem;color:var(--text-muted);">
-                        All plans include every feature. Enterprise adds dedicated support and SLAs.
-                        <a href="enterprise.php" style="color:var(--accent-primary);">See all plans &rarr;</a>
-                    </p>
-                </div>
-            </section>
 
 
             <!-- ============================================ -->
-            <!--  MANAGED SETUP SERVICE                       -->
+            <!--  PRICING                                     -->
             <!-- ============================================ -->
-            <section class="hp2-section">
+            <section class="hp2-section" style="padding-bottom:0;">
                 <div class="hp2-section-header">
-                    <h2>Don&rsquo;t want to set it up yourself?</h2>
-                    <p>We&rsquo;ll build your entire cluster for you, ready to go.</p>
+                    <h2>Simple, honest pricing</h2>
+                    <p>Every feature is free. Enterprise is for businesses that need SLAs and SSO.</p>
                 </div>
 
-                <div class="hp2-service">
-                    <div>
-                        <h3>Managed Cluster Setup</h3>
-                        <p>Our team will install WolfStack on your servers, configure clustering, networking, storage, backups,
-                            monitoring, and deploy your applications &mdash; so you can start using it immediately without touching the command line.</p>
-                        <ul class="hp2-service-features">
-                            <li>WolfStack installed on all your servers</li>
-                            <li>Cluster configured and nodes connected</li>
-                            <li>WolfNet encrypted mesh set up</li>
-                            <li>Storage mounts configured (S3, NFS, etc.)</li>
-                            <li>Backup schedules configured</li>
-                            <li>Status pages and alerting set up</li>
-                            <li>Your applications deployed via App Store</li>
-                            <li>Firewall and security hardened</li>
-                            <li>SSL certificates provisioned</li>
-                            <li>Handover walkthrough with your team</li>
-                        </ul>
+                <div class="hp2-pricing-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:960px;margin:0 auto;">
+                    <!-- Free -->
+                    <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:28px 24px;text-align:center;">
+                        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:4px;">Community</div>
+                        <div style="font-size:1.15rem;font-weight:800;margin-bottom:8px;">Free</div>
+                        <div style="font-size:1.8rem;font-weight:800;color:var(--success);margin-bottom:8px;">Free</div>
+                        <p style="font-size:0.84rem;color:var(--text-secondary);line-height:1.6;margin:0;">Every feature. Every server. Forever.</p>
                     </div>
-                    <div class="hp2-service-cta">
-                        <div class="price">From &pound;500</div>
-                        <div class="price-note">One-time fee &middot; price depends on cluster size</div>
-                        <a href="enterprise-contact.php?plan=ManagedSetup" class="btn btn-primary" style="width:100%;">Get a Quote</a>
-                        <div class="includes">Includes up to 5 servers.<br>Additional servers &pound;50 each.<br>Remote setup via SSH.</div>
+                    <!-- Sponsor -->
+                    <div style="background:var(--bg-card);border:1px solid rgba(34,197,94,0.4);border-radius:12px;padding:28px 24px;text-align:center;">
+                        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:4px;">Sponsor</div>
+                        <div style="font-size:1.15rem;font-weight:800;margin-bottom:8px;">GitHub Sponsors</div>
+                        <div style="font-size:1.8rem;font-weight:800;color:var(--success);margin-bottom:8px;">From &pound;3 <span style="font-size:0.78rem;font-weight:500;color:var(--text-muted);">/ month</span></div>
+                        <p style="font-size:0.84rem;color:var(--text-secondary);line-height:1.6;margin:0;">Private Discord, priority support, early access.</p>
+                    </div>
+                    <!-- Enterprise -->
+                    <div style="background:var(--bg-card);border:1px solid rgba(220,38,38,0.4);border-radius:12px;padding:28px 24px;text-align:center;">
+                        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:4px;">Enterprise</div>
+                        <div style="font-size:1.15rem;font-weight:800;margin-bottom:8px;">Enterprise</div>
+                        <div style="font-size:1.8rem;font-weight:800;color:var(--accent-primary);margin-bottom:8px;">&pound;79 <span style="font-size:0.78rem;font-weight:500;color:var(--text-muted);">/ server / year</span></div>
+                        <p style="font-size:0.84rem;color:var(--text-secondary);line-height:1.6;margin:0;">SSO, API keys, plugins, WolfHost, WolfCustom, SLA, dedicated support. <a href="enterprise.php" style="color:var(--accent-primary);font-weight:600;">Details &rarr;</a></p>
                     </div>
                 </div>
             </section>
@@ -1681,7 +1616,6 @@ include 'includes/head.php';
 
                 <div class="hp2-actions" style="justify-content:center;">
                     <a href="wolfstack.php" class="btn btn-primary">Learn More</a>
-                    <a href="https://github.com/sponsors/wolfsoftwaresystemsltd" target="_blank" class="btn btn-sponsor">Fund Open Source</a>
                 </div>
 
                 <div class="hp2-cta-links">

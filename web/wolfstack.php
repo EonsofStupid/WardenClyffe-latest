@@ -30,27 +30,39 @@ include 'includes/head.php';
                         <li><strong>Container management</strong> — Create, clone, migrate, and manage Docker and LXC
                             containers</li>
                         <li><strong>Multi-server clustering</strong> — Manage your entire fleet from one dashboard</li>
-                        <li><strong>Proxmox integration</strong> — Install on top of Proxmox to manage VE clusters</li>
+                        <li><strong>Proxmox &amp; libvirt integration</strong> — Manages Proxmox VE, libvirt/virsh, or standalone QEMU VMs</li>
                         <li><strong>WolfRun orchestration</strong> — Schedule and scale containers across nodes,
                             replacing Kubernetes</li>
                         <li><strong>File & config management</strong> — Browse and edit files on any node via the web UI
                         </li>
                         <li><strong>Web terminal</strong> — Full SSH terminal in your browser for any node or container
                         </li>
-                        <li><strong>App Store</strong> — Deploy containers and apps to any node with one click</li>
+                        <li><strong>App Store</strong> — 510+ one-click apps across 20 categories</li>
                         <li><strong>Issues Scanner</strong> — AI-powered proactive monitoring for hardware and service
                             issues</li>
-                        <li><strong>Alerting</strong> — Discord, Slack, and Telegram notifications for threshold
+                        <li><strong>Alerting</strong> — Discord, Slack, Telegram, and email notifications for threshold
                             breaches</li>
                         <li><strong>Status Pages</strong> — Built-in uptime monitoring with public status pages and incident tracking</li>
+                        <li><strong>WolfFlow automation</strong> — Visual workflow editor with drag-and-drop steps, cron scheduling, and cross-node execution</li>
                         <li><strong>AI Agent</strong> — Ask questions about your infrastructure in natural language</li>
                         <li><strong>Beautiful themes</strong> — Dark, Glass, Midnight, Amber Terminal, and more</li>
+                        <li><strong>USB/PCI device passthrough</strong> — Pass through GPUs, NVMe drives, USB devices, and network cards to VMs with IOMMU group detection and conflict checking</li>
+                        <li><strong>Docker image update watcher</strong> — Monitors upstream registries for new images, auto-backs up before update, one-click rollback</li>
                     </ul>
                 </div>
 
                 <div class="content-section">
                     <h2>⚡ Quick Start</h2>
-                    <h3>Step 1: Install WolfStack</h3>
+                    <h3>Step 1: Install prerequisites</h3>
+                    <p>Make sure <code>curl</code> and <code>sudo</code> are installed. Most servers have these already &mdash; if not, run as root:</p>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:10px 0 16px;">
+                        <div class="code-block" style="margin:0;"><div class="code-header"><span>Debian / Ubuntu</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>apt install -y sudo curl</code></pre></div>
+                        <div class="code-block" style="margin:0;"><div class="code-header"><span>RHEL / Fedora</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>dnf install -y sudo curl</code></pre></div>
+                        <div class="code-block" style="margin:0;"><div class="code-header"><span>Arch Linux</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>pacman -S --noconfirm sudo curl</code></pre></div>
+                        <div class="code-block" style="margin:0;"><div class="code-header"><span>openSUSE</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>zypper install -y sudo curl</code></pre></div>
+                    </div>
+
+                    <h3>Step 2: Install WolfStack</h3>
                     <p>Run this on every machine you want to manage:</p>
                     <div class="code-block">
                         <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
@@ -134,7 +146,7 @@ include 'includes/head.php';
                     <ul>
                         <li><a href="wolfstack-containers.php"><strong>Container Management</strong></a> — Docker & LXC
                             with cloning, migration, and resource limits</li>
-                        <li><a href="wolfstack-storage.php"><strong>Storage Manager</strong></a> — S3/R2, NFS, WolfDisk
+                        <li><a href="wolfstack-storage.php"><strong>Storage Manager</strong></a> — S3/R2, NFS, SSHFS, WolfDisk
                             mounts from the dashboard</li>
                         <li><a href="wolfstack-files.php"><strong>File Manager</strong></a> — Browse, edit, upload, and
                             download files on any node</li>
@@ -142,20 +154,22 @@ include 'includes/head.php';
                             forwarding, firewall rules</li>
                         <li><a href="wolfstack-clustering.php"><strong>Multi-Server Clustering</strong></a> — Join
                             nodes into clusters with auto-discovery</li>
-                        <li><a href="wolfstack-mysql.php"><strong>MariaDB/MySQL Editor</strong></a> — Browse tables,
-                            run queries, manage databases</li>
+                        <li><a href="wolfstack-mysql.php"><strong>Database Editor</strong></a> — Browse tables,
+                            run queries, and manage MariaDB, MySQL, PostgreSQL, and Percona databases</li>
                         <li><a href="wolfstack-security.php"><strong>Security</strong></a> — Linux PAM authentication,
                             API tokens, audit logging</li>
                         <li><a href="wolfstack-certificates.php"><strong>Certificates</strong></a> — SSL/TLS
                             certificate management</li>
                         <li><a href="wolfstack-cron.php"><strong>Cron Jobs</strong></a> — Schedule and manage cron
                             tasks on any node</li>
+                        <li><a href="wolfflow.php"><strong>WolfFlow Automation</strong></a> — Visual workflow
+                            automation with drag-and-drop editor, cron scheduling, and cross-node execution</li>
                         <li><a href="wolfstack-terminal.php"><strong>Terminal</strong></a> — Full web-based SSH
                             terminal</li>
                         <li><a href="wolfstack-issues.php"><strong>Issues Scanner</strong></a> — AI-powered server
                             health monitoring</li>
-                        <li><a href="wolfstack-alerting.php"><strong>Alerting</strong></a> — Discord, Slack, Telegram
-                            notifications</li>
+                        <li><a href="wolfstack-alerting.php"><strong>Alerting</strong></a> — Discord, Slack, Telegram,
+                            and email notifications</li>
                         <li><a href="wolfstack-statuspage.php"><strong>Status Pages</strong></a> — Uptime monitoring
                             with public status pages</li>
                         <li><a href="wolfrun.php"><strong>WolfRun Orchestration</strong></a> — Schedule, scale, and
@@ -164,12 +178,16 @@ include 'includes/head.php';
                         <li><a href="proxmox.php"><strong>Proxmox Integration</strong></a> — Install on Proxmox to
                             manage
                             VE clusters from the WolfStack dashboard</li>
-                        <li><a href="app-store.php"><strong>App Store</strong></a> — One-click container deployment
+                        <li><a href="app-store.php"><strong>App Store</strong></a> — 510+ one-click apps
                         </li>
+                        <li><a href="wolfstack-vms.php"><strong>USB/PCI Device Passthrough</strong></a> — Pass GPUs, NVMe, USB devices, and NICs directly to VMs with IOMMU group detection</li>
+                        <li><a href="wolfflow.php"><strong>WolfFlow Automation Nodes</strong></a> — 16 action types including HTTP requests, Docker image updates, NetBird/TrueNAS/Unifi connectors, and conditional branching</li>
+                        <li><a href="wolfstack-containers.php"><strong>Docker Image Update Watcher</strong></a> — Checks upstream registries for new images, backup-before-update, one-click rollback</li>
                         <li><a href="wolfstack-ai.php"><strong>AI Agent</strong></a> — Natural language infrastructure
                             queries</li>
                         <li><a href="wolfstack-settings.php"><strong>Settings</strong></a> — Themes, alerting, Docker
                             registries, node and cluster configuration</li>
+                        <li><a href="wolfhost.php"><strong>WolfHost</strong></a> — Complete web hosting platform with customer management, billing, domains, email, SSL, and white-label portal <span style="font-size:0.65rem;background:rgba(220,38,38,0.15);color:#ef4444;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle;">Enterprise</span></li>
                     </ul>
                 </div>
 

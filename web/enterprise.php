@@ -17,6 +17,8 @@ $page_css = '.pricing-grid {
             text-align: center;
             transition: all 0.3s ease;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .pricing-card:hover {
@@ -100,6 +102,7 @@ $page_css = '.pricing-grid {
             padding: 0;
             margin: 0 0 1.5rem;
             text-align: left;
+            flex: 1;
         }
 
         .pricing-features li {
@@ -275,6 +278,37 @@ $page_css = '.pricing-grid {
             font-weight: 700;
         }
 
+        .comp-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.84rem;
+            margin: 1.5rem 0;
+        }
+        .comp-table th, .comp-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            text-align: left;
+        }
+        .comp-table th {
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .comp-table td:first-child {
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+        .comp-table .hl {
+            color: #22c55e;
+            font-weight: 700;
+        }
+        .comp-table .paid {
+            color: var(--accent-primary);
+        }
+
         @media (max-width: 768px) {
             .pricing-grid {
                 grid-template-columns: 1fr;
@@ -284,8 +318,11 @@ $page_css = '.pricing-grid {
                 grid-template-columns: 1fr;
             }
 
-            .content-section [style*="grid-template-columns: 1fr 1fr"] {
-                grid-template-columns: 1fr !important;
+            .comp-table {
+                font-size: 0.75rem;
+            }
+            .comp-table th, .comp-table td {
+                padding: 6px 8px;
             }
         }';
 include 'includes/head.php';
@@ -297,42 +334,16 @@ include 'includes/head.php';
 
 
                 <div class="content-section">
-                    <h2>How WolfStack is Funded</h2>
-                    <p>WolfStack is <strong>free and open-source</strong> software, funded by the community through <a
-                            href="https://github.com/sponsors/wolfsoftwaresystemsltd" target="_blank"
-                            style="color:#22c55e;font-weight:600;">GitHub Sponsors</a>. This keeps it accessible to
-                        everyone &mdash; from hobbyists running a single server to large organisations managing entire fleets.
-                    </p>
-                    <p>For businesses that need <strong>guaranteed support, professional installation, and a ticketing
-                            system</strong>, we offer Enterprise Licensing. You get everything in the community edition,
-                        plus dedicated support from the team that builds it.</p>
-                </div>
-
-                <!-- Sponsor Highlight -->
-                <div class="sponsor-highlight">
-                    <h3>GitHub Sponsors get extra love</h3>
-                    <p>WolfStack is built by a small, dedicated team. GitHub Sponsors are the reason we can keep developing it full-time. In return, sponsors get perks that go beyond the free community edition:</p>
-                    <ul>
-                        <li><strong>Private sponsors-only Discord channel</strong> &mdash; direct access to the dev team for support, questions, and feedback</li>
-                        <li><strong>Early access to beta features</strong> &mdash; test new functionality before public release</li>
-                        <li><strong>Priority bug fixes</strong> &mdash; issues reported by sponsors are addressed first</li>
-                        <li><strong>Vote on the development roadmap</strong> &mdash; help shape what gets built next</li>
-                        <li><strong>Your name on the Supporters page</strong> &mdash; recognised as someone who keeps WolfStack alive</li>
-                    </ul>
-                    <p style="margin-top:1rem;margin-bottom:0;">Sponsorship starts from just <strong>&pound;3/month</strong>. Every contribution makes a difference.</p>
-                    <p style="text-align:center;margin-top:1.25rem;">
-                        <a href="https://github.com/sponsors/wolfsoftwaresystemsltd" target="_blank"
-                            class="pricing-cta pricing-cta-green" style="width:auto;">Back This Project</a>
-                    </p>
+                    <h2>Simple, Honest Pricing</h2>
+                    <p>WolfStack is <strong>free and open-source</strong>. Every feature, unlimited servers, forever.
+                        No trials, no feature gates, no node limits.</p>
+                    <p>For businesses that need <strong>SLAs, SSO, and dedicated support</strong>, we offer Enterprise licensing.
+                        For everyone else, <a href="https://github.com/sponsors/wolfsoftwaresystemsltd" target="_blank"
+                        style="color:#22c55e;font-weight:600;">GitHub Sponsors</a> keeps development going.</p>
                 </div>
 
                 <!-- Pricing Cards -->
                 <div class="content-section">
-                    <h2>Plans &amp; Pricing</h2>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">All plans include
-                        every feature. Enterprise adds dedicated support and SLAs. Enterprise plans are priced
-                        <strong>per CPU socket per year</strong> &mdash; it doesn&rsquo;t matter how many cores your
-                        CPU has.</p>
                     <div class="pricing-grid">
 
                         <!-- Community -->
@@ -340,17 +351,20 @@ include 'includes/head.php';
                             <div class="pricing-tier">Community</div>
                             <div class="pricing-name">Free</div>
                             <div class="pricing-price" style="color:#22c55e;">Free</div>
-                            <div class="pricing-subtitle">Free forever, all features</div>
+                            <div class="pricing-subtitle">Every feature. Every server. Forever.</div>
                             <ul class="pricing-features">
                                 <li>All features included</li>
-                                <li>Unlimited servers</li>
-                                <li>Full source code access</li>
+                                <li>Unlimited servers &amp; clusters</li>
+                                <li>Docker, LXC &amp; VM management</li>
+                                <li>WolfNet encrypted mesh VPN</li>
+                                <li>510+ one-click apps</li>
+                                <li>Backups, status pages, alerting</li>
+                                <li>WolfFlow workflow automation</li>
+                                <li>Full source code (MIT licence)</li>
                                 <li>Public Discord community</li>
-                                <li>Documentation &amp; guides</li>
-                                <li>Regular updates</li>
                             </ul>
                             <a href="wolfstack.php"
-                                class="pricing-cta pricing-cta-secondary">Get Started</a>
+                                class="pricing-cta pricing-cta-secondary">Get Started Free</a>
                         </div>
 
                         <!-- Sponsor -->
@@ -358,149 +372,168 @@ include 'includes/head.php';
                             <div class="pricing-tier">Sponsor</div>
                             <div class="pricing-name">GitHub Sponsors</div>
                             <div class="pricing-price" style="color:#22c55e;">From <span class="currency">&pound;</span>3 <span class="period">/ month</span></div>
-                            <div class="pricing-subtitle">Support development, get extra love</div>
+                            <div class="pricing-subtitle">Keep WolfStack free for everyone</div>
                             <ul class="pricing-features">
                                 <li>Everything in Community</li>
                                 <li><strong>Private sponsors-only Discord</strong></li>
                                 <li><strong>Direct support from the dev team</strong></li>
-                                <li><strong>Early access to beta features</strong></li>
                                 <li><strong>Priority bug fixes</strong></li>
-                                <li>Your name on Supporters page</li>
-                                <li>Vote on the roadmap</li>
+                                <li><strong>Early access to beta features</strong></li>
+                                <li>Vote on the development roadmap</li>
+                                <li>Your name on the Supporters page</li>
                             </ul>
                             <a href="https://github.com/sponsors/wolfsoftwaresystemsltd" target="_blank"
                                 class="pricing-cta pricing-cta-green">Back This Project</a>
                         </div>
 
-                        <!-- Standard -->
+                        <!-- Enterprise -->
                         <div class="pricing-card featured">
                             <div class="pricing-tier">Enterprise</div>
-                            <div class="pricing-name">Standard</div>
-                            <div class="pricing-price"><span class="currency">&pound;</span>450 <span class="period">/ year
-                                    per socket</span></div>
-                            <div class="pricing-subtitle">Professional services for businesses</div>
+                            <div class="pricing-name">Enterprise</div>
+                            <div class="pricing-price"><span class="currency">&pound;</span>79 <span class="period">/ server / year</span></div>
+                            <div class="pricing-subtitle" style="font-size:0.8rem;">$99 USD per server per year</div>
                             <ul class="pricing-features">
                                 <li>Everything in Sponsor</li>
+                                <li style="padding-top:0.6rem;font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;border:none;">Enterprise-Exclusive Features</li>
+                                <li><strong><a href="wolfstack-api.php" style="color:var(--text-primary);">REST API Keys</a></strong> &mdash; scoped tokens, audit logging</li>
+                                <li><strong>OIDC / SSO</strong> &mdash; Authentik, Azure AD, Okta, Keycloak</li>
+                                <li><strong><a href="wolfstack-plugins.php" style="color:var(--text-primary);">Plugin System</a></strong> &mdash; extend WolfStack with custom plugins</li>
+                                <li><strong><a href="wolfhost.php" style="color:var(--text-primary);">WolfHost</a></strong> &mdash; web hosting platform with billing &amp; customer portal</li>
+                                <li><strong><a href="wolfcustom.php" style="color:var(--text-primary);">WolfCustom</a></strong> &mdash; white-label branding (your logo, name, colours)</li>
+                                <li style="padding-top:0.6rem;font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;border:none;">Professional Services</li>
+                                <li>SLA with guaranteed response times</li>
                                 <li>Full installation &amp; onboarding</li>
-                                <li>Migration from Proxmox/Portainer</li>
-                                <li>SLA with 4-hour response time</li>
-                                <li>Monthly check-ins</li>
-                                <li>Team training sessions</li>
+                                <li>Dedicated support &amp; ticketing</li>
+                                <li>Team training &amp; architecture consulting</li>
                             </ul>
-                            <a href="enterprise-contact.php?plan=Standard"
+                            <a href="enterprise-contact.php"
                                 class="pricing-cta pricing-cta-primary">Contact Sales</a>
-                        </div>
-
-                        <!-- Premium -->
-                        <div class="pricing-card">
-                            <div class="pricing-tier">Enterprise</div>
-                            <div class="pricing-name">Premium</div>
-                            <div class="pricing-price"><span class="currency">&pound;</span>900 <span class="period">/ year
-                                    per socket</span></div>
-                            <div class="pricing-subtitle">All you&rsquo;ll ever need</div>
-                            <ul class="pricing-features">
-                                <li>Everything in Standard</li>
-                                <li>24/7 support</li>
-                                <li>SLA with 2-hour response time</li>
-                                <li>Dedicated account manager</li>
-                                <li>Custom development requests</li>
-                                <li>On-site or remote training</li>
-                                <li>Architecture consulting</li>
-                            </ul>
-                            <a href="enterprise-contact.php?plan=Premium"
-                                class="pricing-cta pricing-cta-secondary">Contact Sales</a>
                         </div>
 
                     </div>
                 </div>
 
-                <!-- What's Included -->
+                <!-- Competition Comparison -->
+                <div class="content-section">
+                    <h2>How WolfStack Compares</h2>
+                    <p style="color:var(--text-secondary);font-size:0.88rem;">Everything your competitors charge for, WolfStack gives away free. Enterprise is purely for businesses that need SLAs and SSO &mdash; not for features.</p>
+
+                    <div style="overflow-x:auto;">
+                    <table class="comp-table">
+                        <thead>
+                            <tr>
+                                <th>Platform</th>
+                                <th>Price</th>
+                                <th>What You Get</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Proxmox VE</td>
+                                <td class="paid">$110&ndash;220 <small>/yr/socket</small></td>
+                                <td>VM &amp; container management only. No Docker, no overlay VPN, no app store, no workflows.</td>
+                            </tr>
+                            <tr>
+                                <td>Portainer Business</td>
+                                <td class="paid">$180 <small>/yr/node</small></td>
+                                <td>Docker management only. No VMs, no VPN, no status pages, no backups.</td>
+                            </tr>
+                            <tr>
+                                <td>Tailscale Business</td>
+                                <td class="paid">$18 <small>/user/mo</small></td>
+                                <td>VPN only. No server management, no containers, no monitoring.</td>
+                            </tr>
+                            <tr>
+                                <td>Coolify</td>
+                                <td class="paid">$5 <small>/server/mo</small></td>
+                                <td>App deployment only. No VMs, no LXC, no VPN, no clustering.</td>
+                            </tr>
+                            <tr>
+                                <td>Better Stack</td>
+                                <td class="paid">$25+ <small>/mo</small></td>
+                                <td>Uptime monitoring only. No server management.</td>
+                            </tr>
+                            <tr>
+                                <td>n8n Cloud</td>
+                                <td class="paid">$20+ <small>/mo</small></td>
+                                <td>Workflow automation only. No infrastructure management.</td>
+                            </tr>
+                            <tr style="background:rgba(34,197,94,0.06);">
+                                <td style="color:#22c55e;">WolfStack</td>
+                                <td class="hl">Free</td>
+                                <td><strong>All of the above in a single binary.</strong> Docker, LXC, VMs, encrypted mesh VPN, 510+ apps,
+                                    status pages, alerting, backups, workflow automation, clustering &mdash; unlimited servers, forever.</td>
+                            </tr>
+                            <tr style="background:rgba(220,38,38,0.06);">
+                                <td style="color:var(--accent-primary);">WolfStack Enterprise</td>
+                                <td style="color:var(--accent-primary);font-weight:700;">&pound;79 <small>/yr/server</small><br><small style="color:var(--text-muted);">($99 USD)</small></td>
+                                <td><strong>Everything above, plus SSO/OIDC, REST API keys, plugin system, WolfHost, WolfCustom white-label,
+                                    SLA, dedicated support &amp; training.</strong> Still cheaper than any single competitor above &mdash;
+                                    and replaces all of them.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+
+                    <p style="text-align:center;margin-top:1rem;font-size:0.84rem;color:var(--text-muted);">
+                        A typical 5-server setup using Proxmox + Portainer + Tailscale + monitoring costs
+                        <strong style="color:var(--accent-primary);">$3,000&ndash;6,000/year</strong>.
+                        WolfStack is <strong style="color:#22c55e;">free</strong>. Enterprise is still
+                        <strong style="color:var(--accent-primary);">cheaper than any single product above</strong>.
+                    </p>
+                </div>
+
+                <!-- What's Included with Enterprise -->
                 <div class="content-section">
                     <h2>What&rsquo;s Included with Enterprise</h2>
                     <div class="enterprise-includes">
                         <div class="include-card">
-                            <h4>Full Installation</h4>
-                            <p>Our team will install and configure WolfStack across your entire infrastructure. We
-                                handle the setup so you can focus on your business.</p>
+                            <h4>OIDC / SSO</h4>
+                            <p>Single sign-on via Authentik, Azure AD, Okta, Google Workspace, Keycloak, or any OIDC provider.
+                                Centralise authentication across your organisation.</p>
                         </div>
                         <div class="include-card">
-                            <h4>Ticketing System</h4>
-                            <p>Dedicated ticketing system for reporting issues, requesting features, and tracking
-                                resolution. No more waiting on community forums.</p>
+                            <h4>API Keys</h4>
+                            <p>Long-lived API tokens (<code>wsk_*</code>) with scoped permissions. Automate deployments,
+                                integrate CI/CD pipelines, and build tooling against the WolfStack API.</p>
                         </div>
                         <div class="include-card">
-                            <h4>Direct Support</h4>
-                            <p>Email and priority support directly from the WolfStack development team. Get answers from
-                                the people who build the software.</p>
+                            <h4>Plugin System</h4>
+                            <p>Extend WolfStack with custom plugins &mdash; new UI pages, backend services, and
+                                API integrations. See the <a href="wolfstack-plugins.php">plugin docs</a>.</p>
                         </div>
                         <div class="include-card">
-                            <h4>Migration Help</h4>
-                            <p>Moving from Proxmox, Portainer, or another platform? We&rsquo;ll help migrate your containers,
-                                configurations, and workflows.</p>
+                            <h4>WolfHost</h4>
+                            <p>Complete web hosting platform with customer management, billing, domain management,
+                                email, SSL provisioning, and a white-label customer portal. See <a href="wolfhost.php">WolfHost docs</a>.</p>
+                        </div>
+                        <div class="include-card">
+                            <h4>WolfCustom</h4>
+                            <p>White-label WolfStack with your own branding &mdash; replace the logo, product name,
+                                colours, favicon, and copyright with your company identity. See <a href="wolfcustom.php">WolfCustom docs</a>.</p>
                         </div>
                         <div class="include-card">
                             <h4>SLA Guarantee</h4>
-                            <p>Enterprise Premium customers receive a Service Level Agreement with guaranteed response
-                                times and uptime commitments.</p>
+                            <p>Service Level Agreement with guaranteed response times. Because your business can&rsquo;t
+                                wait for community forum replies.</p>
                         </div>
                         <div class="include-card">
-                            <h4>Training</h4>
-                            <p>Get your team up to speed with dedicated training sessions covering WolfStack, WolfNet,
-                                container management, and more.</p>
+                            <h4>Installation &amp; Migration</h4>
+                            <p>Our team installs WolfStack across your infrastructure and migrates you from
+                                Proxmox, Portainer, or whatever you&rsquo;re running today.</p>
+                        </div>
+                        <div class="include-card">
+                            <h4>Dedicated Support &amp; Training</h4>
+                            <p>Direct access to the development team via ticketing system. Team training sessions
+                                and architecture consulting included.</p>
                         </div>
                     </div>
-                </div>
-
-                <!-- Managed Setup Service -->
-                <div class="content-section">
-                    <h2>Managed Cluster Setup</h2>
-                    <p>Don&rsquo;t want to set it up yourself? Our team will build your entire WolfStack cluster for you,
-                        configured and ready to use. We handle everything via remote SSH access.</p>
-
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0;">
-                        <div>
-                            <h3>What&rsquo;s included</h3>
-                            <ul>
-                                <li>WolfStack installed on all your servers</li>
-                                <li>Cluster configured and nodes connected</li>
-                                <li>WolfNet encrypted mesh networking set up</li>
-                                <li>Storage mounts configured (S3, NFS, ZFS, Ceph, etc.)</li>
-                                <li>Backup schedules configured</li>
-                                <li>Status pages and alerting set up</li>
-                                <li>Your applications deployed via the App Store</li>
-                                <li>Firewall rules and security hardened</li>
-                                <li>SSL certificates provisioned via Let&rsquo;s Encrypt</li>
-                                <li>Handover walkthrough with your team</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3>Pricing</h3>
-                            <p style="font-size:2rem;font-weight:800;color:var(--accent-primary);margin:0.5rem 0 0.25rem;">From &pound;500</p>
-                            <p>One-time fee. Price depends on cluster size and complexity.</p>
-                            <ul>
-                                <li>Includes up to <strong>5 servers</strong></li>
-                                <li>Additional servers <strong>&pound;50 each</strong></li>
-                                <li>Remote setup via SSH</li>
-                                <li>On-site setup available (Premium customers)</li>
-                            </ul>
-                            <p style="margin-top:1rem;">
-                                <a href="enterprise-contact.php?plan=ManagedSetup"
-                                    class="pricing-cta pricing-cta-primary" style="width:auto;">Get a Quote</a>
-                            </p>
-                        </div>
-                    </div>
-
-                    <p style="color:var(--text-muted);font-size:0.82rem;margin-top:0.5rem;">
-                        Managed setup is available as a standalone service &mdash; you don&rsquo;t need an enterprise subscription.
-                        Pair it with a GitHub Sponsors membership for ongoing private Discord support after setup.</p>
                 </div>
 
                 <!-- Contact Box -->
                 <div class="contact-box">
                     <h3>Ready to Get Started?</h3>
-                    <p>Contact our sales team to discuss your requirements and find the right plan for your
-                        organisation.<br>
-                        We&rsquo;ll get back to you within one business day.</p>
+                    <p>WolfStack is free &mdash; just install it. Need Enterprise? Contact us and we&rsquo;ll get back to you within one business day.</p>
                     <a href="enterprise-contact.php" class="contact-email">
                         Contact Sales
                     </a>
@@ -510,41 +543,53 @@ include 'includes/head.php';
                 <div class="content-section">
                     <h2>Frequently Asked Questions</h2>
 
-                    <h3>How many subscriptions do I need?</h3>
-                    <p>Enterprise subscriptions are priced per <strong>physical CPU socket</strong> occupied on the
-                        motherboard. It doesn&rsquo;t matter if your CPU has 4 cores or 128 cores &mdash; each occupied socket
-                        counts as one. Empty slots do not require a subscription. Each server needs its own subscription
-                        based on its socket count.</p>
-
-                    <h3>Do I need an enterprise licence to use WolfStack?</h3>
-                    <p>No. WolfStack is completely free and open-source under the MIT licence. The Community Edition
-                        includes all features with no limits. Enterprise licensing is for organisations that want
-                        dedicated support and professional services.</p>
+                    <h3>Do I need to pay anything to use WolfStack?</h3>
+                    <p>No. WolfStack is completely free and open-source under the MIT licence. Every feature,
+                        unlimited servers, forever. Enterprise licensing is only for organisations that need
+                        SLAs, SSO, and dedicated support.</p>
 
                     <h3>What do GitHub Sponsors get?</h3>
                     <p>Sponsors get access to a <strong>private Discord channel</strong> with direct support from the dev team,
                         early access to beta features, priority bug fixes, and a vote on the development roadmap. It&rsquo;s
-                        the best way to support WolfStack if you don&rsquo;t need a formal enterprise SLA.</p>
+                        the best way to support WolfStack if you don&rsquo;t need a formal SLA.</p>
 
-                    <h3>Can I switch plans later?</h3>
-                    <p>Yes &mdash; you can upgrade or downgrade your enterprise plan at any time. Contact <a
-                            href="mailto:sales@wolf.uk.com">sales@wolf.uk.com</a> to discuss changes.</p>
+                    <h3>What&rsquo;s the difference between Sponsor and Enterprise?</h3>
+                    <p><strong>Sponsors</strong> fund open-source development and get direct dev access via Discord.
+                        <strong>Enterprise</strong> is for businesses that need formal SLAs, SSO/OIDC integration,
+                        API keys, a ticketing system, and professional services like installation and migration.</p>
 
-                    <h3>What payment methods do you accept?</h3>
-                    <p>We accept bank transfer and invoice-based payments. Contact our sales team for details.</p>
+                    <h3>How is Enterprise priced?</h3>
+                    <p><strong>&pound;79/year per server</strong> ($99 USD). That&rsquo;s it &mdash; no per-socket, no per-core,
+                        no per-user complexity. A 10-server cluster is &pound;790/year.</p>
 
-                    <h3>Is support available outside business hours?</h3>
-                    <p>24/7 support is included with the Enterprise Premium plan. Basic and Standard plans
-                        include support during UK business hours (Mon&ndash;Fri, 9am&ndash;5pm GMT). GitHub Sponsors
-                        get support via the private Discord channel.</p>
+                    <h3>Can I sponsor on GitHub and have Enterprise?</h3>
+                    <p>Absolutely. Sponsorship funds continued development for everyone. You&rsquo;ll get the sponsor
+                        perks on top of your enterprise benefits.</p>
 
-                    <h3>Can I still sponsor on GitHub if I have an enterprise licence?</h3>
-                    <p>Absolutely! GitHub Sponsors support is always welcome and helps fund continued development for the entire
-                        community. You&rsquo;ll get the sponsor perks on top of your enterprise benefits.</p>
+                    <h3>What data does the Enterprise license report?</h3>
+                    <p>Enterprise licenses include a lightweight daily heartbeat that reports only <strong>server hostnames</strong>,
+                        <strong>WolfStack version</strong>, and <strong>cluster name</strong> to Wolf Software Systems. No user data,
+                        container names, or configuration is ever transmitted. The heartbeat is used solely to verify your active
+                        server count against your license. The heartbeat is non-blocking &mdash; WolfStack continues to function
+                        normally regardless of connectivity to our licensing server.</p>
+                </div>
+
+                <!-- License Compliance -->
+                <div class="content-section">
+                    <h2>License Compliance</h2>
+                    <p>Enterprise licenses include a lightweight daily heartbeat that reports the number of active servers
+                        to Wolf Software Systems. This contains only <strong>server hostnames</strong>,
+                        <strong>WolfStack version</strong>, and <strong>cluster name</strong> &mdash; no user data, container names,
+                        or configuration.</p>
+                    <p>If your active server count exceeds your licensed count for more than <strong>5 consecutive days</strong>,
+                        we will issue an invoice for the additional servers at the standard rate of
+                        <strong>&pound;79/$99 per server per year</strong>.</p>
+                    <p>The heartbeat is non-blocking &mdash; WolfStack continues to function normally regardless of
+                        connectivity to our licensing server.</p>
                 </div>
 
                 <div class="page-nav"><a href="licensing.php" class="prev">&larr; Licensing</a><a href="support.php"
-                        class="next">Fund Open Source &rarr;</a></div>
+                        class="next">Support &rarr;</a></div>
 
     </main>
 <?php include 'includes/footer.php'; ?>
