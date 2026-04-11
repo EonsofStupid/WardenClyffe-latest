@@ -12,6 +12,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
+                <img src="images/screenshots/networking.png" alt="WolfStack network interface management" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
                 <p>WolfStack includes comprehensive networking tools for managing IPs, WolfNet mesh connections, and container networking across your fleet.</p>
                 <h3>Global WolfNet</h3>
                 <p>The Global WolfNet view shows all WolfNet IPs and peer connections across your entire infrastructure. See which IPs belong to nodes, LXC containers, Docker containers, and VMs at a glance.</p>

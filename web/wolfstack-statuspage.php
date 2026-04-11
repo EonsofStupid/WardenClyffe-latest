@@ -12,6 +12,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
+                <img src="images/screenshots/statuspage.png" alt="WolfStack public status pages with uptime monitoring" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
                 <p>WolfStack includes a full-featured uptime monitoring system with public-facing status pages &mdash; all built in, no third-party tools required. Create monitors for your services, build beautiful branded status pages, and keep your users informed with automatic incident tracking.</p>
                 <p>Status pages are <strong>cluster-scoped</strong>: each cluster has its own pool of monitors, pages, and incidents. Configuration syncs automatically between nodes in the same cluster.</p>
 

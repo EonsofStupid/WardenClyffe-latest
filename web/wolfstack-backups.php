@@ -13,6 +13,7 @@ include 'includes/head.php';
             <!-- Overview -->
             <div class="content-section">
                 <h1>Overview</h1>
+                <img src="images/screenshots/backups.png" alt="WolfStack backup scheduling and management" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
                 <p>WolfStack&rsquo;s Backup &amp; Restore system lets you create on-demand or scheduled backups of everything on your server &mdash; Docker containers, LXC containers, KVM virtual machines, and WolfStack configuration files. Backups can be stored locally, on S3-compatible object storage, on a remote WolfStack node, on a WolfDisk mount, or on a Proxmox Backup Server (PBS).</p>
                 <p>Per-node backups are accessed under each node &rarr; <strong>💾 Backups</strong>. For a cluster-wide view, see <a href="#cluster-backups">Cluster Backups</a> under your cluster name in the sidebar.</p>
 

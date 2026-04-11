@@ -12,6 +12,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
+                <img src="images/screenshots/files.png" alt="WolfStack file manager for containers" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
                 <p>The built-in File Manager lets you browse the filesystem of any node in your cluster directly from the web dashboard. Navigate directories, view and edit files, upload new files, and download existing ones.</p>
                 <h3>Features</h3>
                 <ul>

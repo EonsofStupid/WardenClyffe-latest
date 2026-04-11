@@ -12,6 +12,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
+                <img src="images/screenshots/cron.png" alt="WolfStack cron job management" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
                 <p>WolfStack&rsquo;s Cron Manager lets you view, create, edit, and delete cron jobs on any node in your cluster from the web dashboard. No more SSH-ing into individual servers to manage scheduled tasks.</p>
                 <h3>Features</h3>
                 <ul>

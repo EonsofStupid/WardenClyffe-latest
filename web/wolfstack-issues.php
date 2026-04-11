@@ -12,6 +12,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
+                <img src="images/screenshots/issues.png" alt="WolfStack issue detection and health monitoring" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
                 <p>WolfStack&rsquo;s Issues Scanner proactively scans your fleet for hardware, software, and configuration problems. Issues are categorised by severity (Critical, Warning, Info) and grouped by cluster.</p>
                 <h3>What Gets Scanned</h3>
                 <ul>

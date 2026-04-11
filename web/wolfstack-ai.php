@@ -12,6 +12,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
+                <img src="images/screenshots/ai-agent.png" alt="WolfStack AI Agent settings — Claude, Gemini, or local AI" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
                 <p>WolfStack&rsquo;s AI Agent lets you ask questions about your infrastructure in natural language. Get intelligent answers about server health, resource usage, container status, and configuration &mdash; powered by leading AI models.</p>
 
                 <h3>Supported Providers</h3>

@@ -11,6 +11,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
+                <img src="images/screenshots/vms.png" alt="WolfStack virtual machine management with USB/PCI passthrough" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
                 <p>WolfStack lets you create and manage KVM/QEMU virtual machines directly from the web dashboard. VMs work on <strong>native WolfStack nodes</strong> (any Linux server with KVM support), <strong>libvirt/virsh nodes</strong>, and <strong>Proxmox VE nodes</strong> &mdash; all managed through a single interface.</p>
 
                 <h3>Key Features</h3>

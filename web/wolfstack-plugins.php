@@ -11,6 +11,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Plugin System</h2>
+                <img src="images/screenshots/plugins.png" alt="WolfStack plugin system with Plugin Store" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
                 <p>WolfStack&rsquo;s plugin system lets you extend the platform with additional functionality. Plugins can add new pages to the UI, provide backend APIs, and integrate with WolfStack&rsquo;s existing features.</p>
                 <p>Plugins are managed from <strong>Settings &rarr; Plugins</strong> in the WolfStack dashboard.</p>
                 <div class="info-box" style="border-left:4px solid var(--accent-primary);">

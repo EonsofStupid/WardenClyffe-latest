@@ -12,6 +12,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
+                <img src="images/screenshots/lxc.png" alt="WolfStack container management with card view and pie charts" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
                 <p>WolfStack provides comprehensive container management for both <strong>Docker</strong> and <strong>LXC</strong> containers. Create, start, stop, restart, clone, and migrate containers across your entire fleet from a single dashboard.</p>
                 <h3>Docker Containers</h3>
                 <ul>

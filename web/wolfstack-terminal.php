@@ -12,6 +12,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
+                <img src="images/screenshots/terminal.png" alt="WolfStack web terminal — SSH in browser" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
                 <p>WolfStack includes a full web-based terminal that lets you open SSH sessions to any node or container directly from the dashboard. No separate SSH client needed.</p>
                 <h3>Features</h3>
                 <ul>
