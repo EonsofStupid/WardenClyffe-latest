@@ -12,7 +12,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h1>WolfNote Integration</h1>
-                <img src="images/screenshots/wolfflow.png" alt="WolfStack WolfNote documentation system" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
+                <img src="images/screenshots/wolfnote.png" alt="WolfStack WolfNote documentation and notes system" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
                 <p>WolfStack integrates directly with <a href="https://wolfnote.org" target="_blank" rel="noopener">WolfNote</a>, a self-hosted note-taking app by Wolf Software Systems. Connect your WolfNote account and WolfStack will automatically document your infrastructure &mdash; AI-generated reports, event logs, incident notes, backup results, and one-click captures of any dashboard view.</p>
 
                 <div class="info-box"><strong>Requires WolfNote:</strong> You need a WolfNote account at <a href="https://app.wolfnote.org" target="_blank" rel="noopener">app.wolfnote.org</a> (or a self-hosted instance). WolfStack authenticates with your WolfNote credentials and stores a session token locally.</div>
