@@ -987,40 +987,52 @@ include 'includes/head.php';
                         <div class="hp2-slider-track">
                             <div class="hp2-slider-inner">
                                 <div class="hp2-slide">
-                                    <img src="images/screenshots/hero-dashboard-2x.png" alt="Datacenter Overview" loading="eager">
-                                    <div class="hp2-slide-label"><h4>Datacenter Overview</h4></div>
+                                    <img src="images/screenshots/dashboard-server.png" alt="Datacenter Overview — cluster map, node health, topology" loading="eager">
+                                    <div class="hp2-slide-label"><h4>Datacenter Overview</h4><p>Cluster map, node health, real-time metrics</p></div>
                                 </div>
                                 <div class="hp2-slide">
-                                    <img src="images/screenshots/hero-containers-2x.png" alt="Container Management" loading="lazy">
-                                    <div class="hp2-slide-label"><h4>Container Management</h4></div>
+                                    <img src="images/screenshots/lxc.png" alt="LXC Container Card View with SVG pie charts" loading="lazy">
+                                    <div class="hp2-slide-label"><h4>Container Card View</h4><p>SVG pie charts for CPU, RAM, Disk &mdash; all controls at a glance</p></div>
                                 </div>
                                 <div class="hp2-slide">
-                                    <img src="images/screenshots/hero-appstore-2x.png" alt="App Store" loading="lazy">
-                                    <div class="hp2-slide-label"><h4>App Store</h4></div>
+                                    <img src="images/screenshots/containers.png" alt="Docker Container Management" loading="lazy">
+                                    <div class="hp2-slide-label"><h4>Docker Management</h4><p>Full lifecycle &mdash; create, monitor, logs, console, volumes</p></div>
                                 </div>
                                 <div class="hp2-slide">
-                                    <img src="images/screenshots/dashboard-server.png" alt="Server Dashboard" loading="lazy">
-                                    <div class="hp2-slide-label"><h4>Server Monitoring</h4></div>
+                                    <img src="images/screenshots/wolfflow.png" alt="WolfFlow Visual Workflow Automation" loading="lazy">
+                                    <div class="hp2-slide-label"><h4>WolfFlow Automation</h4><p>16 action types, conditional branching, template variables</p></div>
                                 </div>
                                 <div class="hp2-slide">
-                                    <img src="images/screenshots/networking.png" alt="Networking" loading="lazy">
-                                    <div class="hp2-slide-label"><h4>Networking</h4></div>
+                                    <img src="images/screenshots/appstore.png" alt="App Store — 510+ one-click applications" loading="lazy">
+                                    <div class="hp2-slide-label"><h4>App Store</h4><p>510+ one-click applications</p></div>
                                 </div>
                                 <div class="hp2-slide">
-                                    <img src="images/screenshots/statuspage.png" alt="Status Pages" loading="lazy">
-                                    <div class="hp2-slide-label"><h4>Status Pages</h4></div>
+                                    <img src="images/screenshots/vms.png" alt="Virtual Machine Management with USB/PCI passthrough" loading="lazy">
+                                    <div class="hp2-slide-label"><h4>Virtual Machines</h4><p>KVM/QEMU with USB/PCI passthrough, import disk images</p></div>
                                 </div>
                                 <div class="hp2-slide">
-                                    <img src="images/screenshots/wolfflow.png" alt="WolfFlow" loading="lazy">
-                                    <div class="hp2-slide-label"><h4>WolfFlow Automation</h4></div>
+                                    <img src="images/screenshots/networking.png" alt="Networking — interfaces, VLANs, DNS, WolfNet VPN" loading="lazy">
+                                    <div class="hp2-slide-label"><h4>Networking</h4><p>Interfaces, VLANs, DNS, WolfNet mesh VPN</p></div>
                                 </div>
                                 <div class="hp2-slide">
-                                    <img src="images/screenshots/terminal.png" alt="Web Terminal" loading="lazy">
-                                    <div class="hp2-slide-label"><h4>Web Terminal</h4></div>
+                                    <img src="images/screenshots/ai-agent.png" alt="AI Agent — Claude, Gemini, or local AI" loading="lazy">
+                                    <div class="hp2-slide-label"><h4>AI Operations Agent</h4><p>Claude, Gemini, or your own local AI (Ollama, LM Studio)</p></div>
                                 </div>
                                 <div class="hp2-slide">
-                                    <img src="images/screenshots/kubernetes.png" alt="Kubernetes" loading="lazy">
-                                    <div class="hp2-slide-label"><h4>WolfKube Kubernetes</h4></div>
+                                    <img src="images/screenshots/plugins.png" alt="Plugin System with Plugin Store" loading="lazy">
+                                    <div class="hp2-slide-label"><h4>Plugin Store</h4><p>One-click install &mdash; WolfHost, WolfCustom, and more</p></div>
+                                </div>
+                                <div class="hp2-slide">
+                                    <img src="images/screenshots/statuspage.png" alt="Status Pages — public uptime monitoring" loading="lazy">
+                                    <div class="hp2-slide-label"><h4>Status Pages</h4><p>Public uptime monitoring with incident tracking</p></div>
+                                </div>
+                                <div class="hp2-slide">
+                                    <img src="images/screenshots/terminal.png" alt="Web Terminal — SSH in your browser" loading="lazy">
+                                    <div class="hp2-slide-label"><h4>Web Terminal</h4><p>Full SSH terminal in your browser</p></div>
+                                </div>
+                                <div class="hp2-slide">
+                                    <img src="images/screenshots/topology.png" alt="Cluster Topology — visual node map" loading="lazy">
+                                    <div class="hp2-slide-label"><h4>Cluster Topology</h4><p>Visual map of your infrastructure</p></div>
                                 </div>
                             </div>
                         </div>
@@ -1599,7 +1611,7 @@ include 'includes/head.php';
                     <div style="background:var(--bg-card);border:1px solid rgba(220,38,38,0.4);border-radius:12px;padding:28px 24px;text-align:center;">
                         <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:4px;">Enterprise</div>
                         <div style="font-size:1.15rem;font-weight:800;margin-bottom:8px;">Enterprise</div>
-                        <div style="font-size:1.8rem;font-weight:800;color:var(--accent-primary);margin-bottom:8px;">&pound;79 <span style="font-size:0.78rem;font-weight:500;color:var(--text-muted);">/ server / year</span></div>
+                        <div style="font-size:1.8rem;font-weight:800;color:var(--accent-primary);margin-bottom:8px;">&pound;79 <span style="font-size:0.78rem;font-weight:500;color:var(--text-muted);">/ server / month</span></div>
                         <p style="font-size:0.84rem;color:var(--text-secondary);line-height:1.6;margin:0;">SSO, API keys, plugins, WolfHost, WolfCustom, SLA, dedicated support. <a href="enterprise.php" style="color:var(--accent-primary);font-weight:600;">Details &rarr;</a></p>
                     </div>
                 </div>
