@@ -30,8 +30,43 @@ include 'includes/head.php';
                             <td>Gemini Pro, Flash</td>
                             <td>API key from Google AI Studio</td>
                         </tr>
+                        <tr>
+                            <td><strong>Local / Self-Hosted</strong></td>
+                            <td>Any model your server supports</td>
+                            <td>Any OpenAI-compatible API endpoint</td>
+                        </tr>
                     </tbody>
                 </table>
+            </div>
+
+            <div class="content-section">
+                <h2>Local AI Support</h2>
+                <p>WolfStack can connect to <strong>self-hosted AI servers</strong> running on your own hardware &mdash; no cloud API keys required, no data leaves your network, and zero ongoing API costs.</p>
+
+                <h3>Supported Local AI Servers</h3>
+                <p>Any server that exposes an <strong>OpenAI-compatible API</strong> works out of the box. Tested platforms include:</p>
+                <ul>
+                    <li><strong>Ollama</strong> &mdash; the most popular local AI runtime. Run <code>ollama serve</code> and WolfStack connects automatically.</li>
+                    <li><strong>LM Studio</strong> &mdash; desktop app with a built-in OpenAI-compatible server</li>
+                    <li><strong>LocalAI</strong> &mdash; drop-in OpenAI replacement with broad model support</li>
+                    <li><strong>vLLM</strong> &mdash; high-performance serving engine for large language models</li>
+                    <li><strong>text-generation-webui</strong> (oobabooga) &mdash; enable the OpenAI extension</li>
+                    <li><strong>llama.cpp</strong> &mdash; lightweight C++ inference server with <code>--api</code> flag</li>
+                </ul>
+
+                <h3>Auto-Detection</h3>
+                <p>When you point WolfStack at a local AI server, it <strong>automatically queries the available models</strong> and populates the model dropdown. No need to manually look up model names &mdash; just set the endpoint URL and WolfStack discovers what&rsquo;s installed.</p>
+
+                <h3>Expert Knowledge Base</h3>
+                <p>WolfStack ships with a <strong>built-in expert knowledge base</strong> that is injected into every AI conversation. This means even smaller local models can give deep, accurate answers about your infrastructure because they receive curated context about WolfStack&rsquo;s architecture, commands, and best practices alongside your question.</p>
+
+                <h3>Why Run AI Locally?</h3>
+                <ul>
+                    <li><strong>Zero cost</strong> &mdash; no per-token API charges, run unlimited queries</li>
+                    <li><strong>Complete privacy</strong> &mdash; infrastructure data never leaves your network</li>
+                    <li><strong>No internet required</strong> &mdash; works in air-gapped environments</li>
+                    <li><strong>Your choice of model</strong> &mdash; use whatever model fits your hardware and needs</li>
+                </ul>
             </div>
 
             <div class="content-section">
@@ -68,7 +103,7 @@ include 'includes/head.php';
                 <p>AI configuration is automatically synced across all nodes in your cluster.</p>
             </div>
 
-<div class="page-nav"><a href="app-store.php" class="prev">&larr; App Store</a><a href="wolfdisk.php" class="next">WolfDisk &rarr;</a></div>
+<div class="page-nav"><a href="app-store.php" class="prev">&larr; App Store</a><a href="wolfstack-wolfnote.php" class="next">WolfNote Integration &rarr;</a></div>
         
     </main>
 <?php include 'includes/footer.php'; ?>

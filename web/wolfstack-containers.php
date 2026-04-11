@@ -84,6 +84,41 @@ include 'includes/head.php';
                 <p><strong>Clone</strong> creates a copy of a container on the same node. <strong>Migrate</strong> moves a container to a different node in the cluster — WolfStack handles the file transfer, IP reassignment, and route configuration automatically.</p>
             </div>
 
+            <div class="content-section">
+                <h2>Card View</h2>
+                <p>Every container and VM screen supports a <strong>card view</strong> as an alternative to the default table view. Toggle between the two layouts using the view switcher at the top of the page &mdash; your preference is saved per screen.</p>
+                <ul>
+                    <li><strong>SVG pie charts</strong> &mdash; Each card displays live CPU, RAM, and disk usage as small SVG pie charts for at-a-glance resource monitoring</li>
+                    <li><strong>Responsive layout</strong> &mdash; 4 cards across on desktop, 2 on tablet, 1 on mobile</li>
+                    <li><strong>Available everywhere</strong> &mdash; Card view works on Docker, LXC, and VM screens</li>
+                    <li><strong>Per-screen preference</strong> &mdash; Switch the Docker screen to cards while keeping LXC as a table, or vice versa &mdash; each screen remembers its own setting</li>
+                </ul>
+            </div>
+
+            <div class="content-section">
+                <h2>Additional Features</h2>
+
+                <h3>Container Cron Jobs</h3>
+                <p>WolfStack lets you manage cron jobs inside individual Docker and LXC containers directly from the dashboard. View, create, edit, and delete crontab entries without needing to shell into the container.</p>
+
+                <h3>Update Checks</h3>
+                <p>For Docker containers, WolfStack can check whether a newer version of the container&rsquo;s image is available and apply updates from the dashboard.</p>
+
+                <h3>Docker Image Management</h3>
+                <ul>
+                    <li>View all pulled Docker images on a node</li>
+                    <li>Pull new images from Docker Hub or private registries</li>
+                    <li>Search Docker Hub for images</li>
+                    <li>Remove unused images</li>
+                </ul>
+
+                <h3>Docker Network Management</h3>
+                <ul>
+                    <li>View Docker networks on each node</li>
+                    <li>Inspect network configuration and connected containers</li>
+                </ul>
+            </div>
+
 <div class="page-nav"><a href="wolfstack.php" class="prev">&larr; Overview</a><a href="wolfstack-storage.php" class="next">Storage Manager &rarr;</a></div>
         
     </main>

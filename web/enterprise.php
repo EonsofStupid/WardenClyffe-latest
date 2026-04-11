@@ -390,8 +390,8 @@ include 'includes/head.php';
                         <div class="pricing-card featured">
                             <div class="pricing-tier">Enterprise</div>
                             <div class="pricing-name">Enterprise</div>
-                            <div class="pricing-price"><span class="currency">&pound;</span>79 <span class="period">/ server / year</span></div>
-                            <div class="pricing-subtitle" style="font-size:0.8rem;">$99 USD per server per year</div>
+                            <div class="pricing-price"><span class="currency">&pound;</span>79 <span class="period">/ server / month</span></div>
+                            <div class="pricing-subtitle" style="font-size:0.8rem;">$99 USD per server per month</div>
                             <ul class="pricing-features">
                                 <li>Everything in Sponsor</li>
                                 <li style="padding-top:0.6rem;font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;border:none;">Enterprise-Exclusive Features</li>
@@ -402,9 +402,7 @@ include 'includes/head.php';
                                 <li><strong><a href="wolfcustom.php" style="color:var(--text-primary);">WolfCustom</a></strong> &mdash; white-label branding (your logo, name, colours)</li>
                                 <li style="padding-top:0.6rem;font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;border:none;">Professional Services</li>
                                 <li>SLA with guaranteed response times</li>
-                                <li>Full installation &amp; onboarding</li>
                                 <li>Dedicated support &amp; ticketing</li>
-                                <li>Team training &amp; architecture consulting</li>
                             </ul>
                             <a href="enterprise-contact.php"
                                 class="pricing-cta pricing-cta-primary">Contact Sales</a>
@@ -429,12 +427,12 @@ include 'includes/head.php';
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Proxmox VE</td>
-                                <td class="paid">$110&ndash;220 <small>/yr/socket</small></td>
+                                <td>Leading virtualisation platform</td>
+                                <td class="paid">&euro;110&ndash;220 <small>/yr/socket</small></td>
                                 <td>VM &amp; container management only. No Docker, no overlay VPN, no app store, no workflows.</td>
                             </tr>
                             <tr>
-                                <td>Portainer Business</td>
+                                <td>Leading container platform</td>
                                 <td class="paid">$180 <small>/yr/node</small></td>
                                 <td>Docker management only. No VMs, no VPN, no status pages, no backups.</td>
                             </tr>
@@ -458,6 +456,28 @@ include 'includes/head.php';
                                 <td class="paid">$20+ <small>/mo</small></td>
                                 <td>Workflow automation only. No infrastructure management.</td>
                             </tr>
+                            <tr>
+                                <td colspan="3" style="font-weight:700;color:var(--text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;padding-top:1.2rem;">Enterprise Per-Server Pricing</td>
+                            </tr>
+                            <tr>
+                                <td>Leading virtualisation platform</td>
+                                <td class="paid">&euro;110&ndash;220 <small>/yr/socket</small></td>
+                                <td>VM management only &mdash; no Docker, no VPN, no apps, no monitoring.</td>
+                            </tr>
+                            <tr>
+                                <td>Leading container platform</td>
+                                <td class="paid">$180 <small>/yr/node</small></td>
+                                <td>Docker only &mdash; no VMs, no VPN, no status pages, no backups.</td>
+                            </tr>
+                            <tr style="background:rgba(220,38,38,0.06);">
+                                <td style="color:var(--accent-primary);">WolfStack Enterprise</td>
+                                <td style="color:var(--accent-primary);font-weight:700;">&pound;79/$99 <small>/mo/server</small></td>
+                                <td><strong>Everything included</strong> &mdash; Docker, LXC, VMs, VPN, 510+ apps, status pages, alerting,
+                                    backups, workflows, SSO, API keys, plugins, WolfHost, WolfCustom, and dedicated support.</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" style="font-weight:700;color:var(--text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;padding-top:1.2rem;">Individual Product Comparison</td>
+                            </tr>
                             <tr style="background:rgba(34,197,94,0.06);">
                                 <td style="color:#22c55e;">WolfStack</td>
                                 <td class="hl">Free</td>
@@ -466,9 +486,9 @@ include 'includes/head.php';
                             </tr>
                             <tr style="background:rgba(220,38,38,0.06);">
                                 <td style="color:var(--accent-primary);">WolfStack Enterprise</td>
-                                <td style="color:var(--accent-primary);font-weight:700;">&pound;79 <small>/yr/server</small><br><small style="color:var(--text-muted);">($99 USD)</small></td>
+                                <td style="color:var(--accent-primary);font-weight:700;">&pound;79 <small>/mo/server</small><br><small style="color:var(--text-muted);">($99 USD)</small></td>
                                 <td><strong>Everything above, plus SSO/OIDC, REST API keys, plugin system, WolfHost, WolfCustom white-label,
-                                    SLA, dedicated support &amp; training.</strong> Still cheaper than any single competitor above &mdash;
+                                    SLA &amp; dedicated support.</strong> Still cheaper than any single competitor above &mdash;
                                     and replaces all of them.</td>
                             </tr>
                         </tbody>
@@ -518,14 +538,9 @@ include 'includes/head.php';
                                 wait for community forum replies.</p>
                         </div>
                         <div class="include-card">
-                            <h4>Installation &amp; Migration</h4>
-                            <p>Our team installs WolfStack across your infrastructure and migrates you from
-                                Proxmox, Portainer, or whatever you&rsquo;re running today.</p>
-                        </div>
-                        <div class="include-card">
-                            <h4>Dedicated Support &amp; Training</h4>
-                            <p>Direct access to the development team via ticketing system. Team training sessions
-                                and architecture consulting included.</p>
+                            <h4>Dedicated Support</h4>
+                            <p>Direct access to the development team via ticketing system. Priority bug fixes
+                                and technical support from the people who build WolfStack.</p>
                         </div>
                     </div>
                 </div>
@@ -559,12 +574,18 @@ include 'includes/head.php';
                         API keys, a ticketing system, and professional services like installation and migration.</p>
 
                     <h3>How is Enterprise priced?</h3>
-                    <p><strong>&pound;79/year per server</strong> ($99 USD). That&rsquo;s it &mdash; no per-socket, no per-core,
-                        no per-user complexity. A 10-server cluster is &pound;790/year.</p>
+                    <p><strong>&pound;79/month per server</strong> ($99 USD). That&rsquo;s it &mdash; no per-socket, no per-core,
+                        no per-user complexity. A 10-server cluster is &pound;790/month.</p>
 
                     <h3>Can I sponsor on GitHub and have Enterprise?</h3>
                     <p>Absolutely. Sponsorship funds continued development for everyone. You&rsquo;ll get the sponsor
                         perks on top of your enterprise benefits.</p>
+
+                    <h3>Do I need to install the license on every server?</h3>
+                    <p>No. Install the license on <strong>any single node</strong> in your cluster and it is
+                        <strong>automatically propagated to every other node within 10 seconds</strong>.
+                        WolfStack&rsquo;s cluster polling distributes the license key to all connected nodes &mdash;
+                        no manual copying or per-server configuration required.</p>
 
                     <h3>What data does the Enterprise license report?</h3>
                     <p>Enterprise licenses include a lightweight daily heartbeat that reports only <strong>server hostnames</strong>,
@@ -583,7 +604,7 @@ include 'includes/head.php';
                         or configuration.</p>
                     <p>If your active server count exceeds your licensed count for more than <strong>5 consecutive days</strong>,
                         we will issue an invoice for the additional servers at the standard rate of
-                        <strong>&pound;79/$99 per server per year</strong>.</p>
+                        <strong>&pound;79/$99 per server per month</strong>.</p>
                     <p>The heartbeat is non-blocking &mdash; WolfStack continues to function normally regardless of
                         connectivity to our licensing server.</p>
                 </div>
