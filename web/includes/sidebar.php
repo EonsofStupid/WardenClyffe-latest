@@ -18,41 +18,60 @@ function nav_active($href, $active) {
                 <div class="dropdown-panel dropdown-mega">
                     <div class="dropdown-col">
                         <div class="dropdown-col-title">Getting Started</div>
-                        <a href="wolfstack.php"<?= nav_active('wolfstack.php', $active) ?>>Overview &amp; Quick Start</a>
-                        <a href="wolfstack-containers.php"<?= nav_active('wolfstack-containers.php', $active) ?>>Container Management</a>
-                        <a href="wolfstack-clustering.php"<?= nav_active('wolfstack-clustering.php', $active) ?>>Multi-Server Clustering</a>
                         <a href="app-store.php"<?= nav_active('app-store.php', $active) ?>>App Store</a>
+                        <a href="wolfstack-containers.php"<?= nav_active('wolfstack-containers.php', $active) ?>>Container Management</a>
+                        <a href="download.php"<?= nav_active('download.php', $active) ?> style="font-weight:600;">Install</a>
+                        <a href="live-usb.php"<?= nav_active('live-usb.php', $active) ?>>Live USB</a>
+                        <a href="wolfstack-clustering.php"<?= nav_active('wolfstack-clustering.php', $active) ?>>Multi-Server Clustering</a>
+                        <a href="wolfstack.php"<?= nav_active('wolfstack.php', $active) ?>>Overview &amp; Quick Start</a>
                         <a href="proxmox.php"<?= nav_active('proxmox.php', $active) ?>>Proxmox Integration</a>
-                        <a href="wolfrun.php"<?= nav_active('wolfrun.php', $active) ?>>WolfRun Orchestration</a>
+                        <a href="wolfstack-vms.php"<?= nav_active('wolfstack-vms.php', $active) ?>>Virtual Machines</a>
                         <a href="wolfkube.php"<?= nav_active('wolfkube.php', $active) ?>>WolfKube Kubernetes</a>
+                        <a href="wolfrun.php"<?= nav_active('wolfrun.php', $active) ?>>WolfRun Orchestration</a>
                     </div>
                     <div class="dropdown-col">
                         <div class="dropdown-col-title">Server Management</div>
-                        <a href="wolfstack-storage.php"<?= nav_active('wolfstack-storage.php', $active) ?>>Storage &amp; Disks</a>
                         <a href="wolfstack-ceph.php"<?= nav_active('wolfstack-ceph.php', $active) ?>>Ceph Clusters</a>
-                        <a href="wolfstack-networking.php"<?= nav_active('wolfstack-networking.php', $active) ?>>Networking</a>
+                        <a href="wolfstack-cluster-browser.php"<?= nav_active('wolfstack-cluster-browser.php', $active) ?>>Cluster Browser</a>
+                        <a href="wolfstack-cron.php"<?= nav_active('wolfstack-cron.php', $active) ?>>Cron Jobs</a>
                         <a href="wolfstack-files.php"<?= nav_active('wolfstack-files.php', $active) ?>>File Manager</a>
+                        <a href="wolfstack-networking.php"<?= nav_active('wolfstack-networking.php', $active) ?>>Networking</a>
+                        <a href="wolfstack-storage.php"<?= nav_active('wolfstack-storage.php', $active) ?>>Storage &amp; Disks</a>
+                        <a href="wolfstack-systemcheck.php"<?= nav_active('wolfstack-systemcheck.php', $active) ?>>System Check <span style="font-size:0.6rem;background:rgba(34,197,94,0.15);color:#22c55e;padding:1px 5px;border-radius:3px;margin-left:2px;vertical-align:middle;">New</span></a>
                         <a href="wolfstack-terminal.php"<?= nav_active('wolfstack-terminal.php', $active) ?>>Terminal</a>
                         <a href="wolfstack-tui.php"<?= nav_active('wolfstack-tui.php', $active) ?>>Terminal UI</a>
-                        <a href="wolfstack-cron.php"<?= nav_active('wolfstack-cron.php', $active) ?>>Cron Jobs</a>
+                        <a href="wolfflow.php"<?= nav_active('wolfflow.php', $active) ?>>WolfFlow Automation</a>
                     </div>
                     <div class="dropdown-col">
                         <div class="dropdown-col-title">Monitoring &amp; Tools</div>
-                        <a href="wolfstack-alerting.php"<?= nav_active('wolfstack-alerting.php', $active) ?>>Alerting &amp; Notifications</a>
-                        <a href="wolfstack-statuspage.php"<?= nav_active('wolfstack-statuspage.php', $active) ?>>Status Pages</a>
-                        <a href="wolfstack-issues.php"<?= nav_active('wolfstack-issues.php', $active) ?>>Issues Scanner</a>
-                        <a href="wolfstack-backups.php"<?= nav_active('wolfstack-backups.php', $active) ?>>Backup &amp; Restore</a>
-                        <a href="wolfstack-mysql.php"<?= nav_active('wolfstack-mysql.php', $active) ?>>MariaDB/MySQL Editor</a>
                         <a href="wolfstack-ai.php"<?= nav_active('wolfstack-ai.php', $active) ?>>AI Agent</a>
+                        <a href="wolfstack-agents.php"<?= nav_active('wolfstack-agents.php', $active) ?>>WolfAgents <span style="font-size:0.6rem;background:rgba(168,85,247,0.2);color:#c084fc;padding:1px 5px;border-radius:3px;margin-left:2px;vertical-align:middle;">New</span></a>
+                        <a href="wolfstack-alerting.php"<?= nav_active('wolfstack-alerting.php', $active) ?>>Alerting &amp; Notifications</a>
+                        <a href="wolfstack-backups.php"<?= nav_active('wolfstack-backups.php', $active) ?>>Backup &amp; Restore</a>
+                        <a href="wolfstack-issues.php"<?= nav_active('wolfstack-issues.php', $active) ?>>Issues Scanner</a>
+                        <a href="wolfstack-mysql.php"<?= nav_active('wolfstack-mysql.php', $active) ?>>Databases <span style="font-size:0.6rem;background:rgba(34,197,94,0.15);color:#22c55e;padding:1px 5px;border-radius:3px;margin-left:2px;vertical-align:middle;">New</span></a>
+                        <a href="wolfstack-statuspage.php"<?= nav_active('wolfstack-statuspage.php', $active) ?>>Status Pages</a>
+                        <a href="wolfstack-vr.php"<?= nav_active('wolfstack-vr.php', $active) ?>>VR Server Room</a>
+                        <a href="wolfstack-wolfnote.php"<?= nav_active('wolfstack-wolfnote.php', $active) ?>>WolfNote Integration</a>
                     </div>
                     <div class="dropdown-col">
                         <div class="dropdown-col-title">Security &amp; Network</div>
-                        <a href="wolfstack-security.php"<?= nav_active('wolfstack-security.php', $active) ?>>Security</a>
                         <a href="wolfstack-certificates.php"<?= nav_active('wolfstack-certificates.php', $active) ?>>Certificates</a>
-                        <a href="wolfnet-vpn.php"<?= nav_active('wolfnet-vpn.php', $active) ?>>Remote Access VPN</a>
-                        <a href="wolfstack-wireguard.php"<?= nav_active('wolfstack-wireguard.php', $active) ?>>WireGuard Bridge</a>
-                        <a href="wolfstack-settings.php"<?= nav_active('wolfstack-settings.php', $active) ?>>Settings</a>
                         <a href="wolfnet-global.php"<?= nav_active('wolfnet-global.php', $active) ?>>Global View</a>
+                        <a href="wolfstack-plugins.php"<?= nav_active('wolfstack-plugins.php', $active) ?>>Plugins</a>
+                        <a href="wolfnet-vpn.php"<?= nav_active('wolfnet-vpn.php', $active) ?>>Remote Access VPN</a>
+                        <a href="wolfstack-api.php"<?= nav_active('wolfstack-api.php', $active) ?>>REST API <span style="font-size:0.65rem;background:rgba(220,38,38,0.15);color:#ef4444;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle;">Enterprise</span></a>
+                        <a href="wolfstack-security.php"<?= nav_active('wolfstack-security.php', $active) ?>>Security, Users &amp; 2FA</a>
+                        <a href="wolfstack-settings.php"<?= nav_active('wolfstack-settings.php', $active) ?>>Settings</a>
+                        <a href="wolfstack-troubleshooting.php"<?= nav_active('wolfstack-troubleshooting.php', $active) ?>>Troubleshooting</a>
+                        <a href="wolfstack-wireguard.php"<?= nav_active('wolfstack-wireguard.php', $active) ?>>WireGuard Bridge</a>
+                        <a href="wolfcustom.php"<?= nav_active('wolfcustom.php', $active) ?>>WolfCustom <span style="font-size:0.6rem;background:rgba(220,38,38,0.15);color:#ef4444;padding:1px 5px;border-radius:3px;margin-left:2px;vertical-align:middle;">Enterprise</span></a>
+                        <a href="wolfhost.php"<?= nav_active('wolfhost.php', $active) ?>>WolfHost <span style="font-size:0.6rem;background:rgba(220,38,38,0.15);color:#ef4444;padding:1px 5px;border-radius:3px;margin-left:2px;vertical-align:middle;">Enterprise</span></a>
+                        <a href="wolfhost-admin.php"<?= nav_active('wolfhost-admin.php', $active) ?>>WolfHost Admin</a>
+                        <a href="wolfhost-portal.php"<?= nav_active('wolfhost-portal.php', $active) ?>>WolfHost Portal</a>
+                        <a href="wolfhost-provisioning.php"<?= nav_active('wolfhost-provisioning.php', $active) ?>>WolfHost Provisioning</a>
+                        <a href="wolfhost-setup.php"<?= nav_active('wolfhost-setup.php', $active) ?>>WolfHost Setup</a>
+                        <a href="wolfrouter.php"<?= nav_active('wolfrouter.php', $active) ?>>WolfRouter</a>
                     </div>
                 </div>
             </div>
@@ -61,11 +80,15 @@ function nav_active($href, $active) {
             <div class="topnav-item has-dropdown">
                 <button class="topnav-link" type="button">Products</button>
                 <div class="dropdown-panel">
-                    <a href="wolfnet.php"<?= nav_active('wolfnet.php', $active) ?>>WolfNet <span class="dropdown-desc">Private Network</span></a>
                     <a href="wolfdisk.php"<?= nav_active('wolfdisk.php', $active) ?>>WolfDisk <span class="dropdown-desc">Distributed Filesystem</span></a>
+                    <a href="wolfhost.php"<?= nav_active('wolfhost.php', $active) ?>>WolfHost <span class="dropdown-desc">Web Hosting Platform</span> <span style="font-size:0.6rem;background:rgba(220,38,38,0.15);color:#ef4444;padding:1px 5px;border-radius:3px;margin-left:2px;vertical-align:middle;">Enterprise</span></a>
+                    <a href="wolfnet.php"<?= nav_active('wolfnet.php', $active) ?>>WolfNet <span class="dropdown-desc">Private Network</span></a>
+                    <a href="https://wolfnote.org" target="_blank" rel="noopener">WolfNote <span class="dropdown-desc">AI-Powered Notes</span></a>
                     <a href="wolfproxy.php"<?= nav_active('wolfproxy.php', $active) ?>>WolfProxy <span class="dropdown-desc">Reverse Proxy</span></a>
-                    <a href="wolfserve.php"<?= nav_active('wolfserve.php', $active) ?>>WolfServe <span class="dropdown-desc">Web Server</span></a>
+                    <a href="wolfram.php"<?= nav_active('wolfram.php', $active) ?>>Wolfram <span class="dropdown-desc">Memory Compression</span></a>
                     <a href="quickstart.php"<?= nav_active('quickstart.php', $active) ?>>WolfScale <span class="dropdown-desc">Database Replication</span></a>
+                    <a href="wolfserve.php"<?= nav_active('wolfserve.php', $active) ?>>WolfServe <span class="dropdown-desc">Web Server</span></a>
+                    <a href="wolfusb.php"<?= nav_active('wolfusb.php', $active) ?>>WolfUSB <span class="dropdown-desc">USB over Network</span></a>
                 </div>
             </div>
 
@@ -88,25 +111,28 @@ function nav_active($href, $active) {
 
             <a href="comparison.php" class="topnav-link<?= ($active === 'comparison.php') ? ' active' : '' ?>">Compare</a>
             <a href="enterprise.php" class="topnav-link<?= ($active === 'enterprise.php') ? ' active' : '' ?>">Licensing</a>
+            <a href="development.php" class="topnav-link<?= ($active === 'development.php') ? ' active' : '' ?>" style="color:var(--accent-primary);font-weight:600;">Hire Us</a>
 
             <!-- About dropdown -->
             <div class="topnav-item has-dropdown">
                 <button class="topnav-link" type="button">About</button>
                 <div class="dropdown-panel">
                     <a href="about.php"<?= nav_active('about.php', $active) ?>>About</a>
-                    <a href="roadmap.php"<?= nav_active('roadmap.php', $active) ?>>Roadmap</a>
                     <a href="contact.php"<?= nav_active('contact.php', $active) ?>>Contact</a>
+                    <a href="support.php"<?= nav_active('support.php', $active) ?> style="color:var(--accent-primary);font-weight:600;">Fund Open Source</a>
                     <a href="glossary.php"<?= nav_active('glossary.php', $active) ?>>Glossary</a>
                     <a href="licensing.php"<?= nav_active('licensing.php', $active) ?>>Licensing</a>
                     <a href="privacy.php"<?= nav_active('privacy.php', $active) ?>>Privacy Policy</a>
-                    <a href="terms.php"<?= nav_active('terms.php', $active) ?>>Terms of Service</a>
+                    <a href="roadmap.php"<?= nav_active('roadmap.php', $active) ?>>Roadmap</a>
+                    <a href="development.php"<?= nav_active('development.php', $active) ?>>Software Development</a>
                     <a href="supporters.php"<?= nav_active('supporters.php', $active) ?>>Supporters</a>
-                    <a href="support.php"<?= nav_active('support.php', $active) ?> style="color:var(--accent-primary);font-weight:600;">Support Us</a>
+                    <a href="terms.php"<?= nav_active('terms.php', $active) ?>>Terms of Service</a>
                 </div>
             </div>
 
             <div class="topnav-right-group">
-                <a href="support.php" class="topnav-link" style="color:var(--accent-primary);font-weight:600;font-size:0.82rem;">&#10084; Support Us</a>
+                <button class="topnav-search-btn" id="search-btn" onclick="openSearch()" aria-label="Search" title="Search (Ctrl+K)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span class="search-shortcut">Ctrl+K</span></button>
+                <a href="support.php" class="topnav-link" style="color:var(--accent-primary);font-weight:600;font-size:0.82rem;">&#10084; Fund Open Source</a>
                 <a href="https://github.com/wolfsoftwaresystemsltd/WolfScale" target="_blank" class="topnav-link topnav-icon-link" title="GitHub">GitHub</a>
                 <a href="https://discord.gg/q9qMjHjUQY" target="_blank" class="topnav-link topnav-icon-link" title="Discord">Discord</a>
                 <a href="https://www.youtube.com/@wolfsoftwaresystems" target="_blank" rel="noopener" class="topnav-social" title="YouTube"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg></a>

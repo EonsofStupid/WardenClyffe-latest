@@ -154,8 +154,9 @@ include 'includes/head.php';
                             forwarding, firewall rules</li>
                         <li><a href="wolfstack-clustering.php"><strong>Multi-Server Clustering</strong></a> — Join
                             nodes into clusters with auto-discovery</li>
-                        <li><a href="wolfstack-mysql.php"><strong>Database Editor</strong></a> — Browse tables,
-                            run queries, and manage MariaDB, MySQL, PostgreSQL, and Percona databases</li>
+                        <li><a href="wolfstack-mysql.php"><strong>Databases</strong></a> — Unified cluster-wide
+                            Database Manager for MariaDB, MySQL, PostgreSQL, and Percona with per-connection routing,
+                            enterprise ACL, and AI agent access</li>
                         <li><a href="wolfstack-security.php"><strong>Security</strong></a> — Linux PAM authentication,
                             API tokens, audit logging</li>
                         <li><a href="wolfstack-certificates.php"><strong>Certificates</strong></a> — SSL/TLS

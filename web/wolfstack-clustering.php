@@ -58,7 +58,7 @@ include 'includes/head.php';
                 <p>This tells all nodes in the cluster about each other and establishes encrypted WolfNet connections between them. It will also propagate to all other nodes automatically. You only need to do this once after adding new nodes &mdash; if all your nodes are on the same local network, they will discover each other immediately.</p>
             </div>
 
-<div class="page-nav"><a href="wolfstack-networking.php" class="prev">&larr; Networking</a><a href="wolfstack-mysql.php" class="next">MySQL Editor &rarr;</a></div>
+<div class="page-nav"><a href="wolfstack-networking.php" class="prev">&larr; Networking</a><a href="wolfstack-mysql.php" class="next">Databases &rarr;</a></div>
         
     </main>
 <?php include 'includes/footer.php'; ?>
