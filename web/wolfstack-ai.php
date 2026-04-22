@@ -14,6 +14,7 @@ include 'includes/head.php';
                 <h2>Overview</h2>
                 <img src="images/screenshots/ai-agent.png" alt="WolfStack AI Agent settings — Claude, Gemini, or local AI" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
                 <p>WolfStack&rsquo;s AI Agent lets you ask questions about your infrastructure in natural language. Get intelligent answers about server health, resource usage, container status, and configuration &mdash; powered by leading AI models.</p>
+                <p class="note"><strong>Looking for named, persistent-memory agents?</strong> See <a href="wolfstack-agents.php">WolfAgents</a> &mdash; a multi-agent surface that sits on top of this same AI configuration. The AI Agent page (this one) configures the <em>provider + key</em>; WolfAgents lets you create named personalities that each have their own system prompt, conversation history, tool allowlist, and optional Discord / Telegram / WhatsApp channel binding.</p>
 
                 <h3>Supported Providers</h3>
                 <table>
@@ -78,7 +79,61 @@ include 'includes/head.php';
                     <li><strong>AI-assisted diagnostics</strong> &mdash; Troubleshoot issues with context-aware suggestions based on your actual system state</li>
                     <li><strong>Cross-cluster metrics</strong> &mdash; Query metrics and resource usage across all nodes and clusters</li>
                     <li><strong>Command execution</strong> &mdash; The AI agent can run read-only commands on your infrastructure to gather information for answers</li>
+                    <li><strong>Proposed actions</strong> &mdash; When the AI identifies a fixable problem, it proposes specific commands you can approve and execute with one click</li>
+                    <li><strong>Database access (NEW)</strong> &mdash; The AI can query MariaDB / MySQL / PostgreSQL through operator-defined connection profiles &mdash; ask "how many customers signed up yesterday?" and get a real answer from the live database</li>
                 </ul>
+            </div>
+
+            <div class="content-section">
+                <h2>Database Access &mdash; AI Talks to SQL</h2>
+                <p>WolfStack&rsquo;s AI can run <strong>real queries against your databases</strong> using the same connection profiles the <a href="wolfstack-mysql.php">Database Manager</a> uses. Ask <em>"how many orders in the last 24 hours?"</em> and the AI writes the SQL, runs it, and feeds the numbers back into its answer &mdash; all routed through the cluster, all audit-logged, all enterprise-ACL-gated.</p>
+                <h3>How it&rsquo;s gated</h3>
+                <p>Every AI SQL call passes through three independent checks:</p>
+                <ol>
+                    <li><strong>Per-agent permission flags</strong> &mdash; each agent has separate <code>sql_read</code>, <code>sql_update</code>, and <code>sql_delete</code> switches. All default <strong>off</strong>. DDL (ALTER / CREATE / DROP) is never granted to agents regardless of flags &mdash; schema changes always require a human operator.</li>
+                    <li><strong>Connection allowlist</strong> &mdash; an operator explicitly picks which connection IDs each agent is allowed to touch. Empty list means no database access.</li>
+                    <li><strong>sqlparser classifier</strong> &mdash; every query is parsed and classified before dispatch. An <code>UPDATE</code> pretending to be a <code>SELECT</code> is rejected. Multi-statement queries are rejected outright. The tier the agent declared must equal-or-exceed what the parser detected.</li>
+                </ol>
+                <h3>Audit trail</h3>
+                <p>Every AI query is appended to <code>/var/log/wolfstack/sql-audit.log</code> with the agent ID, connection ID, full query text, outcome, row count, and elapsed time. You can review exactly what an agent asked the database at any point in the past.</p>
+                <h3>Why this is safe</h3>
+                <p>AI agents use the <strong>same cluster-aware pipeline</strong> as the UI &mdash; encrypted passwords at rest, cluster-secret authentication for inter-node proxying, enterprise per-user ACL on every profile, and the hardcoded API denylist that blocks agents from reaching <code>/api/sql-connections/*</code> through the generic <code>wolfstack_api</code> tool. The only path to SQL is the dedicated, gated <code>sql_query</code> tool.</p>
+            </div>
+
+            <div class="content-section">
+                <h2>AI Actions &mdash; Propose &amp; Fix</h2>
+                <p>When the AI diagnoses an issue, it doesn&rsquo;t just tell you what&rsquo;s wrong &mdash; it <strong>proposes the fix</strong> and lets you approve it with one click.</p>
+
+                <h3>How It Works</h3>
+                <ol>
+                    <li><strong>You ask a question</strong> or the AI detects an issue during a health scan</li>
+                    <li><strong>The AI proposes actions</strong> &mdash; each fix is shown as a card with the exact command, a risk level, and an explanation of what it does</li>
+                    <li><strong>You approve or dismiss</strong> &mdash; nothing executes without your explicit click</li>
+                    <li><strong>Results appear instantly</strong> &mdash; command output is shown in the chat, and the action is logged to the audit trail</li>
+                </ol>
+
+                <h3>Risk Levels</h3>
+                <table>
+                    <thead><tr><th>Level</th><th>Examples</th><th>Badge</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Low</strong></td><td>Service restarts, cache clears, config reloads</td><td style="color:#22c55e;">Green</td></tr>
+                        <tr><td><strong>Medium</strong></td><td>Config file changes, package installs, firewall rules</td><td style="color:#f59e0b;">Amber</td></tr>
+                        <tr><td><strong>High</strong></td><td>Disk operations, user management, network changes</td><td style="color:#ef4444;">Red</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>Safety Guardrails</h3>
+                <ul>
+                    <li><strong>Never auto-executes</strong> &mdash; every action requires explicit user approval</li>
+                    <li><strong>Catastrophic commands blocked</strong> &mdash; patterns like <code>rm -rf /</code>, <code>dd</code> to disks, fork bombs, and filesystem wipes are permanently blocked even if approved</li>
+                    <li><strong>30-second timeout</strong> &mdash; commands that hang are automatically killed</li>
+                    <li><strong>10-minute expiry</strong> &mdash; proposed actions expire if not approved within 10 minutes</li>
+                    <li><strong>Full audit log</strong> &mdash; every proposed, approved, rejected, and executed action is logged to <code>/etc/wolfstack/ai-actions.log</code> with timestamps, usernames, and results</li>
+                    <li><strong>Cluster-wide</strong> &mdash; actions can target the local node or all nodes in the cluster</li>
+                </ul>
+
+                <h3>Actions in Alert Emails</h3>
+                <p>When the AI health scanner detects an issue and proposes a fix, the <strong>alert email includes the proposed actions</strong> with their risk level and commands. You can then open the WolfStack dashboard to approve them.</p>
             </div>
 
             <div class="content-section">
