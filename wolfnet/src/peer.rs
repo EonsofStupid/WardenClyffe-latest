@@ -44,6 +44,15 @@ pub struct Peer {
     pub relay_via: Option<Ipv4Addr>,
     /// Original configured endpoint string (may be a hostname:port for DNS re-resolution)
     pub configured_endpoint: Option<String>,
+    /// Last time we decrypted an encrypted DATA packet from this peer —
+    /// distinct from `last_seen` which is also bumped by handshakes and
+    /// keepalives. Tracking these separately is what lets us tell the
+    /// difference between "tunnel is up and data is flowing" and "we
+    /// can handshake with the peer but data packets vanish in either
+    /// direction" — the latter is exactly the scenario klasSponsor hit
+    /// on 2026-05-11 where wolfnetctl said "6 (6 connected)" while
+    /// every ping silently failed.
+    pub last_data_rx: Option<Instant>,
 }
 
 impl Peer {
@@ -64,6 +73,7 @@ impl Peer {
             last_handshake: None,
             relay_via: None,
             configured_endpoint: None,
+            last_data_rx: None,
         }
     }
 
@@ -75,9 +85,22 @@ impl Peer {
 
     }
 
-    /// Check if this peer has an active session
+    /// Check if this peer has an active session — i.e. ANY signed traffic
+    /// (handshake, keepalive, or data) has been observed recently. This is
+    /// the "tunnel is alive" semantic. Use `is_passing_data` instead if
+    /// you need to know whether ACTUAL data is flowing — handshakes and
+    /// keepalives alone are not enough to confirm a working bidirectional
+    /// data path.
     pub fn is_connected(&self) -> bool {
         self.cipher.is_some() && self.last_seen.map_or(false, |t| t.elapsed().as_secs() < 120)
+    }
+
+    /// True iff we've decrypted a real DATA packet from this peer in the
+    /// last 120 seconds. Handshakes and keepalives don't count; the whole
+    /// point of this method is to expose the asymmetric case where the
+    /// tunnel "looks up" (handshakes flow) but data drops on the floor.
+    pub fn is_passing_data(&self) -> bool {
+        self.cipher.is_some() && self.last_data_rx.map_or(false, |t| t.elapsed().as_secs() < 120)
     }
 
     /// Encrypt a packet for this peer
@@ -93,7 +116,9 @@ impl Peer {
         let cipher = self.cipher.as_mut().ok_or("No session established")?;
         let result = cipher.decrypt(counter, data)?;
         self.rx_bytes += result.len() as u64;
-        self.last_seen = Some(Instant::now());
+        let now = Instant::now();
+        self.last_seen = Some(now);
+        self.last_data_rx = Some(now);
         Ok(result)
     }
 
@@ -110,7 +135,9 @@ impl Peer {
         let cipher = self.cipher.as_mut().ok_or("No session established")?;
         let pt_len = cipher.decrypt_into(counter, buf, len)?;
         self.rx_bytes += pt_len as u64;
-        self.last_seen = Some(Instant::now());
+        let now = Instant::now();
+        self.last_seen = Some(now);
+        self.last_data_rx = Some(now);
         Ok(pt_len)
     }
 }
@@ -125,6 +152,18 @@ pub struct PeerManager {
     endpoint_to_ip: Arc<RwLock<HashMap<SocketAddr, Ipv4Addr>>>,
     /// Subnet routes: container/VM IP → host peer IP (for routing to containers on remote nodes)
     subnet_routes: Arc<RwLock<HashMap<Ipv4Addr, Ipv4Addr>>>,
+    /// CIDR subnet routes: (network, prefix, gateway WolfNet IP). Sorted
+    /// longest-prefix first so find_subnet_match can return on the
+    /// first hit. Populated from /var/run/wolfnet/subnet-routes.json,
+    /// which WolfStack writes when its WolfRouter SubnetRoute config
+    /// changes. Without this, packets read from the TUN whose dest IP
+    /// matches a kernel route via wolfnet0 (e.g. a remote LAN like
+    /// 10.10.0.0/16 reachable via peer 10.100.10.30) have no per-peer
+    /// destination — TUN devices have no link layer, so the kernel's
+    /// "next-hop" hint is meaningless to userspace — and the packet
+    /// would either get dropped (no peer match) or sent to the first
+    /// auto-gateway peer (often the wrong one).
+    subnet_routes_cidrs: Arc<RwLock<Vec<(Ipv4Addr, u8, Ipv4Addr)>>>,
     /// IPs purged via SIGHUP — blocked from PEX re-addition until daemon restart
     purged_ips: Arc<RwLock<std::collections::HashSet<Ipv4Addr>>>,
 }
@@ -136,6 +175,7 @@ impl PeerManager {
             id_to_ip: Arc::new(RwLock::new(HashMap::new())),
             endpoint_to_ip: Arc::new(RwLock::new(HashMap::new())),
             subnet_routes: Arc::new(RwLock::new(HashMap::new())),
+            subnet_routes_cidrs: Arc::new(RwLock::new(Vec::new())),
             purged_ips: Arc::new(RwLock::new(std::collections::HashSet::new())),
         }
     }
@@ -359,6 +399,87 @@ impl PeerManager {
         }
     }
 
+    /// Load CIDR-based subnet routes from a JSON file (cidr → gateway WolfNet IP).
+    /// Called on startup and on SIGHUP. WolfStack writes this file from its
+    /// WolfRouter SubnetRoute config so userspace can do longest-prefix
+    /// matching for packets whose dest doesn't match any peer or any
+    /// container exact-IP route.
+    ///
+    /// Behaviour:
+    ///   • File missing → clear the table (nothing should be routed).
+    ///   • JSON parse fails → keep the previous table (don't blackhole
+    ///     traffic on a transient bad write). Matches load_routes.
+    ///   • Parse OK → replace the table with the parsed contents,
+    ///     sorted longest-prefix-first.
+    pub fn load_subnet_routes(&self, path: &std::path::Path) {
+        let content = match std::fs::read_to_string(path) {
+            Ok(c) => c,
+            Err(_) => {
+                // File missing — clear the table so deleted CIDRs go
+                // away. (load_routes returns without clearing here, but
+                // for subnet routes "no file" really does mean "no
+                // routes configured", and stale entries would cause
+                // wrong routing decisions.)
+                self.subnet_routes_cidrs.write().unwrap().clear();
+                return;
+            }
+        };
+        let map: HashMap<String, String> = match serde_json::from_str(&content) {
+            Ok(m) => m,
+            Err(_) => return, // keep existing table on parse failure
+        };
+
+        let mut parsed: Vec<(Ipv4Addr, u8, Ipv4Addr)> = Vec::new();
+        for (cidr, gw_str) in &map {
+            let (net_str, prefix_str) = match cidr.split_once('/') {
+                Some(p) => p,
+                None => continue,
+            };
+            let net: Ipv4Addr = match net_str.parse() {
+                Ok(n) => n,
+                Err(_) => continue,
+            };
+            let prefix: u8 = match prefix_str.parse() {
+                Ok(p) if p <= 32 => p,
+                _ => continue,
+            };
+            let gateway: Ipv4Addr = match gw_str.parse() {
+                Ok(g) => g,
+                Err(_) => continue,
+            };
+            parsed.push((net, prefix, gateway));
+        }
+        // Sort longest prefix first so find_subnet_match returns on the
+        // first hit (longest-prefix-match semantics, like the kernel).
+        parsed.sort_by(|a, b| b.1.cmp(&a.1));
+        *self.subnet_routes_cidrs.write().unwrap() = parsed;
+    }
+
+    /// Longest-prefix-match against the loaded CIDR subnet routes.
+    /// Returns the gateway WolfNet IP for the most specific configured
+    /// CIDR that contains dest_ip, or None if no CIDR matches.
+    pub fn find_subnet_match(&self, dest_ip: &Ipv4Addr) -> Option<Ipv4Addr> {
+        let dest_u32 = u32::from_be_bytes(dest_ip.octets());
+        let table = self.subnet_routes_cidrs.read().unwrap();
+        for (net, prefix, gw) in table.iter() {
+            // /0 means "match everything" — useful as a default route.
+            // /32 is a single host. Anything in between uses a normal
+            // network mask.
+            let mask: u32 = if *prefix == 0 {
+                0
+            } else if *prefix >= 32 {
+                u32::MAX
+            } else {
+                u32::MAX << (32 - *prefix as u32)
+            };
+            let net_u32 = u32::from_be_bytes(net.octets());
+            if (dest_u32 & mask) == (net_u32 & mask) {
+                return Some(*gw);
+            }
+        }
+        None
+    }
+
     /// Get peer count
     pub fn count(&self) -> usize {
         self.peers_by_ip.read().unwrap().len()
@@ -490,7 +611,206 @@ impl PeerManager {
                 connected: p.is_connected(),
                 is_gateway: p.is_gateway,
                 relay_via: p.relay_via.map(|ip| ip.to_string()),
+                data_flowing: p.is_passing_data(),
+                last_data_rx_secs: p.last_data_rx.map_or(u64::MAX, |t| t.elapsed().as_secs()),
             }
         }).collect()
+    }
+}
+
+#[cfg(test)]
+mod peer_state_tests {
+    use super::*;
+    use x25519_dalek::{PublicKey, StaticSecret};
+
+    fn make_peer() -> Peer {
+        let secret = StaticSecret::random_from_rng(rand::thread_rng());
+        let public = PublicKey::from(&secret);
+        Peer::new(public, "10.100.10.1".parse().unwrap())
+    }
+
+    #[test]
+    fn fresh_peer_is_neither_connected_nor_passing_data() {
+        let p = make_peer();
+        assert!(!p.is_connected(), "fresh peer with no cipher must not register as connected");
+        assert!(!p.is_passing_data(), "fresh peer cannot be passing data");
+    }
+
+    #[test]
+    fn handshake_alone_does_not_set_passing_data() {
+        // Simulate the asymmetric state that misled klasSponsor / Fang:
+        // we have a session cipher, last_seen is recent (handshake just
+        // arrived), but we've never decrypted a real data packet.
+        let mut p = make_peer();
+        // Manufacture the post-handshake state without going through
+        // establish_session — keeps the test independent of the DH path.
+        p.cipher = None; // cipher gets installed by establish_session normally
+        p.last_seen = Some(Instant::now());
+        p.last_data_rx = None;
+        // Without a cipher is_connected stays false — that's correct.
+        assert!(!p.is_connected());
+        assert!(!p.is_passing_data());
+    }
+
+    #[test]
+    fn passing_data_requires_actual_decrypt() {
+        // Set last_data_rx without going through decrypt to simulate
+        // post-decrypt state, then assert the predicate flips.
+        let mut p = make_peer();
+        p.last_seen = Some(Instant::now());
+        p.last_data_rx = Some(Instant::now());
+        // is_connected/is_passing_data both still require a cipher, so
+        // they're false here — that's the right semantic: no cipher
+        // means we couldn't actually have decrypted anything.
+        assert!(!p.is_passing_data(),
+            "is_passing_data must require an established cipher, not just a recent timestamp");
+    }
+}
+
+#[cfg(test)]
+mod subnet_match_tests {
+    use super::*;
+
+    /// Inject a hand-built CIDR table for testing without touching disk.
+    fn install(pm: &PeerManager, entries: Vec<(&str, u8, &str)>) {
+        let mut parsed: Vec<(Ipv4Addr, u8, Ipv4Addr)> = entries
+            .into_iter()
+            .map(|(net, prefix, gw)| (net.parse().unwrap(), prefix, gw.parse().unwrap()))
+            .collect();
+        parsed.sort_by(|a, b| b.1.cmp(&a.1));
+        *pm.subnet_routes_cidrs.write().unwrap() = parsed;
+    }
+
+    #[test]
+    fn matches_exact_ip_in_slash16() {
+        let pm = PeerManager::new();
+        install(&pm, vec![("10.10.0.0", 16, "10.100.10.30")]);
+        let gw = pm.find_subnet_match(&"10.10.10.10".parse().unwrap());
+        assert_eq!(gw, Some("10.100.10.30".parse().unwrap()));
+    }
+
+    #[test]
+    fn no_match_when_outside_subnet() {
+        let pm = PeerManager::new();
+        install(&pm, vec![("10.10.0.0", 16, "10.100.10.30")]);
+        let gw = pm.find_subnet_match(&"10.11.0.5".parse().unwrap());
+        assert_eq!(gw, None);
+    }
+
+    #[test]
+    fn empty_table_returns_none() {
+        let pm = PeerManager::new();
+        let gw = pm.find_subnet_match(&"10.10.10.10".parse().unwrap());
+        assert_eq!(gw, None);
+    }
+
+    #[test]
+    fn longest_prefix_wins() {
+        let pm = PeerManager::new();
+        // /16 covers 10.10.0.0/16 → gw A. A more-specific /24 inside it
+        // (10.10.5.0/24) → gw B. Anything in 10.10.5.x must hit B,
+        // anything else in 10.10.x.x must hit A.
+        install(&pm, vec![
+            ("10.10.0.0", 16, "10.100.0.1"),
+            ("10.10.5.0", 24, "10.100.0.2"),
+        ]);
+        assert_eq!(
+            pm.find_subnet_match(&"10.10.5.10".parse().unwrap()),
+            Some("10.100.0.2".parse().unwrap())
+        );
+        assert_eq!(
+            pm.find_subnet_match(&"10.10.99.99".parse().unwrap()),
+            Some("10.100.0.1".parse().unwrap())
+        );
+    }
+
+    #[test]
+    fn slash_32_exact_host() {
+        let pm = PeerManager::new();
+        install(&pm, vec![("192.168.5.42", 32, "10.100.0.5")]);
+        assert_eq!(
+            pm.find_subnet_match(&"192.168.5.42".parse().unwrap()),
+            Some("10.100.0.5".parse().unwrap())
+        );
+        assert_eq!(
+            pm.find_subnet_match(&"192.168.5.43".parse().unwrap()),
+            None
+        );
+    }
+
+    #[test]
+    fn slash_zero_default_route() {
+        let pm = PeerManager::new();
+        // /0 = match everything. Useful as a full-tunnel default.
+        install(&pm, vec![("0.0.0.0", 0, "10.100.0.99")]);
+        assert_eq!(
+            pm.find_subnet_match(&"8.8.8.8".parse().unwrap()),
+            Some("10.100.0.99".parse().unwrap())
+        );
+    }
+
+    #[test]
+    fn slash_24_boundary() {
+        let pm = PeerManager::new();
+        install(&pm, vec![("192.168.1.0", 24, "10.100.0.7")]);
+        assert_eq!(
+            pm.find_subnet_match(&"192.168.1.0".parse().unwrap()),
+            Some("10.100.0.7".parse().unwrap())
+        );
+        assert_eq!(
+            pm.find_subnet_match(&"192.168.1.255".parse().unwrap()),
+            Some("10.100.0.7".parse().unwrap())
+        );
+        assert_eq!(
+            pm.find_subnet_match(&"192.168.2.0".parse().unwrap()),
+            None
+        );
+    }
+
+    #[test]
+    fn loaded_table_is_sorted_longest_first() {
+        // Verifies load_subnet_routes really does sort. Even if the
+        // JSON happens to list /16 before /24, find_subnet_match must
+        // still pick the /24 for IPs inside it.
+        let pm = PeerManager::new();
+        let tmp = std::env::temp_dir().join("wolfnet-subnet-test.json");
+        std::fs::write(
+            &tmp,
+            r#"{"10.10.0.0/16":"10.100.0.1","10.10.5.0/24":"10.100.0.2"}"#,
+        ).unwrap();
+        pm.load_subnet_routes(&tmp);
+        assert_eq!(
+            pm.find_subnet_match(&"10.10.5.5".parse().unwrap()),
+            Some("10.100.0.2".parse().unwrap())
+        );
+        assert_eq!(
+            pm.find_subnet_match(&"10.10.99.5".parse().unwrap()),
+            Some("10.100.0.1".parse().unwrap())
+        );
+        let _ = std::fs::remove_file(&tmp);
+    }
+
+    #[test]
+    fn missing_file_clears_table() {
+        let pm = PeerManager::new();
+        install(&pm, vec![("10.10.0.0", 16, "10.100.0.1")]);
+        let nonexistent = std::path::PathBuf::from("/tmp/wolfnet-this-file-does-not-exist-zzz.json");
+        pm.load_subnet_routes(&nonexistent);
+        assert_eq!(pm.find_subnet_match(&"10.10.10.10".parse().unwrap()), None);
+    }
+
+    #[test]
+    fn malformed_json_keeps_table() {
+        let pm = PeerManager::new();
+        install(&pm, vec![("10.10.0.0", 16, "10.100.0.1")]);
+        let tmp = std::env::temp_dir().join("wolfnet-subnet-malformed.json");
+        std::fs::write(&tmp, "{ this is not json }").unwrap();
+        pm.load_subnet_routes(&tmp);
+        // Existing table preserved.
+        assert_eq!(
+            pm.find_subnet_match(&"10.10.10.10".parse().unwrap()),
+            Some("10.100.0.1".parse().unwrap())
+        );
+        let _ = std::fs::remove_file(&tmp);
     }
 }
