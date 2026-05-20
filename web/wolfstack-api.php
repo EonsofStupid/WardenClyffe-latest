@@ -1,7 +1,7 @@
 <?php
-$page_title = 'REST API Documentation — WolfStack Docs';
-$page_desc = 'WolfStack REST API reference — complete endpoint documentation for managing servers, containers, storage, networking, backups, orchestration and more. Enterprise API key support with scoped permissions.';
-$active = 'wolfstack-api.php';
+$page_title = 'REST API Documentation — WardenClyffe Docs';
+$page_desc = 'WardenClyffe REST API reference — complete endpoint documentation for managing servers, containers, storage, networking, backups, orchestration and more. Enterprise API key support with scoped permissions.';
+$active = 'wardenclyffe-api.php';
 $page_css = '
 .api-side-nav{position:sticky;top:80px;align-self:start;max-height:calc(100vh - 100px);overflow-y:auto;padding-right:12px;}
 .api-side-nav a{display:block;padding:4px 0;font-size:11px;color:var(--text-secondary);text-decoration:none;border-left:2px solid transparent;padding-left:10px;transition:all 0.15s;}
@@ -25,12 +25,12 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>REST API Reference</h2>
-                <img src="images/screenshots/settings-security.png" alt="WolfStack REST API key management" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
+                <img src="images/screenshots/settings-security.png" alt="WardenClyffe REST API key management" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
                 <div style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(220,38,38,0.1),rgba(239,68,68,0.05));border:1px solid rgba(220,38,38,0.25);border-radius:8px;padding:8px 16px;margin-bottom:16px;font-size:0.85rem;">
                     <span style="font-size:1.1rem;">&#128273;</span>
                     <span><strong>Enterprise Feature</strong> &mdash; API key management requires an <a href="enterprise.php" style="color:#ef4444;font-weight:600;">Enterprise license</a>. All endpoints listed below work with standard session cookie authentication in every edition.</span>
                 </div>
-                <p>WolfStack exposes a comprehensive REST API covering every feature available in the web UI. Enterprise customers can create scoped API keys for programmatic access from CI/CD pipelines, monitoring tools, custom scripts, and third-party integrations. All endpoints return JSON and use the base URL <code>https://your-server:8553</code>.</p>
+                <p>WardenClyffe exposes a comprehensive REST API covering every feature available in the web UI. Enterprise customers can create scoped API keys for programmatic access from CI/CD pipelines, monitoring tools, custom scripts, and third-party integrations. All endpoints return JSON and use the base URL <code>https://your-server:8553</code>.</p>
             </div>
 
             <div class="api-grid" style="display:grid;grid-template-columns:220px 1fr;gap:32px;">
@@ -50,7 +50,7 @@ include 'includes/head.php';
                 <a href="#zfs">ZFS</a>
                 <a href="#ceph">Ceph</a>
                 <a href="#networking">Networking</a>
-                <a href="#wolfnet">WolfNet</a>
+                <a href="#wardenclyffenet">WardenClyffeNet</a>
                 <a href="#wireguard">WireGuard Bridge</a>
                 <a href="#backups">Backups</a>
                 <a href="#files">File Manager</a>
@@ -59,9 +59,9 @@ include 'includes/head.php';
                 <a href="#alerting">Alerting</a>
                 <a href="#statuspages">Status Pages</a>
                 <a href="#appstore">App Store</a>
-                <a href="#wolfrun">WolfRun Orchestration</a>
-                <a href="#kubernetes">Kubernetes (WolfKube)</a>
-                <a href="#wolfflow">WolfFlow Automation</a>
+                <a href="#wardenclyfferun">WardenClyffeRun Orchestration</a>
+                <a href="#kubernetes">Kubernetes (WardenClyffeKube)</a>
+                <a href="#wardenclyffeflow">WardenClyffeFlow Automation</a>
                 <a href="#cron">Cron Jobs</a>
                 <a href="#mysql">MySQL/MariaDB Editor</a>
                 <a href="#ai">AI Agent</a>
@@ -69,7 +69,7 @@ include 'includes/head.php';
                 <a href="#components">Components &amp; Services</a>
                 <a href="#system">System</a>
                 <a href="#apikeys">Enterprise API Keys</a>
-                <a href="#nginx">Nginx (WolfProxy)</a>
+                <a href="#nginx">Nginx (WardenClyffeProxy)</a>
                 <div class="nav-heading">Reference</div>
                 <a href="#errors">Error Handling</a>
                 <a href="#ratelimiting">Rate Limiting</a>
@@ -91,11 +91,11 @@ include 'includes/head.php';
                     </div>
                     <div style="background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:8px;padding:16px;">
                         <h3 style="font-size:0.92rem;margin-bottom:6px;">Session Cookie</h3>
-                        <p style="font-size:0.82rem;color:var(--text-secondary);">After logging in via the web UI or <code>POST /api/login</code>, the browser sends the <code>wolfstack_session</code> cookie automatically with every request. Works in all editions.</p>
+                        <p style="font-size:0.82rem;color:var(--text-secondary);">After logging in via the web UI or <code>POST /api/login</code>, the browser sends the <code>wardenclyffe_session</code> cookie automatically with every request. Works in all editions.</p>
                     </div>
                     <div style="background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:8px;padding:16px;">
                         <h3 style="font-size:0.92rem;margin-bottom:6px;">Cluster Secret</h3>
-                        <p style="font-size:0.82rem;color:var(--text-secondary);">Inter-node communication uses the <code>X-WolfStack-Secret</code> header with the shared cluster secret. Used internally for node-to-node API calls.</p>
+                        <p style="font-size:0.82rem;color:var(--text-secondary);">Inter-node communication uses the <code>X-WardenClyffe-Secret</code> header with the shared cluster secret. Used internally for node-to-node API calls.</p>
                     </div>
                 </div>
 
@@ -122,7 +122,7 @@ curl -b cookies.txt https://your-server:8553/api/metrics</code></pre>
                 <h3>Cluster Secret Authentication</h3>
                 <p>Used for inter-node communication within a cluster:</p>
 <pre><code># Node-to-node request with cluster secret
-curl -s -H "X-WolfStack-Secret: your-cluster-secret" \
+curl -s -H "X-WardenClyffe-Secret: your-cluster-secret" \
   https://node-02:8553/api/metrics</code></pre>
             </div>
 
@@ -138,12 +138,12 @@ curl -s -H "X-WolfStack-Secret: your-cluster-secret" \
                         <tr><td><code>containers</code></td><td>Docker &amp; LXC container management</td></tr>
                         <tr><td><code>vms</code></td><td>Virtual machine management</td></tr>
                         <tr><td><code>storage</code></td><td>Storage mounts, disks, ZFS, and Ceph</td></tr>
-                        <tr><td><code>networking</code></td><td>Network interfaces, DNS, VLANs, WolfNet</td></tr>
+                        <tr><td><code>networking</code></td><td>Network interfaces, DNS, VLANs, WardenClyffeNet</td></tr>
                         <tr><td><code>backup</code></td><td>Backup schedules, targets, and restore operations</td></tr>
                         <tr><td><code>appstore</code></td><td>App store browsing, install, and management</td></tr>
                         <tr><td><code>statuspage</code></td><td>Status page monitors, pages, and incidents</td></tr>
                         <tr><td><code>cluster</code></td><td>Cluster nodes, join, and settings</td></tr>
-                        <tr><td><code>wolfrun</code></td><td>WolfRun container orchestration services</td></tr>
+                        <tr><td><code>wardenclyfferun</code></td><td>WardenClyffeRun container orchestration services</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -315,7 +315,7 @@ curl -X POST -H "X-API-Key: wsk_..." \
                     <thead><tr><th style="width:70px;">Method</th><th style="width:340px;">Endpoint</th><th>Description</th></tr></thead>
                     <tbody>
                         <tr><td><code class="method-get">GET</code></td><td><code>/api/storage/list</code></td><td>List all block devices and their partitions with size, filesystem type, and mount point</td></tr>
-                        <tr><td><code class="method-get">GET</code></td><td><code>/api/storage/mounts</code></td><td>List all configured storage mounts (S3, NFS, SSHFS, WolfDisk, local) with status</td></tr>
+                        <tr><td><code class="method-get">GET</code></td><td><code>/api/storage/mounts</code></td><td>List all configured storage mounts (S3, NFS, SSHFS, WardenClyffeDisk, local) with status</td></tr>
                         <tr><td><code class="method-post">POST</code></td><td><code>/api/storage/mounts</code></td><td>Create a new storage mount configuration (specify type, credentials, mount point)</td></tr>
                         <tr><td><code class="method-put">PUT</code></td><td><code>/api/storage/mounts/{id}</code></td><td>Update an existing storage mount configuration</td></tr>
                         <tr><td><code class="method-delete">DELETE</code></td><td><code>/api/storage/mounts/{id}</code></td><td>Delete a storage mount configuration (unmounts first if currently mounted)</td></tr>
@@ -414,27 +414,27 @@ curl -X POST -H "X-API-Key: wsk_..." -H "Content-Type: application/json" \
   https://server:8553/api/networking/vlans</code></pre>
             </div>
 
-            <!-- WolfNet -->
-            <div class="content-section" id="wolfnet">
-                <h2>WolfNet</h2>
-                <p>WolfNet is the encrypted overlay network that connects cluster nodes. Uses X25519 key exchange with ChaCha20-Poly1305 encryption.</p>
+            <!-- WardenClyffeNet -->
+            <div class="content-section" id="wardenclyffenet">
+                <h2>WardenClyffeNet</h2>
+                <p>WardenClyffeNet is the encrypted overlay network that connects cluster nodes. Uses X25519 key exchange with ChaCha20-Poly1305 encryption.</p>
                 <table class="feature-table" style="width:100%;font-size:0.82rem;">
                     <thead><tr><th style="width:70px;">Method</th><th style="width:340px;">Endpoint</th><th>Description</th></tr></thead>
                     <tbody>
-                        <tr><td><code class="method-get">GET</code></td><td><code>/api/networking/wolfnet</code></td><td>Get WolfNet configuration including local IP, subnet, and peer list</td></tr>
-                        <tr><td><code class="method-get">GET</code></td><td><code>/api/wolfnet/status</code></td><td>WolfNet daemon status: running/stopped, interface state, connected peers, and traffic stats</td></tr>
-                        <tr><td><code class="method-get">GET</code></td><td><code>/api/wolfnet/next-ip</code></td><td>Get the next available IP address in the WolfNet subnet for a new peer</td></tr>
-                        <tr><td><code class="method-post">POST</code></td><td><code>/api/networking/wolfnet/peers</code></td><td>Add a peer to the WolfNet overlay network with its public key and endpoint</td></tr>
-                        <tr><td><code class="method-delete">DELETE</code></td><td><code>/api/networking/wolfnet/peers</code></td><td>Remove a peer from the WolfNet overlay network</td></tr>
+                        <tr><td><code class="method-get">GET</code></td><td><code>/api/networking/wardenclyffenet</code></td><td>Get WardenClyffeNet configuration including local IP, subnet, and peer list</td></tr>
+                        <tr><td><code class="method-get">GET</code></td><td><code>/api/wardenclyffenet/status</code></td><td>WardenClyffeNet daemon status: running/stopped, interface state, connected peers, and traffic stats</td></tr>
+                        <tr><td><code class="method-get">GET</code></td><td><code>/api/wardenclyffenet/next-ip</code></td><td>Get the next available IP address in the WardenClyffeNet subnet for a new peer</td></tr>
+                        <tr><td><code class="method-post">POST</code></td><td><code>/api/networking/wardenclyffenet/peers</code></td><td>Add a peer to the WardenClyffeNet overlay network with its public key and endpoint</td></tr>
+                        <tr><td><code class="method-delete">DELETE</code></td><td><code>/api/networking/wardenclyffenet/peers</code></td><td>Remove a peer from the WardenClyffeNet overlay network</td></tr>
                     </tbody>
                 </table>
-<pre><code># Check WolfNet status
-curl -s -H "X-API-Key: wsk_..." https://server:8553/api/wolfnet/status | jq .
+<pre><code># Check WardenClyffeNet status
+curl -s -H "X-API-Key: wsk_..." https://server:8553/api/wardenclyffenet/status | jq .
 
-# Add a WolfNet peer
+# Add a WardenClyffeNet peer
 curl -X POST -H "X-API-Key: wsk_..." -H "Content-Type: application/json" \
   -d '{"public_key":"base64key...","endpoint":"203.0.113.10:51820","allowed_ip":"10.99.0.5/32"}' \
-  https://server:8553/api/networking/wolfnet/peers</code></pre>
+  https://server:8553/api/networking/wardenclyffenet/peers</code></pre>
             </div>
 
             <!-- WireGuard Bridge -->
@@ -484,7 +484,7 @@ curl -s -H "X-API-Key: wsk_..." https://server:8553/api/backups | jq .
 curl -X POST -H "X-API-Key: wsk_..." -H "Content-Type: application/json" \
   -d '{
     "name": "etc-config-backup",
-    "source_paths": ["/etc/wolfstack", "/etc/nginx"],
+    "source_paths": ["/etc/wardenclyffe", "/etc/nginx"],
     "target_id": "s3-backup-target",
     "retention_days": 30
   }' \
@@ -647,35 +647,35 @@ curl -X POST -H "X-API-Key: wsk_..." \
   https://server:8553/api/appstore/apps/nextcloud/prepare-install | jq .</code></pre>
             </div>
 
-            <!-- WolfRun Orchestration -->
-            <div class="content-section" id="wolfrun">
-                <h2>WolfRun Orchestration</h2>
+            <!-- WardenClyffeRun Orchestration -->
+            <div class="content-section" id="wardenclyfferun">
+                <h2>WardenClyffeRun Orchestration</h2>
                 <p>Manage multi-container services across cluster nodes with automatic scaling, health checks, and rolling updates.</p>
                 <table class="feature-table" style="width:100%;font-size:0.82rem;">
                     <thead><tr><th style="width:70px;">Method</th><th style="width:340px;">Endpoint</th><th>Description</th></tr></thead>
                     <tbody>
-                        <tr><td><code class="method-get">GET</code></td><td><code>/api/wolfrun/services</code></td><td>List all orchestrated services with replica count, status, health, and assigned nodes</td></tr>
-                        <tr><td><code class="method-post">POST</code></td><td><code>/api/wolfrun/services</code></td><td>Create a new orchestrated service with image, replicas, placement, and health check config</td></tr>
-                        <tr><td><code class="method-post">POST</code></td><td><code>/api/wolfrun/services/adopt</code></td><td>Adopt an existing running container as a WolfRun-managed service</td></tr>
-                        <tr><td><code class="method-get">GET</code></td><td><code>/api/wolfrun/services/{id}</code></td><td>Get detailed service information including per-replica status and deployment history</td></tr>
-                        <tr><td><code class="method-delete">DELETE</code></td><td><code>/api/wolfrun/services/{id}</code></td><td>Delete an orchestrated service and stop all its replicas across the cluster</td></tr>
-                        <tr><td><code class="method-post">POST</code></td><td><code>/api/wolfrun/services/{id}/scale</code></td><td>Scale a service to a target replica count across available nodes</td></tr>
-                        <tr><td><code class="method-post">POST</code></td><td><code>/api/wolfrun/services/{id}/action</code></td><td>Perform a service action: restart all replicas, rolling update, or force redeploy</td></tr>
+                        <tr><td><code class="method-get">GET</code></td><td><code>/api/wardenclyfferun/services</code></td><td>List all orchestrated services with replica count, status, health, and assigned nodes</td></tr>
+                        <tr><td><code class="method-post">POST</code></td><td><code>/api/wardenclyfferun/services</code></td><td>Create a new orchestrated service with image, replicas, placement, and health check config</td></tr>
+                        <tr><td><code class="method-post">POST</code></td><td><code>/api/wardenclyfferun/services/adopt</code></td><td>Adopt an existing running container as a WardenClyffeRun-managed service</td></tr>
+                        <tr><td><code class="method-get">GET</code></td><td><code>/api/wardenclyfferun/services/{id}</code></td><td>Get detailed service information including per-replica status and deployment history</td></tr>
+                        <tr><td><code class="method-delete">DELETE</code></td><td><code>/api/wardenclyfferun/services/{id}</code></td><td>Delete an orchestrated service and stop all its replicas across the cluster</td></tr>
+                        <tr><td><code class="method-post">POST</code></td><td><code>/api/wardenclyfferun/services/{id}/scale</code></td><td>Scale a service to a target replica count across available nodes</td></tr>
+                        <tr><td><code class="method-post">POST</code></td><td><code>/api/wardenclyfferun/services/{id}/action</code></td><td>Perform a service action: restart all replicas, rolling update, or force redeploy</td></tr>
                     </tbody>
                 </table>
 <pre><code># List orchestrated services
-curl -s -H "X-API-Key: wsk_..." https://server:8553/api/wolfrun/services | jq .
+curl -s -H "X-API-Key: wsk_..." https://server:8553/api/wardenclyfferun/services | jq .
 
 # Scale a service to 5 replicas
 curl -X POST -H "X-API-Key: wsk_..." -H "Content-Type: application/json" \
   -d '{"replicas":5}' \
-  https://server:8553/api/wolfrun/services/svc_abc123/scale</code></pre>
+  https://server:8553/api/wardenclyfferun/services/svc_abc123/scale</code></pre>
             </div>
 
-            <!-- Kubernetes (WolfKube) -->
+            <!-- Kubernetes (WardenClyffeKube) -->
             <div class="content-section" id="kubernetes">
-                <h2>Kubernetes (WolfKube)</h2>
-                <p>Manage lightweight Kubernetes clusters provisioned by WolfStack. Deploy apps, manage pods, and scale deployments.</p>
+                <h2>Kubernetes (WardenClyffeKube)</h2>
+                <p>Manage lightweight Kubernetes clusters provisioned by WardenClyffe. Deploy apps, manage pods, and scale deployments.</p>
                 <table class="feature-table" style="width:100%;font-size:0.82rem;">
                     <thead><tr><th style="width:70px;">Method</th><th style="width:340px;">Endpoint</th><th>Description</th></tr></thead>
                     <tbody>
@@ -699,28 +699,28 @@ curl -X PATCH -H "X-API-Key: wsk_..." -H "Content-Type: application/json" \
   https://server:8553/api/kubernetes/clusters/k8s_01/deployments/web-app/scale</code></pre>
             </div>
 
-            <!-- WolfFlow Automation -->
-            <div class="content-section" id="wolfflow">
-                <h2>WolfFlow Automation</h2>
+            <!-- WardenClyffeFlow Automation -->
+            <div class="content-section" id="wardenclyffeflow">
+                <h2>WardenClyffeFlow Automation</h2>
                 <p>Visual workflow automation engine. Create workflows with triggers, conditions, and actions to automate server management tasks.</p>
                 <table class="feature-table" style="width:100%;font-size:0.82rem;">
                     <thead><tr><th style="width:70px;">Method</th><th style="width:340px;">Endpoint</th><th>Description</th></tr></thead>
                     <tbody>
-                        <tr><td><code class="method-get">GET</code></td><td><code>/api/wolfflow/workflows</code></td><td>List all workflows with name, trigger type, enabled status, and last run time</td></tr>
-                        <tr><td><code class="method-post">POST</code></td><td><code>/api/wolfflow/workflows</code></td><td>Create a new workflow with nodes (triggers, conditions, actions) and edge connections</td></tr>
-                        <tr><td><code class="method-get">GET</code></td><td><code>/api/wolfflow/workflows/{id}</code></td><td>Get a workflow definition including all nodes, edges, and configuration</td></tr>
-                        <tr><td><code class="method-put">PUT</code></td><td><code>/api/wolfflow/workflows/{id}</code></td><td>Update a workflow definition (replaces all nodes and edges)</td></tr>
-                        <tr><td><code class="method-delete">DELETE</code></td><td><code>/api/wolfflow/workflows/{id}</code></td><td>Delete a workflow and its run history</td></tr>
-                        <tr><td><code class="method-post">POST</code></td><td><code>/api/wolfflow/workflows/{id}/run</code></td><td>Manually trigger a workflow run regardless of its configured trigger</td></tr>
-                        <tr><td><code class="method-get">GET</code></td><td><code>/api/wolfflow/runs</code></td><td>List workflow run history with status (success, failed, running), duration, and output logs</td></tr>
+                        <tr><td><code class="method-get">GET</code></td><td><code>/api/wardenclyffeflow/workflows</code></td><td>List all workflows with name, trigger type, enabled status, and last run time</td></tr>
+                        <tr><td><code class="method-post">POST</code></td><td><code>/api/wardenclyffeflow/workflows</code></td><td>Create a new workflow with nodes (triggers, conditions, actions) and edge connections</td></tr>
+                        <tr><td><code class="method-get">GET</code></td><td><code>/api/wardenclyffeflow/workflows/{id}</code></td><td>Get a workflow definition including all nodes, edges, and configuration</td></tr>
+                        <tr><td><code class="method-put">PUT</code></td><td><code>/api/wardenclyffeflow/workflows/{id}</code></td><td>Update a workflow definition (replaces all nodes and edges)</td></tr>
+                        <tr><td><code class="method-delete">DELETE</code></td><td><code>/api/wardenclyffeflow/workflows/{id}</code></td><td>Delete a workflow and its run history</td></tr>
+                        <tr><td><code class="method-post">POST</code></td><td><code>/api/wardenclyffeflow/workflows/{id}/run</code></td><td>Manually trigger a workflow run regardless of its configured trigger</td></tr>
+                        <tr><td><code class="method-get">GET</code></td><td><code>/api/wardenclyffeflow/runs</code></td><td>List workflow run history with status (success, failed, running), duration, and output logs</td></tr>
                     </tbody>
                 </table>
 <pre><code># List all workflows
-curl -s -H "X-API-Key: wsk_..." https://server:8553/api/wolfflow/workflows | jq .
+curl -s -H "X-API-Key: wsk_..." https://server:8553/api/wardenclyffeflow/workflows | jq .
 
 # Manually trigger a workflow
 curl -X POST -H "X-API-Key: wsk_..." \
-  https://server:8553/api/wolfflow/workflows/wf_abc123/run</code></pre>
+  https://server:8553/api/wardenclyffeflow/workflows/wf_abc123/run</code></pre>
             </div>
 
             <!-- Cron Jobs -->
@@ -819,12 +819,12 @@ curl -X POST -H "X-API-Key: wsk_..." -H "Content-Type: application/json" \
             <!-- Components & Services -->
             <div class="content-section" id="components">
                 <h2>Components &amp; Services</h2>
-                <p>Manage system components (Docker, LXC, WolfNet, etc.) and systemd services directly from the API.</p>
+                <p>Manage system components (Docker, LXC, WardenClyffeNet, etc.) and systemd services directly from the API.</p>
                 <table class="feature-table" style="width:100%;font-size:0.82rem;">
                     <thead><tr><th style="width:70px;">Method</th><th style="width:340px;">Endpoint</th><th>Description</th></tr></thead>
                     <tbody>
-                        <tr><td><code class="method-get">GET</code></td><td><code>/api/components</code></td><td>List all WolfStack components with installed status, version, and service state</td></tr>
-                        <tr><td><code class="method-post">POST</code></td><td><code>/api/components/{name}/install</code></td><td>Install a component (Docker, LXC, WolfNet, Ceph, etc.) on the current node</td></tr>
+                        <tr><td><code class="method-get">GET</code></td><td><code>/api/components</code></td><td>List all WardenClyffe components with installed status, version, and service state</td></tr>
+                        <tr><td><code class="method-post">POST</code></td><td><code>/api/components/{name}/install</code></td><td>Install a component (Docker, LXC, WardenClyffeNet, Ceph, etc.) on the current node</td></tr>
                         <tr><td><code class="method-post">POST</code></td><td><code>/api/services/{name}/action</code></td><td>Perform a systemd service action: start, stop, restart, enable, or disable</td></tr>
                     </tbody>
                 </table>
@@ -843,14 +843,14 @@ curl -X POST -H "X-API-Key: wsk_..." -H "Content-Type: application/json" \
                 <table class="feature-table" style="width:100%;font-size:0.82rem;">
                     <thead><tr><th style="width:70px;">Method</th><th style="width:340px;">Endpoint</th><th>Description</th></tr></thead>
                     <tbody>
-                        <tr><td><code class="method-get">GET</code></td><td><code>/api/config/export</code></td><td>Export the complete WolfStack configuration as a JSON archive for backup or migration</td></tr>
-                        <tr><td><code class="method-post">POST</code></td><td><code>/api/config/import</code></td><td>Import a WolfStack configuration archive to restore settings, mounts, and schedules</td></tr>
-                        <tr><td><code class="method-post">POST</code></td><td><code>/api/upgrade</code></td><td>Upgrade WolfStack to the latest version (downloads and replaces the binary, then restarts)</td></tr>
+                        <tr><td><code class="method-get">GET</code></td><td><code>/api/config/export</code></td><td>Export the complete WardenClyffe configuration as a JSON archive for backup or migration</td></tr>
+                        <tr><td><code class="method-post">POST</code></td><td><code>/api/config/import</code></td><td>Import a WardenClyffe configuration archive to restore settings, mounts, and schedules</td></tr>
+                        <tr><td><code class="method-post">POST</code></td><td><code>/api/upgrade</code></td><td>Upgrade WardenClyffe to the latest version (downloads and replaces the binary, then restarts)</td></tr>
                         <tr><td><code class="method-get">GET</code></td><td><code>/api/issues/scan</code></td><td>Scan for system issues: outdated packages, misconfigured services, security warnings, and resource problems</td></tr>
                     </tbody>
                 </table>
 <pre><code># Export configuration
-curl -s -H "X-API-Key: wsk_..." https://server:8553/api/config/export -o wolfstack-config.json
+curl -s -H "X-API-Key: wsk_..." https://server:8553/api/config/export -o wardenclyffe-config.json
 
 # Scan for issues
 curl -s -H "X-API-Key: wsk_..." https://server:8553/api/issues/scan | jq .</code></pre>
@@ -892,9 +892,9 @@ curl -X POST -H "X-API-Key: wsk_admin_key..." -H "Content-Type: application/json
 curl -s -H "X-API-Key: wsk_..." https://server:8553/api/tokens/events | jq '.[0:5]'</code></pre>
             </div>
 
-            <!-- Nginx (WolfProxy) Configurator -->
+            <!-- Nginx (WardenClyffeProxy) Configurator -->
             <div class="content-section" id="nginx">
-                <h2>Nginx (WolfProxy) Configurator</h2>
+                <h2>Nginx (WardenClyffeProxy) Configurator</h2>
                 <p>Manage Nginx reverse proxy configurations. Create, edit, enable, and disable site configurations with automatic syntax validation.</p>
                 <table class="feature-table" style="width:100%;font-size:0.82rem;">
                     <thead><tr><th style="width:70px;">Method</th><th style="width:340px;">Endpoint</th><th>Description</th></tr></thead>
@@ -960,7 +960,7 @@ curl -X POST -H "X-API-Key: wsk_..." https://server:8553/api/configurator/nginx/
             <!-- Rate Limiting -->
             <div class="content-section" id="ratelimiting">
                 <h2>Rate Limiting</h2>
-                <p>WolfStack applies rate limiting to protect against abuse:</p>
+                <p>WardenClyffe applies rate limiting to protect against abuse:</p>
                 <ul>
                     <li><strong>Login endpoint</strong> &mdash; Maximum 10 attempts per 5 minutes per IP address. Lockouts clear automatically after the window expires.</li>
                     <li><strong>API endpoints</strong> &mdash; No hard rate limit on authenticated API requests. However, resource-intensive operations (backups, migrations, updates) are serialized to prevent overloading the system.</li>
@@ -974,13 +974,13 @@ curl -X POST -H "X-API-Key: wsk_..." https://server:8553/api/configurator/nginx/
                 <h2>Installing an Enterprise License</h2>
                 <p>Enterprise licenses are issued as a signed JSON file. To activate API key management:</p>
                 <ol style="margin:12px 0;padding-left:20px;font-size:0.9rem;line-height:1.8;">
-                    <li>Obtain your license key file from <a href="https://wolf.uk.com">Wolf Software Systems</a></li>
-                    <li>Save it to <code>/etc/wolfstack/license.key</code> on your server</li>
-                    <li>Restart WolfStack: <code>sudo systemctl restart wolfstack</code></li>
+                    <li>Obtain your license key file from <a href="https://wardenclyffe.uk.com">WardenClyffe Software Systems</a></li>
+                    <li>Save it to <code>/etc/wardenclyffe/license.key</code> on your server</li>
+                    <li>Restart WardenClyffe: <code>sudo systemctl restart wardenclyffe</code></li>
                     <li>Go to <strong>Settings &rarr; API Keys</strong> to create your first key</li>
                 </ol>
 <pre><code># Save the license file
-sudo tee /etc/wolfstack/license.key &lt;&lt; 'EOF'
+sudo tee /etc/wardenclyffe/license.key &lt;&lt; 'EOF'
 {
   "payload": "eyJjdXN0b21lci...",
   "signature": "dGhpcyBpcyBh..."
@@ -988,13 +988,13 @@ sudo tee /etc/wolfstack/license.key &lt;&lt; 'EOF'
 EOF
 
 # Restart to activate
-sudo systemctl restart wolfstack
+sudo systemctl restart wardenclyffe
 
 # Verify the license
 curl -s -H "X-API-Key: wsk_..." https://server:8553/api/platform/status | jq .</code></pre>
             </div>
 
-            <div class="page-nav"><a href="wolfstack-security.php" class="prev">&larr; Security</a><a href="enterprise.php" class="next">Enterprise Licensing &rarr;</a></div>
+            <div class="page-nav"><a href="wardenclyffe-security.php" class="prev">&larr; Security</a><a href="enterprise.php" class="next">Enterprise Licensing &rarr;</a></div>
 
             </div><!-- end main content column -->
             </div><!-- end api-grid -->

@@ -1,5 +1,5 @@
 #!/bin/bash
-# WolfScale Run Script
+# WardenClyffeScale Run Script
 # Usage: ./run.sh [mode] [options]
 #   Modes: start, proxy
 #   Options: --bootstrap (for start mode), --listen ADDRESS (for proxy mode)
@@ -7,12 +7,12 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BINARY="$SCRIPT_DIR/target/release/wolfscale"
-CONFIG="$SCRIPT_DIR/wolfscale.toml"
+BINARY="$SCRIPT_DIR/target/release/wardenclyffescale"
+CONFIG="$SCRIPT_DIR/wardenclyffescale.toml"
 
 # Build if binary doesn't exist
 if [ ! -f "$BINARY" ]; then
-    echo "Building WolfScale..."
+    echo "Building WardenClyffeScale..."
     cd "$SCRIPT_DIR"
     cargo build --release
 fi
@@ -29,13 +29,13 @@ MODE="${1:-start}"
 case "$MODE" in
     start)
         shift || true
-        echo "Starting WolfScale node..."
+        echo "Starting WardenClyffeScale node..."
         "$BINARY" --config "$CONFIG" start "$@"
         ;;
     proxy)
         shift || true
         LISTEN="${1:---listen 0.0.0.0:8007}"
-        echo "Starting WolfScale MySQL Proxy..."
+        echo "Starting WardenClyffeScale MySQL Proxy..."
         "$BINARY" --config "$CONFIG" proxy $LISTEN
         ;;
     status)

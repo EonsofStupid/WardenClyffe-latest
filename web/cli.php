@@ -1,6 +1,6 @@
 <?php
-$page_title = '💻 WolfScale CLI Reference — WolfStack Docs';
-$page_desc = 'Command-line interface reference for WolfScale';
+$page_title = '💻 WardenClyffeScale CLI Reference — WardenClyffe Docs';
+$page_desc = 'Command-line interface reference for WardenClyffeScale';
 $active = 'cli.php';
 include 'includes/head.php';
 ?>
@@ -12,21 +12,21 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>CLI Commands</h2>
-                <h3>wolfscale start</h3>
-                <p>Start the WolfScale replication agent.</p>
+                <h3>wardenclyffescale start</h3>
+                <p>Start the WardenClyffeScale replication agent.</p>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-                    <pre><code>wolfscale start</code></pre>
+                    <pre><code>wardenclyffescale start</code></pre>
                 </div>
-                <h3>wolfscale status</h3>
+                <h3>wardenclyffescale status</h3>
                 <p>Show replication status and peer connections.</p>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-                    <pre><code>wolfscale status</code></pre>
+                    <pre><code>wardenclyffescale status</code></pre>
                 </div>
-                <h3>wolfscale peers</h3>
+                <h3>wardenclyffescale peers</h3>
                 <p>List connected peers and their replication lag.</p>
-                <h3>wolfscale failover</h3>
+                <h3>wardenclyffescale failover</h3>
                 <p>Manually trigger a failover to a specific node.</p>
             </div>
 

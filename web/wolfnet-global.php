@@ -1,7 +1,7 @@
 <?php
-$page_title = '🌍 Global View — WolfStack Docs';
-$page_desc = 'Global View is WolfStack\'s fleet dashboard — manage all Docker containers, LXC containers, and VMs across every node in your cluster from one unified interface.';
-$active = 'wolfnet-global.php';
+$page_title = '🌍 Global View — WardenClyffe Docs';
+$page_desc = 'Global View is WardenClyffe\'s fleet dashboard — manage all Docker containers, LXC containers, and VMs across every node in your cluster from one unified interface.';
+$active = 'wardenclyffenet-global.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -12,18 +12,18 @@ include 'includes/head.php';
 
                 <div class="content-section">
                     <h2>Overview</h2>
-                    <p>Global View is WolfStack's fleet management dashboard. It scans all nodes in your cluster and presents every Docker container, LXC container, and VM in a single unified table &mdash; organised by <strong>cluster &rarr; server &rarr; containers &rarr; VMs</strong>. You get full control over every workload without switching between individual node pages.</p>
+                    <p>Global View is WardenClyffe's fleet management dashboard. It scans all nodes in your cluster and presents every Docker container, LXC container, and VM in a single unified table &mdash; organised by <strong>cluster &rarr; server &rarr; containers &rarr; VMs</strong>. You get full control over every workload without switching between individual node pages.</p>
                     <div class="info-box" style="background:rgba(16,185,129,0.08);border-left:4px solid #10b981;padding:12px 16px;border-radius:6px;margin:16px 0;">
-                        <strong>Formerly "Global WolfNet"</strong> &mdash; this view was renamed and expanded in v11.18. It now goes far beyond WolfNet IP scanning to serve as a full fleet management console.
+                        <strong>Formerly "Global WardenClyffeNet"</strong> &mdash; this view was renamed and expanded in v11.18. It now goes far beyond WardenClyffeNet IP scanning to serve as a full fleet management console.
                     </div>
                 </div>
 
                 <div class="content-section">
                     <h2>Accessing Global View</h2>
                     <ol>
-                        <li>Open the WolfStack dashboard on any node</li>
+                        <li>Open the WardenClyffe dashboard on any node</li>
                         <li>In the left sidebar under <strong>Datacenter</strong>, click <strong>Global View</strong></li>
-                        <li>Click <strong>Scan Network</strong> to discover all WolfNet peers and node IPs</li>
+                        <li>Click <strong>Scan Network</strong> to discover all WardenClyffeNet peers and node IPs</li>
                         <li>The <strong>Fleet Containers &amp; VMs</strong> section loads automatically after the scan</li>
                     </ol>
                 </div>
@@ -116,7 +116,7 @@ include 'includes/head.php';
 
                 <div class="content-section">
                     <h2>Cross-Node Operations</h2>
-                    <p>All actions work transparently across remote nodes. WolfStack automatically routes commands through its node proxy system:</p>
+                    <p>All actions work transparently across remote nodes. WardenClyffe automatically routes commands through its node proxy system:</p>
                     <ul>
                         <li><strong>Local node</strong> &mdash; API calls go directly to <code>/api/...</code></li>
                         <li><strong>Remote nodes</strong> &mdash; API calls are proxied through <code>/api/nodes/{id}/proxy/...</code></li>
@@ -125,13 +125,13 @@ include 'includes/head.php';
                 </div>
 
                 <div class="content-section">
-                    <h2>WolfNet IP Scanning</h2>
-                    <p>Global View also scans the WolfNet overlay network across all nodes, giving you a table of:</p>
+                    <h2>WardenClyffeNet IP Scanning</h2>
+                    <p>Global View also scans the WardenClyffeNet overlay network across all nodes, giving you a table of:</p>
                     <ul>
-                        <li>Every WolfNet peer and its assigned IP address</li>
+                        <li>Every WardenClyffeNet peer and its assigned IP address</li>
                         <li>Connection status per peer</li>
                         <li>Cluster membership</li>
-                        <li>Summary stats &mdash; total nodes, WolfNet peers, LXC containers, Docker containers, and VMs</li>
+                        <li>Summary stats &mdash; total nodes, WardenClyffeNet peers, LXC containers, Docker containers, and VMs</li>
                     </ul>
                 </div>
 
@@ -149,14 +149,14 @@ include 'includes/head.php';
                 <div class="content-section">
                     <h2>Requirements</h2>
                     <ul>
-                        <li>WolfStack v11.18 or later</li>
-                        <li>Multi-node features require <a href="wolfstack-clustering.php">clustering</a> to be configured</li>
-                        <li>WolfNet IP scanning requires <a href="wolfnet.php">WolfNet</a> to be installed on your nodes</li>
+                        <li>WardenClyffe v11.18 or later</li>
+                        <li>Multi-node features require <a href="wardenclyffe-clustering.php">clustering</a> to be configured</li>
+                        <li>WardenClyffeNet IP scanning requires <a href="wardenclyffenet.php">WardenClyffeNet</a> to be installed on your nodes</li>
                         <li>Single-node setups work too &mdash; Global View will show all local containers and VMs</li>
                     </ul>
                 </div>
 
-                <div class="page-nav"><a href="wolfnet.php" class="prev">&larr; WolfNet</a><a href="wolfnet-vpn.php"
+                <div class="page-nav"><a href="wardenclyffenet.php" class="prev">&larr; WardenClyffeNet</a><a href="wardenclyffenet-vpn.php"
                         class="next">Remote Access VPN &rarr;</a></div>
             
     </main>

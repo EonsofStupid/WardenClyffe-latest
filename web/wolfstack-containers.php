@@ -1,7 +1,7 @@
 <?php
-$page_title = '📦 Container Management — WolfStack Docs';
+$page_title = '📦 Container Management — WardenClyffe Docs';
 $page_desc = 'Create, manage, clone, and migrate Docker & LXC containers across your fleet';
-$active = 'wolfstack-containers.php';
+$active = 'wardenclyffe-containers.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -12,8 +12,8 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
-                <img src="images/screenshots/lxc.png" alt="WolfStack container management with card view and pie charts" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
-                <p>WolfStack provides comprehensive container management for both <strong>Docker</strong> and <strong>LXC</strong> containers. Create, start, stop, restart, clone, and migrate containers across your entire fleet from a single dashboard.</p>
+                <img src="images/screenshots/lxc.png" alt="WardenClyffe container management with card view and pie charts" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
+                <p>WardenClyffe provides comprehensive container management for both <strong>Docker</strong> and <strong>LXC</strong> containers. Create, start, stop, restart, clone, and migrate containers across your entire fleet from a single dashboard.</p>
                 <h3>Docker Containers</h3>
                 <ul>
                     <li>View all running Docker containers with live CPU, memory, and network stats</li>
@@ -30,20 +30,20 @@ include 'includes/head.php';
                     <li>Clone containers locally or across nodes</li>
                     <li>Migrate containers between servers in one click</li>
                     <li>Edit container configuration directly</li>
-                    <li>Assign WolfNet IPs for cross-node communication</li>
+                    <li>Assign WardenClyffeNet IPs for cross-node communication</li>
                     <li>Set CPU, memory, and disk resource limits</li>
                     <li>Autostart containers on boot</li>
                 </ul>
             </div>
             <div class="content-section">
                 <h2>Creating an LXC Container</h2>
-                <p>Click the <strong>Create Container</strong> button on any node page. Choose a distribution template (Debian, Ubuntu, AlmaLinux, Alpine, etc.), set the container name, and optionally configure resources. WolfStack handles the rest.</p>
+                <p>Click the <strong>Create Container</strong> button on any node page. Choose a distribution template (Debian, Ubuntu, AlmaLinux, Alpine, etc.), set the container name, and optionally configure resources. WardenClyffe handles the rest.</p>
                 <h3>Container Networking</h3>
-                <p>Each container automatically gets a bridge IP on the <code>lxcbr0</code> bridge. When WolfNet is enabled, containers also receive a WolfNet IP (10.10.10.x) for encrypted cross-node communication. The bridge IP matches the WolfNet last octet for easy identification.</p>
+                <p>Each container automatically gets a bridge IP on the <code>lxcbr0</code> bridge. When WardenClyffeNet is enabled, containers also receive a WardenClyffeNet IP (10.10.10.x) for encrypted cross-node communication. The bridge IP matches the WardenClyffeNet last octet for easy identification.</p>
             </div>
             <div class="content-section">
                 <h2>LXC Container Features</h2>
-                <p>WolfStack lets you toggle advanced LXC features from the container's <strong>Settings</strong> page. These are applied to the container configuration and take effect on the next start.</p>
+                <p>WardenClyffe lets you toggle advanced LXC features from the container's <strong>Settings</strong> page. These are applied to the container configuration and take effect on the next start.</p>
                 <table>
                     <thead>
                         <tr><th>Feature</th><th>Description</th><th>Required By</th></tr>
@@ -52,12 +52,12 @@ include 'includes/head.php';
                         <tr>
                             <td><strong>TUN/TAP Device</strong></td>
                             <td>Enables <code>/dev/net/tun</code> inside the container for VPN and tunnel support</td>
-                            <td>WolfDisk, Tailscale, WireGuard, OpenVPN</td>
+                            <td>WardenClyffeDisk, Tailscale, WireGuard, OpenVPN</td>
                         </tr>
                         <tr>
                             <td><strong>FUSE</strong></td>
                             <td>Enables <code>/dev/fuse</code> for user-space filesystems</td>
-                            <td>WolfDisk, AppImage, sshfs, rclone mount</td>
+                            <td>WardenClyffeDisk, AppImage, sshfs, rclone mount</td>
                         </tr>
                         <tr>
                             <td><strong>Nesting</strong></td>
@@ -77,12 +77,12 @@ include 'includes/head.php';
                     </tbody>
                 </table>
                 <div class="info-box" style="border-left: 4px solid #e74c3c; background: rgba(231, 76, 60, 0.1);">
-                    <p>⚠️ <strong>Installing WolfDisk in a container?</strong> You <strong>must</strong> enable both <strong>TUN/TAP Device</strong> and <strong>FUSE</strong> in the container settings before WolfDisk will work. If installing via the App Store, these are enabled automatically. After changing settings, stop and start the container for them to take effect.</p>
+                    <p>⚠️ <strong>Installing WardenClyffeDisk in a container?</strong> You <strong>must</strong> enable both <strong>TUN/TAP Device</strong> and <strong>FUSE</strong> in the container settings before WardenClyffeDisk will work. If installing via the App Store, these are enabled automatically. After changing settings, stop and start the container for them to take effect.</p>
                 </div>
             </div>
             <div class="content-section">
                 <h2>Cloning &amp; Migration</h2>
-                <p><strong>Clone</strong> creates a copy of a container on the same node. <strong>Migrate</strong> moves a container to a different node in the cluster — WolfStack handles the file transfer, IP reassignment, and route configuration automatically.</p>
+                <p><strong>Clone</strong> creates a copy of a container on the same node. <strong>Migrate</strong> moves a container to a different node in the cluster — WardenClyffe handles the file transfer, IP reassignment, and route configuration automatically.</p>
             </div>
 
             <div class="content-section">
@@ -100,10 +100,10 @@ include 'includes/head.php';
                 <h2>Additional Features</h2>
 
                 <h3>Container Cron Jobs</h3>
-                <p>WolfStack lets you manage cron jobs inside individual Docker and LXC containers directly from the dashboard. View, create, edit, and delete crontab entries without needing to shell into the container.</p>
+                <p>WardenClyffe lets you manage cron jobs inside individual Docker and LXC containers directly from the dashboard. View, create, edit, and delete crontab entries without needing to shell into the container.</p>
 
                 <h3>Update Checks</h3>
-                <p>For Docker containers, WolfStack can check whether a newer version of the container&rsquo;s image is available and apply updates from the dashboard.</p>
+                <p>For Docker containers, WardenClyffe can check whether a newer version of the container&rsquo;s image is available and apply updates from the dashboard.</p>
 
                 <h3>Docker Image Management</h3>
                 <ul>
@@ -120,7 +120,7 @@ include 'includes/head.php';
                 </ul>
             </div>
 
-<div class="page-nav"><a href="wolfstack.php" class="prev">&larr; Overview</a><a href="wolfstack-storage.php" class="next">Storage Manager &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffe.php" class="prev">&larr; Overview</a><a href="wardenclyffe-storage.php" class="next">Storage Manager &rarr;</a></div>
         
     </main>
 <?php include 'includes/footer.php'; ?>

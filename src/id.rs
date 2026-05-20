@@ -14,7 +14,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 /// Custom epoch: 2024-01-01 00:00:00 UTC
-const WOLFSCALE_EPOCH: u64 = 1704067200000;
+const WARDENCLYFFESCALE_EPOCH: u64 = 1704067200000;
 
 /// Bit allocation
 #[allow(dead_code)]
@@ -45,9 +45,9 @@ impl SnowflakeId {
         self.0
     }
 
-    /// Extract timestamp from ID (milliseconds since WOLFSCALE_EPOCH)
+    /// Extract timestamp from ID (milliseconds since WARDENCLYFFESCALE_EPOCH)
     pub fn timestamp(&self) -> u64 {
-        (self.0 >> TIMESTAMP_SHIFT) + WOLFSCALE_EPOCH
+        (self.0 >> TIMESTAMP_SHIFT) + WARDENCLYFFESCALE_EPOCH
     }
 
     /// Extract node ID from ID
@@ -164,13 +164,13 @@ impl SnowflakeGenerator {
         ids
     }
 
-    /// Get current time in milliseconds since WOLFSCALE_EPOCH
+    /// Get current time in milliseconds since WARDENCLYFFESCALE_EPOCH
     fn current_time_millis() -> u64 {
         SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .expect("Time went backwards before UNIX epoch")
             .as_millis() as u64
-            - WOLFSCALE_EPOCH
+            - WARDENCLYFFESCALE_EPOCH
     }
 
     /// Parse a node ID from a string (e.g., "node-5" -> 5)
@@ -259,7 +259,7 @@ mod tests {
         let id = gen.generate();
 
         assert_eq!(id.node_id(), 42);
-        assert!(id.timestamp() > WOLFSCALE_EPOCH);
+        assert!(id.timestamp() > WARDENCLYFFESCALE_EPOCH);
     }
 
     #[test]

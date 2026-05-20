@@ -1,17 +1,17 @@
 #!/bin/bash
-# WolfScale Service Installer
-# Installs WolfScale as a systemd service
+# WardenClyffeScale Service Installer
+# Installs WardenClyffeScale as a systemd service
 # Run with sudo: sudo ./install_service.sh [node|lb]
 
 set -e
 
 SERVICE_TYPE="${1:-node}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BINARY="$SCRIPT_DIR/target/release/wolfscale"
-SOURCE_CONFIG="$SCRIPT_DIR/wolfscale.toml"
-INSTALL_DIR="/opt/wolfscale"
-CONFIG="$INSTALL_DIR/wolfscale.toml"
-USER="wolfscale"
+BINARY="$SCRIPT_DIR/target/release/wardenclyffescale"
+SOURCE_CONFIG="$SCRIPT_DIR/wardenclyffescale.toml"
+INSTALL_DIR="/opt/wardenclyffescale"
+CONFIG="$INSTALL_DIR/wardenclyffescale.toml"
+USER="wardenclyffescale"
 
 # Check if running as root
 if [ "$EUID" -ne 0 ]; then
@@ -22,24 +22,24 @@ fi
 # Validate service type
 if [[ "$SERVICE_TYPE" != "node" && "$SERVICE_TYPE" != "lb" ]]; then
     echo "Usage: sudo $0 [node|lb]"
-    echo "  node - Install WolfScale database node (requires MariaDB)"
-    echo "  lb   - Install WolfScale load balancer (no database needed)"
+    echo "  node - Install WardenClyffeScale database node (requires MariaDB)"
+    echo "  lb   - Install WardenClyffeScale load balancer (no database needed)"
     exit 1
 fi
 
 # Check for binary
 if [ ! -f "$BINARY" ]; then
-    echo "ERROR: WolfScale binary not found at $BINARY"
+    echo "ERROR: WardenClyffeScale binary not found at $BINARY"
     echo "Please build first with: cargo build --release"
     exit 1
 fi
 
-echo "Installing WolfScale as systemd service ($SERVICE_TYPE mode)..."
+echo "Installing WardenClyffeScale as systemd service ($SERVICE_TYPE mode)..."
 
 # Stop existing service if running (for upgrades)
-if systemctl is-active --quiet wolfscale 2>/dev/null; then
-    echo "Stopping existing WolfScale service..."
-    systemctl stop wolfscale
+if systemctl is-active --quiet wardenclyffescale 2>/dev/null; then
+    echo "Stopping existing WardenClyffeScale service..."
+    systemctl stop wardenclyffescale
 fi
 
 # Create user if doesn't exist
@@ -50,12 +50,12 @@ fi
 
 # Create install directory
 mkdir -p "$INSTALL_DIR"
-mkdir -p /var/lib/wolfscale
-mkdir -p /var/log/wolfscale
+mkdir -p /var/lib/wardenclyffescale
+mkdir -p /var/log/wardenclyffescale
 
 # Copy binary
-cp "$BINARY" "$INSTALL_DIR/wolfscale"
-chmod +x "$INSTALL_DIR/wolfscale"
+cp "$BINARY" "$INSTALL_DIR/wardenclyffescale"
+chmod +x "$INSTALL_DIR/wardenclyffescale"
 
 # ============ Configuration Wizard ============
 # Different wizards for node vs load balancer mode
@@ -66,7 +66,7 @@ if [ "$SERVICE_TYPE" == "lb" ]; then
     echo "Load Balancer Configuration"
     echo "============================"
     echo ""
-    echo "The load balancer proxies MySQL connections to your WolfScale cluster."
+    echo "The load balancer proxies MySQL connections to your WardenClyffeScale cluster."
     echo "It does NOT require a local MariaDB installation."
     echo ""
     
@@ -84,7 +84,7 @@ if [ "$SERVICE_TYPE" == "lb" ]; then
         EXTRACTED_PEERS=$(grep -E '^\s*peers\s*=' "$CONFIG_TO_READ" | sed 's/.*=\s*\[//' | sed 's/\]//' | tr -d '"' | tr -d ' ' | tr ',' '\n' | grep -v '^$' | tr '\n' ',' | sed 's/,$//')
         
         if [ -n "$EXTRACTED_PEERS" ]; then
-            echo "Detected WolfScale cluster peers from config:"
+            echo "Detected WardenClyffeScale cluster peers from config:"
             echo "  $EXTRACTED_PEERS"
             echo ""
             read -p "Use these peers? (y/n) [y]: " USE_EXTRACTED
@@ -100,8 +100,8 @@ if [ "$SERVICE_TYPE" == "lb" ]; then
     # If no peers extracted or user wants manual entry
     if [ -z "$LB_PEERS" ]; then
         echo ""
-        echo "Enter at least one WolfScale cluster node address."
-        echo "These are the nodes in your WolfScale cluster (port 7654, not MariaDB 3306)."
+        echo "Enter at least one WardenClyffeScale cluster node address."
+        echo "These are the nodes in your WardenClyffeScale cluster (port 7654, not MariaDB 3306)."
         echo "Format: ip:port (one per line, press Enter after each)"
         echo "Example: 10.0.10.115:7654"
         echo "Press Enter on an empty line when done."
@@ -166,8 +166,8 @@ else
         
         # Cluster name (optional, for multi-cluster networks)
         echo ""
-        echo "Cluster name is used to isolate multiple WolfScale clusters on the same network."
-        echo "Leave empty if you only have one WolfScale cluster."
+        echo "Cluster name is used to isolate multiple WardenClyffeScale clusters on the same network."
+        echo "Leave empty if you only have one WardenClyffeScale cluster."
         read -p "Cluster name (optional): " CLUSTER_NAME
         
         # Peer addresses (optional - auto-discovery handles this now)
@@ -193,7 +193,7 @@ else
         echo "Database Configuration"
         echo "======================"
         echo ""
-        echo "WolfScale connects to the local MariaDB server and replicates ALL"
+        echo "WardenClyffeScale connects to the local MariaDB server and replicates ALL"
         echo "operations to other nodes. Enter the connection details below."
         echo "(The database name is just for the connection - all databases are synced)"
         echo ""
@@ -206,8 +206,8 @@ else
         DB_PORT="${DB_PORT:-3306}"
         
         # Database user
-        read -p "Database user [wolfscale]: " DB_USER
-        DB_USER="${DB_USER:-wolfscale}"
+        read -p "Database user [wardenclyffescale]: " DB_USER
+        DB_USER="${DB_USER:-wardenclyffescale}"
         
         # Database password
         read -sp "Database password: " DB_PASS
@@ -223,13 +223,13 @@ else
         
         # Generate config file
         cat > "$CONFIG" <<EOF
-# WolfScale Configuration
+# WardenClyffeScale Configuration
 # Generated by install_service.sh
 
 [node]
 id = "$NODE_ID"
 bind_address = "$BIND_ADDR"
-data_dir = "/var/lib/wolfscale/$NODE_ID"
+data_dir = "/var/lib/wardenclyffescale/$NODE_ID"
 advertise_address = "$ADVERTISE_ADDR"
 
 [database]
@@ -269,15 +269,15 @@ fi
 
 # Set permissions
 chown -R "$USER:$USER" "$INSTALL_DIR"
-chown -R "$USER:$USER" /var/lib/wolfscale
-chown -R "$USER:$USER" /var/log/wolfscale
+chown -R "$USER:$USER" /var/lib/wardenclyffescale
+chown -R "$USER:$USER" /var/log/wardenclyffescale
 
 # Create systemd service based on mode
 if [ "$SERVICE_TYPE" == "lb" ]; then
     # Load Balancer Service
-    SERVICE_NAME="wolfscale-lb"
-    EXEC_START="$INSTALL_DIR/wolfscale load-balancer --peers $LB_PEERS --listen $LB_LISTEN --max-lag $MAX_LAG"
-    DESCRIPTION="WolfScale Load Balancer"
+    SERVICE_NAME="wardenclyffescale-lb"
+    EXEC_START="$INSTALL_DIR/wardenclyffescale load-balancer --peers $LB_PEERS --listen $LB_LISTEN --max-lag $MAX_LAG"
+    DESCRIPTION="WardenClyffeScale Load Balancer"
     AFTER_DEPS="network.target"
     WANTS_LINE=""
 else
@@ -287,9 +287,9 @@ else
         BOOTSTRAP_FLAG="--bootstrap"
     fi
     
-    SERVICE_NAME="wolfscale"
-    EXEC_START="$INSTALL_DIR/wolfscale --config $CONFIG start $BOOTSTRAP_FLAG"
-    DESCRIPTION="WolfScale Distributed Database Manager"
+    SERVICE_NAME="wardenclyffescale"
+    EXEC_START="$INSTALL_DIR/wardenclyffescale --config $CONFIG start $BOOTSTRAP_FLAG"
+    DESCRIPTION="WardenClyffeScale Distributed Database Manager"
     AFTER_DEPS="network.target mariadb.service"
     WANTS_LINE="Wants=mariadb.service"
 fi
@@ -308,23 +308,23 @@ WorkingDirectory=$INSTALL_DIR
 ExecStart=$EXEC_START
 Restart=always
 RestartSec=5
-StandardOutput=append:/var/log/wolfscale/${SERVICE_NAME}.log
-StandardError=append:/var/log/wolfscale/${SERVICE_NAME}.error.log
+StandardOutput=append:/var/log/wardenclyffescale/${SERVICE_NAME}.log
+StandardError=append:/var/log/wardenclyffescale/${SERVICE_NAME}.error.log
 
 # Security
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/var/lib/wolfscale /var/log/wolfscale
+ReadWritePaths=/var/lib/wardenclyffescale /var/log/wardenclyffescale
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
 # Install logrotate configuration
-LOGROTATE_SRC="$SCRIPT_DIR/wolfscale.logrotate"
+LOGROTATE_SRC="$SCRIPT_DIR/wardenclyffescale.logrotate"
 if [ -f "$LOGROTATE_SRC" ]; then
-    cp "$LOGROTATE_SRC" /etc/logrotate.d/wolfscale
+    cp "$LOGROTATE_SRC" /etc/logrotate.d/wardenclyffescale
     echo "Installed log rotation configuration"
 fi
 
@@ -343,12 +343,12 @@ sleep 2
 if systemctl is-active --quiet "$SERVICE_NAME"; then
     echo ""
     echo "=============================================="
-    echo "WolfScale installed and running!"
+    echo "WardenClyffeScale installed and running!"
     echo "=============================================="
 else
     echo ""
     echo "=============================================="
-    echo "WolfScale installed (service may need attention)"
+    echo "WardenClyffeScale installed (service may need attention)"
     echo "=============================================="
     echo ""
     echo "Check logs: sudo journalctl -u $SERVICE_NAME -n 50"
@@ -356,8 +356,8 @@ fi
 
 echo ""
 echo "Configuration: $CONFIG"
-echo "Data directory: /var/lib/wolfscale"
-echo "Logs: /var/log/wolfscale/"
+echo "Data directory: /var/lib/wardenclyffescale"
+echo "Logs: /var/log/wardenclyffescale/"
 echo ""
 echo "Commands:"
 echo "  sudo systemctl status $SERVICE_NAME    # Check status"

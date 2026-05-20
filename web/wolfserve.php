@@ -1,7 +1,7 @@
 <?php
-$page_title = '🌍 WolfServe — WolfStack Docs';
+$page_title = '🌍 WardenClyffeServe — WardenClyffe Docs';
 $page_desc = 'Apache2-compatible web server with PHP FastCGI and Rust FFI bridge';
-$active = 'wolfserve.php';
+$active = 'wardenclyffeserve.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -12,7 +12,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
-                <p>WolfServe is an Apache2-compatible web server that serves PHP via FastCGI. It reads your existing Apache vhost configs directly, making migration seamless.</p>
+                <p>WardenClyffeServe is an Apache2-compatible web server that serves PHP via FastCGI. It reads your existing Apache vhost configs directly, making migration seamless.</p>
                 <h3>Features</h3>
                 <ul>
                     <li><strong>Drop-in Apache2 replacement</strong> &mdash; Reads vhost configs</li>
@@ -28,12 +28,12 @@ include 'includes/head.php';
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
                     <pre><code># Stop Apache2 first
 sudo systemctl stop apache2
-# Install and start WolfServe
-curl -sSL https://raw.githubusercontent.com/wolfsoftwaresystemsltd/WolfScale/master/wolfserve/install.sh | sudo bash</code></pre>
+# Install and start WardenClyffeServe
+curl -sSL https://raw.githubusercontent.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale/master/wardenclyffeserve/install.sh | sudo bash</code></pre>
                 </div>
             </div>
 
-<div class="page-nav"><a href="wolfproxy.php" class="prev">&larr; WolfProxy</a><a href="about.php" class="next">About &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffeproxy.php" class="prev">&larr; WardenClyffeProxy</a><a href="about.php" class="next">About &rarr;</a></div>
         
     </main>
 <?php include 'includes/footer.php'; ?>

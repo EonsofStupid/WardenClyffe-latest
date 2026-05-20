@@ -1,7 +1,7 @@
 <?php
-$page_title = '🔔 Alerting &amp; Notifications — WolfStack Docs';
+$page_title = '🔔 Alerting &amp; Notifications — WardenClyffe Docs';
 $page_desc = 'Discord, Slack, Telegram, and email notifications for infrastructure events';
-$active = 'wolfstack-alerting.php';
+$active = 'wardenclyffe-alerting.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -12,8 +12,8 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
-                <img src="images/screenshots/issues.png" alt="WolfStack alerting and issue detection" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
-                <p>WolfStack sends alerts when resource thresholds are exceeded or critical events occur. Configure alert rules and notification channels from the Settings page.</p>
+                <img src="images/screenshots/issues.png" alt="WardenClyffe alerting and issue detection" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
+                <p>WardenClyffe sends alerts when resource thresholds are exceeded or critical events occur. Configure alert rules and notification channels from the Settings page.</p>
 
                 <h3>Notification Channels</h3>
                 <table>
@@ -81,7 +81,7 @@ include 'includes/head.php';
                 <p>Go to <strong>Settings &rarr; Alerting</strong> to configure webhook URLs, email settings, and thresholds.</p>
             </div>
 
-<div class="page-nav"><a href="wolfstack-issues.php" class="prev">&larr; Issues Scanner</a><a href="wolfstack-statuspage.php" class="next">Status Pages &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffe-issues.php" class="prev">&larr; Issues Scanner</a><a href="wardenclyffe-statuspage.php" class="next">Status Pages &rarr;</a></div>
         
     </main>
 <?php include 'includes/footer.php'; ?>

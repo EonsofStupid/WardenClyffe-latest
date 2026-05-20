@@ -1,6 +1,6 @@
 <?php
-$page_title = '❤️ Support Us — WolfStack Docs';
-$page_desc = 'Help keep WolfStack free and open-source by supporting development';
+$page_title = '❤️ Support Us — WardenClyffe Docs';
+$page_desc = 'Help keep WardenClyffe free and open-source by supporting development';
 $active = 'support.php';
 include 'includes/head.php';
 ?>
@@ -11,8 +11,8 @@ include 'includes/head.php';
 
 
                 <div class="content-section">
-                    <h2>Support WolfStack Development</h2>
-                    <p>WolfStack is free and open-source software built by a small team. Your support helps us dedicate
+                    <h2>Support WardenClyffe Development</h2>
+                    <p>WardenClyffe is free and open-source software built by a small team. Your support helps us dedicate
                         more time to development, fix bugs faster, and add new features.</p>
                     <h3>Patreon</h3>
                     <p>The best way to support us is through Patreon. Patrons get early access to new features and
@@ -30,16 +30,16 @@ include 'includes/head.php';
                     </p>
                     <h3>Other Ways to Help</h3>
                     <ul>
-                        <li>⭐ <a href="https://github.com/wolfsoftwaresystemsltd/WolfScale" target="_blank">Star us on
+                        <li>⭐ <a href="https://github.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale" target="_blank">Star us on
                                 GitHub</a></li>
                         <li>💬 <a href="https://discord.gg/q9qMjHjUQY" target="_blank">Join our Discord community</a>
                         </li>
-                        <li>🔥 <a href="https://www.reddit.com/r/WolfStack/" target="_blank">Discuss on r/WolfStack</a>
+                        <li>🔥 <a href="https://www.reddit.com/r/WardenClyffe/" target="_blank">Discuss on r/WardenClyffe</a>
                         </li>
-                        <li>▶ <a href="https://www.youtube.com/@wolfsoftwaresystems" target="_blank">Subscribe on
+                        <li>▶ <a href="https://www.youtube.com/@wardenclyffesoftwaresystems" target="_blank">Subscribe on
                                 YouTube</a></li>
-                        <li>📣 Spread the word &mdash; tell others about WolfStack!</li>
-                        <li>🐛 <a href="https://github.com/wolfsoftwaresystemsltd/WolfScale/issues"
+                        <li>📣 Spread the word &mdash; tell others about WardenClyffe!</li>
+                        <li>🐛 <a href="https://github.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale/issues"
                                 target="_blank">Report bugs</a></li>
                     </ul>
                     <h3>🏢 Enterprise Licensing</h3>

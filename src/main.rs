@@ -1,4 +1,4 @@
-//! WolfScale - Distributed MariaDB Synchronization Manager
+//! WardenClyffeScale - Distributed MariaDB Synchronization Manager
 //!
 //! A high-performance Rust application that keeps multiple MariaDB
 //! databases in sync using a Write-Ahead Log (WAL).
@@ -11,23 +11,23 @@ use clap::{Parser, Subcommand};
 use tokio::sync::RwLock;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
-use wolfscale::config::WolfScaleConfig;
-use wolfscale::wal::{WalWriter, WalReader};
-use wolfscale::state::{StateTracker, ClusterMembership, ElectionConfig};
-use wolfscale::executor::MariaDbExecutor;
-use wolfscale::api::HttpServer;
-use wolfscale::network::{NetworkServer, NetworkClient, Discovery};
-use wolfscale::replication::{LeaderNode, FollowerNode, ReplicationConfig};
-use wolfscale::proxy::{ProxyServer, ProxyConfig};
-use wolfscale::error::Result;
+use wardenclyffescale::config::WardenClyffeScaleConfig;
+use wardenclyffescale::wal::{WalWriter, WalReader};
+use wardenclyffescale::state::{StateTracker, ClusterMembership, ElectionConfig};
+use wardenclyffescale::executor::MariaDbExecutor;
+use wardenclyffescale::api::HttpServer;
+use wardenclyffescale::network::{NetworkServer, NetworkClient, Discovery};
+use wardenclyffescale::replication::{LeaderNode, FollowerNode, ReplicationConfig};
+use wardenclyffescale::proxy::{ProxyServer, ProxyConfig};
+use wardenclyffescale::error::Result;
 
-/// WolfScale - Distributed MariaDB Synchronization Manager
+/// WardenClyffeScale - Distributed MariaDB Synchronization Manager
 #[derive(Parser)]
-#[command(name = "wolfscale")]
+#[command(name = "wardenclyffescale")]
 #[command(author, version, about, long_about = None)]
 struct Cli {
     /// Path to configuration file
-    #[arg(short, long, default_value = "wolfscale.toml")]
+    #[arg(short, long, default_value = "wardenclyffescale.toml")]
     config: PathBuf,
 
     /// Log level (trace, debug, info, warn, error)
@@ -40,7 +40,7 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Start the WolfScale node
+    /// Start the WardenClyffeScale node
     Start {
         /// Force start as leader (for initial cluster bootstrap)
         #[arg(long)]
@@ -70,7 +70,7 @@ enum Commands {
     /// Initialize a new configuration file
     Init {
         /// Output path for configuration file
-        #[arg(short, long, default_value = "wolfscale.toml")]
+        #[arg(short, long, default_value = "wardenclyffescale.toml")]
         output: PathBuf,
         
         /// Node ID
@@ -156,7 +156,7 @@ fn init_logging(level: &str) {
         .init();
 }
 
-/// Start the WolfScale node
+/// Start the WardenClyffeScale node
 async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
     // Print ASCII art banner
     println!(r#"
@@ -170,13 +170,13 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
   ░   ░  ░ ░ ░ ▒    ░ ░    ░ ░   ░  ░  ░  ░ ░   ░   ░   ▒     ░ ░      ░   
     ░        ░ ░      ░  ░             ░        ░       ░  ░    ░  ░   ░  ░
                                                                            
-        (C) Wolf Software Systems Ltd -- https://wolf.uk.com
+        (C) WardenClyffe Software Systems Ltd -- https://wardenclyffe.uk.com
 "#);
 
-    tracing::info!("Starting WolfScale node...");
+    tracing::info!("Starting WardenClyffeScale node...");
 
     // Load configuration
-    let config = match WolfScaleConfig::from_file(&config_path) {
+    let config = match WardenClyffeScaleConfig::from_file(&config_path) {
         Ok(c) => c,
         Err(e) => {
             tracing::error!("Failed to load configuration from {:?}: {}", config_path, e);
@@ -184,7 +184,7 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
             return Err(e);
         }
     };
-    tracing::info!("WolfScale v{} - Node: {}", env!("CARGO_PKG_VERSION"), config.node.id);
+    tracing::info!("WardenClyffeScale v{} - Node: {}", env!("CARGO_PKG_VERSION"), config.node.id);
 
     // Ensure directories exist
     if let Err(e) = std::fs::create_dir_all(config.data_dir()) {
@@ -202,8 +202,8 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
 
     // Auto-tune performance settings based on hardware
     let tuned = if config.performance.auto_tune {
-        let t = wolfscale::tuning::auto_tune();
-        tracing::info!("Auto-tuning enabled:\n{}", wolfscale::tuning::tuning_summary(&t));
+        let t = wardenclyffescale::tuning::auto_tune();
+        tracing::info!("Auto-tuning enabled:\n{}", wardenclyffescale::tuning::tuning_summary(&t));
         Some(t)
     } else {
         tracing::info!("Auto-tuning disabled, using default settings");
@@ -333,7 +333,7 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
 
     // Initialize network - separate channels for incoming and outgoing messages
     // Outgoing: used by leader to queue messages to send to peers
-    let (outgoing_tx, mut outgoing_rx) = tokio::sync::mpsc::channel::<(String, wolfscale::replication::Message)>(10000);
+    let (outgoing_tx, mut outgoing_rx) = tokio::sync::mpsc::channel::<(String, wardenclyffescale::replication::Message)>(10000);
     // Incoming: used by network server to receive messages from peers
     let (incoming_tx, mut incoming_rx) = tokio::sync::mpsc::channel(10000);
     // Shared heartbeat timestamp: updated by incoming loop, read by follower to reset election timer
@@ -384,7 +384,7 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
     // Using channel to pass entries - follower loop processes them and sends ACK
     // IMPORTANT: Small buffer (10) to prevent memory exhaustion with large batches.
     // Blocking send provides back-pressure when follower can't keep up.
-    let (entry_tx, entry_rx) = tokio::sync::mpsc::channel::<wolfscale::replication::ReplicationBatch>(10);
+    let (entry_tx, entry_rx) = tokio::sync::mpsc::channel::<wardenclyffescale::replication::ReplicationBatch>(10);
     let shared_entry_rx = Arc::new(tokio::sync::Mutex::new(Some(entry_rx)));
 
     // Start INCOMING message processing loop - handles messages from peers
@@ -404,7 +404,7 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
             tracing::trace!("RECEIVED {} from {}", message.type_name(), peer_addr);
             
             match message {
-                wolfscale::replication::Message::Heartbeat { leader_id, commit_lsn, term, members } => {
+                wardenclyffescale::replication::Message::Heartbeat { leader_id, commit_lsn, term, members } => {
                     // Sync cluster membership from leader - this is how followers learn about each other
                     for (member_id, member_addr) in members {
                         if member_id == our_node_id {
@@ -445,7 +445,7 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
                     
                     // Send HeartbeatResponse back to the leader with our actual applied LSN
                     let last_applied = incoming_cluster.get_self().await.last_applied_lsn;
-                    let response = wolfscale::replication::Message::HeartbeatResponse {
+                    let response = wardenclyffescale::replication::Message::HeartbeatResponse {
                         node_id: our_node_id.clone(),
                         term,
                         last_applied_lsn: last_applied,
@@ -464,7 +464,7 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
                         });
                     let _ = response_tx.send((leader_addr, response)).await;
                 }
-                wolfscale::replication::Message::AppendEntries { term, leader_id, prev_lsn: _, prev_term: _, entries, leader_commit_lsn: _ } => {
+                wardenclyffescale::replication::Message::AppendEntries { term, leader_id, prev_lsn: _, prev_term: _, entries, leader_commit_lsn: _ } => {
                     tracing::debug!("RECEIVED {} entries from leader {}", entries.len(), leader_id);
                     let _ = incoming_cluster.record_heartbeat(&leader_id, 0).await;
                     
@@ -495,7 +495,7 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
                     if !entries.is_empty() {
                         let first_lsn = entries.first().map(|e| e.header.lsn).unwrap_or(0);
                         let last_lsn = entries.last().map(|e| e.header.lsn).unwrap_or(0);
-                        let batch = wolfscale::replication::ReplicationBatch {
+                        let batch = wardenclyffescale::replication::ReplicationBatch {
                             entries,
                             term,
                             leader_id: leader_id.clone(),
@@ -519,7 +519,7 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
                     }
                     // NOTE: No ACK here - FollowerNode sends ACK after processing
                 }
-                wolfscale::replication::Message::HeartbeatResponse { node_id, success, last_applied_lsn, .. } => {
+                wardenclyffescale::replication::Message::HeartbeatResponse { node_id, success, last_applied_lsn, .. } => {
                     // Leader receives response from follower - mark follower as active
                     if success {
                         // Register the follower if we don't know it yet
@@ -545,7 +545,7 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
                         let _ = incoming_cluster.record_heartbeat(&node_id, last_applied_lsn).await;
                     }
                 }
-                wolfscale::replication::Message::AppendEntriesResponse { node_id, success, match_lsn, .. } => {
+                wardenclyffescale::replication::Message::AppendEntriesResponse { node_id, success, match_lsn, .. } => {
                     // Leader receives ACK from follower - update their progress
                     if success {
                         // Register the follower if we don't know it yet (same as HeartbeatResponse)
@@ -580,10 +580,10 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
                         }
                     }
                 }
-                wolfscale::replication::Message::RequestVote { candidate_id, .. } => {
+                wardenclyffescale::replication::Message::RequestVote { candidate_id, .. } => {
                     tracing::info!("Vote request from {}", candidate_id);
                 }
-                wolfscale::replication::Message::PeerHeartbeat { node_id, members, .. } => {
+                wardenclyffescale::replication::Message::PeerHeartbeat { node_id, members, .. } => {
                     // Peer heartbeat - record that this peer is alive
                     tracing::trace!("Peer heartbeat from {}", node_id);
                     
@@ -737,7 +737,7 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
     
     // Start binlog client if configured (captures from MariaDB binlog to WAL)
     if config.replication.mode == "binlog" {
-        use wolfscale::binlog::BinlogClient;
+        use wardenclyffescale::binlog::BinlogClient;
         
         let binlog_wal = Arc::new(wal_writer.clone());
         let binlog_db_config = config.database.clone();
@@ -768,7 +768,7 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
         
         // Create a write handler that appends to WAL
         let write_wal = wal_writer.clone();
-        let write_handler: wolfscale::api::WriteHandler = Arc::new(move |entry| {
+        let write_handler: wardenclyffescale::api::WriteHandler = Arc::new(move |entry| {
             let wal = write_wal.clone();
             Box::pin(async move {
                 wal.append(entry).await
@@ -903,7 +903,7 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
                 
                 // Send peer heartbeat to all known peers
                 for peer in &peers {
-                    let msg = wolfscale::replication::Message::PeerHeartbeat {
+                    let msg = wardenclyffescale::replication::Message::PeerHeartbeat {
                         node_id: peer_node_id.clone(),
                         term: 0,  // Followers don't track term
                         members: members.clone(),
@@ -1012,7 +1012,7 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
         network_server_handle.abort();
     }
 
-    tracing::info!("WolfScale shutdown complete");
+    tracing::info!("WardenClyffeScale shutdown complete");
     Ok(())
 }
 
@@ -1020,7 +1020,7 @@ async fn run_start(config_path: PathBuf, bootstrap: bool) -> Result<()> {
 async fn run_join(config_path: PathBuf, leader: String) -> Result<()> {
     tracing::info!("Joining cluster via leader: {}", leader);
 
-    let config = WolfScaleConfig::from_file(&config_path)?;
+    let config = WardenClyffeScaleConfig::from_file(&config_path)?;
     
     // Connect to leader
     let client = NetworkClient::new(
@@ -1028,7 +1028,7 @@ async fn run_join(config_path: PathBuf, leader: String) -> Result<()> {
         Duration::from_secs(30),
     );
 
-    let join_msg = wolfscale::replication::Message::JoinRequest {
+    let join_msg = wardenclyffescale::replication::Message::JoinRequest {
         node_id: config.node.id.clone(),
         address: config.advertise_address().to_string(),
     };
@@ -1036,21 +1036,21 @@ async fn run_join(config_path: PathBuf, leader: String) -> Result<()> {
     match client.send(&leader, join_msg).await {
         Ok(response) => {
             match response {
-                wolfscale::replication::Message::JoinResponse { success, message, .. } => {
+                wardenclyffescale::replication::Message::JoinResponse { success, message, .. } => {
                     if success {
                         tracing::info!("Successfully joined cluster");
                         // Now start normally
                         run_start(config_path, false).await
                     } else {
                         tracing::error!("Join failed: {:?}", message);
-                        Err(wolfscale::error::Error::Replication(
+                        Err(wardenclyffescale::error::Error::Replication(
                             message.unwrap_or_else(|| "Join failed".to_string())
                         ))
                     }
                 }
                 _ => {
                     tracing::error!("Unexpected response from leader");
-                    Err(wolfscale::error::Error::Replication("Unexpected response".into()))
+                    Err(wardenclyffescale::error::Error::Replication("Unexpected response".into()))
                 }
             }
         }
@@ -1068,13 +1068,13 @@ async fn run_status(address: String) -> Result<()> {
     match reqwest::get(&url).await {
         Ok(response) => {
             let status: serde_json::Value = response.json().await
-                .map_err(|e| wolfscale::error::Error::Network(e.to_string()))?;
+                .map_err(|e| wardenclyffescale::error::Error::Network(e.to_string()))?;
             println!("{}", serde_json::to_string_pretty(&status).unwrap());
             Ok(())
         }
         Err(e) => {
             eprintln!("Failed to get status: {}", e);
-            Err(wolfscale::error::Error::Network(e.to_string()))
+            Err(wardenclyffescale::error::Error::Network(e.to_string()))
         }
     }
 }
@@ -1086,33 +1086,33 @@ async fn run_sync(address: String) -> Result<()> {
     match reqwest::get(&url).await {
         Ok(response) => {
             let cluster: serde_json::Value = response.json().await
-                .map_err(|e| wolfscale::error::Error::Network(e.to_string()))?;
+                .map_err(|e| wardenclyffescale::error::Error::Network(e.to_string()))?;
             println!("Cluster Info:");
             println!("{}", serde_json::to_string_pretty(&cluster).unwrap());
             Ok(())
         }
         Err(e) => {
             eprintln!("Failed to get cluster info: {}", e);
-            Err(wolfscale::error::Error::Network(e.to_string()))
+            Err(wardenclyffescale::error::Error::Network(e.to_string()))
         }
     }
 }
 
 /// Initialize configuration file
 fn run_init(output: PathBuf, node_id: String) -> Result<()> {
-    let config_content = format!(r#"# WolfScale Configuration
+    let config_content = format!(r#"# WardenClyffeScale Configuration
 # Generated configuration file
 
 [node]
 id = "{node_id}"
 bind_address = "0.0.0.0:7654"
-data_dir = "/var/lib/wolfscale/{node_id}"
+data_dir = "/var/lib/wardenclyffescale/{node_id}"
 # advertise_address = "my-public-ip:7654"
 
 [database]
 host = "localhost"
 port = 3306
-user = "wolfscale"
+user = "wardenclyffescale"
 password = "changeme"
 database = "myapp"
 pool_size = 10
@@ -1141,7 +1141,7 @@ cors_enabled = false
 [logging]
 level = "info"
 format = "pretty"
-# file = "/var/log/wolfscale/wolfscale.log"
+# file = "/var/log/wardenclyffescale/wardenclyffescale.log"
 
 [proxy]
 enabled = true
@@ -1151,14 +1151,14 @@ bind_address = "0.0.0.0:8007"
     std::fs::write(&output, config_content)?;
     println!("Configuration file created: {}", output.display());
     println!("\nEdit the file to configure your database and cluster settings.");
-    println!("Then start with: wolfscale start --config {}", output.display());
+    println!("Then start with: wardenclyffescale start --config {}", output.display());
     
     Ok(())
 }
 
 /// Validate configuration
 fn run_validate(config_path: PathBuf) -> Result<()> {
-    match WolfScaleConfig::from_file(&config_path) {
+    match WardenClyffeScaleConfig::from_file(&config_path) {
         Ok(config) => {
             println!("✓ Configuration is valid");
             println!("  Node ID: {}", config.node.id);
@@ -1181,9 +1181,9 @@ fn run_validate(config_path: PathBuf) -> Result<()> {
 
 /// Show node information
 fn run_info(config_path: PathBuf) -> Result<()> {
-    let config = WolfScaleConfig::from_file(&config_path)?;
+    let config = WardenClyffeScaleConfig::from_file(&config_path)?;
     
-    println!("WolfScale Node Information");
+    println!("WardenClyffeScale Node Information");
     println!("==========================");
     println!();
     println!("Node ID:          {}", config.node.id);
@@ -1213,9 +1213,9 @@ fn run_info(config_path: PathBuf) -> Result<()> {
 
 /// Run the MySQL protocol proxy
 async fn run_proxy(config_path: PathBuf, listen_address: String) -> Result<()> {
-    let config = WolfScaleConfig::from_file(&config_path)?;
+    let config = WardenClyffeScaleConfig::from_file(&config_path)?;
     
-    tracing::info!("Starting WolfScale MySQL Proxy");
+    tracing::info!("Starting WardenClyffeScale MySQL Proxy");
     tracing::info!("Node ID: {}", config.node.id);
     
     // Create cluster membership (we need it to find the leader)
@@ -1242,7 +1242,7 @@ async fn run_proxy(config_path: PathBuf, listen_address: String) -> Result<()> {
     
     let proxy = ProxyServer::new(proxy_config, cluster);
     
-    println!("WolfScale MySQL Proxy");
+    println!("WardenClyffeScale MySQL Proxy");
     println!("====================");
     println!();
     println!("MySQL clients can connect to this proxy as if it were a MariaDB server.");
@@ -1266,14 +1266,14 @@ async fn run_proxy(config_path: PathBuf, listen_address: String) -> Result<()> {
 
 /// Run as a load balancer (no local database)
 async fn run_load_balancer(mut peers: Vec<String>, listen_address: String, cluster_name: Option<String>) -> Result<()> {
-    use wolfscale::state::{ClusterMembership, NodeRole, NodeStatus};
-    use wolfscale::network::discovery;
+    use wardenclyffescale::state::{ClusterMembership, NodeRole, NodeStatus};
+    use wardenclyffescale::network::discovery;
     
     // Generate a unique LB node ID
     let lb_id = format!("lb-{}", &uuid::Uuid::new_v4().to_string()[..8]);
     
     println!();
-    println!("  WolfScale Load Balancer Mode");
+    println!("  WardenClyffeScale Load Balancer Mode");
     println!("  {}", "─".repeat(50));
     println!();
     println!("  Node ID:     {}", lb_id);
@@ -1297,10 +1297,10 @@ async fn run_load_balancer(mut peers: Vec<String>, listen_address: String, clust
             Ok(_) => {
                 println!();
                 println!("WARNING: No nodes discovered via UDP broadcast.");
-                println!("         Make sure WolfScale nodes are running on the same network.");
+                println!("         Make sure WardenClyffeScale nodes are running on the same network.");
                 println!("         You can also specify peers manually with --peers");
                 println!();
-                return Err(wolfscale::error::Error::Config(
+                return Err(wardenclyffescale::error::Error::Config(
                     "No cluster nodes found. Use --peers to specify manually.".into()
                 ));
             }
@@ -1309,7 +1309,7 @@ async fn run_load_balancer(mut peers: Vec<String>, listen_address: String, clust
                 println!("WARNING: Auto-discovery failed: {}", e);
                 println!("         Specify peers manually with --peers");
                 println!();
-                return Err(wolfscale::error::Error::Config(
+                return Err(wardenclyffescale::error::Error::Config(
                     format!("Auto-discovery failed: {}. Use --peers to specify manually.", e)
                 ));
             }
@@ -1337,7 +1337,7 @@ async fn run_load_balancer(mut peers: Vec<String>, listen_address: String, clust
     let http_client = reqwest::Client::builder()
         .timeout(Duration::from_secs(5))
         .build()
-        .map_err(|e| wolfscale::error::Error::Network(e.to_string()))?;
+        .map_err(|e| wardenclyffescale::error::Error::Network(e.to_string()))?;
     
     let mut leader_address: Option<String> = None;
     let mut discovered_nodes = Vec::new();
@@ -1459,9 +1459,9 @@ async fn run_load_balancer(mut peers: Vec<String>, listen_address: String, clust
                                     let _ = refresh_cluster.add_peer(node_id.clone(), address).await;
                                     
                                     let node_role = if role == "Leader" { 
-                                        wolfscale::state::NodeRole::Leader 
+                                        wardenclyffescale::state::NodeRole::Leader 
                                     } else { 
-                                        wolfscale::state::NodeRole::Follower 
+                                        wardenclyffescale::state::NodeRole::Follower 
                                     };
                                     
                                     let _ = refresh_cluster.update_node(&node_id, |n| {
@@ -1530,7 +1530,7 @@ async fn run_load_balancer(mut peers: Vec<String>, listen_address: String, clust
                         let leader = cluster.current_leader().await;
                         let all_nodes = cluster.all_nodes().await;
                         let active_nodes: Vec<_> = all_nodes.iter()
-                            .filter(|n| n.status == wolfscale::state::NodeStatus::Active && !n.id.starts_with("lb-"))
+                            .filter(|n| n.status == wardenclyffescale::state::NodeStatus::Active && !n.id.starts_with("lb-"))
                             .collect();
                         let read_nodes: Vec<String> = active_nodes.iter()
                             .map(|n| format!("{} ({})", n.id, n.address))
@@ -1567,16 +1567,16 @@ async fn run_load_balancer(mut peers: Vec<String>, listen_address: String, clust
                             .collect();
                         
                         let active_count = nodes.iter()
-                            .filter(|n| n.status == wolfscale::state::NodeStatus::Active)
+                            .filter(|n| n.status == wardenclyffescale::state::NodeStatus::Active)
                             .count();
                         
                         // Build summary
-                        let summary = wolfscale::state::ClusterSummary {
+                        let summary = wardenclyffescale::state::ClusterSummary {
                             total_nodes: nodes.len(),
                             active_nodes: active_count,
-                            syncing_nodes: nodes.iter().filter(|n| n.status == wolfscale::state::NodeStatus::Syncing).count(),
-                            lagging_nodes: nodes.iter().filter(|n| n.status == wolfscale::state::NodeStatus::Lagging).count(),
-                            dropped_nodes: nodes.iter().filter(|n| n.status == wolfscale::state::NodeStatus::Dropped).count(),
+                            syncing_nodes: nodes.iter().filter(|n| n.status == wardenclyffescale::state::NodeStatus::Syncing).count(),
+                            lagging_nodes: nodes.iter().filter(|n| n.status == wardenclyffescale::state::NodeStatus::Lagging).count(),
+                            dropped_nodes: nodes.iter().filter(|n| n.status == wardenclyffescale::state::NodeStatus::Dropped).count(),
                             leader_id: leader.map(|l| l.id),
                         };
                         
@@ -1600,7 +1600,7 @@ async fn run_load_balancer(mut peers: Vec<String>, listen_address: String, clust
     println!();
     
     // Simple TCP proxy - forward all traffic to leader's MySQL port
-    // This preserves session state and lets the WolfScale node handle replication
+    // This preserves session state and lets the WardenClyffeScale node handle replication
     let listener = tokio::net::TcpListener::bind(&listen_address).await?;
     tracing::info!("Load balancer listening on {}", listen_address);
     

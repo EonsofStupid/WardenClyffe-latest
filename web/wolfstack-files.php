@@ -1,7 +1,7 @@
 <?php
-$page_title = '📂 File Manager — WolfStack Docs';
+$page_title = '📂 File Manager — WardenClyffe Docs';
 $page_desc = 'Browse, edit, upload, and download files on any node via the web UI';
-$active = 'wolfstack-files.php';
+$active = 'wardenclyffe-files.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -12,7 +12,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
-                <img src="images/screenshots/files.png" alt="WolfStack file manager for containers" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
+                <img src="images/screenshots/files.png" alt="WardenClyffe file manager for containers" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
                 <p>The built-in File Manager lets you browse the filesystem of any node in your cluster directly from the web dashboard. Navigate directories, view and edit files, upload new files, and download existing ones.</p>
                 <h3>Features</h3>
                 <ul>
@@ -26,7 +26,7 @@ include 'includes/head.php';
                 </ul>
             </div>
 
-<div class="page-nav"><a href="wolfstack-storage.php" class="prev">&larr; Storage</a><a href="wolfstack-networking.php" class="next">Networking &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffe-storage.php" class="prev">&larr; Storage</a><a href="wardenclyffe-networking.php" class="next">Networking &rarr;</a></div>
         
     </main>
 <?php include 'includes/footer.php'; ?>

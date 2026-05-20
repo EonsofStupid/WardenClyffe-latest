@@ -1,7 +1,7 @@
 <?php
-$page_title = 'WolfStack Overview — WolfStack Docs';
-$page_desc = 'WolfStack — The Universal Server Management Platform. Overview, installation, and feature guide.';
-$active = 'wolfstack.php';
+$page_title = 'WardenClyffe Overview — WardenClyffe Docs';
+$page_desc = 'WardenClyffe — The Universal Server Management Platform. Overview, installation, and feature guide.';
+$active = 'wardenclyffe.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -10,17 +10,17 @@ include 'includes/head.php';
     <main class="wiki-content">
 
                 <div class="content-section">
-                    <h2>What is WolfStack?</h2>
-                    <p>WolfStack is an all-in-one server management platform that lets you monitor, manage, and control
+                    <h2>What is WardenClyffe?</h2>
+                    <p>WardenClyffe is an all-in-one server management platform that lets you monitor, manage, and control
                         your entire infrastructure from a single beautiful web dashboard. Whether you have one machine
-                        or hundreds, WolfStack scales with you.</p>
+                        or hundreds, WardenClyffe scales with you.</p>
 
-                    <p>Built entirely in <strong>Rust</strong> for maximum performance and reliability, WolfStack
+                    <p>Built entirely in <strong>Rust</strong> for maximum performance and reliability, WardenClyffe
                         installs on any Linux distribution and auto-adapts to your system. It comes with <a
-                            href="wolfnet.php">WolfNet</a> — an encrypted mesh network that connects all your servers
+                            href="wardenclyffenet.php">WardenClyffeNet</a> — an encrypted mesh network that connects all your servers
                         automatically, even across different data centres.</p>
 
-                    <img src="images/dashboard-overview.png" alt="WolfStack Dashboard"
+                    <img src="images/dashboard-overview.png" alt="WardenClyffe Dashboard"
                         style="width: 100%; border-radius: 10px; margin: 1.5rem 0; border: 1px solid var(--border-color); box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
 
                     <h3>Key Capabilities</h3>
@@ -31,7 +31,7 @@ include 'includes/head.php';
                             containers</li>
                         <li><strong>Multi-server clustering</strong> — Manage your entire fleet from one dashboard</li>
                         <li><strong>Proxmox &amp; libvirt integration</strong> — Manages Proxmox VE, libvirt/virsh, or standalone QEMU VMs</li>
-                        <li><strong>WolfRun orchestration</strong> — Schedule and scale containers across nodes,
+                        <li><strong>WardenClyffeRun orchestration</strong> — Schedule and scale containers across nodes,
                             replacing Kubernetes</li>
                         <li><strong>File & config management</strong> — Browse and edit files on any node via the web UI
                         </li>
@@ -43,7 +43,7 @@ include 'includes/head.php';
                         <li><strong>Alerting</strong> — Discord, Slack, Telegram, and email notifications for threshold
                             breaches</li>
                         <li><strong>Status Pages</strong> — Built-in uptime monitoring with public status pages and incident tracking</li>
-                        <li><strong>WolfFlow automation</strong> — Visual workflow editor with drag-and-drop steps, cron scheduling, and cross-node execution</li>
+                        <li><strong>WardenClyffeFlow automation</strong> — Visual workflow editor with drag-and-drop steps, cron scheduling, and cross-node execution</li>
                         <li><strong>AI Agent</strong> — Ask questions about your infrastructure in natural language</li>
                         <li><strong>Beautiful themes</strong> — Dark, Glass, Midnight, Amber Terminal, and more</li>
                         <li><strong>USB/PCI device passthrough</strong> — Pass through GPUs, NVMe drives, USB devices, and network cards to VMs with IOMMU group detection and conflict checking</li>
@@ -62,14 +62,14 @@ include 'includes/head.php';
                         <div class="code-block" style="margin:0;"><div class="code-header"><span>openSUSE</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code>zypper install -y sudo curl</code></pre></div>
                     </div>
 
-                    <h3>Step 2: Install WolfStack</h3>
+                    <h3>Step 2: Install WardenClyffe</h3>
                     <p>Run this on every machine you want to manage:</p>
                     <div class="code-block">
                         <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                                 onclick="copyCode(this)">Copy</button></div>
-                        <pre><code>curl -sSL https://raw.githubusercontent.com/wolfsoftwaresystemsltd/WolfStack/master/setup.sh | sudo bash</code></pre>
+                        <pre><code>curl -sSL https://raw.githubusercontent.com/wardenclyffesoftwaresystemsltd/WardenClyffe/master/setup.sh | sudo bash</code></pre>
                     </div>
-                    <p>The installer automatically detects your Linux distribution and installs WolfStack as a systemd
+                    <p>The installer automatically detects your Linux distribution and installs WardenClyffe as a systemd
                         service.</p>
 
                     <h3>Step 2: Get the Token</h3>
@@ -77,7 +77,7 @@ include 'includes/head.php';
                     <div class="code-block">
                         <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                                 onclick="copyCode(this)">Copy</button></div>
-                        <pre><code>wolfstack --show-token</code></pre>
+                        <pre><code>wardenclyffe --show-token</code></pre>
                     </div>
 
                     <h3>Step 3: Open the Web UI</h3>
@@ -86,10 +86,10 @@ include 'includes/head.php';
 
                     <h3>Step 4: Add Your Other Nodes</h3>
                     <p>Click the <strong>+</strong> button in the sidebar to add each server using its token. You can
-                        add both WolfStack and Proxmox nodes.</p>
+                        add both WardenClyffe and Proxmox nodes.</p>
 
-                    <h3>Step 5: Connect WolfNet</h3>
-                    <p>Go into your cluster settings and click <strong>🔗 Update WolfNet Connections</strong> to
+                    <h3>Step 5: Connect WardenClyffeNet</h3>
+                    <p>Go into your cluster settings and click <strong>🔗 Update WardenClyffeNet Connections</strong> to
                         automatically set up encrypted peer-to-peer networking between all your nodes.</p>
 
                     <p><strong>That's it!</strong> You now have a fully managed, encrypted cluster. 🐺</p>
@@ -134,67 +134,67 @@ include 'includes/head.php';
                         from one page.</p>
 
                     <h3>Themes</h3>
-                    <img src="images/settings-themes.png" alt="WolfStack Themes"
+                    <img src="images/settings-themes.png" alt="WardenClyffe Themes"
                         style="width: 100%; border-radius: 10px; margin-bottom: 1rem; border: 1px solid var(--border-color); box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
-                    <p>WolfStack includes multiple beautiful themes including WolfStack Dark, Midnight, Glass
+                    <p>WardenClyffe includes multiple beautiful themes including WardenClyffe Dark, Midnight, Glass
                         (glassmorphism), Amber Terminal, and more. Switch themes from the Settings page.</p>
                 </div>
 
                 <div class="content-section">
                     <h2>What's Included</h2>
-                    <p>WolfStack comes with a suite of integrated tools:</p>
+                    <p>WardenClyffe comes with a suite of integrated tools:</p>
                     <ul>
-                        <li><a href="wolfstack-containers.php"><strong>Container Management</strong></a> — Docker & LXC
+                        <li><a href="wardenclyffe-containers.php"><strong>Container Management</strong></a> — Docker & LXC
                             with cloning, migration, and resource limits</li>
-                        <li><a href="wolfstack-storage.php"><strong>Storage Manager</strong></a> — S3/R2, NFS, SSHFS, WolfDisk
+                        <li><a href="wardenclyffe-storage.php"><strong>Storage Manager</strong></a> — S3/R2, NFS, SSHFS, WardenClyffeDisk
                             mounts from the dashboard</li>
-                        <li><a href="wolfstack-files.php"><strong>File Manager</strong></a> — Browse, edit, upload, and
+                        <li><a href="wardenclyffe-files.php"><strong>File Manager</strong></a> — Browse, edit, upload, and
                             download files on any node</li>
-                        <li><a href="wolfstack-networking.php"><strong>Networking</strong></a> — IP management, port
+                        <li><a href="wardenclyffe-networking.php"><strong>Networking</strong></a> — IP management, port
                             forwarding, firewall rules</li>
-                        <li><a href="wolfstack-clustering.php"><strong>Multi-Server Clustering</strong></a> — Join
+                        <li><a href="wardenclyffe-clustering.php"><strong>Multi-Server Clustering</strong></a> — Join
                             nodes into clusters with auto-discovery</li>
-                        <li><a href="wolfstack-mysql.php"><strong>Databases</strong></a> — Unified cluster-wide
+                        <li><a href="wardenclyffe-mysql.php"><strong>Databases</strong></a> — Unified cluster-wide
                             Database Manager for MariaDB, MySQL, PostgreSQL, and Percona with per-connection routing,
                             enterprise ACL, and AI agent access</li>
-                        <li><a href="wolfstack-security.php"><strong>Security</strong></a> — Linux PAM authentication,
+                        <li><a href="wardenclyffe-security.php"><strong>Security</strong></a> — Linux PAM authentication,
                             API tokens, audit logging</li>
-                        <li><a href="wolfstack-certificates.php"><strong>Certificates</strong></a> — SSL/TLS
+                        <li><a href="wardenclyffe-certificates.php"><strong>Certificates</strong></a> — SSL/TLS
                             certificate management</li>
-                        <li><a href="wolfstack-cron.php"><strong>Cron Jobs</strong></a> — Schedule and manage cron
+                        <li><a href="wardenclyffe-cron.php"><strong>Cron Jobs</strong></a> — Schedule and manage cron
                             tasks on any node</li>
-                        <li><a href="wolfflow.php"><strong>WolfFlow Automation</strong></a> — Visual workflow
+                        <li><a href="wardenclyffeflow.php"><strong>WardenClyffeFlow Automation</strong></a> — Visual workflow
                             automation with drag-and-drop editor, cron scheduling, and cross-node execution</li>
-                        <li><a href="wolfstack-terminal.php"><strong>Terminal</strong></a> — Full web-based SSH
+                        <li><a href="wardenclyffe-terminal.php"><strong>Terminal</strong></a> — Full web-based SSH
                             terminal</li>
-                        <li><a href="wolfstack-issues.php"><strong>Issues Scanner</strong></a> — AI-powered server
+                        <li><a href="wardenclyffe-issues.php"><strong>Issues Scanner</strong></a> — AI-powered server
                             health monitoring</li>
-                        <li><a href="wolfstack-alerting.php"><strong>Alerting</strong></a> — Discord, Slack, Telegram,
+                        <li><a href="wardenclyffe-alerting.php"><strong>Alerting</strong></a> — Discord, Slack, Telegram,
                             and email notifications</li>
-                        <li><a href="wolfstack-statuspage.php"><strong>Status Pages</strong></a> — Uptime monitoring
+                        <li><a href="wardenclyffe-statuspage.php"><strong>Status Pages</strong></a> — Uptime monitoring
                             with public status pages</li>
-                        <li><a href="wolfrun.php"><strong>WolfRun Orchestration</strong></a> — Schedule, scale, and
+                        <li><a href="wardenclyfferun.php"><strong>WardenClyffeRun Orchestration</strong></a> — Schedule, scale, and
                             manage
                             services across your cluster — replaces Kubernetes</li>
                         <li><a href="proxmox.php"><strong>Proxmox Integration</strong></a> — Install on Proxmox to
                             manage
-                            VE clusters from the WolfStack dashboard</li>
+                            VE clusters from the WardenClyffe dashboard</li>
                         <li><a href="app-store.php"><strong>App Store</strong></a> — 510+ one-click apps
                         </li>
-                        <li><a href="wolfstack-vms.php"><strong>USB/PCI Device Passthrough</strong></a> — Pass GPUs, NVMe, USB devices, and NICs directly to VMs with IOMMU group detection</li>
-                        <li><a href="wolfflow.php"><strong>WolfFlow Automation Nodes</strong></a> — 16 action types including HTTP requests, Docker image updates, NetBird/TrueNAS/Unifi connectors, and conditional branching</li>
-                        <li><a href="wolfstack-containers.php"><strong>Docker Image Update Watcher</strong></a> — Checks upstream registries for new images, backup-before-update, one-click rollback</li>
-                        <li><a href="wolfstack-ai.php"><strong>AI Agent</strong></a> — Natural language infrastructure
+                        <li><a href="wardenclyffe-vms.php"><strong>USB/PCI Device Passthrough</strong></a> — Pass GPUs, NVMe, USB devices, and NICs directly to VMs with IOMMU group detection</li>
+                        <li><a href="wardenclyffeflow.php"><strong>WardenClyffeFlow Automation Nodes</strong></a> — 16 action types including HTTP requests, Docker image updates, NetBird/TrueNAS/Unifi connectors, and conditional branching</li>
+                        <li><a href="wardenclyffe-containers.php"><strong>Docker Image Update Watcher</strong></a> — Checks upstream registries for new images, backup-before-update, one-click rollback</li>
+                        <li><a href="wardenclyffe-ai.php"><strong>AI Agent</strong></a> — Natural language infrastructure
                             queries</li>
-                        <li><a href="wolfstack-settings.php"><strong>Settings</strong></a> — Themes, alerting, Docker
+                        <li><a href="wardenclyffe-settings.php"><strong>Settings</strong></a> — Themes, alerting, Docker
                             registries, node and cluster configuration</li>
-                        <li><a href="wolfhost.php"><strong>WolfHost</strong></a> — Complete web hosting platform with customer management, billing, domains, email, SSL, and white-label portal <span style="font-size:0.65rem;background:rgba(220,38,38,0.15);color:#ef4444;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle;">Enterprise</span></li>
+                        <li><a href="wardenclyffehost.php"><strong>WardenClyffeHost</strong></a> — Complete web hosting platform with customer management, billing, domains, email, SSL, and white-label portal <span style="font-size:0.65rem;background:rgba(220,38,38,0.15);color:#ef4444;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle;">Enterprise</span></li>
                     </ul>
                 </div>
 
                 <div class="page-nav">
                     <a href="index.php" class="prev">← Home</a>
-                    <a href="wolfstack-containers.php" class="next">Container Management →</a>
+                    <a href="wardenclyffe-containers.php" class="next">Container Management →</a>
                 </div>
             
     </main>

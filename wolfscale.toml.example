@@ -1,5 +1,5 @@
-# WolfScale Configuration Example
-# Copy this file to wolfscale.toml and edit for your environment
+# WardenClyffeScale Configuration Example
+# Copy this file to wardenclyffescale.toml and edit for your environment
 
 [node]
 # Unique identifier for this node (must be unique across cluster)
@@ -9,7 +9,7 @@ id = "node-1"
 bind_address = "0.0.0.0:7654"
 
 # Data directory for WAL and state storage
-data_dir = "/var/lib/wolfscale/node-1"
+data_dir = "/var/lib/wardenclyffescale/node-1"
 
 # Optional: Advertised address for other nodes to connect
 # Use if bind address is 0.0.0.0 or behind NAT
@@ -19,7 +19,7 @@ data_dir = "/var/lib/wolfscale/node-1"
 # MariaDB connection settings
 host = "localhost"
 port = 3306
-user = "wolfscale"
+user = "wardenclyffescale"
 password = "your-secure-password"
 database = "myapp"
 
@@ -83,4 +83,4 @@ level = "info"
 format = "pretty"
 
 # Optional: Log to file
-# file = "/var/log/wolfscale/wolfscale.log"
+# file = "/var/log/wardenclyffescale/wardenclyffescale.log"

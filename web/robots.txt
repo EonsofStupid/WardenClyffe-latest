@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://wolfscale.org/sitemap.xml
+Sitemap: https://wardenclyffescale.org/sitemap.xml

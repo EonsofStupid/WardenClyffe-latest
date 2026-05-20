@@ -1,7 +1,7 @@
 <?php
-$page_title = '🖥️ Virtual Machines — WolfStack Docs';
-$page_desc = 'Create, manage, and run KVM/QEMU virtual machines on any WolfStack or Proxmox node — ISO boot, VNC console, disk management, and WolfNet networking.';
-$active = 'wolfstack-vms.php';
+$page_title = '🖥️ Virtual Machines — WardenClyffe Docs';
+$page_desc = 'Create, manage, and run KVM/QEMU virtual machines on any WardenClyffe or Proxmox node — ISO boot, VNC console, disk management, and WardenClyffeNet networking.';
+$active = 'wardenclyffe-vms.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -11,8 +11,8 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
-                <img src="images/screenshots/vms.png" alt="WolfStack virtual machine management with USB/PCI passthrough" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
-                <p>WolfStack lets you create and manage KVM/QEMU virtual machines directly from the web dashboard. VMs work on <strong>native WolfStack nodes</strong> (any Linux server with KVM support), <strong>libvirt/virsh nodes</strong>, and <strong>Proxmox VE nodes</strong> &mdash; all managed through a single interface.</p>
+                <img src="images/screenshots/vms.png" alt="WardenClyffe virtual machine management with USB/PCI passthrough" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
+                <p>WardenClyffe lets you create and manage KVM/QEMU virtual machines directly from the web dashboard. VMs work on <strong>native WardenClyffe nodes</strong> (any Linux server with KVM support), <strong>libvirt/virsh nodes</strong>, and <strong>Proxmox VE nodes</strong> &mdash; all managed through a single interface.</p>
 
                 <h3>Key Features</h3>
                 <ul>
@@ -23,10 +23,10 @@ include 'includes/head.php';
                     <li><strong>Disk management</strong> &mdash; Resize disks, add extra storage volumes, choose disk bus (virtio, IDE, SATA)</li>
                     <li><strong>Multi-NIC support</strong> &mdash; Add multiple network interfaces for firewalls (OPNsense, pfSense), routers, and multi-homed servers</li>
                     <li><strong>Physical NIC passthrough</strong> &mdash; Pass a host network adapter directly to a VM for raw L2 access (e.g. Starlink, dedicated WAN)</li>
-                    <li><strong>WolfNet networking</strong> &mdash; Assign a WolfNet IP to make the VM reachable across your cluster</li>
+                    <li><strong>WardenClyffeNet networking</strong> &mdash; Assign a WardenClyffeNet IP to make the VM reachable across your cluster</li>
                     <li><strong>Autostart</strong> &mdash; Configure VMs to start automatically when the host boots</li>
                     <li><strong>Windows support</strong> &mdash; IDE/SATA disk bus and e1000 network adapter for Windows compatibility, VirtIO drivers ISO support</li>
-                    <li><strong>Libvirt integration</strong> &mdash; On systems with libvirtd, WolfStack auto-discovers and manages existing VMs via virsh &mdash; no reinstallation needed</li>
+                    <li><strong>Libvirt integration</strong> &mdash; On systems with libvirtd, WardenClyffe auto-discovers and manages existing VMs via virsh &mdash; no reinstallation needed</li>
                     <li><strong>Proxmox integration</strong> &mdash; On Proxmox nodes, VMs are created and managed via the PVE API with full feature parity</li>
                 </ul>
             </div>
@@ -93,7 +93,7 @@ include 'includes/head.php';
                 <h2>Attaching an ISO</h2>
                 <p>ISOs provide the installation media for your VM &mdash; like inserting a CD. The ISO is attached as a virtual CD-ROM drive and the VM boots from it.</p>
 
-                <h3>Native WolfStack Nodes</h3>
+                <h3>Native WardenClyffe Nodes</h3>
                 <p>Upload or download the ISO to any path on the server, then enter the full path:</p>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -101,7 +101,7 @@ include 'includes/head.php';
 sudo mkdir -p /opt/isos
 sudo wget -O /opt/isos/ubuntu-24.04.iso https://releases.ubuntu.com/24.04/ubuntu-24.04-live-server-amd64.iso
 
-# Then enter in WolfStack:
+# Then enter in WardenClyffe:
 /opt/isos/ubuntu-24.04.iso</code></pre>
                 </div>
 
@@ -126,19 +126,19 @@ sudo wget -O /opt/isos/ubuntu-24.04.iso https://releases.ubuntu.com/24.04/ubuntu
             <div class="content-section">
                 <h2>Booting from .img Files</h2>
                 <p>Some operating systems distribute disk images as <code>.img</code> files instead of ISOs (e.g. Raspberry Pi OS, Alpine cloud images, OpenWrt).
-                    WolfStack attaches these as a <strong>virtual USB drive</strong> so the VM can boot and install from them, just like plugging in a USB stick.</p>
+                    WardenClyffe attaches these as a <strong>virtual USB drive</strong> so the VM can boot and install from them, just like plugging in a USB stick.</p>
                 <p>Use the <strong>Boot Media</strong> field and enter the path to the <code>.img</code> file:</p>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">text</span></div>
                     <pre><code>/opt/isos/alpine-virt-3.20.0-x86_64.img</code></pre>
                 </div>
-                <p>WolfStack auto-detects the file type: <code>.iso</code> files are attached as CD-ROM, <code>.img</code> and <code>.raw</code> files are attached as USB.</p>
+                <p>WardenClyffe auto-detects the file type: <code>.iso</code> files are attached as CD-ROM, <code>.img</code> and <code>.raw</code> files are attached as USB.</p>
             </div>
 
             <div class="content-section">
                 <h2>Importing Disk Images</h2>
                 <p>If you have a pre-built disk image (a cloud image, an exported VM, or a downloaded appliance), you can import it directly
-                    as the OS disk instead of installing from scratch. WolfStack converts it to qcow2 format automatically.</p>
+                    as the OS disk instead of installing from scratch. WardenClyffe converts it to qcow2 format automatically.</p>
 
                 <h3>Supported Formats</h3>
                 <table>
@@ -168,12 +168,12 @@ sudo wget -O /opt/isos/ubuntu-24.04.iso https://releases.ubuntu.com/24.04/ubuntu
 sudo mkdir -p /opt/images
 sudo wget -O /opt/images/ubuntu-24.04-cloud.img https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
 
-# Then enter in WolfStack Import Image field:
+# Then enter in WardenClyffe Import Image field:
 /opt/images/ubuntu-24.04-cloud.img</code></pre>
                 </div>
 
                 <div class="info-box">
-                    <p>&#x1F4A1; <strong>Migrating from other platforms?</strong> Export your VM from VMware (.vmdk), VirtualBox (.vdi), or Hyper-V (.vhd) and import it directly into WolfStack. The disk is converted to qcow2 automatically.</p>
+                    <p>&#x1F4A1; <strong>Migrating from other platforms?</strong> Export your VM from VMware (.vmdk), VirtualBox (.vdi), or Hyper-V (.vhd) and import it directly into WardenClyffe. The disk is converted to qcow2 automatically.</p>
                 </div>
             </div>
 
@@ -188,7 +188,7 @@ sudo wget -O /opt/images/ubuntu-24.04-cloud.img https://cloud-images.ubuntu.com/
                 </ul>
 
                 <div class="info-box">
-                    <p>&#x1F4A1; <strong>VR Server Room:</strong> In WolfStack&rsquo;s 3D Server Room view, you can access VM consoles directly in VR &mdash; point at a VM server unit and pull the trigger to open an in-scene VNC display.</p>
+                    <p>&#x1F4A1; <strong>VR Server Room:</strong> In WardenClyffe&rsquo;s 3D Server Room view, you can access VM consoles directly in VR &mdash; point at a VM server unit and pull the trigger to open an in-scene VNC display.</p>
                 </div>
             </div>
 
@@ -228,7 +228,7 @@ sudo wget -O /opt/images/ubuntu-24.04-cloud.img https://cloud-images.ubuntu.com/
                     <li><strong>Disk Resize</strong> &mdash; Increase the OS disk size (cannot shrink)</li>
                     <li><strong>Extra Disks</strong> &mdash; Add additional storage volumes</li>
                     <li><strong>Network Adapter</strong> &mdash; Change the primary NIC model (virtio, e1000, rtl8139)</li>
-                    <li><strong>WolfNet IP</strong> &mdash; Assign a WolfNet IP for cross-node access</li>
+                    <li><strong>WardenClyffeNet IP</strong> &mdash; Assign a WardenClyffeNet IP for cross-node access</li>
                     <li><strong>Additional NICs</strong> &mdash; Add, remove, or modify extra network interfaces</li>
                     <li><strong>ISO</strong> &mdash; Attach or detach installation media</li>
                     <li><strong>BIOS Type</strong> &mdash; Switch between SeaBIOS (legacy) and OVMF (UEFI)</li>
@@ -253,9 +253,9 @@ sudo wget -O /opt/images/ubuntu-24.04-cloud.img https://cloud-images.ubuntu.com/
 
             <div class="content-section">
                 <h2>Storage</h2>
-                <p>VM disk images are stored as <strong>qcow2</strong> files on native WolfStack nodes:</p>
+                <p>VM disk images are stored as <strong>qcow2</strong> files on native WardenClyffe nodes:</p>
                 <ul>
-                    <li>Default location: <code>/var/lib/wolfstack/vms/</code></li>
+                    <li>Default location: <code>/var/lib/wardenclyffe/vms/</code></li>
                     <li>Each VM has a config JSON and one or more disk images</li>
                     <li>Extra disks can be added for additional storage</li>
                 </ul>
@@ -267,7 +267,7 @@ sudo wget -O /opt/images/ubuntu-24.04-cloud.img https://cloud-images.ubuntu.com/
                 <p>Every VM has a <strong>primary NIC</strong> (net0) configured during creation. You can also add <strong>extra NICs</strong> for multi-homed configurations.</p>
                 <ul>
                     <li><strong>User-mode networking</strong> &mdash; Default. The VM gets NAT access to the host network via QEMU&rsquo;s built-in DHCP. No bridge needed.</li>
-                    <li><strong>WolfNet IP</strong> &mdash; Assign an IP in VM Settings to create a TAP interface on WolfNet, making the VM reachable across your cluster mesh.</li>
+                    <li><strong>WardenClyffeNet IP</strong> &mdash; Assign an IP in VM Settings to create a TAP interface on WardenClyffeNet, making the VM reachable across your cluster mesh.</li>
                     <li><strong>Bridge mode</strong> &mdash; Attach a NIC to a host bridge (e.g. <code>br0</code>, <code>vmbr1</code>) for direct L2 network access. The VM gets its own IP on the physical network.</li>
                     <li><strong>Proxmox</strong> &mdash; On PVE nodes, networking is managed via Proxmox bridges (<code>vmbr0</code>, <code>vmbr1</code>, etc.).</li>
                 </ul>
@@ -302,7 +302,7 @@ sudo wget -O /opt/images/ubuntu-24.04-cloud.img https://cloud-images.ubuntu.com/
                         </tr>
                         <tr>
                             <td><strong>Physical NIC</strong></td>
-                            <td>Select a host network interface from the dropdown. Only visible in Physical NIC mode. WolfStack auto-creates a dedicated bridge.</td>
+                            <td>Select a host network interface from the dropdown. Only visible in Physical NIC mode. WardenClyffe auto-creates a dedicated bridge.</td>
                             <td>&mdash;</td>
                         </tr>
                         <tr>
@@ -330,7 +330,7 @@ sudo wget -O /opt/images/ubuntu-24.04-cloud.img https://cloud-images.ubuntu.com/
                     <li><strong>Multi-homed servers</strong> &mdash; Attach VMs directly to specific physical networks</li>
                     <li><strong>Firewall WAN/LAN separation</strong> &mdash; Give each firewall interface its own physical NIC</li>
                 </ul>
-                <p>When you select <strong>Physical NIC</strong> mode, WolfStack:</p>
+                <p>When you select <strong>Physical NIC</strong> mode, WardenClyffe:</p>
                 <ol>
                     <li>Shows a dropdown of available physical interfaces on the host (with driver and link speed)</li>
                     <li>Auto-creates a dedicated bridge for the selected interface (<code>vmbr{N}</code> on Proxmox, <code>br-pt-{name}</code> on native)</li>
@@ -352,15 +352,15 @@ sudo wget -O /opt/images/ubuntu-24.04-cloud.img https://cloud-images.ubuntu.com/
                 </ol>
 
                 <div class="info-box">
-                    <p>&#x1F4A1; <strong>Proxmox users:</strong> Use <code>vmbr0</code>, <code>vmbr1</code>, etc. as bridge names in Bridge mode, or use Physical NIC mode for automatic bridge creation. WolfStack creates the Proxmox bridge and registers it for persistence across reboots.</p>
+                    <p>&#x1F4A1; <strong>Proxmox users:</strong> Use <code>vmbr0</code>, <code>vmbr1</code>, etc. as bridge names in Bridge mode, or use Physical NIC mode for automatic bridge creation. WardenClyffe creates the Proxmox bridge and registers it for persistence across reboots.</p>
                 </div>
 
                 <div class="info-box">
-                    <p>&#x1F4A1; <strong>Native WolfStack nodes:</strong> In Bridge mode, use standard Linux bridge names (e.g. <code>br0</code>, <code>br-lan</code>). In Physical NIC mode, WolfStack handles everything &mdash; no manual bridge configuration needed.</p>
+                    <p>&#x1F4A1; <strong>Native WardenClyffe nodes:</strong> In Bridge mode, use standard Linux bridge names (e.g. <code>br0</code>, <code>br-lan</code>). In Physical NIC mode, WardenClyffe handles everything &mdash; no manual bridge configuration needed.</p>
                 </div>
 
                 <h3>How Bridged NICs Work Internally</h3>
-                <p>For each extra NIC with a bridge specified (or Physical NIC passthrough), WolfStack:</p>
+                <p>For each extra NIC with a bridge specified (or Physical NIC passthrough), WardenClyffe:</p>
                 <ol>
                     <li>Creates a TAP interface (e.g. <code>tap-myvm-1</code>) on the host</li>
                     <li>Attaches the TAP to the bridge (<code>ip link set tap-myvm-1 master br1</code>)</li>
@@ -372,7 +372,7 @@ sudo wget -O /opt/images/ubuntu-24.04-cloud.img https://cloud-images.ubuntu.com/
 
             <div class="content-section">
                 <h2 id="passthrough">USB/PCI Device Passthrough</h2>
-                <p>WolfStack supports passing USB devices, GPUs, NVMe drives, network cards, and any other PCI device directly to a VM. The VM gets exclusive, near-native access to the hardware &mdash; essential for GPU compute, NVMe storage, and dedicated network interfaces.</p>
+                <p>WardenClyffe supports passing USB devices, GPUs, NVMe drives, network cards, and any other PCI device directly to a VM. The VM gets exclusive, near-native access to the hardware &mdash; essential for GPU compute, NVMe storage, and dedicated network interfaces.</p>
 
                 <h3>Supported Devices</h3>
                 <ul>
@@ -384,7 +384,7 @@ sudo wget -O /opt/images/ubuntu-24.04-cloud.img https://cloud-images.ubuntu.com/
                 </ul>
 
                 <h3>IOMMU Group Detection</h3>
-                <p>WolfStack automatically scans your system&rsquo;s IOMMU groups and shows which devices can be passed through safely. Each PCI device belongs to an IOMMU group &mdash; all devices in the same group must be passed through together. WolfStack:</p>
+                <p>WardenClyffe automatically scans your system&rsquo;s IOMMU groups and shows which devices can be passed through safely. Each PCI device belongs to an IOMMU group &mdash; all devices in the same group must be passed through together. WardenClyffe:</p>
                 <ul>
                     <li>Detects whether IOMMU is enabled (<code>intel_iommu=on</code> or <code>amd_iommu=on</code>)</li>
                     <li>Lists all IOMMU groups with their member devices</li>
@@ -403,7 +403,7 @@ sudo wget -O /opt/images/ubuntu-24.04-cloud.img https://cloud-images.ubuntu.com/
                             <td><strong>Native QEMU</strong></td>
                             <td>Yes</td>
                             <td>Yes</td>
-                            <td>WolfStack binds the device to <code>vfio-pci</code> and passes it via QEMU <code>-device vfio-pci</code></td>
+                            <td>WardenClyffe binds the device to <code>vfio-pci</code> and passes it via QEMU <code>-device vfio-pci</code></td>
                         </tr>
                         <tr>
                             <td><strong>Libvirt</strong></td>
@@ -421,7 +421,7 @@ sudo wget -O /opt/images/ubuntu-24.04-cloud.img https://cloud-images.ubuntu.com/
                 </table>
 
                 <h3>Conflict Detection</h3>
-                <p>Before passing a device through, WolfStack checks for conflicts:</p>
+                <p>Before passing a device through, WardenClyffe checks for conflicts:</p>
                 <ul>
                     <li><strong>Driver conflicts</strong> &mdash; Warns if a device is currently in use by a host driver (e.g. the NVIDIA driver has the GPU)</li>
                     <li><strong>IOMMU group sharing</strong> &mdash; Warns if other devices in the same group would be affected</li>
@@ -435,18 +435,18 @@ sudo wget -O /opt/images/ubuntu-24.04-cloud.img https://cloud-images.ubuntu.com/
                     <li>Open <strong>Create VM</strong> or <strong>VM Settings</strong> (VM must be stopped)</li>
                     <li>Go to the <strong>Hardware</strong> tab</li>
                     <li>Click <strong>+ Add PCI Device</strong> or <strong>+ Add USB Device</strong></li>
-                    <li>Select the device from the dropdown &mdash; WolfStack shows the device name, IOMMU group, and current driver</li>
+                    <li>Select the device from the dropdown &mdash; WardenClyffe shows the device name, IOMMU group, and current driver</li>
                     <li>Click <strong>Create</strong> or <strong>Save</strong></li>
                 </ol>
-                <p>WolfStack handles driver unbinding and VFIO binding automatically. On VM stop, devices are released back to the host.</p>
+                <p>WardenClyffe handles driver unbinding and VFIO binding automatically. On VM stop, devices are released back to the host.</p>
             </div>
 
             <div class="content-section">
                 <h2>Libvirt Integration</h2>
-                <p>On systems with <strong>libvirtd</strong> running, WolfStack automatically detects and manages all libvirt VMs &mdash; no adoption or import step needed. VMs appear in the dashboard just like they do on Proxmox.</p>
+                <p>On systems with <strong>libvirtd</strong> running, WardenClyffe automatically detects and manages all libvirt VMs &mdash; no adoption or import step needed. VMs appear in the dashboard just like they do on Proxmox.</p>
 
                 <h3>How It Works</h3>
-                <p>WolfStack checks for a running libvirt daemon on startup (via <code>virsh uri</code>). If detected, all VM operations are delegated to virsh:</p>
+                <p>WardenClyffe checks for a running libvirt daemon on startup (via <code>virsh uri</code>). If detected, all VM operations are delegated to virsh:</p>
                 <table>
                     <thead>
                         <tr><th>Operation</th><th>Command</th></tr>
@@ -463,15 +463,15 @@ sudo wget -O /opt/images/ubuntu-24.04-cloud.img https://cloud-images.ubuntu.com/
                     </tbody>
                 </table>
 
-                <h3>Migrating from Libvirt to WolfStack</h3>
-                <p>If you have existing VMs managed by libvirtd, there&rsquo;s nothing to migrate. Install WolfStack and your VMs appear automatically in the dashboard. WolfStack manages them through virsh without modifying your libvirt configuration.</p>
+                <h3>Migrating from Libvirt to WardenClyffe</h3>
+                <p>If you have existing VMs managed by libvirtd, there&rsquo;s nothing to migrate. Install WardenClyffe and your VMs appear automatically in the dashboard. WardenClyffe manages them through virsh without modifying your libvirt configuration.</p>
 
                 <h3>Detection Priority</h3>
-                <p>WolfStack auto-detects the virtualisation platform in this order:</p>
+                <p>WardenClyffe auto-detects the virtualisation platform in this order:</p>
                 <ol>
-                    <li><strong>Proxmox VE</strong> &mdash; If <code>pct</code> (Proxmox Container Toolkit) is installed, WolfStack uses the Proxmox API</li>
-                    <li><strong>Libvirt</strong> &mdash; If <code>virsh uri</code> succeeds (libvirtd is running), WolfStack uses virsh commands</li>
-                    <li><strong>Native QEMU</strong> &mdash; Otherwise, WolfStack manages QEMU directly (no hypervisor layer)</li>
+                    <li><strong>Proxmox VE</strong> &mdash; If <code>pct</code> (Proxmox Container Toolkit) is installed, WardenClyffe uses the Proxmox API</li>
+                    <li><strong>Libvirt</strong> &mdash; If <code>virsh uri</code> succeeds (libvirtd is running), WardenClyffe uses virsh commands</li>
+                    <li><strong>Native QEMU</strong> &mdash; Otherwise, WardenClyffe manages QEMU directly (no hypervisor layer)</li>
                 </ol>
             </div>
 
@@ -479,13 +479,13 @@ sudo wget -O /opt/images/ubuntu-24.04-cloud.img https://cloud-images.ubuntu.com/
                 <h2>Requirements</h2>
                 <ul>
                     <li><strong>KVM support</strong> &mdash; The host CPU must support hardware virtualisation (Intel VT-x or AMD-V). Check with: <code>grep -c vmx /proc/cpuinfo</code></li>
-                    <li><strong>QEMU</strong> &mdash; Installed automatically by WolfStack when creating your first VM</li>
-                    <li><strong>Libvirt (optional)</strong> &mdash; If libvirtd is running, WolfStack manages VMs through virsh. Install with: <code>apt install libvirt-daemon-system virt-install</code></li>
+                    <li><strong>QEMU</strong> &mdash; Installed automatically by WardenClyffe when creating your first VM</li>
+                    <li><strong>Libvirt (optional)</strong> &mdash; If libvirtd is running, WardenClyffe manages VMs through virsh. Install with: <code>apt install libvirt-daemon-system virt-install</code></li>
                     <li><strong>Proxmox VE (optional)</strong> &mdash; On Proxmox nodes, VMs are managed via the PVE API (no additional setup needed)</li>
                 </ul>
             </div>
 
-<div class="page-nav"><a href="wolfstack-containers.php" class="prev">&larr; Container Management</a><a href="wolfstack-storage.php" class="next">Storage &amp; Disks &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffe-containers.php" class="prev">&larr; Container Management</a><a href="wardenclyffe-storage.php" class="next">Storage &amp; Disks &rarr;</a></div>
 
     </main>
 <?php include 'includes/footer.php'; ?>

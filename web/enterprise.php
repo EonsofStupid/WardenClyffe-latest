@@ -1,6 +1,6 @@
 <?php
-$page_title = 'Enterprise Licensing — WolfStack';
-$page_desc = 'WolfStack Enterprise Licensing — full support, installation, ticketing and SLA for businesses. GitHub Sponsors get private Discord support and early access.';
+$page_title = 'Enterprise Licensing — WardenClyffe';
+$page_desc = 'WardenClyffe Enterprise Licensing — full support, installation, ticketing and SLA for businesses. GitHub Sponsors get private Discord support and early access.';
 $active = 'enterprise.php';
 $page_css = '.pricing-grid {
             display: grid;
@@ -335,10 +335,10 @@ include 'includes/head.php';
 
                 <div class="content-section">
                     <h2>Simple, Honest Pricing</h2>
-                    <p>WolfStack is <strong>free and open-source</strong>. Every feature, unlimited servers, forever.
+                    <p>WardenClyffe is <strong>free and open-source</strong>. Every feature, unlimited servers, forever.
                         No trials, no feature gates, no node limits.</p>
                     <p>For businesses that need <strong>SLAs, SSO, and dedicated support</strong>, we offer Enterprise licensing.
-                        For everyone else, <a href="https://github.com/sponsors/wolfsoftwaresystemsltd" target="_blank"
+                        For everyone else, <a href="https://github.com/sponsors/wardenclyffesoftwaresystemsltd" target="_blank"
                         style="color:#22c55e;font-weight:600;">GitHub Sponsors</a> keeps development going.</p>
                 </div>
 
@@ -356,14 +356,14 @@ include 'includes/head.php';
                                 <li>All features included</li>
                                 <li>Unlimited servers &amp; clusters</li>
                                 <li>Docker, LXC &amp; VM management</li>
-                                <li>WolfNet encrypted mesh VPN</li>
+                                <li>WardenClyffeNet encrypted mesh VPN</li>
                                 <li>510+ one-click apps</li>
                                 <li>Backups, status pages, alerting</li>
-                                <li>WolfFlow workflow automation</li>
+                                <li>WardenClyffeFlow workflow automation</li>
                                 <li>Full source code (MIT licence)</li>
                                 <li>Public Discord community</li>
                             </ul>
-                            <a href="wolfstack.php"
+                            <a href="wardenclyffe.php"
                                 class="pricing-cta pricing-cta-secondary">Get Started Free</a>
                         </div>
 
@@ -372,7 +372,7 @@ include 'includes/head.php';
                             <div class="pricing-tier">Sponsor</div>
                             <div class="pricing-name">GitHub Sponsors</div>
                             <div class="pricing-price" style="color:#22c55e;">From <span class="currency">&pound;</span>3 <span class="period">/ month</span></div>
-                            <div class="pricing-subtitle">Keep WolfStack free for everyone</div>
+                            <div class="pricing-subtitle">Keep WardenClyffe free for everyone</div>
                             <ul class="pricing-features">
                                 <li>Everything in Community</li>
                                 <li><strong>Private sponsors-only Discord</strong></li>
@@ -382,7 +382,7 @@ include 'includes/head.php';
                                 <li>Vote on the development roadmap</li>
                                 <li>Your name on the Supporters page</li>
                             </ul>
-                            <a href="https://github.com/sponsors/wolfsoftwaresystemsltd" target="_blank"
+                            <a href="https://github.com/sponsors/wardenclyffesoftwaresystemsltd" target="_blank"
                                 class="pricing-cta pricing-cta-green">Back This Project</a>
                         </div>
 
@@ -395,11 +395,11 @@ include 'includes/head.php';
                             <ul class="pricing-features">
                                 <li>Everything in Sponsor</li>
                                 <li style="padding-top:0.6rem;font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;border:none;">Enterprise-Exclusive Features</li>
-                                <li><strong><a href="wolfstack-api.php" style="color:var(--text-primary);">REST API Keys</a></strong> &mdash; scoped tokens, audit logging</li>
+                                <li><strong><a href="wardenclyffe-api.php" style="color:var(--text-primary);">REST API Keys</a></strong> &mdash; scoped tokens, audit logging</li>
                                 <li><strong>OIDC / SSO</strong> &mdash; Authentik, Azure AD, Okta, Keycloak</li>
-                                <li><strong><a href="wolfstack-plugins.php" style="color:var(--text-primary);">Plugin System</a></strong> &mdash; extend WolfStack with custom plugins</li>
-                                <li><strong><a href="wolfhost.php" style="color:var(--text-primary);">WolfHost</a></strong> &mdash; web hosting platform with billing &amp; customer portal</li>
-                                <li><strong><a href="wolfcustom.php" style="color:var(--text-primary);">WolfCustom</a></strong> &mdash; white-label branding (your logo, name, colours)</li>
+                                <li><strong><a href="wardenclyffe-plugins.php" style="color:var(--text-primary);">Plugin System</a></strong> &mdash; extend WardenClyffe with custom plugins</li>
+                                <li><strong><a href="wardenclyffehost.php" style="color:var(--text-primary);">WardenClyffeHost</a></strong> &mdash; web hosting platform with billing &amp; customer portal</li>
+                                <li><strong><a href="wardenclyffecustom.php" style="color:var(--text-primary);">WardenClyffeCustom</a></strong> &mdash; white-label branding (your logo, name, colours)</li>
                                 <li style="padding-top:0.6rem;font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;border:none;">Professional Services</li>
                                 <li>SLA with guaranteed response times</li>
                                 <li>Dedicated support &amp; ticketing</li>
@@ -413,8 +413,8 @@ include 'includes/head.php';
 
                 <!-- Competition Comparison -->
                 <div class="content-section">
-                    <h2>How WolfStack Compares</h2>
-                    <p style="color:var(--text-secondary);font-size:0.88rem;">Everything your competitors charge for, WolfStack gives away free. Enterprise is purely for businesses that need SLAs and SSO &mdash; not for features.</p>
+                    <h2>How WardenClyffe Compares</h2>
+                    <p style="color:var(--text-secondary);font-size:0.88rem;">Everything your competitors charge for, WardenClyffe gives away free. Enterprise is purely for businesses that need SLAs and SSO &mdash; not for features.</p>
 
                     <div style="overflow-x:auto;">
                     <table class="comp-table">
@@ -470,24 +470,24 @@ include 'includes/head.php';
                                 <td>Docker only &mdash; no VMs, no VPN, no status pages, no backups.</td>
                             </tr>
                             <tr style="background:rgba(220,38,38,0.06);">
-                                <td style="color:var(--accent-primary);">WolfStack Enterprise</td>
+                                <td style="color:var(--accent-primary);">WardenClyffe Enterprise</td>
                                 <td style="color:var(--accent-primary);font-weight:700;">&pound;79/$99 <small>/mo/server</small></td>
                                 <td><strong>Everything included</strong> &mdash; Docker, LXC, VMs, VPN, 510+ apps, status pages, alerting,
-                                    backups, workflows, SSO, API keys, plugins, WolfHost, WolfCustom, and dedicated support.</td>
+                                    backups, workflows, SSO, API keys, plugins, WardenClyffeHost, WardenClyffeCustom, and dedicated support.</td>
                             </tr>
                             <tr>
                                 <td colspan="3" style="font-weight:700;color:var(--text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;padding-top:1.2rem;">Individual Product Comparison</td>
                             </tr>
                             <tr style="background:rgba(34,197,94,0.06);">
-                                <td style="color:#22c55e;">WolfStack</td>
+                                <td style="color:#22c55e;">WardenClyffe</td>
                                 <td class="hl">Free</td>
                                 <td><strong>All of the above in a single binary.</strong> Docker, LXC, VMs, encrypted mesh VPN, 510+ apps,
                                     status pages, alerting, backups, workflow automation, clustering &mdash; unlimited servers, forever.</td>
                             </tr>
                             <tr style="background:rgba(220,38,38,0.06);">
-                                <td style="color:var(--accent-primary);">WolfStack Enterprise</td>
+                                <td style="color:var(--accent-primary);">WardenClyffe Enterprise</td>
                                 <td style="color:var(--accent-primary);font-weight:700;">&pound;79 <small>/mo/server</small><br><small style="color:var(--text-muted);">($99 USD)</small></td>
-                                <td><strong>Everything above, plus SSO/OIDC, REST API keys, plugin system, WolfHost, WolfCustom white-label,
+                                <td><strong>Everything above, plus SSO/OIDC, REST API keys, plugin system, WardenClyffeHost, WardenClyffeCustom white-label,
                                     SLA &amp; dedicated support.</strong> Still cheaper than any single competitor above &mdash;
                                     and replaces all of them.</td>
                             </tr>
@@ -498,7 +498,7 @@ include 'includes/head.php';
                     <p style="text-align:center;margin-top:1rem;font-size:0.84rem;color:var(--text-muted);">
                         A typical 5-server setup using Proxmox + Portainer + Tailscale + monitoring costs
                         <strong style="color:var(--accent-primary);">$3,000&ndash;6,000/year</strong>.
-                        WolfStack is <strong style="color:#22c55e;">free</strong>. Enterprise is still
+                        WardenClyffe is <strong style="color:#22c55e;">free</strong>. Enterprise is still
                         <strong style="color:var(--accent-primary);">cheaper than any single product above</strong>.
                     </p>
                 </div>
@@ -515,22 +515,22 @@ include 'includes/head.php';
                         <div class="include-card">
                             <h4>API Keys</h4>
                             <p>Long-lived API tokens (<code>wsk_*</code>) with scoped permissions. Automate deployments,
-                                integrate CI/CD pipelines, and build tooling against the WolfStack API.</p>
+                                integrate CI/CD pipelines, and build tooling against the WardenClyffe API.</p>
                         </div>
                         <div class="include-card">
                             <h4>Plugin System</h4>
-                            <p>Extend WolfStack with custom plugins &mdash; new UI pages, backend services, and
-                                API integrations. See the <a href="wolfstack-plugins.php">plugin docs</a>.</p>
+                            <p>Extend WardenClyffe with custom plugins &mdash; new UI pages, backend services, and
+                                API integrations. See the <a href="wardenclyffe-plugins.php">plugin docs</a>.</p>
                         </div>
                         <div class="include-card">
-                            <h4>WolfHost</h4>
+                            <h4>WardenClyffeHost</h4>
                             <p>Complete web hosting platform with customer management, billing, domain management,
-                                email, SSL provisioning, and a white-label customer portal. See <a href="wolfhost.php">WolfHost docs</a>.</p>
+                                email, SSL provisioning, and a white-label customer portal. See <a href="wardenclyffehost.php">WardenClyffeHost docs</a>.</p>
                         </div>
                         <div class="include-card">
-                            <h4>WolfCustom</h4>
-                            <p>White-label WolfStack with your own branding &mdash; replace the logo, product name,
-                                colours, favicon, and copyright with your company identity. See <a href="wolfcustom.php">WolfCustom docs</a>.</p>
+                            <h4>WardenClyffeCustom</h4>
+                            <p>White-label WardenClyffe with your own branding &mdash; replace the logo, product name,
+                                colours, favicon, and copyright with your company identity. See <a href="wardenclyffecustom.php">WardenClyffeCustom docs</a>.</p>
                         </div>
                         <div class="include-card">
                             <h4>SLA Guarantee</h4>
@@ -540,7 +540,7 @@ include 'includes/head.php';
                         <div class="include-card">
                             <h4>Dedicated Support</h4>
                             <p>Direct access to the development team via ticketing system. Priority bug fixes
-                                and technical support from the people who build WolfStack.</p>
+                                and technical support from the people who build WardenClyffe.</p>
                         </div>
                     </div>
                 </div>
@@ -548,7 +548,7 @@ include 'includes/head.php';
                 <!-- Contact Box -->
                 <div class="contact-box">
                     <h3>Ready to Get Started?</h3>
-                    <p>WolfStack is free &mdash; just install it. Need Enterprise? Contact us and we&rsquo;ll get back to you within one business day.</p>
+                    <p>WardenClyffe is free &mdash; just install it. Need Enterprise? Contact us and we&rsquo;ll get back to you within one business day.</p>
                     <a href="enterprise-contact.php" class="contact-email">
                         Contact Sales
                     </a>
@@ -558,15 +558,15 @@ include 'includes/head.php';
                 <div class="content-section">
                     <h2>Frequently Asked Questions</h2>
 
-                    <h3>Do I need to pay anything to use WolfStack?</h3>
-                    <p>No. WolfStack is completely free and open-source under the MIT licence. Every feature,
+                    <h3>Do I need to pay anything to use WardenClyffe?</h3>
+                    <p>No. WardenClyffe is completely free and open-source under the MIT licence. Every feature,
                         unlimited servers, forever. Enterprise licensing is only for organisations that need
                         SLAs, SSO, and dedicated support.</p>
 
                     <h3>What do GitHub Sponsors get?</h3>
                     <p>Sponsors get access to a <strong>private Discord channel</strong> with direct support from the dev team,
                         early access to beta features, priority bug fixes, and a vote on the development roadmap. It&rsquo;s
-                        the best way to support WolfStack if you don&rsquo;t need a formal SLA.</p>
+                        the best way to support WardenClyffe if you don&rsquo;t need a formal SLA.</p>
 
                     <h3>What&rsquo;s the difference between Sponsor and Enterprise?</h3>
                     <p><strong>Sponsors</strong> fund open-source development and get direct dev access via Discord.
@@ -584,14 +584,14 @@ include 'includes/head.php';
                     <h3>Do I need to install the license on every server?</h3>
                     <p>No. Install the license on <strong>any single node</strong> in your cluster and it is
                         <strong>automatically propagated to every other node within 10 seconds</strong>.
-                        WolfStack&rsquo;s cluster polling distributes the license key to all connected nodes &mdash;
+                        WardenClyffe&rsquo;s cluster polling distributes the license key to all connected nodes &mdash;
                         no manual copying or per-server configuration required.</p>
 
                     <h3>What data does the Enterprise license report?</h3>
                     <p>Enterprise licenses include a lightweight daily heartbeat that reports only <strong>server hostnames</strong>,
-                        <strong>WolfStack version</strong>, and <strong>cluster name</strong> to Wolf Software Systems. No user data,
+                        <strong>WardenClyffe version</strong>, and <strong>cluster name</strong> to WardenClyffe Software Systems. No user data,
                         container names, or configuration is ever transmitted. The heartbeat is used solely to verify your active
-                        server count against your license. The heartbeat is non-blocking &mdash; WolfStack continues to function
+                        server count against your license. The heartbeat is non-blocking &mdash; WardenClyffe continues to function
                         normally regardless of connectivity to our licensing server.</p>
                 </div>
 
@@ -599,13 +599,13 @@ include 'includes/head.php';
                 <div class="content-section">
                     <h2>License Compliance</h2>
                     <p>Enterprise licenses include a lightweight daily heartbeat that reports the number of active servers
-                        to Wolf Software Systems. This contains only <strong>server hostnames</strong>,
-                        <strong>WolfStack version</strong>, and <strong>cluster name</strong> &mdash; no user data, container names,
+                        to WardenClyffe Software Systems. This contains only <strong>server hostnames</strong>,
+                        <strong>WardenClyffe version</strong>, and <strong>cluster name</strong> &mdash; no user data, container names,
                         or configuration.</p>
                     <p>If your active server count exceeds your licensed count for more than <strong>5 consecutive days</strong>,
                         we will issue an invoice for the additional servers at the standard rate of
                         <strong>&pound;79/$99 per server per month</strong>.</p>
-                    <p>The heartbeat is non-blocking &mdash; WolfStack continues to function normally regardless of
+                    <p>The heartbeat is non-blocking &mdash; WardenClyffe continues to function normally regardless of
                         connectivity to our licensing server.</p>
                 </div>
 

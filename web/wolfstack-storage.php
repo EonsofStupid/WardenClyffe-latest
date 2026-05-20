@@ -1,7 +1,7 @@
 <?php
-$page_title = '💾 Storage Manager — WolfStack Docs';
-$page_desc = 'Manage S3/R2, NFS, SSHFS, and WolfDisk storage mounts from the dashboard';
-$active = 'wolfstack-storage.php';
+$page_title = '💾 Storage Manager — WardenClyffe Docs';
+$page_desc = 'Manage S3/R2, NFS, SSHFS, and WardenClyffeDisk storage mounts from the dashboard';
+$active = 'wardenclyffe-storage.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -12,8 +12,8 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
-                <img src="images/screenshots/storage.png" alt="WolfStack storage mount management — S3, NFS, SSHFS" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
-                <p>WolfStack&rsquo;s Storage Manager lets you mount and manage remote storage directly from the dashboard.</p>
+                <img src="images/screenshots/storage.png" alt="WardenClyffe storage mount management — S3, NFS, SSHFS" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
+                <p>WardenClyffe&rsquo;s Storage Manager lets you mount and manage remote storage directly from the dashboard.</p>
 
                 <h3>Supported Storage Types</h3>
                 <table>
@@ -42,8 +42,8 @@ include 'includes/head.php';
                             <td>Path aliasing, container storage paths</td>
                         </tr>
                         <tr>
-                            <td><strong>WolfDisk</strong></td>
-                            <td>Mount a <a href="wolfdisk.php">WolfDisk</a> distributed filesystem drive</td>
+                            <td><strong>WardenClyffeDisk</strong></td>
+                            <td>Mount a <a href="wardenclyffedisk.php">WardenClyffeDisk</a> distributed filesystem drive</td>
                             <td>Replicated shared storage across your cluster</td>
                         </tr>
                     </tbody>
@@ -54,7 +54,7 @@ include 'includes/head.php';
                 <h2>Features</h2>
                 <ul>
                     <li>View storage usage and capacity at a glance</li>
-                    <li>Browse files in mounted storage via the <a href="wolfstack-files.php">File Manager</a></li>
+                    <li>Browse files in mounted storage via the <a href="wardenclyffe-files.php">File Manager</a></li>
                     <li>Configure credentials and mount points from the web UI</li>
                     <li>Auto-mount on boot</li>
                     <li>S3 sync operations for syncing local directories with S3 buckets</li>
@@ -63,7 +63,7 @@ include 'includes/head.php';
                 </ul>
             </div>
 
-<div class="page-nav"><a href="wolfstack-containers.php" class="prev">&larr; Containers</a><a href="wolfstack-files.php" class="next">File Manager &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffe-containers.php" class="prev">&larr; Containers</a><a href="wardenclyffe-files.php" class="next">File Manager &rarr;</a></div>
         
     </main>
 <?php include 'includes/footer.php'; ?>

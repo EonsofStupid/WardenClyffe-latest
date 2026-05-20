@@ -2,8 +2,8 @@
 session_start();
 require_once 'includes/mail-send.php';
 
-$page_title = 'Contact Sales — WolfStack Enterprise';
-$page_desc = 'Get in touch with our sales team about WolfStack Enterprise licensing.';
+$page_title = 'Contact Sales — WardenClyffe Enterprise';
+$page_desc = 'Get in touch with our sales team about WardenClyffe Enterprise licensing.';
 $active = 'enterprise.php';
 
 // Anti-spam: rate limit (max 3 per 10 min)
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         $plan_label = $form['plan'] ?: 'Not specified';
-        $body  = "New enterprise enquiry from wolfscale.org\r\n";
+        $body  = "New enterprise enquiry from wardenclyffescale.org\r\n";
         $body .= "========================================\r\n\r\n";
         $body .= "Name:    {$form['name']}\r\n";
         $body .= "Email:   {$form['email']}\r\n";
@@ -81,10 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $body .= "--------\r\n";
         $body .= $form['message'] . "\r\n";
 
-        $recipients = ['paul@wolf.uk.com', 'ian@wolf.uk.com', 'ben@wolf.uk.com'];
+        $recipients = ['paul@wardenclyffe.uk.com', 'ian@wardenclyffe.uk.com', 'ben@wardenclyffe.uk.com'];
         $result = true;
         foreach ($recipients as $to) {
-            $r = smtp_send($to, 'WolfStack Enterprise Enquiry', $body, $form['email']);
+            $r = smtp_send($to, 'WardenClyffe Enterprise Enquiry', $body, $form['email']);
             if ($r !== true) $result = $r;
         }
 
@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Clear form on success
             $form = ['name'=>'','email'=>'','company'=>'','phone'=>'','plan'=>'','message'=>''];
         } else {
-            $errors[] = 'Unable to send your message right now. Please email sales@wolf.uk.com directly.';
+            $errors[] = 'Unable to send your message right now. Please email sales@wardenclyffe.uk.com directly.';
         }
     }
 }

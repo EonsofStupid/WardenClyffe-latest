@@ -1,8 +1,8 @@
 <?php
-$page_title = 'WolfStack — One Binary. Your Entire Infrastructure.';
-$page_desc = 'WolfStack replaces Proxmox, Portainer, Uptime Kuma, and Ansible with a single Rust binary. Manage Docker, LXC, VMs, networking, storage, backups, status pages, and more from one dashboard.';
-$page_keywords = 'server management, WolfStack, Proxmox alternative, Portainer alternative, Docker management, LXC, container orchestration, Rust, server dashboard, homelab, self-hosted, infrastructure management';
-$page_canonical = 'https://wolfscale.org/';
+$page_title = 'WardenClyffe — One Binary. Your Entire Infrastructure.';
+$page_desc = 'WardenClyffe replaces Proxmox, Portainer, Uptime Kuma, and Ansible with a single Rust binary. Manage Docker, LXC, VMs, networking, storage, backups, status pages, and more from one dashboard.';
+$page_keywords = 'server management, WardenClyffe, Proxmox alternative, Portainer alternative, Docker management, LXC, container orchestration, Rust, server dashboard, homelab, self-hosted, infrastructure management';
+$page_canonical = 'https://wardenclyffescale.org/';
 $active = 'index.php';
 
 // Load setup URL copy count
@@ -973,7 +973,7 @@ include 'includes/head.php';
             <div class="promo-banner">
                 <div class="promo-half promo-half--dev" style="flex-wrap:nowrap;">
                     <span class="promo-half-icon">&#128187;</span>
-                    <span class="promo-half-text" style="white-space:nowrap;">Custom Software Development? Have the authors of <strong>WolfStack</strong> &amp; <strong>WolfNote</strong> develop your project.</span>
+                    <span class="promo-half-text" style="white-space:nowrap;">Custom Software Development? Have the authors of <strong>WardenClyffe</strong> &amp; <strong>WardenClyffeNote</strong> develop your project.</span>
                     <a href="development.php" class="promo-cta">Learn More &rarr;</a>
                 </div>
             </div>
@@ -999,8 +999,8 @@ include 'includes/head.php';
                                     <div class="hp2-slide-label"><h4>Docker Management</h4><p>Full lifecycle &mdash; create, monitor, logs, console, volumes</p></div>
                                 </div>
                                 <div class="hp2-slide">
-                                    <img src="images/screenshots/wolfflow.png" alt="WolfFlow Visual Workflow Automation" loading="lazy">
-                                    <div class="hp2-slide-label"><h4>WolfFlow Automation</h4><p>16 action types, conditional branching, template variables</p></div>
+                                    <img src="images/screenshots/wardenclyffeflow.png" alt="WardenClyffeFlow Visual Workflow Automation" loading="lazy">
+                                    <div class="hp2-slide-label"><h4>WardenClyffeFlow Automation</h4><p>16 action types, conditional branching, template variables</p></div>
                                 </div>
                                 <div class="hp2-slide">
                                     <img src="images/screenshots/appstore.png" alt="App Store — 510+ one-click applications" loading="lazy">
@@ -1011,8 +1011,8 @@ include 'includes/head.php';
                                     <div class="hp2-slide-label"><h4>Virtual Machines</h4><p>KVM/QEMU with USB/PCI passthrough, import disk images</p></div>
                                 </div>
                                 <div class="hp2-slide">
-                                    <img src="images/screenshots/networking.png" alt="Networking — interfaces, VLANs, DNS, WolfNet VPN" loading="lazy">
-                                    <div class="hp2-slide-label"><h4>Networking</h4><p>Interfaces, VLANs, DNS, WolfNet mesh VPN</p></div>
+                                    <img src="images/screenshots/networking.png" alt="Networking — interfaces, VLANs, DNS, WardenClyffeNet VPN" loading="lazy">
+                                    <div class="hp2-slide-label"><h4>Networking</h4><p>Interfaces, VLANs, DNS, WardenClyffeNet mesh VPN</p></div>
                                 </div>
                                 <div class="hp2-slide">
                                     <img src="images/screenshots/ai-agent.png" alt="AI Agent — Claude, Gemini, or local AI" loading="lazy">
@@ -1020,7 +1020,7 @@ include 'includes/head.php';
                                 </div>
                                 <div class="hp2-slide">
                                     <img src="images/screenshots/plugins.png" alt="Plugin System with Plugin Store" loading="lazy">
-                                    <div class="hp2-slide-label"><h4>Plugin Store</h4><p>One-click install &mdash; WolfHost, WolfCustom, and more</p></div>
+                                    <div class="hp2-slide-label"><h4>Plugin Store</h4><p>One-click install &mdash; WardenClyffeHost, WardenClyffeCustom, and more</p></div>
                                 </div>
                                 <div class="hp2-slide">
                                     <img src="images/screenshots/statuspage.png" alt="Status Pages — public uptime monitoring" loading="lazy">
@@ -1052,9 +1052,9 @@ include 'includes/head.php';
                         managed from a single dashboard. Install in one command. No database required.
                     </p>
 
-                    <a href="wolfhost.php" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(220,38,38,0.08),rgba(239,68,68,0.04));border:1px solid rgba(220,38,38,0.2);border-radius:8px;padding:8px 16px;margin-bottom:20px;font-size:0.85rem;color:var(--text-primary);text-decoration:none;transition:border-color 0.2s;">
+                    <a href="wardenclyffehost.php" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(220,38,38,0.08),rgba(239,68,68,0.04));border:1px solid rgba(220,38,38,0.2);border-radius:8px;padding:8px 16px;margin-bottom:20px;font-size:0.85rem;color:var(--text-primary);text-decoration:none;transition:border-color 0.2s;">
                         <span style="font-size:1rem;">&#128679;</span>
-                        <span>Now with <strong>WolfHost</strong> &mdash; complete web hosting platform <span style="font-size:0.65rem;background:rgba(220,38,38,0.15);color:#ef4444;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle;">Enterprise</span></span>
+                        <span>Now with <strong>WardenClyffeHost</strong> &mdash; complete web hosting platform <span style="font-size:0.65rem;background:rgba(220,38,38,0.15);color:#ef4444;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle;">Enterprise</span></span>
                     </a>
 
                     <div class="hp2-distros-section">
@@ -1119,7 +1119,7 @@ include 'includes/head.php';
                 <div class="hp2-section-tight">
                     <div class="hp2-section-header">
                         <h2>Stop duct-taping your infrastructure together</h2>
-                        <p>WolfStack replaces a patchwork of tools with one unified platform.</p>
+                        <p>WardenClyffe replaces a patchwork of tools with one unified platform.</p>
                     </div>
 
                     <div class="hp2-replaces-grid">
@@ -1153,7 +1153,7 @@ include 'includes/head.php';
                         </div>
 
                         <div class="hp2-replaces-result">
-                            <span class="tool-name">WolfStack</span>
+                            <span class="tool-name">WardenClyffe</span>
                             <span class="tool-purpose">All of the above. One binary.</span>
                         </div>
                     </div>
@@ -1174,16 +1174,16 @@ include 'includes/head.php';
                 <div class="hp2-spotlight">
                     <div class="hp2-spot-text">
                         <h3>Docker + LXC + VMs + Kubernetes. One interface.</h3>
-                        <p>Most tools only do Docker. WolfStack manages Docker containers, LXC containers, and virtual machines with the same UI, same clustering, and same orchestration.</p>
+                        <p>Most tools only do Docker. WardenClyffe manages Docker containers, LXC containers, and virtual machines with the same UI, same clustering, and same orchestration.</p>
                         <ul class="hp2-spot-bullets">
                             <li>Create, clone, migrate, and snapshot containers across nodes</li>
                             <li>510+ one-click apps in the built-in App Store</li>
                             <li>Install on Proxmox or libvirt hosts &mdash; it auto-detects and manages existing VMs</li>
-                            <li>WolfRun orchestration with automatic container failover</li>
+                            <li>WardenClyffeRun orchestration with automatic container failover</li>
                         </ul>
                     </div>
                     <div class="hp2-spot-visual">
-                        <img src="images/screenshots/hero-containers-2x.png" alt="WolfStack container management showing Docker and LXC containers across multiple nodes" loading="lazy">
+                        <img src="images/screenshots/hero-containers-2x.png" alt="WardenClyffe container management showing Docker and LXC containers across multiple nodes" loading="lazy">
                     </div>
                 </div>
 
@@ -1201,7 +1201,7 @@ include 'includes/head.php';
                         </ul>
                     </div>
                     <div class="hp2-spot-visual">
-                        <img src="images/screenshots/hero-appstore-2x.png" alt="WolfStack App Store showing one-click application deployment" loading="lazy">
+                        <img src="images/screenshots/hero-appstore-2x.png" alt="WardenClyffe App Store showing one-click application deployment" loading="lazy">
                     </div>
                 </div>
 
@@ -1218,7 +1218,7 @@ include 'includes/head.php';
                         </ul>
                     </div>
                     <div class="hp2-spot-visual">
-                        <img src="images/screenshots/statuspage.png" alt="WolfStack status page monitoring with uptime tracking" loading="lazy">
+                        <img src="images/screenshots/statuspage.png" alt="WardenClyffe status page monitoring with uptime tracking" loading="lazy">
                     </div>
                 </div>
             </section>
@@ -1237,7 +1237,7 @@ include 'includes/head.php';
                     <div class="hp2-feat">
                         <div class="hp2-feat-icon">&#9951;</div>
                         <h3>Encrypted Mesh Network</h3>
-                        <p>WolfNet creates an encrypted private network between all your servers. Works across data centres, clouds, and home labs.</p>
+                        <p>WardenClyffeNet creates an encrypted private network between all your servers. Works across data centres, clouds, and home labs.</p>
                     </div>
                     <div class="hp2-feat">
                         <div class="hp2-feat-icon">&#8635;</div>
@@ -1247,12 +1247,12 @@ include 'includes/head.php';
                     <div class="hp2-feat">
                         <div class="hp2-feat-icon">&#9881;</div>
                         <h3>Workflow Automation</h3>
-                        <p>WolfFlow&rsquo;s visual editor builds multi-step runbooks. Schedule with cron, target any node or container.</p>
+                        <p>WardenClyffeFlow&rsquo;s visual editor builds multi-step runbooks. Schedule with cron, target any node or container.</p>
                     </div>
                     <div class="hp2-feat">
                         <div class="hp2-feat-icon">&#9000;</div>
                         <h3>Kubernetes Management</h3>
-                        <p>Provision k3s, MicroK8s, or kubeadm clusters. Pod management, logs, terminal, storage, and WolfNet load balancing.</p>
+                        <p>Provision k3s, MicroK8s, or kubeadm clusters. Pod management, logs, terminal, storage, and WardenClyffeNet load balancing.</p>
                     </div>
                     <div class="hp2-feat">
                         <div class="hp2-feat-icon">&#9878;</div>
@@ -1262,7 +1262,7 @@ include 'includes/head.php';
                     <div class="hp2-feat">
                         <div class="hp2-feat-icon">&#9735;</div>
                         <h3>Container Failover</h3>
-                        <p>WolfRun pre-stages standby containers. If a node goes down, standbys promote automatically. Zero-downtime HA.</p>
+                        <p>WardenClyffeRun pre-stages standby containers. If a node goes down, standbys promote automatically. Zero-downtime HA.</p>
                     </div>
                     <div class="hp2-feat">
                         <div class="hp2-feat-icon">&#9749;</div>
@@ -1282,7 +1282,7 @@ include 'includes/head.php';
                     <div class="hp2-feat">
                         <div class="hp2-feat-icon">&#8644;</div>
                         <h3>16 Automation Actions</h3>
-                        <p>WolfFlow now includes HTTP requests, Docker image updates, NetBird, TrueNAS, Unifi connectors, conditional branching, and notifications.</p>
+                        <p>WardenClyffeFlow now includes HTTP requests, Docker image updates, NetBird, TrueNAS, Unifi connectors, conditional branching, and notifications.</p>
                     </div>
                     <div class="hp2-feat">
                         <div class="hp2-feat-icon">&#8635;</div>
@@ -1299,7 +1299,7 @@ include 'includes/head.php';
             <section class="hp2-compare">
                 <div class="hp2-section">
                     <div class="hp2-section-header">
-                        <h2>How does WolfStack compare?</h2>
+                        <h2>How does WardenClyffe compare?</h2>
                         <p>One platform instead of six separate tools. Every feature, side by side.</p>
                     </div>
 
@@ -1310,7 +1310,7 @@ include 'includes/head.php';
                             <thead>
                                 <tr>
                                     <th style="text-align:left;">Feature</th>
-                                    <th class="hl">WolfStack</th>
+                                    <th class="hl">WardenClyffe</th>
                                     <th>Proxmox</th>
                                     <th>Kubernetes</th>
                                     <th>Portainer</th>
@@ -1337,7 +1337,7 @@ include 'includes/head.php';
                             <thead>
                                 <tr>
                                     <th style="text-align:left;">Feature</th>
-                                    <th class="hl">WolfStack</th>
+                                    <th class="hl">WardenClyffe</th>
                                     <th>Proxmox</th>
                                     <th>Kubernetes</th>
                                     <th>Portainer</th>
@@ -1346,9 +1346,9 @@ include 'includes/head.php';
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr><td>Container Orchestration</td><td class="hl">WolfRun</td><td>No</td><td>Yes</td><td>Swarm</td><td>No</td><td>No</td></tr>
+                                <tr><td>Container Orchestration</td><td class="hl">WardenClyffeRun</td><td>No</td><td>Yes</td><td>Swarm</td><td>No</td><td>No</td></tr>
                                 <tr><td>Container Failover (HA)</td><td class="hl">Standby HA</td><td>HA (paid)</td><td>Yes</td><td>Swarm HA</td><td>No</td><td>No</td></tr>
-                                <tr><td>Kubernetes Management</td><td class="hl">WolfKube</td><td>No</td><td>Native</td><td>Paid</td><td>No</td><td>No</td></tr>
+                                <tr><td>Kubernetes Management</td><td class="hl">WardenClyffeKube</td><td>No</td><td>Native</td><td>Paid</td><td>No</td><td>No</td></tr>
                                 <tr><td>Pod Terminal &amp; Monitoring</td><td class="hl">Yes</td><td>No</td><td>CLI only</td><td>Yes</td><td>No</td><td>No</td></tr>
                                 <tr><td>K8s PVC Storage</td><td class="hl">Yes</td><td>No</td><td>CLI only</td><td>Paid</td><td>No</td><td>No</td></tr>
                                 <tr><td>Multi-Server Clustering</td><td class="hl">Yes</td><td>Yes</td><td>Yes</td><td>Paid</td><td>No</td><td>No</td></tr>
@@ -1363,7 +1363,7 @@ include 'includes/head.php';
                             <thead>
                                 <tr>
                                     <th style="text-align:left;">Feature</th>
-                                    <th class="hl">WolfStack</th>
+                                    <th class="hl">WardenClyffe</th>
                                     <th>Proxmox</th>
                                     <th>Kubernetes</th>
                                     <th>Portainer</th>
@@ -1376,8 +1376,8 @@ include 'includes/head.php';
                                 <tr><td>Two-Factor Auth (2FA)</td><td class="hl">TOTP</td><td>Paid only</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
                                 <tr><td>Disable Linux Login</td><td class="hl">Yes</td><td>No</td><td>N/A</td><td>N/A</td><td>No</td><td>No</td></tr>
                                 <tr><td>Login Rate Limiting</td><td class="hl">Yes</td><td>Yes</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
-                                <tr><td>Encrypted Mesh Network</td><td class="hl">WolfNet</td><td>No</td><td>CNI plugins</td><td>No</td><td>No</td><td>No</td></tr>
-                                <tr><td>Built-in VPN</td><td class="hl">WolfNet VPN</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
+                                <tr><td>Encrypted Mesh Network</td><td class="hl">WardenClyffeNet</td><td>No</td><td>CNI plugins</td><td>No</td><td>No</td><td>No</td></tr>
+                                <tr><td>Built-in VPN</td><td class="hl">WardenClyffeNet VPN</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
                                 <tr><td>WireGuard VPN Bridge</td><td class="hl">Yes</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
                                 <tr><td>Firewall Management</td><td class="hl">Fail2ban &amp; UFW</td><td>Firewall</td><td>No</td><td>No</td><td>No</td><td>Firewalld</td></tr>
                                 <tr><td>SSL/TLS Certificates</td><td class="hl">Let&rsquo;s Encrypt</td><td>Let&rsquo;s Encrypt</td><td>cert-manager</td><td>No</td><td>No</td><td>Certbot</td></tr>
@@ -1393,7 +1393,7 @@ include 'includes/head.php';
                             <thead>
                                 <tr>
                                     <th style="text-align:left;">Feature</th>
-                                    <th class="hl">WolfStack</th>
+                                    <th class="hl">WardenClyffe</th>
                                     <th>Proxmox</th>
                                     <th>Kubernetes</th>
                                     <th>Portainer</th>
@@ -1420,7 +1420,7 @@ include 'includes/head.php';
                             <thead>
                                 <tr>
                                     <th style="text-align:left;">Feature</th>
-                                    <th class="hl">WolfStack</th>
+                                    <th class="hl">WardenClyffe</th>
                                     <th>Proxmox</th>
                                     <th>Kubernetes</th>
                                     <th>Portainer</th>
@@ -1434,7 +1434,7 @@ include 'includes/head.php';
                                 <tr><td>App Store</td><td class="hl">510+ apps</td><td>No</td><td>Helm</td><td>Yes</td><td>Yes</td><td>No</td></tr>
                                 <tr><td>AI Infrastructure Agent</td><td class="hl">Claude &amp; Gemini</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
                                 <tr><td>Status Pages &amp; Alerting</td><td class="hl">Built in</td><td>No</td><td>Add-ons</td><td>No</td><td>No</td><td>No</td></tr>
-                                <tr><td>Workflow Automation</td><td class="hl">WolfFlow</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
+                                <tr><td>Workflow Automation</td><td class="hl">WardenClyffeFlow</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
                                 <tr><td>Database Editor</td><td class="hl">MySQL &amp; PostgreSQL</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
                                 <tr><td>3D VR Server Room</td><td class="hl">Yes (WebXR)</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
                                 <tr><td>VR Terminal &amp; Console</td><td class="hl">Yes</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
@@ -1449,7 +1449,7 @@ include 'includes/head.php';
                             <thead>
                                 <tr>
                                     <th style="text-align:left;">Feature</th>
-                                    <th class="hl">WolfStack</th>
+                                    <th class="hl">WardenClyffe</th>
                                     <th>Proxmox</th>
                                     <th>Kubernetes</th>
                                     <th>Portainer</th>
@@ -1471,49 +1471,49 @@ include 'includes/head.php';
 
 
             <!-- ============================================ -->
-            <!--  WOLF TOOLKIT                                -->
+            <!--  WARDENCLYFFE TOOLKIT                                -->
             <!-- ============================================ -->
             <section class="hp2-section">
                 <div class="hp2-section-header">
-                    <h2>The Wolf Toolkit</h2>
+                    <h2>The WardenClyffe Toolkit</h2>
                     <p>A complete ecosystem for server infrastructure.</p>
                 </div>
 
                 <div class="hp2-products">
-                    <a href="wolfstack.php" class="hp2-product">
-                        <h3>WolfStack <span class="hp2-tag hp2-tag-flag">Flagship</span></h3>
+                    <a href="wardenclyffe.php" class="hp2-product">
+                        <h3>WardenClyffe <span class="hp2-tag hp2-tag-flag">Flagship</span></h3>
                         <p>The management platform. Dashboard, containers, VMs, monitoring, App Store, status pages, AI agent.</p>
                     </a>
-                    <a href="wolfnet.php" class="hp2-product">
-                        <h3>WolfNet</h3>
+                    <a href="wardenclyffenet.php" class="hp2-product">
+                        <h3>WardenClyffeNet</h3>
                         <p>Encrypted mesh networking with built-in VPN. Connect servers across any network.</p>
                     </a>
-                    <a href="wolfrun.php" class="hp2-product">
-                        <h3>WolfRun <span class="hp2-tag hp2-tag-built">Built in</span></h3>
+                    <a href="wardenclyfferun.php" class="hp2-product">
+                        <h3>WardenClyffeRun <span class="hp2-tag hp2-tag-built">Built in</span></h3>
                         <p>Container orchestration with failover. Schedule and scale services across your cluster.</p>
                     </a>
-                    <a href="wolfflow.php" class="hp2-product">
-                        <h3>WolfFlow <span class="hp2-tag hp2-tag-built">Built in</span></h3>
+                    <a href="wardenclyffeflow.php" class="hp2-product">
+                        <h3>WardenClyffeFlow <span class="hp2-tag hp2-tag-built">Built in</span></h3>
                         <p>Visual workflow automation. Drag-and-drop runbooks with cron scheduling.</p>
                     </a>
-                    <a href="wolfdisk.php" class="hp2-product">
-                        <h3>WolfDisk</h3>
+                    <a href="wardenclyffedisk.php" class="hp2-product">
+                        <h3>WardenClyffeDisk</h3>
                         <p>Distributed filesystem with content-addressed deduplication.</p>
                     </a>
-                    <a href="wolfproxy.php" class="hp2-product">
-                        <h3>WolfProxy</h3>
+                    <a href="wardenclyffeproxy.php" class="hp2-product">
+                        <h3>WardenClyffeProxy</h3>
                         <p>NGINX-compatible reverse proxy with built-in firewall.</p>
                     </a>
-                    <a href="wolfkube.php" class="hp2-product">
-                        <h3>WolfKube <span class="hp2-tag hp2-tag-built">Built in</span></h3>
+                    <a href="wardenclyffekube.php" class="hp2-product">
+                        <h3>WardenClyffeKube <span class="hp2-tag hp2-tag-built">Built in</span></h3>
                         <p>Kubernetes cluster management. Provision k3s, MicroK8s, kubeadm, and more.</p>
                     </a>
-                    <a href="wolfserve.php" class="hp2-product">
-                        <h3>WolfServe</h3>
+                    <a href="wardenclyffeserve.php" class="hp2-product">
+                        <h3>WardenClyffeServe</h3>
                         <p>Apache-compatible web server with PHP. Reads existing vhost configs.</p>
                     </a>
-                    <a href="wolfhost.php" class="hp2-product">
-                        <h3>WolfHost <span class="hp2-tag" style="background:rgba(220,38,38,0.15);color:#ef4444;">Enterprise</span></h3>
+                    <a href="wardenclyffehost.php" class="hp2-product">
+                        <h3>WardenClyffeHost <span class="hp2-tag" style="background:rgba(220,38,38,0.15);color:#ef4444;">Enterprise</span></h3>
                         <p>Complete web hosting platform. Customers, billing, domains, email, SSL, app installer, and white-label portal.</p>
                     </a>
                 </div>
@@ -1526,7 +1526,7 @@ include 'includes/head.php';
             <section id="quickstart" class="hp2-section" style="padding-top:0;">
                 <div class="hp2-section-header">
                     <h2>Up and running in minutes</h2>
-                    <p>Install WolfStack on every server you want to manage, then connect them into a cluster.</p>
+                    <p>Install WardenClyffe on every server you want to manage, then connect them into a cluster.</p>
                 </div>
 
                 <div style="max-width:720px;margin:0 auto;">
@@ -1542,11 +1542,11 @@ include 'includes/head.php';
                             </div>
                         </li>
                         <li>
-                            <strong>Run the WolfStack installer</strong>
+                            <strong>Run the WardenClyffe installer</strong>
                             <span class="hp2-step-desc">Run this on every computer you want to manage &mdash; from a Raspberry Pi to a datacenter server or cloud VPS:</span>
                             <div class="code-block" style="margin:10px 0;">
                                 <div class="code-header"><span>bash</span><button class="copy-btn" data-track="setup-url" onclick="copyCode(this)">Copy</button></div>
-                                <pre><code>curl -sSL https://raw.githubusercontent.com/wolfsoftwaresystemsltd/WolfStack/master/setup.sh | sudo bash</code></pre>
+                                <pre><code>curl -sSL https://raw.githubusercontent.com/wardenclyffesoftwaresystemsltd/WardenClyffe/master/setup.sh | sudo bash</code></pre>
                             </div>
                         </li>
                         <li>
@@ -1554,7 +1554,7 @@ include 'includes/head.php';
                             <span class="hp2-step-desc">After installation, each server displays its cluster token. You can also retrieve it at any time:</span>
                             <div class="code-block" style="margin:10px 0;">
                                 <div class="code-header"><span>bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-                                <pre><code>wolfstack --show-token</code></pre>
+                                <pre><code>wardenclyffe --show-token</code></pre>
                             </div>
                         </li>
                         <li>
@@ -1563,16 +1563,16 @@ include 'includes/head.php';
                         </li>
                         <li>
                             <strong>Add your other nodes to the cluster</strong>
-                            <span class="hp2-step-desc">Click the <strong>+</strong> button in the dashboard and paste each server&rsquo;s cluster token. You can add WolfStack servers, Proxmox VE hosts, or a mix of both. Add as many clusters as you like for a single-pane-of-glass view.</span>
+                            <span class="hp2-step-desc">Click the <strong>+</strong> button in the dashboard and paste each server&rsquo;s cluster token. You can add WardenClyffe servers, Proxmox VE hosts, or a mix of both. Add as many clusters as you like for a single-pane-of-glass view.</span>
                         </li>
                         <li>
                             <strong>Set up encrypted networking</strong>
-                            <span class="hp2-step-desc">Go to your cluster settings and click <strong>Update WolfNet Connections</strong> to automatically create an encrypted peer-to-peer mesh network between all your nodes &mdash; even across different data centres and cloud providers.</span>
+                            <span class="hp2-step-desc">Go to your cluster settings and click <strong>Update WardenClyffeNet Connections</strong> to automatically create an encrypted peer-to-peer mesh network between all your nodes &mdash; even across different data centres and cloud providers.</span>
                         </li>
                     </ol>
 
                     <div class="warning-box" style="margin-top:20px;">
-                        <p><strong>Rust compilation:</strong> WolfStack compiles from source during installation. On low-powered devices like Raspberry Pi, the first build compiles all ~330 crates and can take <strong>30&ndash;60 minutes</strong>. The installer automatically creates temporary swap space to prevent out-of-memory failures. Subsequent upgrades only recompile WolfStack itself and take just a few minutes.</p>
+                        <p><strong>Rust compilation:</strong> WardenClyffe compiles from source during installation. On low-powered devices like Raspberry Pi, the first build compiles all ~330 crates and can take <strong>30&ndash;60 minutes</strong>. The installer automatically creates temporary swap space to prevent out-of-memory failures. Subsequent upgrades only recompile WardenClyffe itself and take just a few minutes.</p>
                     </div>
                     <p style="color:var(--text-muted);font-size:0.8rem;margin-top:10px;text-align:center;">
                         <strong>Low disk space?</strong> Build on an external drive:
@@ -1612,7 +1612,7 @@ include 'includes/head.php';
                         <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:4px;">Enterprise</div>
                         <div style="font-size:1.15rem;font-weight:800;margin-bottom:8px;">Enterprise</div>
                         <div style="font-size:1.8rem;font-weight:800;color:var(--accent-primary);margin-bottom:8px;">&pound;79 <span style="font-size:0.78rem;font-weight:500;color:var(--text-muted);">/ server / month</span></div>
-                        <p style="font-size:0.84rem;color:var(--text-secondary);line-height:1.6;margin:0;">SSO, API keys, plugins, WolfHost, WolfCustom, SLA, dedicated support. <a href="enterprise.php" style="color:var(--accent-primary);font-weight:600;">Details &rarr;</a></p>
+                        <p style="font-size:0.84rem;color:var(--text-secondary);line-height:1.6;margin:0;">SSO, API keys, plugins, WardenClyffeHost, WardenClyffeCustom, SLA, dedicated support. <a href="enterprise.php" style="color:var(--accent-primary);font-weight:600;">Details &rarr;</a></p>
                     </div>
                 </div>
             </section>
@@ -1627,15 +1627,15 @@ include 'includes/head.php';
                     Free forever for personal use.</p>
 
                 <div class="hp2-actions" style="justify-content:center;">
-                    <a href="wolfstack.php" class="btn btn-primary">Learn More</a>
+                    <a href="wardenclyffe.php" class="btn btn-primary">Learn More</a>
                 </div>
 
                 <div class="hp2-cta-links">
                     <a href="https://discord.gg/q9qMjHjUQY" target="_blank">Discord</a>
-                    <a href="https://www.reddit.com/r/WolfStack/" target="_blank">Reddit</a>
-                    <a href="https://www.youtube.com/@wolfsoftwaresystems" target="_blank">YouTube</a>
-                    <a href="https://github.com/wolfsoftwaresystemsltd/WolfScale" target="_blank">GitHub</a>
-                    <a href="https://opensimsocial.com/@lonewolf" target="_blank" rel="me">Mastodon</a>
+                    <a href="https://www.reddit.com/r/WardenClyffe/" target="_blank">Reddit</a>
+                    <a href="https://www.youtube.com/@wardenclyffesoftwaresystems" target="_blank">YouTube</a>
+                    <a href="https://github.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale" target="_blank">GitHub</a>
+                    <a href="https://opensimsocial.com/@lonewardenclyffe" target="_blank" rel="me">Mastodon</a>
                 </div>
             </section>
 

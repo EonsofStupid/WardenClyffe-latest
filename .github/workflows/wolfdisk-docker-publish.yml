@@ -1,13 +1,13 @@
-name: WolfDisk — Publish Docker Image
+name: WardenClyffeDisk — Publish Docker Image
 
 on:
   push:
     branches: [main]
     paths:
-      - 'wolfdisk/Cargo.toml'
-      - 'wolfdisk/src/**'
-      - 'wolfdisk/docker/**'
-      - '.github/workflows/wolfdisk-docker-publish.yml'
+      - 'wardenclyffedisk/Cargo.toml'
+      - 'wardenclyffedisk/src/**'
+      - 'wardenclyffedisk/docker/**'
+      - '.github/workflows/wardenclyffedisk-docker-publish.yml'
   workflow_dispatch:
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     defaults:
       run:
-        working-directory: wolfdisk
+        working-directory: wardenclyffedisk
     steps:
       - uses: actions/checkout@v4
 
@@ -44,15 +44,15 @@ jobs:
       - name: Stage binaries
         run: |
           mkdir -p dist/${{ matrix.arch }}
-          cp target/${{ matrix.target }}/release/wolfdisk    dist/${{ matrix.arch }}/wolfdisk
-          cp target/${{ matrix.target }}/release/wolfdiskctl dist/${{ matrix.arch }}/wolfdiskctl
-          chmod +x dist/${{ matrix.arch }}/wolfdisk dist/${{ matrix.arch }}/wolfdiskctl
+          cp target/${{ matrix.target }}/release/wardenclyffedisk    dist/${{ matrix.arch }}/wardenclyffedisk
+          cp target/${{ matrix.target }}/release/wardenclyffediskctl dist/${{ matrix.arch }}/wardenclyffediskctl
+          chmod +x dist/${{ matrix.arch }}/wardenclyffedisk dist/${{ matrix.arch }}/wardenclyffediskctl
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: wolfdisk-binaries-${{ matrix.arch }}
-          path: wolfdisk/dist/${{ matrix.arch }}/
+          name: wardenclyffedisk-binaries-${{ matrix.arch }}
+          path: wardenclyffedisk/dist/${{ matrix.arch }}/
 
   publish:
     needs: build-binaries
@@ -65,22 +65,22 @@ jobs:
 
       - name: Get version
         id: version
-        run: echo "version=$(grep '^version' wolfdisk/Cargo.toml | head -1 | sed 's/.*\"\(.*\)\".*/\1/')" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(grep '^version' wardenclyffedisk/Cargo.toml | head -1 | sed 's/.*\"\(.*\)\".*/\1/')" >> "$GITHUB_OUTPUT"
 
       - name: Download amd64 binaries
         uses: actions/download-artifact@v4
         with:
-          name: wolfdisk-binaries-amd64
-          path: wolfdisk/dist/amd64
+          name: wardenclyffedisk-binaries-amd64
+          path: wardenclyffedisk/dist/amd64
 
       - name: Download arm64 binaries
         uses: actions/download-artifact@v4
         with:
-          name: wolfdisk-binaries-arm64
-          path: wolfdisk/dist/arm64
+          name: wardenclyffedisk-binaries-arm64
+          path: wardenclyffedisk/dist/arm64
 
       - name: Ensure binaries are executable
-        run: chmod +x wolfdisk/dist/amd64/* wolfdisk/dist/arm64/*
+        run: chmod +x wardenclyffedisk/dist/amd64/* wardenclyffedisk/dist/arm64/*
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -98,10 +98,10 @@ jobs:
       - name: Build and push multi-arch image
         uses: docker/build-push-action@v5
         with:
-          context: wolfdisk
-          file: wolfdisk/docker/Dockerfile
+          context: wardenclyffedisk
+          file: wardenclyffedisk/docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/wolfsoftwaresystemsltd/wolfdisk:latest
-            ghcr.io/wolfsoftwaresystemsltd/wolfdisk:${{ steps.version.outputs.version }}
+            ghcr.io/wardenclyffesoftwaresystemsltd/wardenclyffedisk:latest
+            ghcr.io/wardenclyffesoftwaresystemsltd/wardenclyffedisk:${{ steps.version.outputs.version }}

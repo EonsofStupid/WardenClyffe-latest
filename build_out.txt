@@ -1,4 +1,4 @@
-   Compiling wolfscale v0.3.0 (/home/paulc/NetBeansProjects/wolfscale)
+   Compiling wardenclyffescale v0.3.0 (/home/paulc/NetBeansProjects/wardenclyffescale)
 warning: unused variable: `incoming_wal_reader`
    --> src/main.rs:312:9
     |
@@ -67,5 +67,5 @@ note: required by a bound in `tokio::spawn`
 171 |         F: Future + Send + 'static,
     |                     ^^^^ required by this bound in `spawn`
 
-warning: `wolfscale` (bin "wolfscale") generated 1 warning
-error: could not compile `wolfscale` (bin "wolfscale") due to 2 previous errors; 1 warning emitted
+warning: `wardenclyffescale` (bin "wardenclyffescale") generated 1 warning
+error: could not compile `wardenclyffescale` (bin "wardenclyffescale") due to 2 previous errors; 1 warning emitted

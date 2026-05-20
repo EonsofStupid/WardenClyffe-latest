@@ -1,8 +1,8 @@
 <?php
-$page_title = '🗄️ Databases — WolfStack Docs';
+$page_title = '🗄️ Databases — WardenClyffe Docs';
 $page_desc = 'One cluster-wide Database Manager for MariaDB, MySQL, and PostgreSQL — ER diagrams, visual query builder, inline row editing, dumps, CSV import, schema compare, AI agent access, per-user saved queries, enterprise per-user ACL.';
-$page_keywords = 'wolfstack, database manager, mysql, mariadb, postgresql, cluster, sql, er diagram, query builder, enterprise, acl, ai agent, wolfflow, dbeaver, navicat';
-$active = 'wolfstack-mysql.php';
+$page_keywords = 'wardenclyffe, database manager, mysql, mariadb, postgresql, cluster, sql, er diagram, query builder, enterprise, acl, ai agent, wardenclyffeflow, dbeaver, navicat';
+$active = 'wardenclyffe-mysql.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -12,9 +12,9 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
-                <img src="images/screenshots/mysql-editor.png" alt="WolfStack unified Database Manager" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
-                <p><strong>One Database Manager, cluster-wide.</strong> The <code>🗄️ Databases</code> page at the top of the sidebar is the single place in WolfStack to reach every configured database — MariaDB, MySQL, or PostgreSQL — regardless of which node in the cluster actually owns it. <em>The old per-node MySQL editor has been retired</em>: there is now one manager at the datacenter level that serves every connection.</p>
-                <p>Connections are stored as <strong>profiles</strong>: a label, engine type, host/port/user/password, and the cluster+node that can reach it. Because profiles replicate to every WolfStack peer, any node can proxy queries — if the main node goes down, the others pick up seamlessly.</p>
+                <img src="images/screenshots/mysql-editor.png" alt="WardenClyffe unified Database Manager" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
+                <p><strong>One Database Manager, cluster-wide.</strong> The <code>🗄️ Databases</code> page at the top of the sidebar is the single place in WardenClyffe to reach every configured database — MariaDB, MySQL, or PostgreSQL — regardless of which node in the cluster actually owns it. <em>The old per-node MySQL editor has been retired</em>: there is now one manager at the datacenter level that serves every connection.</p>
+                <p>Connections are stored as <strong>profiles</strong>: a label, engine type, host/port/user/password, and the cluster+node that can reach it. Because profiles replicate to every WardenClyffe peer, any node can proxy queries — if the main node goes down, the others pick up seamlessly.</p>
             </div>
 
             <div class="content-section">
@@ -32,8 +32,8 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Cluster-Aware Routing</h2>
-                <p>When you add a connection you pick the target cluster, then the owning node, then the IP reachable from that node — the dropdown includes host interfaces, Docker containers, LXC containers, and VMs with their names so you can find them at a glance. You can also paste a shorthand like <code>WolfStack-Proxmox:wolfstack-1:10.10.10.105</code>.</p>
-                <p>Queries execute on the node that owns the connection. If you open a connection from a different node, WolfStack proxies the query to the owning peer over the cluster-secret-authenticated inter-node channel — no exposing database ports on the public network, no copying credentials between nodes. Profile changes replicate automatically.</p>
+                <p>When you add a connection you pick the target cluster, then the owning node, then the IP reachable from that node — the dropdown includes host interfaces, Docker containers, LXC containers, and VMs with their names so you can find them at a glance. You can also paste a shorthand like <code>WardenClyffe-Proxmox:wardenclyffe-1:10.10.10.105</code>.</p>
+                <p>Queries execute on the node that owns the connection. If you open a connection from a different node, WardenClyffe proxies the query to the owning peer over the cluster-secret-authenticated inter-node channel — no exposing database ports on the public network, no copying credentials between nodes. Profile changes replicate automatically.</p>
             </div>
 
             <div class="content-section">
@@ -125,12 +125,12 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Enterprise ACL</h2>
-                <p>Each connection profile can be restricted to a list of named WolfStack users. Operators without access don't see the profile at all — not in the Databases page, not in the Settings editor, not via the API. A 🔒 badge next to the connection in the list indicates ACL is active.</p>
+                <p>Each connection profile can be restricted to a list of named WardenClyffe users. Operators without access don't see the profile at all — not in the Databases page, not in the Settings editor, not via the API. A 🔒 badge next to the connection in the list indicates ACL is active.</p>
                 <p>ACL is an Enterprise feature; on Community installs all authenticated operators share every profile. The restriction applies uniformly to the UI, the REST API, and the AI agent tool surface — there is no bypass path.</p>
             </div>
 
             <div class="content-section">
-                <h2>AI Agents &amp; WolfFlow</h2>
+                <h2>AI Agents &amp; WardenClyffeFlow</h2>
                 <p><strong>AI agents can talk to the database.</strong> Agents configured with SQL permissions use the same pipeline as the UI — same profiles, same cluster routing, same audit log, same <code>sqlparser</code> classifier, same enterprise ACL. An agent asked <em>"how many customers signed up yesterday?"</em> can issue <code>SELECT COUNT(*) FROM customers WHERE created_at &gt; NOW() - INTERVAL 1 DAY</code> and feed the result back into its reply.</p>
                 <p>Per-agent settings gate what the agent can touch via three independent checks:</p>
                 <ol>
@@ -138,7 +138,7 @@ include 'includes/head.php';
                     <li><strong>Allowlist</strong> — an operator-set list of connection IDs the agent is allowed to query (empty list = none).</li>
                     <li><strong>Parser</strong> — every query is classified by <code>sqlparser</code> before dispatch. An <code>UPDATE</code> pretending to be a <code>SELECT</code> is rejected before it hits the database. Multi-statement queries are refused outright.</li>
                 </ol>
-                <p>WolfFlow workflows get a matching <strong>SQL Query</strong> action node with the same gates — operators pick a connection, pick a permission tier, write the query; the workflow runs it on schedule or trigger and can feed the result into subsequent steps. Every execution — agent, workflow, or UI — is appended to <code>/var/log/wolfstack/sql-audit.log</code> with caller tag, connection ID, query, outcome, row count, and elapsed time.</p>
+                <p>WardenClyffeFlow workflows get a matching <strong>SQL Query</strong> action node with the same gates — operators pick a connection, pick a permission tier, write the query; the workflow runs it on schedule or trigger and can feed the result into subsequent steps. Every execution — agent, workflow, or UI — is appended to <code>/var/log/wardenclyffe/sql-audit.log</code> with caller tag, connection ID, query, outcome, row count, and elapsed time.</p>
             </div>
 
             <div class="content-section">
@@ -146,14 +146,14 @@ include 'includes/head.php';
                 <ul>
                     <li><strong>Encrypted at rest</strong> — passwords stored AES-256-GCM encrypted with the cluster secret (same scheme as OIDC client secrets); only decrypted in memory at connect time</li>
                     <li><strong>Cluster-secret auth on inter-node calls</strong> — session cookies can't reach the <code>/query-proxy</code>, <code>/receive</code>, or <code>/audit</code> endpoints; only trusted peers</li>
-                    <li><strong>Hardcoded API denylist</strong> — agents using the generic <code>wolfstack_api</code> tool cannot POST to <code>/api/sql-connections/*</code> or the node-IP enumerator; the only way to run SQL is through the dedicated <code>sql_query</code> tool, which respects all three permission gates</li>
-                    <li><strong>Filesystem denylist</strong> — <code>/etc/wolfstack/sql-connections.json</code>, <code>/etc/wolfstack/sql-saved-queries.json</code>, and <code>/var/log/wolfstack/sql-audit.log</code> are off-limits to agent filesystem tools</li>
+                    <li><strong>Hardcoded API denylist</strong> — agents using the generic <code>wardenclyffe_api</code> tool cannot POST to <code>/api/sql-connections/*</code> or the node-IP enumerator; the only way to run SQL is through the dedicated <code>sql_query</code> tool, which respects all three permission gates</li>
+                    <li><strong>Filesystem denylist</strong> — <code>/etc/wardenclyffe/sql-connections.json</code>, <code>/etc/wardenclyffe/sql-saved-queries.json</code>, and <code>/var/log/wardenclyffe/sql-audit.log</code> are off-limits to agent filesystem tools</li>
                     <li><strong>Per-user saved queries</strong> — operators' pinned SQL is keyed to their username, not shared across the cluster</li>
                     <li><strong>Bounded execution</strong> — 5s connect timeout, 30s default query timeout (configurable per query), 10,000-row / 10 MB result cap; hung databases can't starve the actix workers</li>
                 </ul>
             </div>
 
-<div class="page-nav"><a href="wolfstack-clustering.php" class="prev">&larr; Clustering</a><a href="wolfstack-security.php" class="next">Security &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffe-clustering.php" class="prev">&larr; Clustering</a><a href="wardenclyffe-security.php" class="next">Security &rarr;</a></div>
 
     </main>
 <?php include 'includes/footer.php'; ?>

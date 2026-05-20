@@ -1,0 +1,30 @@
+# WardenClyffeNet Docker Compose — join an existing WardenClyffeNet mesh
+#
+# Usage:
+#   WARDENCLYFFENET_JOIN_TOKEN=<token> docker compose up -d
+#
+# Get the join token by running `wardenclyffenet invite` on an existing WardenClyffeNet node.
+
+services:
+  wardenclyffenet:
+    image: ghcr.io/wardenclyffesoftwaresystemsltd/wardenclyffenet:latest
+    container_name: wardenclyffenet
+    restart: unless-stopped
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    volumes:
+      - wardenclyffenet-config:/etc/wardenclyffenet
+      - /run/wardenclyffenet:/var/run/wardenclyffenet
+    environment:
+      - WARDENCLYFFENET_JOIN_TOKEN=${WARDENCLYFFENET_JOIN_TOKEN:-}
+      # Optional overrides:
+      # - WARDENCLYFFENET_ADDRESS=10.0.10.5
+      # - WARDENCLYFFENET_PORT=9600
+      # - WARDENCLYFFENET_GATEWAY=false
+      # - WARDENCLYFFENET_DISCOVERY=true
+
+volumes:
+  wardenclyffenet-config:

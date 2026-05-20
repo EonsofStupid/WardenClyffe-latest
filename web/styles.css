@@ -1,4 +1,4 @@
-/* WolfStack — styles.css v20 */
+/* WardenClyffe — styles.css v20 */
 
 :root {
     --bg-primary: #181a20;
@@ -578,7 +578,7 @@ section { padding: 28px 0; }
 .benefit-card p { color: var(--text-secondary); font-size: 0.82rem; }
 
 /* Feature / doc cards */
-.why-wolfscale { background: var(--bg-primary); }
+.why-wardenclyffescale { background: var(--bg-primary); }
 
 .features-grid {
     display: grid;

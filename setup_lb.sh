@@ -1,15 +1,15 @@
 #!/bin/bash
 #
-# WolfScale Load Balancer Quick Install Script
-# Installs WolfScale in Load Balancer mode
+# WardenClyffeScale Load Balancer Quick Install Script
+# Installs WardenClyffeScale in Load Balancer mode
 #
-# Usage: curl -sSL https://raw.githubusercontent.com/wolfsoftwaresystemsltd/WolfScale/main/setup_lb.sh | bash
+# Usage: curl -sSL https://raw.githubusercontent.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale/main/setup_lb.sh | bash
 #
 
 set -e
 
 echo ""
-echo "  WolfScale Load Balancer Installer"
+echo "  WardenClyffeScale Load Balancer Installer"
 echo "  Distribute MySQL across your cluster"
 echo "  $(printf '%0.s─' {1..50})"
 echo ""
@@ -58,22 +58,22 @@ fi
 export PATH="$HOME/.cargo/bin:$PATH"
 
 # Clone or update repository
-INSTALL_DIR="/opt/wolfscale-src"
+INSTALL_DIR="/opt/wardenclyffescale-src"
 echo ""
-echo "Cloning WolfScale repository..."
+echo "Cloning WardenClyffeScale repository..."
 
 if [ -d "$INSTALL_DIR" ]; then
     echo "  Updating existing installation..."
     # Stop service before upgrade to prevent issues
-    if systemctl is-active --quiet wolfscale-lb 2>/dev/null; then
-        echo "  Stopping wolfscale-lb service for upgrade..."
-        sudo systemctl stop wolfscale-lb
+    if systemctl is-active --quiet wardenclyffescale-lb 2>/dev/null; then
+        echo "  Stopping wardenclyffescale-lb service for upgrade..."
+        sudo systemctl stop wardenclyffescale-lb
     fi
     cd "$INSTALL_DIR"
     sudo git fetch origin
     sudo git reset --hard origin/main
 else
-    sudo git clone https://github.com/wolfsoftwaresystemsltd/WolfScale.git "$INSTALL_DIR"
+    sudo git clone https://github.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale.git "$INSTALL_DIR"
     cd "$INSTALL_DIR"
 fi
 
@@ -82,21 +82,21 @@ echo "✓ Repository cloned to $INSTALL_DIR"
 
 # Build
 echo ""
-echo "Building WolfScale (this may take a few minutes)..."
+echo "Building WardenClyffeScale (this may take a few minutes)..."
 cd "$INSTALL_DIR"
 cargo build --release
 echo "✓ Build complete"
 
 # Copy binary
-sudo mkdir -p /opt/wolfscale
-sudo cp target/release/wolfscale /opt/wolfscale/wolfscale
-sudo chmod +x /opt/wolfscale/wolfscale
+sudo mkdir -p /opt/wardenclyffescale
+sudo cp target/release/wardenclyffescale /opt/wardenclyffescale/wardenclyffescale
+sudo chmod +x /opt/wardenclyffescale/wardenclyffescale
 
-# Install wolfctl
-if [ -f "target/release/wolfctl" ]; then
-    sudo cp target/release/wolfctl /usr/local/bin/wolfctl
-    sudo chmod +x /usr/local/bin/wolfctl
-    echo "✓ wolfctl installed"
+# Install wardenclyffectl
+if [ -f "target/release/wardenclyffectl" ]; then
+    sudo cp target/release/wardenclyffectl /usr/local/bin/wardenclyffectl
+    sudo chmod +x /usr/local/bin/wardenclyffectl
+    echo "✓ wardenclyffectl installed"
 fi
 
 echo ""
@@ -106,7 +106,7 @@ echo "  $(printf '%0.s─' {1..50})"
 echo ""
 
 # Check for existing config
-CONFIG_FILE="/opt/wolfscale/wolfscale.toml"
+CONFIG_FILE="/opt/wardenclyffescale/wardenclyffescale.toml"
 PEERS=""
 
 if [ -f "$CONFIG_FILE" ]; then
@@ -139,8 +139,8 @@ if [ -f "$CONFIG_FILE" ]; then
 else
     echo "No existing config found."
     echo ""
-    echo "TIP: Copy wolfscale.toml from a cluster node:"
-    echo "  scp user@cluster-node:/opt/wolfscale/wolfscale.toml /opt/wolfscale/"
+    echo "TIP: Copy wardenclyffescale.toml from a cluster node:"
+    echo "  scp user@cluster-node:/opt/wardenclyffescale/wardenclyffescale.toml /opt/wardenclyffescale/"
     echo ""
 fi
 
@@ -148,7 +148,7 @@ fi
 if [ -z "$PEERS" ]; then
     echo ""
     echo "Auto-discovery mode is available!"
-    echo "The load balancer can automatically find WolfScale nodes on your network."
+    echo "The load balancer can automatically find WardenClyffeScale nodes on your network."
     echo ""
     read -p "Use auto-discovery? (y/n) [y]: " USE_AUTODISCOVER < /dev/tty
     USE_AUTODISCOVER=${USE_AUTODISCOVER:-y}
@@ -161,8 +161,8 @@ if [ -z "$PEERS" ]; then
         echo "✓ Will use auto-discovery when starting"
     else
         echo ""
-        echo "Enter WolfScale cluster node addresses."
-        echo "(These are the WolfScale nodes, NOT MariaDB addresses)"
+        echo "Enter WardenClyffeScale cluster node addresses."
+        echo "(These are the WardenClyffeScale nodes, NOT MariaDB addresses)"
         echo ""
         
         PEER_LIST=()
@@ -201,18 +201,18 @@ echo ""
 # Build ExecStart command
 if [ "$PEERS" = "__AUTO_DISCOVERY__" ]; then
     # Auto-discovery mode - no --peers flag
-    EXEC_CMD="/opt/wolfscale/wolfscale load-balancer --listen $LISTEN_ADDR"
+    EXEC_CMD="/opt/wardenclyffescale/wardenclyffescale load-balancer --listen $LISTEN_ADDR"
     [ -n "$CLUSTER_NAME" ] && EXEC_CMD="$EXEC_CMD --cluster-name $CLUSTER_NAME"
 else
-    EXEC_CMD="/opt/wolfscale/wolfscale load-balancer --peers $PEERS --listen $LISTEN_ADDR"
+    EXEC_CMD="/opt/wardenclyffescale/wardenclyffescale load-balancer --peers $PEERS --listen $LISTEN_ADDR"
 fi
 
 # Create systemd service
 echo "Creating systemd service..."
 
-sudo tee /etc/systemd/system/wolfscale-lb.service > /dev/null << EOF
+sudo tee /etc/systemd/system/wardenclyffescale-lb.service > /dev/null << EOF
 [Unit]
-Description=WolfScale Load Balancer
+Description=WardenClyffeScale Load Balancer
 After=network.target
 
 [Service]
@@ -226,27 +226,27 @@ User=root
 NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=yes
-ReadWritePaths=/var/log/wolfscale
+ReadWritePaths=/var/log/wardenclyffescale
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
 # Create log directory
-sudo mkdir -p /var/log/wolfscale
+sudo mkdir -p /var/log/wardenclyffescale
 
 # Enable and start service
 sudo systemctl daemon-reload
-sudo systemctl enable wolfscale-lb
-sudo systemctl start wolfscale-lb
+sudo systemctl enable wardenclyffescale-lb
+sudo systemctl start wardenclyffescale-lb
 
-echo "✓ wolfscale-lb service installed and started"
+echo "✓ wardenclyffescale-lb service installed and started"
 
 echo ""
 echo ""
 echo "  Load Balancer Installation Complete!"
 echo "  $(printf '%0.s─' {1..50})"
 echo "  Connect:  mysql -h 127.0.0.1 -P 3306 -u USER -p"
-echo "  Status:   sudo systemctl status wolfscale-lb"
-echo "  Logs:     sudo journalctl -u wolfscale-lb -f"
+echo "  Status:   sudo systemctl status wardenclyffescale-lb"
+echo "  Logs:     sudo journalctl -u wardenclyffescale-lb -f"
 echo ""

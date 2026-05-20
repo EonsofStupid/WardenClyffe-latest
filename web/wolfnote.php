@@ -1,8 +1,8 @@
 <?php
-$page_title = 'WolfNote — AI-Powered Notes System';
+$page_title = 'WardenClyffeNote — AI-Powered Notes System';
 $page_desc = 'A beautiful web-based notes system with rich text editing, task lists, AI assistant, time tracking, billing, and team collaboration. Single binary, deploys in seconds.';
-$page_keywords = 'notes app, task management, AI notes, todo list, time tracking, billing, team collaboration, Rust, self-hosted, WolfNote';
-$active = 'wolfnote.php';
+$page_keywords = 'notes app, task management, AI notes, todo list, time tracking, billing, team collaboration, Rust, self-hosted, WardenClyffeNote';
+$active = 'wardenclyffenote.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -11,12 +11,12 @@ include 'includes/head.php';
     <main class="wiki-content">
 
             <div class="content-section">
-                <h2>WolfNote</h2>
+                <h2>WardenClyffeNote</h2>
                 <p style="font-size:1.1em;color:var(--text-secondary);margin-bottom:1.5em;">AI-powered notes system with rich text editing, task lists, time tracking, billing, and real-time team collaboration. Single binary, deploys in seconds.</p>
 
                 <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:2em;">
-                    <a href="https://github.com/wolfsoftwaresystemsltd/wolfnote" target="_blank" class="button button-primary" style="text-decoration:none;">View on GitHub</a>
-                    <a href="https://github.com/wolfsoftwaresystemsltd/wolfnote/releases" target="_blank" class="button button-secondary" style="text-decoration:none;">Download Binary</a>
+                    <a href="https://github.com/wardenclyffesoftwaresystemsltd/wardenclyffenote" target="_blank" class="button button-primary" style="text-decoration:none;">View on GitHub</a>
+                    <a href="https://github.com/wardenclyffesoftwaresystemsltd/wardenclyffenote/releases" target="_blank" class="button button-secondary" style="text-decoration:none;">Download Binary</a>
                 </div>
 
                 <h3>Features</h3>
@@ -63,23 +63,23 @@ include 'includes/head.php';
                 <p>Download the pre-built static binary &mdash; no Rust toolchain, no dependencies, runs on any Linux x86_64:</p>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-                    <pre><code>mkdir wolfnote && cd wolfnote
-gh release download v0.2.0 -R wolfsoftwaresystemsltd/wolfnote
+                    <pre><code>mkdir wardenclyffenote && cd wardenclyffenote
+gh release download v0.2.0 -R wardenclyffesoftwaresystemsltd/wardenclyffenote
 mkdir -p static
 mv index.html favicon.svg logo.svg manifest.json sw.js static/
-chmod +x wolfnote-v0.2.0-linux-x86_64
-mv wolfnote-v0.2.0-linux-x86_64 wolfnote
+chmod +x wardenclyffenote-v0.2.0-linux-x86_64
+mv wardenclyffenote-v0.2.0-linux-x86_64 wardenclyffenote
 cp .env.example .env
 nano .env   # Set a strong JWT_SECRET
-./wolfnote</code></pre>
+./wardenclyffenote</code></pre>
                 </div>
                 <p>Open <code>http://localhost:3000</code> &mdash; the first user to register becomes admin.</p>
 
                 <h3>Build from Source</h3>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-                    <pre><code>git clone https://github.com/wolfsoftwaresystemsltd/wolfnote.git
-cd wolfnote
+                    <pre><code>git clone https://github.com/wardenclyffesoftwaresystemsltd/wardenclyffenote.git
+cd wardenclyffenote
 cp .env.example .env
 cargo run</code></pre>
                 </div>
@@ -88,7 +88,7 @@ cargo run</code></pre>
                 <table class="config-table">
                     <thead><tr><th>Variable</th><th>Description</th><th>Default</th></tr></thead>
                     <tbody>
-                        <tr><td><code>DATABASE_URL</code></td><td>SQLite database path</td><td><code>sqlite:wolfnote.db</code></td></tr>
+                        <tr><td><code>DATABASE_URL</code></td><td>SQLite database path</td><td><code>sqlite:wardenclyffenote.db</code></td></tr>
                         <tr><td><code>JWT_SECRET</code></td><td>Secret for JWT token signing</td><td><code>dev-secret-change-me</code></td></tr>
                         <tr><td><code>PORT</code></td><td>Port to listen on</td><td><code>3000</code></td></tr>
                         <tr><td><code>SSL_DOMAIN</code></td><td>Domain for Let's Encrypt cert auto-detection</td><td><em>none</em></td></tr>
@@ -102,13 +102,13 @@ cargo run</code></pre>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">ini</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
                     <pre><code>[Unit]
-Description=WolfNote
+Description=WardenClyffeNote
 After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/wolfnote
-ExecStart=/opt/wolfnote/wolfnote
+WorkingDirectory=/opt/wardenclyffenote
+ExecStart=/opt/wardenclyffenote/wardenclyffenote
 Restart=on-failure
 RestartSec=5
 Environment=RUST_LOG=info
@@ -130,13 +130,13 @@ WantedBy=multi-user.target</code></pre>
                 </ul>
 
                 <h3>PWA &amp; Mobile</h3>
-                <p>WolfNote is a Progressive Web App &mdash; install it on your phone's home screen for a native app experience. The sidebar auto-collapses on mobile with a hamburger menu. Touch-friendly button sizes and responsive layouts throughout.</p>
+                <p>WardenClyffeNote is a Progressive Web App &mdash; install it on your phone's home screen for a native app experience. The sidebar auto-collapses on mobile with a hamburger menu. Touch-friendly button sizes and responsive layouts throughout.</p>
 
                 <h3>License</h3>
-                <p>MIT &mdash; free for personal and commercial use. <a href="https://github.com/wolfsoftwaresystemsltd/wolfnote/blob/master/LICENSE" target="_blank">View license</a>.</p>
+                <p>MIT &mdash; free for personal and commercial use. <a href="https://github.com/wardenclyffesoftwaresystemsltd/wardenclyffenote/blob/master/LICENSE" target="_blank">View license</a>.</p>
             </div>
 
-<div class="page-nav"><a href="wolfserve.php" class="prev">&larr; WolfServe</a><a href="about.php" class="next">About &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffeserve.php" class="prev">&larr; WardenClyffeServe</a><a href="about.php" class="next">About &rarr;</a></div>
 
     </main>
 <?php include 'includes/footer.php'; ?>

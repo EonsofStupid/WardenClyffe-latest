@@ -1,0 +1,134 @@
+//! Gateway functionality for WardenClyffeNet
+//!
+//! Enables NAT/masquerading so nodes on the WardenClyffeNet can access the internet
+//! through a designated gateway node.
+
+use tracing::warn;
+
+/// Detect the default internet-facing interface by parsing the routing table
+pub fn detect_external_interface() -> Option<String> {
+    let output = std::process::Command::new("ip")
+        .args(["route", "show", "default"])
+        .output()
+        .ok()?;
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    // Parse: "default via X.X.X.X dev ethN ..."
+    for part in stdout.split_whitespace().collect::<Vec<_>>().windows(2) {
+        if part[0] == "dev" {
+            return Some(part[1].to_string());
+        }
+    }
+    None
+}
+
+/// Enable gateway mode: IP forwarding + NAT masquerading
+pub fn enable_gateway(wardenclyffenet_interface: &str, subnet: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let ext_iface = detect_external_interface()
+        .ok_or("Could not detect external network interface")?;
+
+
+
+    // Enable forwarding only on the WardenClyffeNet and external interfaces — avoid
+    // global ip_forward which turns the machine into a full router and can
+    // cause network-wide slowdowns (especially on low-powered devices like Pis).
+    let _ = std::process::Command::new("sysctl")
+        .args(["-w", &format!("net.ipv4.conf.{}.forwarding=1", wardenclyffenet_interface)]).output();
+    let _ = std::process::Command::new("sysctl")
+        .args(["-w", &format!("net.ipv4.conf.{}.forwarding=1", ext_iface)]).output();
+    // Disable ICMP redirects on these interfaces
+    let _ = std::process::Command::new("sysctl")
+        .args(["-w", &format!("net.ipv4.conf.{}.send_redirects=0", wardenclyffenet_interface)]).output();
+    let _ = std::process::Command::new("sysctl")
+        .args(["-w", &format!("net.ipv4.conf.{}.send_redirects=0", ext_iface)]).output();
+
+
+    // Add iptables MASQUERADE rule for WardenClyffeNet traffic going to the internet
+    let status = std::process::Command::new("iptables")
+        .args(["-t", "nat", "-A", "POSTROUTING", "-s", subnet, "-o", &ext_iface, "-j", "MASQUERADE"])
+        .status()?;
+    if !status.success() {
+        warn!("iptables MASQUERADE rule may have failed");
+    }
+
+    // Allow forwarding from wardenclyffenet interface to external
+    let status = std::process::Command::new("iptables")
+        .args(["-A", "FORWARD", "-i", wardenclyffenet_interface, "-o", &ext_iface, "-j", "ACCEPT"])
+        .status()?;
+    if !status.success() {
+        warn!("iptables FORWARD rule (out) may have failed");
+    }
+
+    // Allow established/related traffic back
+    let status = std::process::Command::new("iptables")
+        .args(["-A", "FORWARD", "-i", &ext_iface, "-o", wardenclyffenet_interface, "-m", "state", "--state", "ESTABLISHED,RELATED", "-j", "ACCEPT"])
+        .status()?;
+    if !status.success() {
+        warn!("iptables FORWARD rule (in) may have failed");
+    }
+
+    // Removed in v20.11.9: an `-A INPUT -i <ext> -d <subnet> -j DROP` rule
+    // used to live here under the banner "Block all other inbound traffic
+    // to wardenclyffenet (truly private)". klasSponsor (2026-04-27) confirmed it
+    // was breaking WardenClyffeRouter subnet routing on multiple nodes — peers'
+    // packets and replies that legitimately transited via the WardenClyffeNet
+    // CGNAT range were getting dropped depending on the path.
+    //
+    // The rule also wasn't actually defending anything: a packet on the
+    // WAN destined for an RFC1918/CGNAT IP can only reach INPUT if that
+    // IP is local to this host (i.e. its wardenclyffenet0 address) — and packets
+    // from the public internet to a host's wardenclyffenet0 IP can't actually
+    // arrive without spoofing or a misrouted upstream, neither of which
+    // the rule meaningfully mitigates. WardenClyffeNet privacy comes from the
+    // encrypted overlay itself, not from filtering at the gateway's
+    // INPUT chain.
+    //
+    // Belt-and-braces: proactively delete any copy of the old rule that's
+    // still installed on existing nodes from previous releases, so an
+    // upgrade-and-restart of WardenClyffeNet quietly cleans them up. Repeated
+    // -D runs handle the case where multiple copies got appended on
+    // earlier daemon reloads.
+    for _ in 0..4 {
+        let status = std::process::Command::new("iptables")
+            .args(["-D", "INPUT", "-i", &ext_iface, "-d", subnet, "-j", "DROP"])
+            .status();
+        match status {
+            Ok(s) if s.success() => continue, // deleted one, try again
+            _ => break,                       // none left (or iptables missing)
+        }
+    }
+
+    Ok(())
+}
+
+/// Clean up gateway rules on shutdown
+pub fn disable_gateway(wardenclyffenet_interface: &str, subnet: &str) {
+    let ext_iface = detect_external_interface().unwrap_or_default();
+    if ext_iface.is_empty() { return; }
+
+
+
+    let _ = std::process::Command::new("iptables")
+        .args(["-t", "nat", "-D", "POSTROUTING", "-s", subnet, "-o", &ext_iface, "-j", "MASQUERADE"])
+        .status();
+    let _ = std::process::Command::new("iptables")
+        .args(["-D", "FORWARD", "-i", wardenclyffenet_interface, "-o", &ext_iface, "-j", "ACCEPT"])
+        .status();
+    let _ = std::process::Command::new("iptables")
+        .args(["-D", "FORWARD", "-i", &ext_iface, "-o", wardenclyffenet_interface, "-m", "state", "--state", "ESTABLISHED,RELATED", "-j", "ACCEPT"])
+        .status();
+    let _ = std::process::Command::new("iptables")
+        .args(["-D", "INPUT", "-i", &ext_iface, "-d", subnet, "-j", "DROP"])
+        .status();
+}
+
+/// Add a default route through the gateway on a client node
+pub fn add_gateway_route(gateway_ip: &str, wardenclyffenet_interface: &str) -> Result<(), Box<dyn std::error::Error>> {
+
+    let status = std::process::Command::new("ip")
+        .args(["route", "add", "default", "via", gateway_ip, "dev", wardenclyffenet_interface, "metric", "500"])
+        .status()?;
+    if !status.success() {
+        warn!("Failed to add default route via gateway");
+    }
+    Ok(())
+}

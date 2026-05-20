@@ -1,16 +1,16 @@
 <?php
 /**
- * WolfScale Connection Test
+ * WardenClyffeScale Connection Test
  * Lists all tables in the crm_1 database
  */
 
 $host = 'yourserver';
-$port = 8007;  // WolfScale MySQL proxy port
+$port = 8007;  // WardenClyffeScale MySQL proxy port
 $database = 'your_database';
 $user = 'your_username';  // <-- Update this
 $password = 'your_password';  // <-- Update this
 
-echo "Connecting to WolfScale at $host:$port...\n";
+echo "Connecting to WardenClyffeScale at $host:$port...\n";
 
 try {
     // Connect using PDO
@@ -47,7 +47,7 @@ try {
     
     // Common troubleshooting tips
     echo "\nTroubleshooting:\n";
-    echo "  1. Is WolfScale running? Check: curl http://$host:8080/cluster\n";
+    echo "  1. Is WardenClyffeScale running? Check: curl http://$host:8080/cluster\n";
     echo "  2. Is port $port open? Check: nc -zv $host $port\n";
     echo "  3. Are credentials correct?\n";
     echo "  4. Does the database '$database' exist?\n";

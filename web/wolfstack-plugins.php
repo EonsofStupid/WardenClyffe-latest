@@ -1,7 +1,7 @@
 <?php
-$page_title = 'Plugin System — WolfStack Docs';
-$page_desc = 'WolfStack plugin system — extend your server management platform with first-party and third-party plugins. Install, configure, and manage plugins from the Settings UI.';
-$active = 'wolfstack-plugins.php';
+$page_title = 'Plugin System — WardenClyffe Docs';
+$page_desc = 'WardenClyffe plugin system — extend your server management platform with first-party and third-party plugins. Install, configure, and manage plugins from the Settings UI.';
+$active = 'wardenclyffe-plugins.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -11,25 +11,25 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Plugin System</h2>
-                <img src="images/screenshots/plugins.png" alt="WolfStack plugin system with Plugin Store" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
-                <p>WolfStack&rsquo;s plugin system lets you extend the platform with additional functionality. Plugins can add new pages to the UI, provide backend APIs, and integrate with WolfStack&rsquo;s existing features.</p>
-                <p>Plugins are managed from <strong>Settings &rarr; Plugins</strong> in the WolfStack dashboard.</p>
+                <img src="images/screenshots/plugins.png" alt="WardenClyffe plugin system with Plugin Store" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
+                <p>WardenClyffe&rsquo;s plugin system lets you extend the platform with additional functionality. Plugins can add new pages to the UI, provide backend APIs, and integrate with WardenClyffe&rsquo;s existing features.</p>
+                <p>Plugins are managed from <strong>Settings &rarr; Plugins</strong> in the WardenClyffe dashboard.</p>
                 <div class="info-box" style="border-left:4px solid var(--accent-primary);">
-                    <p>&#x2728; <strong>Enterprise feature:</strong> The plugin system requires a WolfStack <a href="enterprise.php">Enterprise license</a>. Plugins are loaded, assets served, and backends proxied only when a valid license is present. Without a license, plugins in <code>/etc/wolfstack/plugins/</code> are listed but marked <code>requires_license</code> and remain inactive.</p>
+                    <p>&#x2728; <strong>Enterprise feature:</strong> The plugin system requires a WardenClyffe <a href="enterprise.php">Enterprise license</a>. Plugins are loaded, assets served, and backends proxied only when a valid license is present. Without a license, plugins in <code>/etc/wardenclyffe/plugins/</code> are listed but marked <code>requires_license</code> and remain inactive.</p>
                 </div>
             </div>
 
             <div class="content-section">
                 <h2>How Plugins Work</h2>
-                <p>A plugin is a directory inside <code>/etc/wolfstack/plugins/</code> containing a manifest and optional frontend/backend code:</p>
-<pre><code>/etc/wolfstack/plugins/my-plugin/
+                <p>A plugin is a directory inside <code>/etc/wardenclyffe/plugins/</code> containing a manifest and optional frontend/backend code:</p>
+<pre><code>/etc/wardenclyffe/plugins/my-plugin/
   manifest.json      &mdash; plugin metadata and configuration
   web/
     plugin.js        &mdash; frontend code (injected into the SPA)
     plugin.css       &mdash; styles (optional)
   bin/
     handler          &mdash; backend binary (optional)</code></pre>
-                <p>On startup, WolfStack scans the plugins directory and loads each valid manifest. Frontend assets (JS/CSS) are automatically injected into the web UI, and API requests are proxied to the plugin&rsquo;s backend process.</p>
+                <p>On startup, WardenClyffe scans the plugins directory and loads each valid manifest. Frontend assets (JS/CSS) are automatically injected into the web UI, and API requests are proxied to the plugin&rsquo;s backend process.</p>
             </div>
 
             <div class="content-section">
@@ -40,7 +40,7 @@ include 'includes/head.php';
   "name": "Advanced Monitoring",
   "version": "1.0.0",
   "description": "Real-time metrics with Prometheus integration",
-  "author": "Wolf Software Systems Ltd",
+  "author": "WardenClyffe Software Systems Ltd",
   "icon": "&#128202;",
   "enabled": true,
   "menu": {
@@ -78,7 +78,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Menu Placement</h2>
-                <p>The <code>menu</code> object controls where the plugin appears in the WolfStack sidebar navigation:</p>
+                <p>The <code>menu</code> object controls where the plugin appears in the WardenClyffe sidebar navigation:</p>
                 <table class="feature-table" style="width:100%;font-size:0.85rem;">
                     <thead><tr><th style="width:120px;">Field</th><th>Description</th></tr></thead>
                     <tbody>
@@ -91,7 +91,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Frontend Plugin (plugin.js)</h2>
-                <p>If your plugin includes <code>web/plugin.js</code>, it will be automatically loaded when WolfStack starts. The script has full access to the WolfStack SPA&rsquo;s DOM and JavaScript functions.</p>
+                <p>If your plugin includes <code>web/plugin.js</code>, it will be automatically loaded when WardenClyffe starts. The script has full access to the WardenClyffe SPA&rsquo;s DOM and JavaScript functions.</p>
                 <p>Your plugin&rsquo;s page container is created automatically at <code>page-plugin-{view}</code>. Populate it in your JS:</p>
 <pre><code>// web/plugin.js — Example: Advanced Monitoring plugin
 
@@ -118,7 +118,7 @@ async function loadMonitoringData() {
     document.getElementById('monitoring-data').innerHTML =
         '&lt;pre&gt;' + JSON.stringify(data, null, 2) + '&lt;/pre&gt;';
 }</code></pre>
-                <p>Available WolfStack functions you can call from plugin JS:</p>
+                <p>Available WardenClyffe functions you can call from plugin JS:</p>
                 <ul>
                     <li><code>showToast(message, type)</code> &mdash; show a notification (<code>type</code>: &lsquo;success&rsquo;, &lsquo;error&rsquo;, &lsquo;info&rsquo;)</li>
                     <li><code>apiUrl(path)</code> &mdash; resolve an API URL (handles node proxying)</li>
@@ -131,11 +131,11 @@ async function loadMonitoringData() {
 
             <div class="content-section">
                 <h2>Backend Plugin (bin/handler)</h2>
-                <p>If your plugin needs server-side logic, include a backend binary at <code>bin/handler</code>. WolfStack will proxy API requests to it:</p>
+                <p>If your plugin needs server-side logic, include a backend binary at <code>bin/handler</code>. WardenClyffe will proxy API requests to it:</p>
                 <ul>
                     <li>Requests to <code>/api/plugins/{id}/api/*</code> are forwarded to <code>http://127.0.0.1:{api_port}/*</code></li>
                     <li>All HTTP methods (GET, POST, PUT, DELETE) are proxied</li>
-                    <li>Authentication is handled by WolfStack &mdash; only authenticated requests reach the plugin</li>
+                    <li>Authentication is handled by WardenClyffe &mdash; only authenticated requests reach the plugin</li>
                     <li>The backend receives <code>PORT</code> and <code>PLUGIN_DIR</code> environment variables</li>
                 </ul>
                 <p>The backend can be written in any language &mdash; it just needs to be a standalone HTTP server. Example in Python:</p>
@@ -158,11 +158,11 @@ HTTPServer(('127.0.0.1', PORT), Handler).serve_forever()</code></pre>
 
             <div class="content-section">
                 <h2>Plugin Store</h2>
-                <p>WolfStack includes a <strong>built-in Plugin Store</strong> accessible from <strong>Settings &rarr; Plugins &rarr; Plugin Store</strong>. Browse available plugins and install them with a single click &mdash; no manual downloads or file management required.</p>
+                <p>WardenClyffe includes a <strong>built-in Plugin Store</strong> accessible from <strong>Settings &rarr; Plugins &rarr; Plugin Store</strong>. Browse available plugins and install them with a single click &mdash; no manual downloads or file management required.</p>
                 <ul>
-                    <li><strong>One-click install</strong> &mdash; Select a plugin from the store and click Install. WolfStack downloads, extracts, and activates it automatically.</li>
-                    <li><strong>Automatic updates</strong> &mdash; Reinstalling a plugin that is already installed automatically updates it. WolfStack stops the existing plugin process, replaces the files, and starts the new version.</li>
-                    <li><strong>Currently available</strong> &mdash; The Plugin Store ships with <a href="wolfhost.php"><strong>WolfHost</strong></a> (web hosting platform) and <a href="wolfcustom.php"><strong>WolfCustom</strong></a> (white-label branding).</li>
+                    <li><strong>One-click install</strong> &mdash; Select a plugin from the store and click Install. WardenClyffe downloads, extracts, and activates it automatically.</li>
+                    <li><strong>Automatic updates</strong> &mdash; Reinstalling a plugin that is already installed automatically updates it. WardenClyffe stops the existing plugin process, replaces the files, and starts the new version.</li>
+                    <li><strong>Currently available</strong> &mdash; The Plugin Store ships with <a href="wardenclyffehost.php"><strong>WardenClyffeHost</strong></a> (web hosting platform) and <a href="wardenclyffecustom.php"><strong>WardenClyffeCustom</strong></a> (white-label branding).</li>
                 </ul>
             </div>
 
@@ -174,26 +174,26 @@ HTTPServer(('127.0.0.1', PORT), Handler).serve_forever()</code></pre>
                 <p>Go to <strong>Settings &rarr; Plugins &rarr; Plugin Store</strong> and click <strong>Install</strong> on any available plugin. This is the easiest method and handles everything automatically.</p>
 
                 <h3>From the UI</h3>
-                <p>Go to <strong>Settings &rarr; Plugins &rarr; Install Plugin</strong> and paste the URL of a <code>.tar.gz</code> archive containing the plugin directory. WolfStack downloads and extracts it automatically.</p>
+                <p>Go to <strong>Settings &rarr; Plugins &rarr; Install Plugin</strong> and paste the URL of a <code>.tar.gz</code> archive containing the plugin directory. WardenClyffe downloads and extracts it automatically.</p>
 
                 <h3>From the command line</h3>
 <pre><code># Download and extract to the plugins directory
-curl -fsSL https://example.com/my-plugin.tar.gz | sudo tar xzf - -C /etc/wolfstack/plugins/
+curl -fsSL https://example.com/my-plugin.tar.gz | sudo tar xzf - -C /etc/wardenclyffe/plugins/
 
-# Restart WolfStack to load the plugin
-sudo systemctl restart wolfstack</code></pre>
+# Restart WardenClyffe to load the plugin
+sudo systemctl restart wardenclyffe</code></pre>
 
                 <h3>Manual installation</h3>
 <pre><code># Create the plugin directory
-sudo mkdir -p /etc/wolfstack/plugins/my-plugin
+sudo mkdir -p /etc/wardenclyffe/plugins/my-plugin
 
 # Copy your plugin files
-sudo cp manifest.json /etc/wolfstack/plugins/my-plugin/
-sudo cp -r web/ /etc/wolfstack/plugins/my-plugin/
-sudo cp -r bin/ /etc/wolfstack/plugins/my-plugin/
+sudo cp manifest.json /etc/wardenclyffe/plugins/my-plugin/
+sudo cp -r web/ /etc/wardenclyffe/plugins/my-plugin/
+sudo cp -r bin/ /etc/wardenclyffe/plugins/my-plugin/
 
 # Restart
-sudo systemctl restart wolfstack</code></pre>
+sudo systemctl restart wardenclyffe</code></pre>
             </div>
 
             <div class="content-section">
@@ -215,15 +215,15 @@ sudo systemctl restart wolfstack</code></pre>
 
             <div class="content-section">
                 <h2>Enterprise License Required</h2>
-                <p>The plugin system as a whole is an <strong>Enterprise feature</strong>. All plugins &mdash; first-party or third-party &mdash; require a valid WolfStack Enterprise license to load.</p>
-                <p>Without a license, plugins dropped into <code>/etc/wolfstack/plugins/</code> are still listed in <strong>Settings &rarr; Plugins</strong>, but their status is shown as <code>requires_license</code> and they remain inactive:</p>
+                <p>The plugin system as a whole is an <strong>Enterprise feature</strong>. All plugins &mdash; first-party or third-party &mdash; require a valid WardenClyffe Enterprise license to load.</p>
+                <p>Without a license, plugins dropped into <code>/etc/wardenclyffe/plugins/</code> are still listed in <strong>Settings &rarr; Plugins</strong>, but their status is shown as <code>requires_license</code> and they remain inactive:</p>
                 <ul>
                     <li>Plugin frontend JS and CSS are not served</li>
                     <li>Backend handler proxies return <code>403 Forbidden</code></li>
                     <li>Plugin menu entries do not appear in the sidebar</li>
                     <li>Plugin installation via URL is blocked</li>
                 </ul>
-                <p>See <a href="enterprise.php">Enterprise Licensing</a> for details on obtaining a license. This gating allows the WolfStack core to remain fully open-source while protecting the plugin ecosystem as part of the Enterprise offering.</p>
+                <p>See <a href="enterprise.php">Enterprise Licensing</a> for details on obtaining a license. This gating allows the WardenClyffe core to remain fully open-source while protecting the plugin ecosystem as part of the Enterprise offering.</p>
             </div>
 
             <div class="content-section">
@@ -244,34 +244,34 @@ sudo systemctl restart wolfstack</code></pre>
                         <tr><td><code>GET</code></td><td><code>/api/plugins/{id}/data/file/{file}</code></td><td>Serve an uploaded file from the plugin&rsquo;s data directory</td></tr>
                     </tbody>
                 </table>
-                <p style="margin-top:1rem;font-size:0.85rem;color:var(--text-secondary);">The <code>/data/</code> endpoints allow plugins to store configuration and uploaded files (logos, images) in <code>/etc/wolfstack/plugins/{id}/data/</code> without needing a backend binary.</p>
+                <p style="margin-top:1rem;font-size:0.85rem;color:var(--text-secondary);">The <code>/data/</code> endpoints allow plugins to store configuration and uploaded files (logos, images) in <code>/etc/wardenclyffe/plugins/{id}/data/</code> without needing a backend binary.</p>
             </div>
 
             <div class="content-section">
                 <h2>Available Plugins</h2>
-                <p>Official plugins developed by Wolf Software Systems Ltd:</p>
+                <p>Official plugins developed by WardenClyffe Software Systems Ltd:</p>
                 <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin-top:16px;">
-                    <a href="wolfhost.php" style="display:block; background:var(--bg-card); border:1px solid var(--border-color); border-radius:10px; padding:1.2rem; text-decoration:none; color:var(--text-primary); transition:all 0.2s;">
+                    <a href="wardenclyffehost.php" style="display:block; background:var(--bg-card); border:1px solid var(--border-color); border-radius:10px; padding:1.2rem; text-decoration:none; color:var(--text-primary); transition:all 0.2s;">
                         <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
                             <span style="font-size:1.3rem;">🌐</span>
-                            <strong>WolfHost</strong>
+                            <strong>WardenClyffeHost</strong>
                             <span style="font-size:0.6rem;background:rgba(220,38,38,0.15);color:#ef4444;padding:1px 5px;border-radius:3px;">Enterprise</span>
                             <span style="font-size:0.6rem;background:rgba(245,158,11,0.15);color:#f59e0b;padding:1px 5px;border-radius:3px;">In Development</span>
                         </div>
                         <p style="font-size:0.82rem; color:var(--text-secondary); margin:0; line-height:1.5;">Complete web hosting platform with customer management, billing, domains, email, SSL, and white-label customer portal.</p>
                     </a>
-                    <a href="wolfcustom.php" style="display:block; background:var(--bg-card); border:1px solid var(--border-color); border-radius:10px; padding:1.2rem; text-decoration:none; color:var(--text-primary); transition:all 0.2s;">
+                    <a href="wardenclyffecustom.php" style="display:block; background:var(--bg-card); border:1px solid var(--border-color); border-radius:10px; padding:1.2rem; text-decoration:none; color:var(--text-primary); transition:all 0.2s;">
                         <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
                             <span style="font-size:1.3rem;">🎨</span>
-                            <strong>WolfCustom</strong>
+                            <strong>WardenClyffeCustom</strong>
                             <span style="font-size:0.6rem;background:rgba(220,38,38,0.15);color:#ef4444;padding:1px 5px;border-radius:3px;">Enterprise</span>
                         </div>
-                        <p style="font-size:0.82rem; color:var(--text-secondary); margin:0; line-height:1.5;">White-label branding. Replace the WolfStack logo, name, colours, favicon, and copyright with your own company identity.</p>
+                        <p style="font-size:0.82rem; color:var(--text-secondary); margin:0; line-height:1.5;">White-label branding. Replace the WardenClyffe logo, name, colours, favicon, and copyright with your own company identity.</p>
                     </a>
                 </div>
             </div>
 
-            <div class="page-nav"><a href="wolfstack-settings.php" class="prev">&larr; Settings</a><a href="wolfcustom.php" class="next">WolfCustom &rarr;</a></div>
+            <div class="page-nav"><a href="wardenclyffe-settings.php" class="prev">&larr; Settings</a><a href="wardenclyffecustom.php" class="next">WardenClyffeCustom &rarr;</a></div>
 
     </main>
 <?php include 'includes/footer.php'; ?>

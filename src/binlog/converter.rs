@@ -1,6 +1,6 @@
 //! Binlog to WAL Converter
 //!
-//! Converts binlog events to WolfScale WAL entries.
+//! Converts binlog events to WardenClyffeScale WAL entries.
 
 use super::event::{BinlogEvent, TableMap};
 use crate::wal::LogEntry;

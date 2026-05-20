@@ -1,15 +1,15 @@
 #!/bin/bash
-# publish.sh - Publish WolfScale to GitHub
+# publish.sh - Publish WardenClyffeScale to GitHub
 #
 # Usage: ./scripts/publish.sh [commit-message]
 #
 # This script initializes git (if needed), adds all files,
-# commits, and pushes to the WolfScale GitHub repository.
+# commits, and pushes to the WardenClyffeScale GitHub repository.
 
 set -e
 
 # Configuration
-REPO_URL="${GITHUB_REPO:-git@github.com:$(git config user.name)/WolfScale.git}"
+REPO_URL="${GITHUB_REPO:-git@github.com:$(git config user.name)/WardenClyffeScale.git}"
 BRANCH="${BRANCH:-main}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
@@ -94,12 +94,12 @@ if ! git remote | grep -q "origin"; then
     if [ -z "$GITHUB_USER" ]; then
         warn "Could not determine GitHub username."
         warn "Please set the remote manually:"
-        echo "  git remote add origin git@github.com:YOUR_USERNAME/WolfScale.git"
+        echo "  git remote add origin git@github.com:YOUR_USERNAME/WardenClyffeScale.git"
         echo ""
         read -p "Enter your GitHub username: " GITHUB_USER
     fi
     
-    REPO_URL="git@github.com:${GITHUB_USER}/WolfScale.git"
+    REPO_URL="git@github.com:${GITHUB_USER}/WardenClyffeScale.git"
     git remote add origin "$REPO_URL"
     info "Remote set to: $REPO_URL"
 fi
@@ -108,7 +108,7 @@ fi
 if [ -n "$1" ]; then
     COMMIT_MSG="$1"
 else
-    COMMIT_MSG="Update WolfScale - $(date '+%Y-%m-%d %H:%M:%S')"
+    COMMIT_MSG="Update WardenClyffeScale - $(date '+%Y-%m-%d %H:%M:%S')"
 fi
 
 # Stage all changes
@@ -132,4 +132,4 @@ git push -u origin "$BRANCH" 2>&1 || {
 
 info "✓ Successfully published to GitHub!"
 echo ""
-echo "Repository URL: https://github.com/${GITHUB_USER:-your-username}/WolfScale"
+echo "Repository URL: https://github.com/${GITHUB_USER:-your-username}/WardenClyffeScale"

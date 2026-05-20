@@ -1,7 +1,7 @@
 <?php
-$page_title = '🌐 WolfNet — WolfStack Docs';
-$page_desc = 'WolfNet — Encrypted mesh networking for Linux. Connect servers across data centres, cloud, and home with X25519 + ChaCha20-Poly1305 encryption, automatic peer discovery, relay forwarding, and zero-config invite tokens.';
-$active = 'wolfnet.php';
+$page_title = '🌐 WardenClyffeNet — WardenClyffe Docs';
+$page_desc = 'WardenClyffeNet — Encrypted mesh networking for Linux. Connect servers across data centres, cloud, and home with X25519 + ChaCha20-Poly1305 encryption, automatic peer discovery, relay forwarding, and zero-config invite tokens.';
+$active = 'wardenclyffenet.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -12,10 +12,10 @@ include 'includes/head.php';
         <!-- ===== Overview ===== -->
         <div class="content-section">
             <h2>Overview</h2>
-            <p>WolfNet creates a secure private network across the internet. Connect servers across data
+            <p>WardenClyffeNet creates a secure private network across the internet. Connect servers across data
                 centres, cloud providers, and on-premises infrastructure as if they were on the same local
                 network. Every packet is encrypted end-to-end with WireGuard-class cryptography.</p>
-            <p>WolfNet works seamlessly whether your peers are on the same LAN, behind NAT, or spread
+            <p>WardenClyffeNet works seamlessly whether your peers are on the same LAN, behind NAT, or spread
                 across continents. LAN peers are discovered automatically, remote peers connect via
                 public IP or DynDNS hostname, and peers behind restrictive firewalls reach each other
                 through relay forwarding &mdash; all without any manual port forwarding.</p>
@@ -27,9 +27,9 @@ include 'includes/head.php';
                 <li><strong>LAN auto-discovery</strong> &mdash; Peers on the same network find each other automatically</li>
                 <li><strong>DynDNS support</strong> &mdash; Remote access via dynamic DNS hostnames, re-resolved every 60 seconds</li>
                 <li><strong>Relay forwarding</strong> &mdash; No port forwarding needed &mdash; peers relay traffic automatically</li>
-                <li><strong>Gateway mode</strong> &mdash; Route internet traffic through a WolfNet peer with NAT</li>
+                <li><strong>Gateway mode</strong> &mdash; Route internet traffic through a WardenClyffeNet peer with NAT</li>
                 <li><strong>Peer exchange (PEX)</strong> &mdash; Nodes share their peer lists so the mesh self-heals</li>
-                <li><strong>Container integration</strong> &mdash; Docker and LXC containers get their own WolfNet addresses</li>
+                <li><strong>Container integration</strong> &mdash; Docker and LXC containers get their own WardenClyffeNet addresses</li>
                 <li><strong>TUN-based</strong> &mdash; Layer 3 networking with automatic route management</li>
                 <li><strong>Built-in VPN</strong> &mdash; Access your entire infrastructure from anywhere</li>
                 <li><strong>IBM Power ready</strong> &mdash; Pure Rust, builds natively on ppc64le</li>
@@ -39,7 +39,7 @@ include 'includes/head.php';
         <!-- ===== How It Works ===== -->
         <div class="content-section">
             <h2>How It Works</h2>
-            <p>WolfNet creates a TUN virtual network interface (<code>wolfnet0</code>) on each node and assigns it
+            <p>WardenClyffeNet creates a TUN virtual network interface (<code>wardenclyffenet0</code>) on each node and assigns it
                 an IP address on the <code>10.10.10.0/24</code> private subnet. All traffic between peers is
                 encrypted end-to-end using modern cryptography.</p>
 
@@ -47,12 +47,12 @@ include 'includes/head.php';
                 <div class="code-header"><span class="code-lang">text</span></div>
                 <pre><code>┌─────────────────────────────────────────────────────────────────────┐
 │                         Your Applications                          │
-│               (SSH, HTTP, databases, WolfStack UI)                 │
+│               (SSH, HTTP, databases, WardenClyffe UI)                 │
 ├─────────────────────────────────────────────────────────────────────┤
-│                    wolfnet0  (10.10.10.x/24)                       │
+│                    wardenclyffenet0  (10.10.10.x/24)                       │
 │                       TUN virtual interface                        │
 ├─────────────────────────────────────────────────────────────────────┤
-│                        WolfNet Daemon                              │
+│                        WardenClyffeNet Daemon                              │
 │  ┌──────────────┐  ┌────────────────┐  ┌────────────────────────┐  │
 │  │  Peer Manager │  │   Encryption   │  │   Routing Engine      │  │
 │  │  (discovery,  │  │   X25519 +     │  │   (direct, relay,     │  │
@@ -66,7 +66,7 @@ include 'includes/head.php';
             </div>
 
             <h3>Encryption</h3>
-            <p>Every WolfNet node generates an <strong>X25519 keypair</strong> on first run. When two peers connect,
+            <p>Every WardenClyffeNet node generates an <strong>X25519 keypair</strong> on first run. When two peers connect,
                 they perform a Diffie-Hellman key exchange to derive a shared secret used as the
                 <strong>ChaCha20-Poly1305</strong> encryption key. This is the same cryptographic foundation used
                 by WireGuard and TLS 1.3.</p>
@@ -75,14 +75,14 @@ include 'includes/head.php';
                 <li><strong>Encryption</strong> &mdash; ChaCha20-Poly1305 AEAD (authenticated encryption)</li>
                 <li><strong>Peer identity</strong> &mdash; SHA-256 derived 4-byte peer IDs for packet routing</li>
                 <li><strong>Replay protection</strong> &mdash; Monotonic nonce counters with direction flags</li>
-                <li><strong>Key storage</strong> &mdash; Private key at <code>/etc/wolfnet/private.key</code> (mode 0600)</li>
+                <li><strong>Key storage</strong> &mdash; Private key at <code>/etc/wardenclyffenet/private.key</code> (mode 0600)</li>
             </ul>
 
             <h3>Packet Flow</h3>
             <ol>
                 <li>Application sends traffic to a <code>10.10.10.x</code> address</li>
-                <li>The kernel routes it through the <code>wolfnet0</code> TUN interface</li>
-                <li>WolfNet reads the packet, looks up the destination peer</li>
+                <li>The kernel routes it through the <code>wardenclyffenet0</code> TUN interface</li>
+                <li>WardenClyffeNet reads the packet, looks up the destination peer</li>
                 <li>The packet is encrypted with the peer&rsquo;s shared ChaCha20-Poly1305 key</li>
                 <li>The encrypted packet is sent as a UDP datagram to the peer&rsquo;s real endpoint</li>
                 <li>The receiving peer decrypts and writes the packet to its local TUN interface</li>
@@ -93,25 +93,25 @@ include 'includes/head.php';
         <!-- ===== Installation ===== -->
         <div class="content-section">
             <h2>Installation</h2>
-            <p>WolfNet is included with WolfStack &mdash; if you have WolfStack installed, you already have WolfNet.
-                For standalone installation on machines without WolfStack:</p>
+            <p>WardenClyffeNet is included with WardenClyffe &mdash; if you have WardenClyffe installed, you already have WardenClyffeNet.
+                For standalone installation on machines without WardenClyffe:</p>
             <div class="code-block">
                 <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                         onclick="copyCode(this)">Copy</button></div>
-                <pre><code>curl -sSL https://raw.githubusercontent.com/wolfsoftwaresystemsltd/WolfScale/master/wolfnet/install.sh | sudo bash</code></pre>
+                <pre><code>curl -sSL https://raw.githubusercontent.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale/master/wardenclyffenet/install.sh | sudo bash</code></pre>
             </div>
-            <p>The installer compiles WolfNet from source using Rust, creates the systemd service, and generates
+            <p>The installer compiles WardenClyffeNet from source using Rust, creates the systemd service, and generates
                 a default configuration.</p>
 
             <h3>Manual Build</h3>
             <div class="code-block">
                 <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                         onclick="copyCode(this)">Copy</button></div>
-                <pre><code>git clone https://github.com/wolfsoftwaresystemsltd/WolfScale.git
-cd WolfScale/wolfnet
+                <pre><code>git clone https://github.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale.git
+cd WardenClyffeScale/wardenclyffenet
 cargo build --release
-sudo cp target/release/wolfnet /usr/local/bin/
-sudo cp target/release/wolfnetctl /usr/local/bin/</code></pre>
+sudo cp target/release/wardenclyffenet /usr/local/bin/
+sudo cp target/release/wardenclyffenetctl /usr/local/bin/</code></pre>
             </div>
 
             <h3>Requirements</h3>
@@ -131,23 +131,23 @@ sudo cp target/release/wolfnetctl /usr/local/bin/</code></pre>
             <div class="code-block">
                 <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                         onclick="copyCode(this)">Copy</button></div>
-                <pre><code>sudo wolfnet init --address 10.10.10.1</code></pre>
+                <pre><code>sudo wardenclyffenet init --address 10.10.10.1</code></pre>
             </div>
-            <p>This creates <code>/etc/wolfnet/config.toml</code> and generates an X25519 keypair.</p>
+            <p>This creates <code>/etc/wardenclyffenet/config.toml</code> and generates an X25519 keypair.</p>
 
-            <h3>2. Start WolfNet</h3>
+            <h3>2. Start WardenClyffeNet</h3>
             <div class="code-block">
                 <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                         onclick="copyCode(this)">Copy</button></div>
-                <pre><code>sudo systemctl start wolfnet
-sudo systemctl enable wolfnet</code></pre>
+                <pre><code>sudo systemctl start wardenclyffenet
+sudo systemctl enable wardenclyffenet</code></pre>
             </div>
 
             <h3>3. Generate an invite token</h3>
             <div class="code-block">
                 <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                         onclick="copyCode(this)">Copy</button></div>
-                <pre><code>sudo wolfnet --config /etc/wolfnet/config.toml invite</code></pre>
+                <pre><code>sudo wardenclyffenet --config /etc/wardenclyffenet/config.toml invite</code></pre>
             </div>
             <p>This outputs a token containing your public key, endpoint, and network details. Share it
                 with the machine you want to connect.</p>
@@ -156,8 +156,8 @@ sudo systemctl enable wolfnet</code></pre>
             <div class="code-block">
                 <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                         onclick="copyCode(this)">Copy</button></div>
-                <pre><code># Install WolfNet on the second machine, then:
-sudo wolfnet --config /etc/wolfnet/config.toml join &lt;token&gt;</code></pre>
+                <pre><code># Install WardenClyffeNet on the second machine, then:
+sudo wardenclyffenet --config /etc/wardenclyffenet/config.toml join &lt;token&gt;</code></pre>
             </div>
             <p>The joining node is automatically assigned the next available IP address (e.g. <code>10.10.10.2</code>)
                 and added as a peer. It also prints a <strong>reverse token</strong> &mdash; run that command on the
@@ -167,38 +167,38 @@ sudo wolfnet --config /etc/wolfnet/config.toml join &lt;token&gt;</code></pre>
             <div class="code-block">
                 <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                         onclick="copyCode(this)">Copy</button></div>
-                <pre><code>sudo systemctl restart wolfnet</code></pre>
+                <pre><code>sudo systemctl restart wardenclyffenet</code></pre>
             </div>
             <p>Both peers are now connected with encrypted tunnels. Test with:</p>
             <div class="code-block">
                 <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                         onclick="copyCode(this)">Copy</button></div>
                 <pre><code>ping 10.10.10.2          # From node 1
-wolfnetctl peers         # View connected peers
-wolfnetctl status        # View this node's status</code></pre>
+wardenclyffenetctl peers         # View connected peers
+wardenclyffenetctl status        # View this node's status</code></pre>
             </div>
 
             <div class="info-box">
-                <p>&#x1F4A1; <strong>WolfStack users:</strong> You can also generate invite tokens and add peers from the
-                    WolfStack dashboard under <strong>Networking &rarr; WolfNet</strong>, or use the cluster settings
-                    page to automatically sync WolfNet connections across all cluster nodes with one click.</p>
+                <p>&#x1F4A1; <strong>WardenClyffe users:</strong> You can also generate invite tokens and add peers from the
+                    WardenClyffe dashboard under <strong>Networking &rarr; WardenClyffeNet</strong>, or use the cluster settings
+                    page to automatically sync WardenClyffeNet connections across all cluster nodes with one click.</p>
             </div>
         </div>
 
         <!-- ===== Configuration ===== -->
         <div class="content-section">
             <h2>Configuration</h2>
-            <p>WolfNet is configured via <code>/etc/wolfnet/config.toml</code>. The <code>wolfnet init</code>
-                command or WolfStack installer creates this file for you.</p>
+            <p>WardenClyffeNet is configured via <code>/etc/wardenclyffenet/config.toml</code>. The <code>wardenclyffenet init</code>
+                command or WardenClyffe installer creates this file for you.</p>
 
             <div class="code-block">
                 <div class="code-header"><span class="code-lang">toml</span><button class="copy-btn"
                         onclick="copyCode(this)">Copy</button></div>
-                <pre><code># WolfNet Configuration
+                <pre><code># WardenClyffeNet Configuration
 
 [network]
-interface = "wolfnet0"        # TUN interface name
-address = "10.10.10.1"        # This node's WolfNet IP address
+interface = "wardenclyffenet0"        # TUN interface name
+address = "10.10.10.1"        # This node's WardenClyffeNet IP address
 subnet = 24                   # Subnet mask (CIDR)
 listen_port = 9600            # UDP port for tunnel traffic
 gateway = false               # Enable gateway/NAT mode
@@ -206,13 +206,13 @@ discovery = true              # Enable LAN auto-discovery broadcasts
 mtu = 1400                    # TUN interface MTU
 
 [security]
-private_key_file = "/etc/wolfnet/private.key"
+private_key_file = "/etc/wardenclyffenet/private.key"
 
 # Add peers — one [[peers]] block per remote node
 [[peers]]
 public_key = "base64_encoded_x25519_public_key"
 endpoint = "203.0.113.5:9600"        # IP:port or hostname:port
-allowed_ip = "10.10.10.2"            # Peer's WolfNet address
+allowed_ip = "10.10.10.2"            # Peer's WardenClyffeNet address
 name = "server-2"                     # Friendly name (optional)
 
 [[peers]]
@@ -236,14 +236,14 @@ name = "home-server"</code></pre>
                     <tr>
                         <td><code>[network]</code></td>
                         <td><code>interface</code></td>
-                        <td><code>wolfnet0</code></td>
-                        <td>Name of the TUN interface created by WolfNet</td>
+                        <td><code>wardenclyffenet0</code></td>
+                        <td>Name of the TUN interface created by WardenClyffeNet</td>
                     </tr>
                     <tr>
                         <td></td>
                         <td><code>address</code></td>
                         <td>&mdash;</td>
-                        <td>This node&rsquo;s WolfNet IP address (e.g. <code>10.10.10.1</code>)</td>
+                        <td>This node&rsquo;s WardenClyffeNet IP address (e.g. <code>10.10.10.1</code>)</td>
                     </tr>
                     <tr>
                         <td></td>
@@ -278,7 +278,7 @@ name = "home-server"</code></pre>
                     <tr>
                         <td><code>[security]</code></td>
                         <td><code>private_key_file</code></td>
-                        <td><code>/etc/wolfnet/private.key</code></td>
+                        <td><code>/etc/wardenclyffenet/private.key</code></td>
                         <td>Path to the X25519 private key file</td>
                     </tr>
                     <tr>
@@ -297,7 +297,7 @@ name = "home-server"</code></pre>
                         <td></td>
                         <td><code>allowed_ip</code></td>
                         <td>&mdash;</td>
-                        <td>Peer&rsquo;s WolfNet IP address (required)</td>
+                        <td>Peer&rsquo;s WardenClyffeNet IP address (required)</td>
                     </tr>
                     <tr>
                         <td></td>
@@ -312,15 +312,15 @@ name = "home-server"</code></pre>
         <!-- ===== Peer Discovery ===== -->
         <div class="content-section">
             <h2>Peer Discovery</h2>
-            <p>WolfNet uses multiple methods to find and connect to peers, allowing it to work across any
+            <p>WardenClyffeNet uses multiple methods to find and connect to peers, allowing it to work across any
                 network topology.</p>
 
             <h3>LAN Auto-Discovery</h3>
-            <p>When <code>discovery = true</code> (the default), WolfNet broadcasts a UDP announcement every
-                2 seconds on port <strong>9601</strong>. Any other WolfNet node on the same LAN segment will
+            <p>When <code>discovery = true</code> (the default), WardenClyffeNet broadcasts a UDP announcement every
+                2 seconds on port <strong>9601</strong>. Any other WardenClyffeNet node on the same LAN segment will
                 automatically detect it and establish a connection &mdash; no configuration needed.</p>
-            <p>This means if you install WolfNet on two servers on the same network and run
-                <code>wolfnet init</code> on each, they will find each other automatically.</p>
+            <p>This means if you install WardenClyffeNet on two servers on the same network and run
+                <code>wardenclyffenet init</code> on each, they will find each other automatically.</p>
 
             <h3>Static Endpoints</h3>
             <p>For peers on different networks, specify their public IP address or hostname in the
@@ -336,7 +336,7 @@ name = "cloud-server"</code></pre>
             </div>
 
             <h3>DynDNS Hostnames</h3>
-            <p>If a peer has a dynamic IP address (e.g. a home server), use a DynDNS hostname instead. WolfNet
+            <p>If a peer has a dynamic IP address (e.g. a home server), use a DynDNS hostname instead. WardenClyffeNet
                 <strong>re-resolves hostnames every 60 seconds</strong>, so if the IP changes, the connection
                 recovers automatically:</p>
             <div class="code-block">
@@ -351,34 +351,34 @@ name = "home-lab"</code></pre>
             <div class="info-box">
                 <p>&#x1F4A1; <strong>Tip:</strong> Free DynDNS services like <a href="https://www.duckdns.org"
                     target="_blank">DuckDNS</a> or <a href="https://www.noip.com" target="_blank">No-IP</a> work
-                    perfectly with WolfNet. Set up the DynDNS client on your router or server, then use the hostname
-                    in your WolfNet config.</p>
+                    perfectly with WardenClyffeNet. Set up the DynDNS client on your router or server, then use the hostname
+                    in your WardenClyffeNet config.</p>
             </div>
 
             <h3>Peer Exchange (PEX)</h3>
-            <p>Every 30 seconds, each WolfNet node shares its full peer list with all connected peers. This
+            <p>Every 30 seconds, each WardenClyffeNet node shares its full peer list with all connected peers. This
                 allows the mesh to self-heal &mdash; if node A knows node B and node C, but B and C don&rsquo;t
                 know each other, A will introduce them via PEX. If direct connection isn&rsquo;t possible,
                 traffic is relayed through A.</p>
 
             <h3>Endpoint Roaming</h3>
-            <p>WolfNet identifies peers by their cryptographic key, not by IP address. If a peer&rsquo;s public IP
-                changes (e.g. after a NAT rebind or ISP address change), WolfNet updates the endpoint mapping
+            <p>WardenClyffeNet identifies peers by their cryptographic key, not by IP address. If a peer&rsquo;s public IP
+                changes (e.g. after a NAT rebind or ISP address change), WardenClyffeNet updates the endpoint mapping
                 automatically when the next packet arrives. Combined with DynDNS re-resolution, this makes
-                WolfNet resilient to IP address changes.</p>
+                WardenClyffeNet resilient to IP address changes.</p>
         </div>
 
         <!-- ===== Remote Access Setup ===== -->
         <div class="content-section">
             <h2>Remote Access Setup</h2>
-            <p>One of WolfNet&rsquo;s most powerful features is that the <strong>same configuration works for both
+            <p>One of WardenClyffeNet&rsquo;s most powerful features is that the <strong>same configuration works for both
                 local and remote access</strong>. A peer on the LAN connects via auto-discovery, and the same peer
                 connecting from a coffee shop reaches your network via the configured endpoint &mdash; no config
                 changes needed.</p>
 
             <h3>Scenario: Office + Home Server</h3>
             <p>You have a server at the office with a static IP and a server at home with a dynamic IP. You want
-                both to be on the same WolfNet and accessible from anywhere.</p>
+                both to be on the same WardenClyffeNet and accessible from anywhere.</p>
 
             <h4>Office Server (static IP: 203.0.113.5)</h4>
             <div class="code-block">
@@ -425,22 +425,22 @@ name = "office-server"</code></pre>
             </div>
 
             <h3>Scenario: Laptop VPN Access</h3>
-            <p>Install WolfNet on your laptop and join the network. Whether you&rsquo;re in the office (LAN
+            <p>Install WardenClyffeNet on your laptop and join the network. Whether you&rsquo;re in the office (LAN
                 discovery finds peers automatically) or working remotely (connects via the configured endpoint),
                 you have the same access to all <code>10.10.10.x</code> resources.</p>
             <div class="code-block">
                 <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                         onclick="copyCode(this)">Copy</button></div>
-                <pre><code># On any WolfStack node, generate an invite:
-sudo wolfnet --config /etc/wolfnet/config.toml invite
+                <pre><code># On any WardenClyffe node, generate an invite:
+sudo wardenclyffenet --config /etc/wardenclyffenet/config.toml invite
 
 # On your laptop:
-sudo wolfnet --config /etc/wolfnet/config.toml join &lt;token&gt;
-sudo systemctl restart wolfnet
+sudo wardenclyffenet --config /etc/wardenclyffenet/config.toml join &lt;token&gt;
+sudo systemctl restart wardenclyffenet
 
 # Now access everything:
 ssh admin@10.10.10.1                     # SSH to a server
-firefox https://10.10.10.1:9443          # WolfStack dashboard
+firefox https://10.10.10.1:9443          # WardenClyffe dashboard
 mysql -h 10.10.10.2 -u root mydb        # Database on another node
 curl http://10.10.10.100:8080            # App in a container</code></pre>
             </div>
@@ -453,11 +453,11 @@ curl http://10.10.10.100:8080            # App in a container</code></pre>
                 <pre><code>Site A (London)                     Site B (Frankfurt)
 ┌─────────────────────┐           ┌──────────────────────┐
 │ 10.10.10.1 (node-a) │◄────────►│ 10.10.10.3 (node-c)  │
-│ 10.10.10.2 (node-b) │  WolfNet │ 10.10.10.4 (node-d)  │
+│ 10.10.10.2 (node-b) │  WardenClyffeNet │ 10.10.10.4 (node-d)  │
 │   LAN discovery ◄─► │  tunnel  │  ◄─► LAN discovery   │
 └─────────────────────┘           └──────────────────────┘
           ▲                                   ▲
-          │           WolfNet tunnel           │
+          │           WardenClyffeNet tunnel           │
           └───────────────────────────────────┘
                      ▲
                      │ VPN access
@@ -474,46 +474,46 @@ curl http://10.10.10.100:8080            # App in a container</code></pre>
         <div class="content-section">
             <h2>Invite/Join System</h2>
             <p>The invite/join system is the easiest way to connect peers. An invite token encodes everything
-                the joining node needs: the inviter&rsquo;s public key, endpoint, WolfNet IP, subnet, and
+                the joining node needs: the inviter&rsquo;s public key, endpoint, WardenClyffeNet IP, subnet, and
                 listen port.</p>
 
             <h3>How It Works</h3>
             <ol>
-                <li><strong>Generate token:</strong> Run <code>wolfnet invite</code> on an existing node. WolfNet
+                <li><strong>Generate token:</strong> Run <code>wardenclyffenet invite</code> on an existing node. WardenClyffeNet
                     auto-detects your public IP and encodes it into the token.</li>
-                <li><strong>Join:</strong> Run <code>wolfnet join &lt;token&gt;</code> on the new node. It decodes the
+                <li><strong>Join:</strong> Run <code>wardenclyffenet join &lt;token&gt;</code> on the new node. It decodes the
                     token, assigns itself the next available IP, and adds the inviter as a peer.</li>
                 <li><strong>Reverse token:</strong> The join command prints a reverse token. Run this on the
                     original node to complete the bidirectional peering.</li>
-                <li><strong>Restart:</strong> Restart WolfNet on both nodes &mdash; they connect immediately.</li>
+                <li><strong>Restart:</strong> Restart WardenClyffeNet on both nodes &mdash; they connect immediately.</li>
             </ol>
 
             <div class="code-block">
                 <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                         onclick="copyCode(this)">Copy</button></div>
                 <pre><code># Node A — generate invite
-$ sudo wolfnet --config /etc/wolfnet/config.toml invite
+$ sudo wardenclyffenet --config /etc/wardenclyffenet/config.toml invite
 Invite token:
-  sudo wolfnet --config /etc/wolfnet/config.toml join eyJwa...
+  sudo wardenclyffenet --config /etc/wardenclyffenet/config.toml join eyJwa...
 
 # Node B — join using the token
-$ sudo wolfnet --config /etc/wolfnet/config.toml join eyJwa...
+$ sudo wardenclyffenet --config /etc/wardenclyffenet/config.toml join eyJwa...
 Joined network! This node is 10.10.10.2
 Run this on the inviting node to complete the connection:
-  sudo wolfnet --config /etc/wolfnet/config.toml join eyJxb...
+  sudo wardenclyffenet --config /etc/wardenclyffenet/config.toml join eyJxb...
 
 # Node A — run the reverse token
-$ sudo wolfnet --config /etc/wolfnet/config.toml join eyJxb...
+$ sudo wardenclyffenet --config /etc/wardenclyffenet/config.toml join eyJxb...
 
 # Both nodes — restart
-$ sudo systemctl restart wolfnet</code></pre>
+$ sudo systemctl restart wardenclyffenet</code></pre>
             </div>
 
             <div class="info-box">
-                <p>&#x1F4A1; <strong>WolfStack dashboard:</strong> In the WolfStack UI, go to <strong>Networking
-                    &rarr; WolfNet</strong> to generate invites, add peers, and manage connections graphically.
-                    The cluster settings page also has a <strong>Update WolfNet Connections</strong> button that
-                    automatically syncs WolfNet peers across all cluster nodes.</p>
+                <p>&#x1F4A1; <strong>WardenClyffe dashboard:</strong> In the WardenClyffe UI, go to <strong>Networking
+                    &rarr; WardenClyffeNet</strong> to generate invites, add peers, and manage connections graphically.
+                    The cluster settings page also has a <strong>Update WardenClyffeNet Connections</strong> button that
+                    automatically syncs WardenClyffeNet peers across all cluster nodes.</p>
             </div>
         </div>
 
@@ -548,15 +548,15 @@ $ sudo systemctl restart wolfnet</code></pre>
                     in favour of the direct path</li>
             </ol>
 
-            <p>Any WolfNet node with two or more peers automatically enables IP forwarding and can act as a
-                relay. The WolfStack dashboard shows relayed peers with a <strong>purple &ldquo;Relay via&rdquo;
+            <p>Any WardenClyffeNet node with two or more peers automatically enables IP forwarding and can act as a
+                relay. The WardenClyffe dashboard shows relayed peers with a <strong>purple &ldquo;Relay via&rdquo;
                 badge</strong> in the Global View.</p>
         </div>
 
         <!-- ===== Gateway Mode ===== -->
         <div class="content-section">
             <h2>Gateway Mode</h2>
-            <p>Gateway mode turns a WolfNet node into a NAT gateway, allowing other peers to route their
+            <p>Gateway mode turns a WardenClyffeNet node into a NAT gateway, allowing other peers to route their
                 internet traffic through it. This is useful when you want to give peers internet access
                 through a specific exit point.</p>
 
@@ -569,62 +569,62 @@ $ sudo systemctl restart wolfnet</code></pre>
 address = "10.10.10.1"
 gateway = true           # Enable NAT gateway</code></pre>
             </div>
-            <p>You can also toggle this from the WolfStack dashboard under <strong>Networking &rarr;
-                WolfNet</strong>.</p>
+            <p>You can also toggle this from the WardenClyffe dashboard under <strong>Networking &rarr;
+                WardenClyffeNet</strong>.</p>
 
             <h3>What Gateway Mode Does</h3>
             <ul>
                 <li>Detects the external network interface automatically</li>
                 <li>Enables IP forwarding (<code>/proc/sys/net/ipv4/ip_forward</code>)</li>
                 <li>Adds iptables MASQUERADE rules for NAT</li>
-                <li>Allows forwarding from WolfNet to the internet</li>
-                <li>Blocks inbound traffic from the internet to the WolfNet subnet</li>
+                <li>Allows forwarding from WardenClyffeNet to the internet</li>
+                <li>Blocks inbound traffic from the internet to the WardenClyffeNet subnet</li>
                 <li>All rules are cleaned up automatically on shutdown</li>
             </ul>
 
             <h3>Client Configuration</h3>
             <p>On a client node that should use the gateway for internet access, add a default route via the
-                gateway&rsquo;s WolfNet IP:</p>
+                gateway&rsquo;s WardenClyffeNet IP:</p>
             <div class="code-block">
                 <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                         onclick="copyCode(this)">Copy</button></div>
                 <pre><code># Route all traffic through the gateway peer
-sudo ip route add default via 10.10.10.1 dev wolfnet0</code></pre>
+sudo ip route add default via 10.10.10.1 dev wardenclyffenet0</code></pre>
             </div>
         </div>
 
         <!-- ===== Container Integration ===== -->
         <div class="content-section">
             <h2>Container Integration</h2>
-            <p>WolfStack can assign WolfNet IP addresses to Docker containers and LXC containers,
+            <p>WardenClyffe can assign WardenClyffeNet IP addresses to Docker containers and LXC containers,
                 making them directly addressable across the mesh network. Container IPs are allocated
                 from the <code>10.10.10.100&ndash;254</code> range.</p>
 
             <h3>Docker Containers</h3>
-            <p>When creating a Docker container in WolfStack, assign a WolfNet IP via the
-                <strong>WolfNet IP</strong> field. This is stored as a Docker label:</p>
+            <p>When creating a Docker container in WardenClyffe, assign a WardenClyffeNet IP via the
+                <strong>WardenClyffeNet IP</strong> field. This is stored as a Docker label:</p>
             <div class="code-block">
                 <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                         onclick="copyCode(this)">Copy</button></div>
-                <pre><code># WolfStack sets this automatically, but you can also do it manually:
-docker create --name myapp --label wolfnet.ip=10.10.10.100 nginx</code></pre>
+                <pre><code># WardenClyffe sets this automatically, but you can also do it manually:
+docker create --name myapp --label wardenclyffenet.ip=10.10.10.100 nginx</code></pre>
             </div>
-            <p>WolfStack then:</p>
+            <p>WardenClyffe then:</p>
             <ol>
-                <li>Adds the WolfNet IP as an alias on the container&rsquo;s network interface</li>
-                <li>Adds a route for the WolfNet subnet inside the container</li>
-                <li>Adds a host-side route so other WolfNet peers can reach the container</li>
+                <li>Adds the WardenClyffeNet IP as an alias on the container&rsquo;s network interface</li>
+                <li>Adds a route for the WardenClyffeNet subnet inside the container</li>
+                <li>Adds a host-side route so other WardenClyffeNet peers can reach the container</li>
                 <li>Publishes the container route to remote peers via <code>routes.json</code></li>
             </ol>
             <p>The container is now reachable at <code>10.10.10.100</code> from any peer on the mesh.</p>
 
             <h3>LXC Containers</h3>
-            <p>LXC containers use a marker file at <code>/var/lib/lxc/&lt;name&gt;/.wolfnet/ip</code>.
-                WolfStack assigns the IP and configures routing automatically, including Proxmox LXC
-                containers with dedicated WolfNet bridge interfaces.</p>
+            <p>LXC containers use a marker file at <code>/var/lib/lxc/&lt;name&gt;/.wardenclyffenet/ip</code>.
+                WardenClyffe assigns the IP and configures routing automatically, including Proxmox LXC
+                containers with dedicated WardenClyffeNet bridge interfaces.</p>
 
             <h3>Route Propagation</h3>
-            <p>Container IP mappings are written to <code>/var/run/wolfnet/routes.json</code>. The WolfNet
+            <p>Container IP mappings are written to <code>/var/run/wardenclyffenet/routes.json</code>. The WardenClyffeNet
                 daemon reads this file and uses it to route traffic destined for containers on remote
                 nodes to the correct host peer. Routes are propagated across the cluster automatically.</p>
         </div>
@@ -632,18 +632,18 @@ docker create --name myapp --label wolfnet.ip=10.10.10.100 nginx</code></pre>
         <!-- ===== Platform Support ===== -->
         <div class="content-section">
             <h2>Platform Support</h2>
-            <p>WolfNet is <strong>Linux only</strong>. It requires a Linux TUN device (<code>/dev/net/tun</code>)
+            <p>WardenClyffeNet is <strong>Linux only</strong>. It requires a Linux TUN device (<code>/dev/net/tun</code>)
                 and runs as a root daemon. There are no clients for iOS, Android, Windows, or macOS.</p>
             <p>Supported architectures: <strong>x86_64</strong>, <strong>aarch64</strong> (ARM64),
                 <strong>armv7</strong>, and <strong>ppc64le</strong> (IBM Power). Any Linux system that can
-                build Rust and create a TUN interface can run WolfNet.</p>
+                build Rust and create a TUN interface can run WardenClyffeNet.</p>
         </div>
 
         <!-- ===== CLI Reference ===== -->
         <div class="content-section">
             <h2>CLI Reference</h2>
 
-            <h3><code>wolfnet</code> (Daemon &amp; Management)</h3>
+            <h3><code>wardenclyffenet</code> (Daemon &amp; Management)</h3>
             <table>
                 <thead>
                     <tr>
@@ -653,39 +653,39 @@ docker create --name myapp --label wolfnet.ip=10.10.10.100 nginx</code></pre>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><code>wolfnet</code></td>
-                        <td>Run the WolfNet daemon (requires root)</td>
+                        <td><code>wardenclyffenet</code></td>
+                        <td>Run the WardenClyffeNet daemon (requires root)</td>
                     </tr>
                     <tr>
-                        <td><code>wolfnet init --address &lt;ip&gt;</code></td>
-                        <td>Generate default config with the given WolfNet address</td>
+                        <td><code>wardenclyffenet init --address &lt;ip&gt;</code></td>
+                        <td>Generate default config with the given WardenClyffeNet address</td>
                     </tr>
                     <tr>
-                        <td><code>wolfnet invite</code></td>
+                        <td><code>wardenclyffenet invite</code></td>
                         <td>Generate an invite token for another node (auto-detects public IP)</td>
                     </tr>
                     <tr>
-                        <td><code>wolfnet join &lt;token&gt;</code></td>
-                        <td>Join a WolfNet network using an invite token</td>
+                        <td><code>wardenclyffenet join &lt;token&gt;</code></td>
+                        <td>Join a WardenClyffeNet network using an invite token</td>
                     </tr>
                     <tr>
-                        <td><code>wolfnet genkey --output &lt;path&gt;</code></td>
+                        <td><code>wardenclyffenet genkey --output &lt;path&gt;</code></td>
                         <td>Generate a new X25519 keypair</td>
                     </tr>
                     <tr>
-                        <td><code>wolfnet pubkey</code></td>
+                        <td><code>wardenclyffenet pubkey</code></td>
                         <td>Print this node&rsquo;s base64 public key</td>
                     </tr>
                     <tr>
-                        <td><code>wolfnet token</code></td>
+                        <td><code>wardenclyffenet token</code></td>
                         <td>Print public key and endpoint in token format</td>
                     </tr>
                 </tbody>
             </table>
-            <p>Options: <code>--config &lt;path&gt;</code> (default: <code>/etc/wolfnet/config.toml</code>),
+            <p>Options: <code>--config &lt;path&gt;</code> (default: <code>/etc/wardenclyffenet/config.toml</code>),
                 <code>--debug</code> (verbose logging)</p>
 
-            <h3><code>wolfnetctl</code> (Status &amp; Monitoring)</h3>
+            <h3><code>wardenclyffenetctl</code> (Status &amp; Monitoring)</h3>
             <table>
                 <thead>
                     <tr>
@@ -695,24 +695,24 @@ docker create --name myapp --label wolfnet.ip=10.10.10.100 nginx</code></pre>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><code>wolfnetctl status</code></td>
+                        <td><code>wardenclyffenetctl status</code></td>
                         <td>Show this node&rsquo;s status (IP, port, gateway, uptime, peer count)</td>
                     </tr>
                     <tr>
-                        <td><code>wolfnetctl list servers</code></td>
+                        <td><code>wardenclyffenetctl list servers</code></td>
                         <td>List all nodes on the network with their roles</td>
                     </tr>
                     <tr>
-                        <td><code>wolfnetctl peers</code></td>
+                        <td><code>wardenclyffenetctl peers</code></td>
                         <td>Detailed peer info: hostname, IP, endpoint, status, traffic, relay info</td>
                     </tr>
                     <tr>
-                        <td><code>wolfnetctl info</code></td>
+                        <td><code>wardenclyffenetctl info</code></td>
                         <td>Combined status + peers output</td>
                     </tr>
                 </tbody>
             </table>
-            <p><code>wolfnetctl</code> reads from <code>/var/run/wolfnet/status.json</code> &mdash; the daemon must
+            <p><code>wardenclyffenetctl</code> reads from <code>/var/run/wardenclyffenet/status.json</code> &mdash; the daemon must
                 be running.</p>
         </div>
 
@@ -723,23 +723,23 @@ docker create --name myapp --label wolfnet.ip=10.10.10.100 nginx</code></pre>
             <div class="code-block">
                 <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                         onclick="copyCode(this)">Copy</button></div>
-                <pre><code># Start WolfNet
-sudo systemctl start wolfnet
+                <pre><code># Start WardenClyffeNet
+sudo systemctl start wardenclyffenet
 
 # Check status
-sudo systemctl status wolfnet
+sudo systemctl status wardenclyffenet
 
 # View logs
-sudo journalctl -u wolfnet -f
+sudo journalctl -u wardenclyffenet -f
 
 # Enable on boot
-sudo systemctl enable wolfnet
+sudo systemctl enable wardenclyffenet
 
 # Restart after config change
-sudo systemctl restart wolfnet
+sudo systemctl restart wardenclyffenet
 
 # Reload config without restart (sends SIGHUP)
-sudo kill -HUP $(pidof wolfnet)</code></pre>
+sudo kill -HUP $(pidof wardenclyffenet)</code></pre>
             </div>
         </div>
 
@@ -786,20 +786,20 @@ sudo kill -HUP $(pidof wolfnet)</code></pre>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><code>/etc/wolfnet/config.toml</code></td>
+                        <td><code>/etc/wardenclyffenet/config.toml</code></td>
                         <td>Main configuration file</td>
                     </tr>
                     <tr>
-                        <td><code>/etc/wolfnet/private.key</code></td>
+                        <td><code>/etc/wardenclyffenet/private.key</code></td>
                         <td>X25519 private key (base64, mode 0600)</td>
                     </tr>
                     <tr>
-                        <td><code>/var/run/wolfnet/status.json</code></td>
+                        <td><code>/var/run/wardenclyffenet/status.json</code></td>
                         <td>Live daemon status (updated every 5 seconds)</td>
                     </tr>
                     <tr>
-                        <td><code>/var/run/wolfnet/routes.json</code></td>
-                        <td>Container/VM IP &rarr; host WolfNet IP routing table</td>
+                        <td><code>/var/run/wardenclyffenet/routes.json</code></td>
+                        <td>Container/VM IP &rarr; host WardenClyffeNet IP routing table</td>
                     </tr>
                 </tbody>
             </table>
@@ -830,17 +830,17 @@ sudo kill -HUP $(pidof wolfnet)</code></pre>
             <h3>Peers not connecting</h3>
             <ul>
                 <li>Check that UDP port <strong>9600</strong> is open in your firewall on both sides</li>
-                <li>Verify the endpoint address is correct: <code>wolfnetctl peers</code> shows the last known endpoint</li>
+                <li>Verify the endpoint address is correct: <code>wardenclyffenetctl peers</code> shows the last known endpoint</li>
                 <li>For DynDNS, ensure the hostname resolves correctly: <code>dig myhost.duckdns.org</code></li>
-                <li>Check logs for handshake errors: <code>sudo journalctl -u wolfnet -f</code></li>
-                <li>Run with <code>--debug</code> for verbose output: <code>sudo wolfnet --debug</code></li>
+                <li>Check logs for handshake errors: <code>sudo journalctl -u wardenclyffenet -f</code></li>
+                <li>Run with <code>--debug</code> for verbose output: <code>sudo wardenclyffenet --debug</code></li>
             </ul>
 
             <h3>Connected but can&rsquo;t ping</h3>
             <ul>
-                <li>Verify both nodes have <code>wolfnet0</code> interface up: <code>ip addr show wolfnet0</code></li>
+                <li>Verify both nodes have <code>wardenclyffenet0</code> interface up: <code>ip addr show wardenclyffenet0</code></li>
                 <li>Check for conflicting firewall rules blocking the <code>10.10.10.0/24</code> subnet</li>
-                <li>Ensure the peer shows as connected: <code>wolfnetctl peers</code></li>
+                <li>Ensure the peer shows as connected: <code>wardenclyffenetctl peers</code></li>
             </ul>
 
             <h3>LAN discovery not working</h3>
@@ -853,38 +853,38 @@ sudo kill -HUP $(pidof wolfnet)</code></pre>
             <h3>Connection drops after IP change</h3>
             <ul>
                 <li>Use a DynDNS hostname instead of a static IP in the <code>endpoint</code> field</li>
-                <li>WolfNet re-resolves hostnames every 60 seconds automatically</li>
+                <li>WardenClyffeNet re-resolves hostnames every 60 seconds automatically</li>
                 <li>Keepalives are sent every 25 seconds to maintain NAT mappings</li>
             </ul>
 
-            <h3>WolfNet status shows no peers</h3>
+            <h3>WardenClyffeNet status shows no peers</h3>
             <div class="code-block">
                 <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                         onclick="copyCode(this)">Copy</button></div>
                 <pre><code># Check if daemon is running
-sudo systemctl status wolfnet
+sudo systemctl status wardenclyffenet
 
 # Check status file
-cat /var/run/wolfnet/status.json | python3 -m json.tool
+cat /var/run/wardenclyffenet/status.json | python3 -m json.tool
 
 # Check config
-cat /etc/wolfnet/config.toml
+cat /etc/wardenclyffenet/config.toml
 
 # View public key (must match what peers have)
-sudo wolfnet --config /etc/wolfnet/config.toml pubkey</code></pre>
+sudo wardenclyffenet --config /etc/wardenclyffenet/config.toml pubkey</code></pre>
             </div>
 
-            <h3>Container not reachable via WolfNet</h3>
+            <h3>Container not reachable via WardenClyffeNet</h3>
             <ul>
-                <li>Verify the container has a WolfNet IP assigned in WolfStack</li>
-                <li>Check that routes are published: <code>cat /var/run/wolfnet/routes.json</code></li>
-                <li>Ensure iptables FORWARD rules allow traffic between <code>wolfnet0</code> and the container bridge</li>
-                <li>Restart WolfStack to reapply container routes: <code>sudo systemctl restart wolfstack</code></li>
+                <li>Verify the container has a WardenClyffeNet IP assigned in WardenClyffe</li>
+                <li>Check that routes are published: <code>cat /var/run/wardenclyffenet/routes.json</code></li>
+                <li>Ensure iptables FORWARD rules allow traffic between <code>wardenclyffenet0</code> and the container bridge</li>
+                <li>Restart WardenClyffe to reapply container routes: <code>sudo systemctl restart wardenclyffe</code></li>
             </ul>
         </div>
 
-        <div class="page-nav"><a href="wolfdisk.php" class="prev">&larr; WolfDisk</a><a
-                href="wolfnet-global.php" class="next">Global View &rarr;</a></div>
+        <div class="page-nav"><a href="wardenclyffedisk.php" class="prev">&larr; WardenClyffeDisk</a><a
+                href="wardenclyffenet-global.php" class="next">Global View &rarr;</a></div>
 
     </main>
 <?php include 'includes/footer.php'; ?>

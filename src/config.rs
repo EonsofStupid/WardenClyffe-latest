@@ -1,15 +1,15 @@
-//! WolfScale Configuration
+//! WardenClyffeScale Configuration
 //!
-//! This module provides configuration structures for the WolfScale
+//! This module provides configuration structures for the WardenClyffeScale
 //! distributed synchronization manager.
 
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use std::time::Duration;
 
-/// Main WolfScale configuration
+/// Main WardenClyffeScale configuration
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct WolfScaleConfig {
+pub struct WardenClyffeScaleConfig {
     /// Node-specific configuration
     pub node: NodeConfig,
 
@@ -135,7 +135,7 @@ pub struct ClusterConfig {
 
     /// Optional cluster name for auto-discovery filtering
     /// Nodes with different cluster names will not join each other
-    /// Leave empty to allow any WolfScale node on the network to join
+    /// Leave empty to allow any WardenClyffeScale node on the network to join
     #[serde(default)]
     pub cluster_name: Option<String>,
 
@@ -243,7 +243,7 @@ pub struct ProxyConfig {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ReplicationModeConfig {
     /// Replication mode: "proxy" (default) or "binlog"
-    /// - proxy: Captures writes through WolfScale's MySQL proxy
+    /// - proxy: Captures writes through WardenClyffeScale's MySQL proxy
     /// - binlog: Reads from MariaDB's binary log (for external Galera clusters)
     #[serde(default = "default_replication_mode")]
     pub mode: String,
@@ -270,7 +270,7 @@ pub struct BinlogConfig {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PerformanceConfig {
     /// Enable automatic hardware detection and tuning
-    /// When true, WolfScale will detect CPU cores and RAM to optimize settings
+    /// When true, WardenClyffeScale will detect CPU cores and RAM to optimize settings
     /// while reserving resources for MariaDB (default: true)
     #[serde(default = "default_true")]
     pub auto_tune: bool,
@@ -367,7 +367,7 @@ fn default_proxy_address() -> String {
 }
 
 fn default_data_dir() -> PathBuf {
-    PathBuf::from("/var/lib/wolfscale")
+    PathBuf::from("/var/lib/wardenclyffescale")
 }
 
 fn default_replication_mode() -> String {
@@ -429,18 +429,18 @@ impl Default for BinlogConfig {
     }
 }
 
-impl WolfScaleConfig {
+impl WardenClyffeScaleConfig {
     /// Load configuration from a TOML file
     pub fn from_file(path: &std::path::Path) -> crate::Result<Self> {
         let content = std::fs::read_to_string(path)?;
-        let config: WolfScaleConfig = toml::from_str(&content)?;
+        let config: WardenClyffeScaleConfig = toml::from_str(&content)?;
         config.validate()?;
         Ok(config)
     }
 
     /// Load configuration from a TOML string
     pub fn from_str(content: &str) -> crate::Result<Self> {
-        let config: WolfScaleConfig = toml::from_str(content)?;
+        let config: WardenClyffeScaleConfig = toml::from_str(content)?;
         config.validate()?;
         Ok(config)
     }
@@ -542,12 +542,12 @@ mod tests {
 [node]
 id = "node-1"
 bind_address = "0.0.0.0:7654"
-data_dir = "/var/lib/wolfscale"
+data_dir = "/var/lib/wardenclyffescale"
 
 [database]
 host = "localhost"
 port = 3306
-user = "wolfscale"
+user = "wardenclyffescale"
 password = "secret"
 database = "myapp"
 
@@ -560,7 +560,7 @@ compression = true
 peers = ["node-2:7654", "node-3:7654"]
 "#;
 
-        let config = WolfScaleConfig::from_str(toml).unwrap();
+        let config = WardenClyffeScaleConfig::from_str(toml).unwrap();
         assert_eq!(config.node.id, "node-1");
         assert_eq!(config.cluster.peers.len(), 2);
         assert_eq!(config.quorum_size(), 2); // 3 nodes, quorum = 2

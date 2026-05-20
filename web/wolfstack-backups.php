@@ -1,7 +1,7 @@
 <?php
-$page_title = '💾 Backup & Restore — WolfStack Docs';
-$page_desc = 'WolfStack Backup & Restore — schedule automated backups of Docker containers, LXC, VMs and config to local storage, S3, remote nodes, WolfDisk, or Proxmox Backup Server';
-$active = 'wolfstack-backups.php';
+$page_title = '💾 Backup & Restore — WardenClyffe Docs';
+$page_desc = 'WardenClyffe Backup & Restore — schedule automated backups of Docker containers, LXC, VMs and config to local storage, S3, remote nodes, WardenClyffeDisk, or Proxmox Backup Server';
+$active = 'wardenclyffe-backups.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -13,8 +13,8 @@ include 'includes/head.php';
             <!-- Overview -->
             <div class="content-section">
                 <h1>Overview</h1>
-                <img src="images/screenshots/backups.png" alt="WolfStack backup scheduling and management" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
-                <p>WolfStack&rsquo;s Backup &amp; Restore system lets you create on-demand or scheduled backups of everything on your server &mdash; Docker containers, LXC containers, KVM virtual machines, and WolfStack configuration files. Backups can be stored locally, on S3-compatible object storage, on a remote WolfStack node, on a WolfDisk mount, or on a Proxmox Backup Server (PBS).</p>
+                <img src="images/screenshots/backups.png" alt="WardenClyffe backup scheduling and management" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
+                <p>WardenClyffe&rsquo;s Backup &amp; Restore system lets you create on-demand or scheduled backups of everything on your server &mdash; Docker containers, LXC containers, KVM virtual machines, and WardenClyffe configuration files. Backups can be stored locally, on S3-compatible object storage, on a remote WardenClyffe node, on a WardenClyffeDisk mount, or on a Proxmox Backup Server (PBS).</p>
                 <p>Per-node backups are accessed under each node &rarr; <strong>💾 Backups</strong>. For a cluster-wide view, see <a href="#cluster-backups">Cluster Backups</a> under your cluster name in the sidebar.</p>
 
                 <h3>What Can Be Backed Up</h3>
@@ -25,7 +25,7 @@ include 'includes/head.php';
                             <tr><td><strong>Docker Container</strong></td><td>Full container filesystem (committed image + gzip)</td><td><code>docker commit</code> &rarr; <code>docker save</code> &rarr; gzip</td></tr>
                             <tr><td><strong>LXC Container</strong></td><td>Entire <code>/var/lib/lxc/{name}/</code> directory (rootfs + config)</td><td><code>tar czf</code> (container is stopped briefly for consistency)</td></tr>
                             <tr><td><strong>KVM/QEMU VM</strong></td><td>Disk images (<code>.qcow2</code>), config JSON, logs, extra volumes</td><td><code>tar czf</code> (VM shut down via ACPI for safe snapshot)</td></tr>
-                            <tr><td><strong>Configuration</strong></td><td>All <code>/etc/wolfstack/</code> and <code>/etc/wolfnet/</code> config files, VM configs</td><td><code>tar czf</code></td></tr>
+                            <tr><td><strong>Configuration</strong></td><td>All <code>/etc/wardenclyffe/</code> and <code>/etc/wardenclyffenet/</code> config files, VM configs</td><td><code>tar czf</code></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -34,14 +34,14 @@ include 'includes/head.php';
             <!-- Storage Destinations -->
             <div class="content-section">
                 <h2>Storage Destinations</h2>
-                <p>When creating a backup or schedule you choose where to store the resulting archive. WolfStack supports five destination types:</p>
+                <p>When creating a backup or schedule you choose where to store the resulting archive. WardenClyffe supports five destination types:</p>
 
                 <h3>Local Path</h3>
                 <p>Store backups in a directory on the server&rsquo;s local filesystem. Fast and simple &mdash; good for quick snapshots or when combined with an external mount.</p>
-                <div class="info-box">Example path: <code>/var/backups/wolfstack</code></div>
+                <div class="info-box">Example path: <code>/var/backups/wardenclyffe</code></div>
 
                 <h3>S3-Compatible Object Storage</h3>
-                <p>Upload backups to any S3-compatible bucket &mdash; AWS S3, Cloudflare R2, MinIO, Wasabi, Backblaze B2, etc. Backups are stored under the <code>wolfstack-backups/</code> prefix inside the bucket.</p>
+                <p>Upload backups to any S3-compatible bucket &mdash; AWS S3, Cloudflare R2, MinIO, Wasabi, Backblaze B2, etc. Backups are stored under the <code>wardenclyffe-backups/</code> prefix inside the bucket.</p>
                 <div class="table-wrapper">
                     <table>
                         <thead><tr><th>Field</th><th>Description</th><th>Example</th></tr></thead>
@@ -55,11 +55,11 @@ include 'includes/head.php';
                     </table>
                 </div>
 
-                <h3>Remote WolfStack Node</h3>
-                <p>Send backups to another WolfStack node&rsquo;s import endpoint. Useful for off-site replication across your cluster. Provide the full URL of the remote node (e.g. <code>https://10.0.10.2:8553</code>).</p>
+                <h3>Remote WardenClyffe Node</h3>
+                <p>Send backups to another WardenClyffe node&rsquo;s import endpoint. Useful for off-site replication across your cluster. Provide the full URL of the remote node (e.g. <code>https://10.0.10.2:8553</code>).</p>
 
-                <h3>WolfDisk</h3>
-                <p>Store backups on a WolfDisk distributed filesystem mount. Works exactly like local storage but the data is replicated across WolfDisk nodes automatically. Specify the mount point path (e.g. <code>/mnt/wolfdisk/backups</code>).</p>
+                <h3>WardenClyffeDisk</h3>
+                <p>Store backups on a WardenClyffeDisk distributed filesystem mount. Works exactly like local storage but the data is replicated across WardenClyffeDisk nodes automatically. Specify the mount point path (e.g. <code>/mnt/wardenclyffedisk/backups</code>).</p>
 
                 <h3>Proxmox Backup Server (PBS)</h3>
                 <p>Send backups to a dedicated Proxmox Backup Server. This is the recommended option if you already run PBS in your infrastructure &mdash; you get deduplication, encryption, and a proven backup pipeline. See the <a href="#pbs">Connecting to Proxmox Backup Server</a> section below for full setup instructions.</p>
@@ -69,9 +69,9 @@ include 'includes/head.php';
             <div class="content-section">
                 <h2>Creating a Backup</h2>
                 <ol>
-                    <li>Go to <strong>Datacenter &rarr; Backup</strong> in the WolfStack dashboard</li>
+                    <li>Go to <strong>Datacenter &rarr; Backup</strong> in the WardenClyffe dashboard</li>
                     <li>The <strong>Targets</strong> panel lists every Docker container, LXC container, VM, and a &ldquo;Config&rdquo; entry. Tick the items you want to back up, or use <strong>Select All</strong>.</li>
-                    <li>Choose a <strong>Storage Destination</strong> from the dropdown (local path, S3, remote node, WolfDisk, or PBS &mdash; if configured).</li>
+                    <li>Choose a <strong>Storage Destination</strong> from the dropdown (local path, S3, remote node, WardenClyffeDisk, or PBS &mdash; if configured).</li>
                     <li>Click <strong>Backup Selected</strong>. A progress indicator shows each item being backed up in real time.</li>
                     <li>Completed backups appear in the <strong>Backup History</strong> table with their size, date, status, and storage location.</li>
                 </ol>
@@ -84,12 +84,12 @@ include 'includes/head.php';
                 <ol>
                     <li>In the <strong>Backup History</strong> table, find the backup you want to restore.</li>
                     <li>Click the <strong>Restore</strong> button on that row.</li>
-                    <li>Confirm the restore in the dialog. WolfStack will download the archive from storage (if remote) and restore it to the appropriate location:
+                    <li>Confirm the restore in the dialog. WardenClyffe will download the archive from storage (if remote) and restore it to the appropriate location:
                         <ul>
                             <li><strong>Docker</strong> &mdash; loads the image back into Docker (<code>docker load</code>). You can then create a new container from it.</li>
                             <li><strong>LXC</strong> &mdash; extracts the rootfs and config to <code>/var/lib/lxc/</code>, fixes paths and permissions automatically. Start it from the Containers page.</li>
-                            <li><strong>VM</strong> &mdash; extracts disk images and config to <code>/var/lib/wolfstack/vms/</code>. The VM appears in the dashboard and can be started.</li>
-                            <li><strong>Config</strong> &mdash; restores all WolfStack and WolfNet configuration files. Restart WolfStack to apply.</li>
+                            <li><strong>VM</strong> &mdash; extracts disk images and config to <code>/var/lib/wardenclyffe/vms/</code>. The VM appears in the dashboard and can be started.</li>
+                            <li><strong>Config</strong> &mdash; restores all WardenClyffe and WardenClyffeNet configuration files. Restart WardenClyffe to apply.</li>
                         </ul>
                     </li>
                 </ol>
@@ -120,7 +120,7 @@ include 'includes/head.php';
                             </table>
                         </div>
                     </li>
-                    <li>Click <strong>Save</strong>. WolfStack checks for due schedules every 60 seconds.</li>
+                    <li>Click <strong>Save</strong>. WardenClyffe checks for due schedules every 60 seconds.</li>
                 </ol>
                 <div class="info-box"><strong>Retention example:</strong> A daily schedule with retention set to 7 keeps one week of backups. On the 8th run, the oldest backup is automatically deleted.</div>
             </div>
@@ -129,7 +129,7 @@ include 'includes/head.php';
             <div class="content-section" id="cluster-backups">
                 <h2>Cluster Backups</h2>
                 <p>Cluster Backups gives you a single aggregated view of all backups across every node in a cluster, plus the ability to push backup schedules and PBS configuration to multiple nodes at once &mdash; even across different clusters.</p>
-                <p>Access it from the sidebar under your cluster name &rarr; <strong>💾 Backups</strong> (next to WolfRun and Status Pages).</p>
+                <p>Access it from the sidebar under your cluster name &rarr; <strong>💾 Backups</strong> (next to WardenClyffeRun and Status Pages).</p>
 
                 <h3>Aggregated Overview</h3>
                 <p>The cluster backups page shows:</p>
@@ -151,15 +151,15 @@ include 'includes/head.php';
                         </ul>
                     </li>
                     <li>In the <strong>Target Nodes</strong> section, tick which nodes should receive the schedule. Nodes are sorted by cluster then hostname.</li>
-                    <li>Click <strong>Push Schedule to Selected Nodes</strong>. WolfStack creates the schedule on each selected node in parallel.</li>
+                    <li>Click <strong>Push Schedule to Selected Nodes</strong>. WardenClyffe creates the schedule on each selected node in parallel.</li>
                 </ol>
-                <div class="info-box"><strong>Tip:</strong> When all targets on a node are selected, WolfStack sends <code>backup_all: true</code> to that node. This means any new containers or VMs added later are automatically included. If you deselect even one target, only the explicitly checked items are backed up.</div>
+                <div class="info-box"><strong>Tip:</strong> When all targets on a node are selected, WardenClyffe sends <code>backup_all: true</code> to that node. This means any new containers or VMs added later are automatically included. If you deselect even one target, only the explicitly checked items are backed up.</div>
 
                 <h3>Pushing PBS Configuration to All Nodes</h3>
-                <p>If you use Proxmox Backup Server, you can configure it once and push the credentials to every WolfStack node &mdash; even nodes in different clusters:</p>
+                <p>If you use Proxmox Backup Server, you can configure it once and push the credentials to every WardenClyffe node &mdash; even nodes in different clusters:</p>
                 <ol>
                     <li>In the <strong>Proxmox Backup Server &mdash; Push Config</strong> card, enter your PBS details (server, datastore, user, password or API token, fingerprint, namespace).</li>
-                    <li>In the <strong>Target Nodes</strong> section, select which nodes to push to. All online WolfStack nodes across every cluster are listed.</li>
+                    <li>In the <strong>Target Nodes</strong> section, select which nodes to push to. All online WardenClyffe nodes across every cluster are listed.</li>
                     <li>Click <strong>Push PBS Config to Selected Nodes</strong>.</li>
                 </ol>
                 <p>Each node receives the full PBS configuration including passwords and secrets, so it can immediately start sending backups to PBS.</p>
@@ -168,7 +168,7 @@ include 'includes/head.php';
                 <p>If PBS is already configured on one of your nodes, you can pull that configuration and use it to push to other nodes:</p>
                 <ol>
                     <li>Click <strong>Pull Config from a Node</strong>.</li>
-                    <li>A dialog shows every online WolfStack node and whether it has PBS configured (with the server and datastore name).</li>
+                    <li>A dialog shows every online WardenClyffe node and whether it has PBS configured (with the server and datastore name).</li>
                     <li>Click <strong>Pull</strong> next to the node you want to copy from. The full config (including passwords and token secrets) is fetched and populated into the form.</li>
                     <li>You can then push it to all other nodes.</li>
                 </ol>
@@ -180,12 +180,12 @@ include 'includes/head.php';
             <!-- Connecting to Proxmox Backup Server -->
             <div class="content-section" id="pbs">
                 <h2>Connecting to Proxmox Backup Server (PBS)</h2>
-                <p>Proxmox Backup Server is a dedicated backup solution with deduplication, compression, and encryption. WolfStack integrates directly with PBS &mdash; you can send backups to it and restore snapshots from it, all from the WolfStack dashboard.</p>
+                <p>Proxmox Backup Server is a dedicated backup solution with deduplication, compression, and encryption. WardenClyffe integrates directly with PBS &mdash; you can send backups to it and restore snapshots from it, all from the WardenClyffe dashboard.</p>
 
                 <h3>Prerequisites</h3>
                 <ul>
                     <li>A running Proxmox Backup Server instance (can be on the same network or reachable over the internet)</li>
-                    <li>The <code>proxmox-backup-client</code> is already installed automatically by the WolfStack setup script &mdash; no extra installation needed</li>
+                    <li>The <code>proxmox-backup-client</code> is already installed automatically by the WardenClyffe setup script &mdash; no extra installation needed</li>
                     <li>A PBS user and API token (or password) with access to a datastore</li>
                 </ul>
 
@@ -196,7 +196,7 @@ include 'includes/head.php';
                     <li>Click <strong>Add</strong> and create a token:
                         <ul>
                             <li><strong>User:</strong> e.g. <code>backup@pbs</code></li>
-                            <li><strong>Token Name:</strong> e.g. <code>wolfstack</code></li>
+                            <li><strong>Token Name:</strong> e.g. <code>wardenclyffe</code></li>
                             <li><strong>Privilege Separation:</strong> Untick this so the token inherits the user&rsquo;s permissions</li>
                         </ul>
                     </li>
@@ -205,7 +205,7 @@ include 'includes/head.php';
                 </ol>
 
                 <h3>Step 2 &mdash; Get the Server Fingerprint (Optional)</h3>
-                <p>If your PBS uses a self-signed certificate you need its TLS fingerprint so WolfStack can verify the connection.</p>
+                <p>If your PBS uses a self-signed certificate you need its TLS fingerprint so WardenClyffe can verify the connection.</p>
                 <div class="code-block" style="margin:0.5rem 0;">
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
                     <pre><code># Run on the PBS server itself:
@@ -216,9 +216,9 @@ openssl s_client -connect your-pbs:8007 &lt; /dev/null 2>/dev/null \
   | openssl x509 -fingerprint -sha256 -noout</code></pre>
                 </div>
 
-                <h3>Step 3 &mdash; Configure PBS in WolfStack</h3>
+                <h3>Step 3 &mdash; Configure PBS in WardenClyffe</h3>
                 <ol>
-                    <li>In the WolfStack dashboard, go to <strong>Datacenter &rarr; Backup</strong>.</li>
+                    <li>In the WardenClyffe dashboard, go to <strong>Datacenter &rarr; Backup</strong>.</li>
                     <li>Open the <strong>Proxmox Backup Server</strong> panel.</li>
                     <li>Fill in the connection details:
                         <div class="table-wrapper" style="margin-top:0.5rem;">
@@ -228,16 +228,16 @@ openssl s_client -connect your-pbs:8007 &lt; /dev/null 2>/dev/null \
                                     <tr><td>PBS Server</td><td>Hostname or IP of your PBS</td><td><code>10.0.10.50</code> or <code>pbs.example.com</code></td></tr>
                                     <tr><td>Datastore</td><td>Name of the PBS datastore to use</td><td><code>main</code></td></tr>
                                     <tr><td>User</td><td>PBS user account</td><td><code>backup@pbs</code></td></tr>
-                                    <tr><td>Token Name</td><td>API token name (leave blank to use password auth)</td><td><code>wolfstack</code></td></tr>
+                                    <tr><td>Token Name</td><td>API token name (leave blank to use password auth)</td><td><code>wardenclyffe</code></td></tr>
                                     <tr><td>Token Secret</td><td>The token secret you copied earlier</td><td><code>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code></td></tr>
                                     <tr><td>Password</td><td>Alternative to token auth &mdash; the user&rsquo;s password</td><td></td></tr>
                                     <tr><td>Fingerprint</td><td>TLS fingerprint (required for self-signed certs, optional otherwise)</td><td><code>AB:CD:EF:...</code></td></tr>
-                                    <tr><td>Namespace</td><td>PBS namespace for organizing backups (optional)</td><td><code>wolfstack</code></td></tr>
+                                    <tr><td>Namespace</td><td>PBS namespace for organizing backups (optional)</td><td><code>wardenclyffe</code></td></tr>
                                 </tbody>
                             </table>
                         </div>
                     </li>
-                    <li>Click <strong>Save &amp; Test Connection</strong>. WolfStack connects to PBS, verifies credentials, and reports how many existing snapshots it found.</li>
+                    <li>Click <strong>Save &amp; Test Connection</strong>. WardenClyffe connects to PBS, verifies credentials, and reports how many existing snapshots it found.</li>
                 </ol>
                 <div class="info-box"><strong>Auth options:</strong> You can authenticate with either an <strong>API token</strong> (recommended) or a <strong>password</strong>. API tokens are preferred because they can be scoped to specific datastores and don&rsquo;t expire with password changes.</div>
 
@@ -248,11 +248,11 @@ openssl s_client -connect your-pbs:8007 &lt; /dev/null 2>/dev/null \
                     <li>Choose <strong>PBS &mdash; your-server/datastore</strong> from the storage dropdown.</li>
                     <li>Click <strong>Backup Selected</strong>.</li>
                 </ol>
-                <p>WolfStack uses <code>proxmox-backup-client</code> under the hood to upload archives to PBS. The repository string is automatically constructed from your configuration:</p>
+                <p>WardenClyffe uses <code>proxmox-backup-client</code> under the hood to upload archives to PBS. The repository string is automatically constructed from your configuration:</p>
                 <div class="code-block" style="margin:0.5rem 0;">
                     <div class="code-header"><span class="code-lang">text</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
                     <pre><code># With API token:
-backup@pbs!wolfstack@10.0.10.50:main
+backup@pbs!wardenclyffe@10.0.10.50:main
 
 # With password:
 backup@pbs@10.0.10.50:main</code></pre>
@@ -262,8 +262,8 @@ backup@pbs@10.0.10.50:main</code></pre>
                 <h3>Step 5 &mdash; Restore from PBS</h3>
                 <ol>
                     <li>In the <strong>Proxmox Backup Server</strong> panel, click <strong>Browse Snapshots</strong>.</li>
-                    <li>WolfStack fetches the snapshot list from PBS and displays them with their date, size, and type.</li>
-                    <li>Click <strong>Restore</strong> on the snapshot you want. WolfStack downloads it using <code>proxmox-backup-client restore</code> and extracts it to the appropriate location on the node.</li>
+                    <li>WardenClyffe fetches the snapshot list from PBS and displays them with their date, size, and type.</li>
+                    <li>Click <strong>Restore</strong> on the snapshot you want. WardenClyffe downloads it using <code>proxmox-backup-client restore</code> and extracts it to the appropriate location on the node.</li>
                     <li>A live progress indicator shows the download and restore status.</li>
                 </ol>
             </div>
@@ -271,19 +271,19 @@ backup@pbs@10.0.10.50:main</code></pre>
             <!-- Connecting to a Proxmox VE Cluster -->
             <div class="content-section">
                 <h2>Backing Up Proxmox VE Guests</h2>
-                <p>If you have Proxmox VE nodes added to your WolfStack cluster, their VMs and LXC containers are visible in the dashboard. However, WolfStack&rsquo;s built-in backup system backs up workloads running <em>on the WolfStack node itself</em> (native Docker, LXC, and KVM/QEMU VMs).</p>
+                <p>If you have Proxmox VE nodes added to your WardenClyffe cluster, their VMs and LXC containers are visible in the dashboard. However, WardenClyffe&rsquo;s built-in backup system backs up workloads running <em>on the WardenClyffe node itself</em> (native Docker, LXC, and KVM/QEMU VMs).</p>
                 <p>For Proxmox VE guests, the recommended backup strategy is:</p>
                 <ul>
-                    <li><strong>Use PBS for PVE guests</strong> &mdash; Configure Proxmox Backup Server as a storage target in both Proxmox VE and WolfStack. PVE handles its own guest backups natively with vzdump, while WolfStack backs up its local workloads to the same PBS.</li>
-                    <li><strong>Restore PVE guests via WolfStack</strong> &mdash; WolfStack can browse PBS snapshots and trigger restores of vzdump archives back to a Proxmox VE node using the PVE API.</li>
+                    <li><strong>Use PBS for PVE guests</strong> &mdash; Configure Proxmox Backup Server as a storage target in both Proxmox VE and WardenClyffe. PVE handles its own guest backups natively with vzdump, while WardenClyffe backs up its local workloads to the same PBS.</li>
+                    <li><strong>Restore PVE guests via WardenClyffe</strong> &mdash; WardenClyffe can browse PBS snapshots and trigger restores of vzdump archives back to a Proxmox VE node using the PVE API.</li>
                 </ul>
-                <div class="info-box"><strong>Adding a Proxmox VE node:</strong> See the <a href="proxmox.php">Proxmox Integration</a> docs. WolfStack auto-discovers all nodes in a PVE cluster when you add one node with an API token.</div>
+                <div class="info-box"><strong>Adding a Proxmox VE node:</strong> See the <a href="proxmox.php">Proxmox Integration</a> docs. WardenClyffe auto-discovers all nodes in a PVE cluster when you add one node with an API token.</div>
             </div>
 
             <!-- Config File Reference -->
             <div class="content-section">
                 <h2>Configuration Reference</h2>
-                <p>Backup configuration is stored in <code>/etc/wolfstack/backups.json</code>. This file is managed automatically by the dashboard &mdash; you should not need to edit it manually, but it&rsquo;s useful to know the structure for debugging.</p>
+                <p>Backup configuration is stored in <code>/etc/wardenclyffe/backups.json</code>. This file is managed automatically by the dashboard &mdash; you should not need to edit it manually, but it&rsquo;s useful to know the structure for debugging.</p>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
                     <pre><code>{
@@ -312,7 +312,7 @@ backup@pbs@10.0.10.50:main</code></pre>
     {
       "id": "uuid",
       "target": { "type": "docker", "name": "nginx-prod" },
-      "storage": { "type": "local", "path": "/var/backups/wolfstack" },
+      "storage": { "type": "local", "path": "/var/backups/wardenclyffe" },
       "filename": "docker-nginx-prod-20260225-020012.tar.gz",
       "size_bytes": 52428800,
       "created_at": "2026-02-25T02:00:12+00:00",
@@ -325,14 +325,14 @@ backup@pbs@10.0.10.50:main</code></pre>
                 </div>
 
                 <h3>PBS Configuration</h3>
-                <p>PBS connection settings are saved separately at <code>/etc/wolfstack/pbs-config.json</code>:</p>
+                <p>PBS connection settings are saved separately at <code>/etc/wardenclyffe/pbs-config.json</code>:</p>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
                     <pre><code>{
   "pbs_server": "10.0.10.50",
   "pbs_datastore": "main",
   "pbs_user": "backup@pbs",
-  "pbs_token_name": "wolfstack",
+  "pbs_token_name": "wardenclyffe",
   "pbs_token_secret": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   "pbs_password": "",
   "pbs_fingerprint": "AB:CD:EF:...",
@@ -347,7 +347,7 @@ backup@pbs@10.0.10.50:main</code></pre>
 
                 <h3>PBS connection fails</h3>
                 <ul>
-                    <li>Verify <code>proxmox-backup-client</code> is working: <code>proxmox-backup-client version</code> (installed automatically by WolfStack setup)</li>
+                    <li>Verify <code>proxmox-backup-client</code> is working: <code>proxmox-backup-client version</code> (installed automatically by WardenClyffe setup)</li>
                     <li>Check that the PBS server is reachable: <code>curl -k https://your-pbs:8007/api2/json/version</code></li>
                     <li>For self-signed certificates, make sure you have the correct fingerprint</li>
                     <li>Ensure the API token has <strong>DatastoreBackup</strong> and <strong>DatastoreReader</strong> roles on the datastore</li>
@@ -362,12 +362,12 @@ backup@pbs@10.0.10.50:main</code></pre>
                 <h3>LXC backup fails or takes very long</h3>
                 <ul>
                     <li>LXC containers are stopped briefly during backup for filesystem consistency. Very large containers may take time to tar.</li>
-                    <li>Ensure sufficient disk space in <code>/tmp/wolfstack-backups/</code> (the staging directory).</li>
+                    <li>Ensure sufficient disk space in <code>/tmp/wardenclyffe-backups/</code> (the staging directory).</li>
                 </ul>
 
                 <h3>Restored LXC container won&rsquo;t start</h3>
                 <ul>
-                    <li>WolfStack automatically fixes the <code>lxc.rootfs.path</code> and sets <code>lxc.apparmor.profile = unconfined</code> during restore.</li>
+                    <li>WardenClyffe automatically fixes the <code>lxc.rootfs.path</code> and sets <code>lxc.apparmor.profile = unconfined</code> during restore.</li>
                     <li>Check the container config: <code>cat /var/lib/lxc/{name}/config</code></li>
                     <li>Verify ownership: <code>ls -la /var/lib/lxc/{name}/</code> &mdash; should be owned by root.</li>
                 </ul>
@@ -381,12 +381,12 @@ backup@pbs@10.0.10.50:main</code></pre>
                 <h3>Scheduled backup didn&rsquo;t run</h3>
                 <ul>
                     <li>Check the schedule is enabled (toggle switch on).</li>
-                    <li>WolfStack checks schedules every 60 seconds. If the time window was missed (e.g. server was down), it will run on the next check.</li>
-                    <li>Review logs: <code>journalctl -u wolfstack | grep -i backup</code></li>
+                    <li>WardenClyffe checks schedules every 60 seconds. If the time window was missed (e.g. server was down), it will run on the next check.</li>
+                    <li>Review logs: <code>journalctl -u wardenclyffe | grep -i backup</code></li>
                 </ul>
             </div>
 
-<div class="page-nav"><a href="wolfstack-statuspage.php" class="prev">&larr; Status Pages</a><a href="wolfrun.php" class="next">WolfRun &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffe-statuspage.php" class="prev">&larr; Status Pages</a><a href="wardenclyfferun.php" class="next">WardenClyffeRun &rarr;</a></div>
         
     </main>
 <?php include 'includes/footer.php'; ?>

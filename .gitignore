@@ -33,4 +33,4 @@ logs/
 
 # SQL dump files
 *.sql
-wolfdisk/target/
+wardenclyffedisk/target/

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>WardenClyffeNet</Name>
+  <Repository>ghcr.io/wardenclyffesoftwaresystemsltd/wardenclyffenet:latest</Repository>
+  <Registry>https://github.com/wardenclyffesoftwaresystemsltd/wardenclyffenet/pkgs/container/wardenclyffenet</Registry>
+  <Network>host</Network>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/wardenclyffesoftwaresystemsltd/wardenclyffenet/issues</Support>
+  <Project>https://github.com/wardenclyffesoftwaresystemsltd/wardenclyffenet</Project>
+  <Overview>WardenClyffeNet is a secure private mesh VPN that creates encrypted tunnels between your servers using X25519 key exchange and ChaCha20-Poly1305 encryption. No WireGuard kernel module needed. Join your Unraid server to your WardenClyffe cluster overlay network.</Overview>
+  <Category>Network:VPN</Category>
+  <WebUI/>
+  <TemplateURL/>
+  <Icon>https://raw.githubusercontent.com/wardenclyffesoftwaresystemsltd/wardenclyffenet/main/icon.png</Icon>
+  <ExtraParams>--cap-add=NET_ADMIN --device=/dev/net/tun:/dev/net/tun</ExtraParams>
+  <PostArgs/>
+  <DonateText>Support WardenClyffe development</DonateText>
+  <DonateLink>https://wardenclyffe.uk.com</DonateLink>
+  <Description>WardenClyffeNet creates a secure encrypted mesh network between your servers. Run on Unraid to join your WardenClyffe cluster. No WireGuard kernel module required — fully userspace crypto.</Description>
+  <Config Name="Join Token" Target="WARDENCLYFFENET_JOIN_TOKEN" Default="" Mode="" Description="Invite token from 'wardenclyffenet invite' on an existing node" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="WardenClyffeNet IP" Target="WARDENCLYFFENET_ADDRESS" Default="" Mode="" Description="Override auto-assigned IP (leave empty for auto)" Type="Variable" Display="advanced" Required="false" Mask="false"/>
+  <Config Name="Listen Port" Target="WARDENCLYFFENET_PORT" Default="9600" Mode="" Description="UDP port for tunnel traffic" Type="Variable" Display="advanced" Required="false" Mask="false"/>
+  <Config Name="Gateway Mode" Target="WARDENCLYFFENET_GATEWAY" Default="false" Mode="" Description="Enable NAT gateway for other WardenClyffeNet nodes" Type="Variable" Display="advanced" Required="false" Mask="false"/>
+  <Config Name="Config" Target="/etc/wardenclyffenet" Default="/mnt/user/appdata/wardenclyffenet" Mode="rw" Description="Configuration and key storage" Type="Path" Display="always" Required="true" Mask="false"/>
+  <Config Name="Status" Target="/var/run/wardenclyffenet" Default="/var/run/wardenclyffenet" Mode="rw" Description="Runtime status files" Type="Path" Display="advanced" Required="false" Mask="false"/>
+</Container>

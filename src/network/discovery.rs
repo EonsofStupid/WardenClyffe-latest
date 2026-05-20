@@ -19,7 +19,7 @@ const DISCOVERY_PORT: u16 = 7654;
 const BROADCAST_INTERVAL: Duration = Duration::from_secs(2);
 
 /// Discovery message prefix
-const DISCOVERY_PREFIX: &str = "WOLFSCALE";
+const DISCOVERY_PREFIX: &str = "WARDENCLYFFESCALE";
 
 /// Discovery message version
 const DISCOVERY_VERSION: u8 = 1;
@@ -273,7 +273,7 @@ pub async fn discover_cluster(
     let mut buf = [0u8; 512];
     let deadline = tokio::time::Instant::now() + timeout;
 
-    tracing::info!("Scanning for WolfScale nodes via UDP broadcast ({} seconds)...", timeout.as_secs());
+    tracing::info!("Scanning for WardenClyffeScale nodes via UDP broadcast ({} seconds)...", timeout.as_secs());
 
     while tokio::time::Instant::now() < deadline {
         let remaining = deadline - tokio::time::Instant::now();

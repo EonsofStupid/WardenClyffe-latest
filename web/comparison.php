@@ -1,6 +1,6 @@
 <?php
-$page_title = 'Compare WolfStack — Feature Comparison';
-$page_desc = 'See how WolfStack compares to Proxmox, Kubernetes, Portainer, CasaOS, and Cockpit. Full feature-by-feature comparison table.';
+$page_title = 'Compare WardenClyffe — Feature Comparison';
+$page_desc = 'See how WardenClyffe compares to Proxmox, Kubernetes, Portainer, CasaOS, and Cockpit. Full feature-by-feature comparison table.';
 $active = 'comparison.php';
 include 'includes/head.php';
 ?>
@@ -10,8 +10,8 @@ include 'includes/head.php';
     <main class="wiki-content">
 
             <div class="content-section">
-                <h2>WolfStack vs the Competition</h2>
-                <p>WolfStack replaces multiple separate tools with a single platform. Here&rsquo;s how it compares feature-by-feature.</p>
+                <h2>WardenClyffe vs the Competition</h2>
+                <p>WardenClyffe replaces multiple separate tools with a single platform. Here&rsquo;s how it compares feature-by-feature.</p>
             </div>
 
             <div class="content-section">
@@ -21,7 +21,7 @@ include 'includes/head.php';
                         <thead>
                             <tr>
                                 <th style="text-align:left;">Feature</th>
-                                <th style="text-align:center;color:var(--accent-primary);">WolfStack</th>
+                                <th style="text-align:center;color:var(--accent-primary);">WardenClyffe</th>
                                 <th style="text-align:center;">Proxmox</th>
                                 <th style="text-align:center;">Kubernetes</th>
                                 <th style="text-align:center;">Portainer</th>
@@ -47,12 +47,12 @@ include 'includes/head.php';
                 <div class="table-wrapper">
                     <table>
                         <thead>
-                            <tr><th style="text-align:left;">Feature</th><th style="text-align:center;color:var(--accent-primary);">WolfStack</th><th style="text-align:center;">Proxmox</th><th style="text-align:center;">Kubernetes</th><th style="text-align:center;">Portainer</th><th style="text-align:center;">CasaOS</th><th style="text-align:center;">Cockpit</th></tr>
+                            <tr><th style="text-align:left;">Feature</th><th style="text-align:center;color:var(--accent-primary);">WardenClyffe</th><th style="text-align:center;">Proxmox</th><th style="text-align:center;">Kubernetes</th><th style="text-align:center;">Portainer</th><th style="text-align:center;">CasaOS</th><th style="text-align:center;">Cockpit</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>Container Orchestration</td><td style="text-align:center;color:var(--success);font-weight:600;">WolfRun</td><td style="text-align:center;">No</td><td style="text-align:center;color:var(--success);">Yes</td><td style="text-align:center;">Swarm</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
+                            <tr><td>Container Orchestration</td><td style="text-align:center;color:var(--success);font-weight:600;">WardenClyffeRun</td><td style="text-align:center;">No</td><td style="text-align:center;color:var(--success);">Yes</td><td style="text-align:center;">Swarm</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
                             <tr><td>Container Failover (HA)</td><td style="text-align:center;color:var(--success);font-weight:600;">Standby HA</td><td style="text-align:center;">HA (paid)</td><td style="text-align:center;color:var(--success);">Yes</td><td style="text-align:center;">Swarm HA</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
-                            <tr><td>Kubernetes Management</td><td style="text-align:center;color:var(--success);font-weight:600;">WolfKube</td><td style="text-align:center;">No</td><td style="text-align:center;">Native</td><td style="text-align:center;">Paid</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
+                            <tr><td>Kubernetes Management</td><td style="text-align:center;color:var(--success);font-weight:600;">WardenClyffeKube</td><td style="text-align:center;">No</td><td style="text-align:center;">Native</td><td style="text-align:center;">Paid</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
                             <tr><td>Pod Terminal &amp; Monitoring</td><td style="text-align:center;color:var(--success);font-weight:600;">Yes</td><td style="text-align:center;">No</td><td style="text-align:center;">CLI only</td><td style="text-align:center;color:var(--success);">Yes</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
                             <tr><td>K8s PVC Storage</td><td style="text-align:center;color:var(--success);font-weight:600;">Yes</td><td style="text-align:center;">No</td><td style="text-align:center;">CLI only</td><td style="text-align:center;">Paid</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
                             <tr><td>Multi-Server Clustering</td><td style="text-align:center;color:var(--success);font-weight:600;">Yes</td><td style="text-align:center;color:var(--success);">Yes</td><td style="text-align:center;color:var(--success);">Yes</td><td style="text-align:center;">Paid</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
@@ -66,15 +66,15 @@ include 'includes/head.php';
                 <div class="table-wrapper">
                     <table>
                         <thead>
-                            <tr><th style="text-align:left;">Feature</th><th style="text-align:center;color:var(--accent-primary);">WolfStack</th><th style="text-align:center;">Proxmox</th><th style="text-align:center;">Kubernetes</th><th style="text-align:center;">Portainer</th><th style="text-align:center;">CasaOS</th><th style="text-align:center;">Cockpit</th></tr>
+                            <tr><th style="text-align:left;">Feature</th><th style="text-align:center;color:var(--accent-primary);">WardenClyffe</th><th style="text-align:center;">Proxmox</th><th style="text-align:center;">Kubernetes</th><th style="text-align:center;">Portainer</th><th style="text-align:center;">CasaOS</th><th style="text-align:center;">Cockpit</th></tr>
                         </thead>
                         <tbody>
                             <tr><td>Built-in User Accounts</td><td style="text-align:center;color:var(--success);font-weight:600;">Yes</td><td style="text-align:center;">Linux/PAM</td><td style="text-align:center;">RBAC</td><td style="text-align:center;color:var(--success);">Yes</td><td style="text-align:center;color:var(--success);">Yes</td><td style="text-align:center;">Linux/PAM</td></tr>
                             <tr><td>Two-Factor Auth (2FA/TOTP)</td><td style="text-align:center;color:var(--success);font-weight:600;">Yes</td><td style="text-align:center;">Yes (paid)</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
                             <tr><td>Disable Linux Login</td><td style="text-align:center;color:var(--success);font-weight:600;">Yes</td><td style="text-align:center;">No</td><td style="text-align:center;">N/A</td><td style="text-align:center;">N/A</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
                             <tr><td>Login Rate Limiting</td><td style="text-align:center;color:var(--success);font-weight:600;">Yes</td><td style="text-align:center;">Yes</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
-                            <tr><td>Encrypted Mesh Network</td><td style="text-align:center;color:var(--success);font-weight:600;">WolfNet</td><td style="text-align:center;">No</td><td style="text-align:center;">CNI plugins</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
-                            <tr><td>Built-in VPN</td><td style="text-align:center;color:var(--success);font-weight:600;">WolfNet VPN</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
+                            <tr><td>Encrypted Mesh Network</td><td style="text-align:center;color:var(--success);font-weight:600;">WardenClyffeNet</td><td style="text-align:center;">No</td><td style="text-align:center;">CNI plugins</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
+                            <tr><td>Built-in VPN</td><td style="text-align:center;color:var(--success);font-weight:600;">WardenClyffeNet VPN</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
                             <tr><td>WireGuard VPN Bridge</td><td style="text-align:center;color:var(--success);font-weight:600;">Yes</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
                             <tr><td>Firewall Management</td><td style="text-align:center;color:var(--success);font-weight:600;">Fail2ban &amp; UFW</td><td style="text-align:center;">Firewall</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">Firewalld</td></tr>
                             <tr><td>SSL/TLS Certificates</td><td style="text-align:center;color:var(--success);font-weight:600;">Let&rsquo;s Encrypt</td><td style="text-align:center;">Let&rsquo;s Encrypt</td><td style="text-align:center;">cert-manager</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">Certbot</td></tr>
@@ -89,7 +89,7 @@ include 'includes/head.php';
                 <div class="table-wrapper">
                     <table>
                         <thead>
-                            <tr><th style="text-align:left;">Feature</th><th style="text-align:center;color:var(--accent-primary);">WolfStack</th><th style="text-align:center;">Proxmox</th><th style="text-align:center;">Kubernetes</th><th style="text-align:center;">Portainer</th><th style="text-align:center;">CasaOS</th><th style="text-align:center;">Cockpit</th></tr>
+                            <tr><th style="text-align:left;">Feature</th><th style="text-align:center;color:var(--accent-primary);">WardenClyffe</th><th style="text-align:center;">Proxmox</th><th style="text-align:center;">Kubernetes</th><th style="text-align:center;">Portainer</th><th style="text-align:center;">CasaOS</th><th style="text-align:center;">Cockpit</th></tr>
                         </thead>
                         <tbody>
                             <tr><td>S3/R2 Object Storage</td><td style="text-align:center;color:var(--success);font-weight:600;">Yes</td><td style="text-align:center;">No</td><td style="text-align:center;">CSI</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
@@ -109,7 +109,7 @@ include 'includes/head.php';
                 <div class="table-wrapper">
                     <table>
                         <thead>
-                            <tr><th style="text-align:left;">Feature</th><th style="text-align:center;color:var(--accent-primary);">WolfStack</th><th style="text-align:center;">Proxmox</th><th style="text-align:center;">Kubernetes</th><th style="text-align:center;">Portainer</th><th style="text-align:center;">CasaOS</th><th style="text-align:center;">Cockpit</th></tr>
+                            <tr><th style="text-align:left;">Feature</th><th style="text-align:center;color:var(--accent-primary);">WardenClyffe</th><th style="text-align:center;">Proxmox</th><th style="text-align:center;">Kubernetes</th><th style="text-align:center;">Portainer</th><th style="text-align:center;">CasaOS</th><th style="text-align:center;">Cockpit</th></tr>
                         </thead>
                         <tbody>
                             <tr><td>Web Terminal</td><td style="text-align:center;color:var(--success);font-weight:600;">Yes</td><td style="text-align:center;color:var(--success);">Yes</td><td style="text-align:center;">No</td><td style="text-align:center;color:var(--success);">Yes</td><td style="text-align:center;">No</td><td style="text-align:center;color:var(--success);">Yes</td></tr>
@@ -117,7 +117,7 @@ include 'includes/head.php';
                             <tr><td>App Store</td><td style="text-align:center;color:var(--success);font-weight:600;">500+ apps</td><td style="text-align:center;">No</td><td style="text-align:center;">Helm</td><td style="text-align:center;color:var(--success);">Yes</td><td style="text-align:center;color:var(--success);">Yes</td><td style="text-align:center;">No</td></tr>
                             <tr><td>AI Agent</td><td style="text-align:center;color:var(--success);font-weight:600;">Claude &amp; Gemini</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
                             <tr><td>Status Pages &amp; Alerting</td><td style="text-align:center;color:var(--success);font-weight:600;">Yes</td><td style="text-align:center;">No</td><td style="text-align:center;">Add-ons</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
-                            <tr><td>Workflow Automation</td><td style="text-align:center;color:var(--success);font-weight:600;">WolfFlow</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
+                            <tr><td>Workflow Automation</td><td style="text-align:center;color:var(--success);font-weight:600;">WardenClyffeFlow</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
                             <tr><td>Database Editor</td><td style="text-align:center;color:var(--success);font-weight:600;">MySQL &amp; PostgreSQL</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
                             <tr><td>3D VR Server Room</td><td style="text-align:center;color:var(--success);font-weight:600;">Yes (WebXR)</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
                             <tr><td>VR Terminal &amp; Console</td><td style="text-align:center;color:var(--success);font-weight:600;">Yes</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td><td style="text-align:center;">No</td></tr>
@@ -131,7 +131,7 @@ include 'includes/head.php';
                 <div class="table-wrapper">
                     <table>
                         <thead>
-                            <tr><th style="text-align:left;">Feature</th><th style="text-align:center;color:var(--accent-primary);">WolfStack</th><th style="text-align:center;">Proxmox</th><th style="text-align:center;">Kubernetes</th><th style="text-align:center;">Portainer</th><th style="text-align:center;">CasaOS</th><th style="text-align:center;">Cockpit</th></tr>
+                            <tr><th style="text-align:left;">Feature</th><th style="text-align:center;color:var(--accent-primary);">WardenClyffe</th><th style="text-align:center;">Proxmox</th><th style="text-align:center;">Kubernetes</th><th style="text-align:center;">Portainer</th><th style="text-align:center;">CasaOS</th><th style="text-align:center;">Cockpit</th></tr>
                         </thead>
                         <tbody>
                             <tr><td>Install Complexity</td><td style="text-align:center;color:var(--success);font-weight:600;">1 command</td><td style="text-align:center;">ISO install</td><td style="text-align:center;">Very complex</td><td style="text-align:center;">Moderate</td><td style="text-align:center;color:var(--success);">1 command</td><td style="text-align:center;color:var(--success);">1 command</td></tr>
@@ -148,12 +148,12 @@ include 'includes/head.php';
                 <h2>Ready to switch?</h2>
                 <p style="margin-bottom:20px;">One command to install. Free forever.</p>
                 <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
-                    <a href="wolfstack.php" class="btn btn-primary" style="padding:12px 28px;">Get Started</a>
-                    <a href="https://github.com/sponsors/wolfsoftwaresystemsltd" target="_blank" class="btn btn-secondary" style="border-color:var(--success);color:var(--success);padding:12px 28px;">Fund Open Source</a>
+                    <a href="wardenclyffe.php" class="btn btn-primary" style="padding:12px 28px;">Get Started</a>
+                    <a href="https://github.com/sponsors/wardenclyffesoftwaresystemsltd" target="_blank" class="btn btn-secondary" style="border-color:var(--success);color:var(--success);padding:12px 28px;">Fund Open Source</a>
                 </div>
             </div>
 
-<div class="page-nav"><a href="wolfstack.php" class="prev">&larr; Overview</a><a href="enterprise.php" class="next">Enterprise &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffe.php" class="prev">&larr; Overview</a><a href="enterprise.php" class="next">Enterprise &rarr;</a></div>
 
     </main>
 <?php include 'includes/footer.php'; ?>

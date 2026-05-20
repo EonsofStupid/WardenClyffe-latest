@@ -1,5 +1,5 @@
 <?php
-$page_title = '📋 Binlog Mode — WolfStack Docs';
+$page_title = '📋 Binlog Mode — WardenClyffe Docs';
 $page_desc = 'Binary log replication for efficient database synchronisation';
 $active = 'binlog.php';
 include 'includes/head.php';
@@ -12,7 +12,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Binary Log Replication</h2>
-                <p>WolfScale supports MySQL/MariaDB binary log replication for efficient, low-latency synchronisation. This is the primary replication method and is recommended for production use.</p>
+                <p>WardenClyffeScale supports MySQL/MariaDB binary log replication for efficient, low-latency synchronisation. This is the primary replication method and is recommended for production use.</p>
                 <h3>Requirements</h3>
                 <ul>
                     <li>Binary logging must be enabled: <code>log_bin = ON</code></li>

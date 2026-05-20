@@ -1,15 +1,15 @@
 #!/bin/bash
 #
-# WolfScale Quick Install Script
-# Installs WolfScale on Ubuntu/Debian (apt) or Fedora/RHEL (dnf)
+# WardenClyffeScale Quick Install Script
+# Installs WardenClyffeScale on Ubuntu/Debian (apt) or Fedora/RHEL (dnf)
 #
-# Usage: curl -sSL https://raw.githubusercontent.com/wolfsoftwaresystemsltd/WolfScale/main/setup.sh | bash
+# Usage: curl -sSL https://raw.githubusercontent.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale/main/setup.sh | bash
 #
 
 set -e
 
 echo ""
-echo "  WolfScale Installer"
+echo "  WardenClyffeScale Installer"
 echo "  Distributed MariaDB Synchronization"
 echo "  $(printf '%0.s─' {1..50})"
 echo ""
@@ -60,9 +60,9 @@ fi
 export PATH="$HOME/.cargo/bin:$PATH"
 
 # Clone or update repository
-INSTALL_DIR="/opt/wolfscale-src"
+INSTALL_DIR="/opt/wardenclyffescale-src"
 echo ""
-echo "Cloning WolfScale repository..."
+echo "Cloning WardenClyffeScale repository..."
 
 if [ -d "$INSTALL_DIR" ]; then
     echo "  Updating existing installation..."
@@ -71,12 +71,12 @@ if [ -d "$INSTALL_DIR" ]; then
     sudo git fetch origin
     sudo git reset --hard origin/main
     # Clear logs to prevent huge log files from accumulating
-    if [ -f "/var/log/wolfscale/wolfscale.log" ]; then
+    if [ -f "/var/log/wardenclyffescale/wardenclyffescale.log" ]; then
         echo "  Clearing logs..."
-        sudo truncate -s 0 /var/log/wolfscale/wolfscale.log
+        sudo truncate -s 0 /var/log/wardenclyffescale/wardenclyffescale.log
     fi
 else
-    sudo git clone https://github.com/wolfsoftwaresystemsltd/WolfScale.git "$INSTALL_DIR"
+    sudo git clone https://github.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale.git "$INSTALL_DIR"
     cd "$INSTALL_DIR"
 fi
 
@@ -85,47 +85,47 @@ echo "✓ Repository cloned to $INSTALL_DIR"
 
 # Build
 echo ""
-echo "Building WolfScale (this may take a few minutes)..."
+echo "Building WardenClyffeScale (this may take a few minutes)..."
 cd "$INSTALL_DIR"
 cargo build --release
 echo "✓ Build complete"
 
 # Check if this is an upgrade (service already exists)
 IS_UPGRADE=false
-if systemctl list-unit-files | grep -q wolfscale.service; then
+if systemctl list-unit-files | grep -q wardenclyffescale.service; then
     IS_UPGRADE=true
     echo ""
-    echo "✓ Detected existing WolfScale installation - performing upgrade"
+    echo "✓ Detected existing WardenClyffeScale installation - performing upgrade"
 fi
 
 if [ "$IS_UPGRADE" = true ]; then
     # Upgrade mode: just copy binary and restart service
     echo ""
-    echo "Upgrading WolfScale..."
+    echo "Upgrading WardenClyffeScale..."
     
     # Copy new binary
-    sudo cp "$INSTALL_DIR/target/release/wolfscale" /usr/local/bin/wolfscale
-    sudo chmod +x /usr/local/bin/wolfscale
+    sudo cp "$INSTALL_DIR/target/release/wardenclyffescale" /usr/local/bin/wardenclyffescale
+    sudo chmod +x /usr/local/bin/wardenclyffescale
     echo "✓ Binary updated"
     
     # Restart service
     sudo systemctl daemon-reload
-    sudo systemctl restart wolfscale
+    sudo systemctl restart wardenclyffescale
     echo "✓ Service restarted"
     
-    # Update wolfctl if present
-    if [ -f "$INSTALL_DIR/target/release/wolfctl" ]; then
-        sudo cp "$INSTALL_DIR/target/release/wolfctl" /usr/local/bin/wolfctl
-        sudo chmod +x /usr/local/bin/wolfctl
-        echo "✓ wolfctl updated"
+    # Update wardenclyffectl if present
+    if [ -f "$INSTALL_DIR/target/release/wardenclyffectl" ]; then
+        sudo cp "$INSTALL_DIR/target/release/wardenclyffectl" /usr/local/bin/wardenclyffectl
+        sudo chmod +x /usr/local/bin/wardenclyffectl
+        echo "✓ wardenclyffectl updated"
     fi
     
     echo ""
     echo ""
     echo "  Upgrade Complete!"
     echo "  $(printf '%0.s─' {1..50})"
-    echo "  Status:   sudo systemctl status wolfscale"
-    echo "  Logs:     sudo journalctl -u wolfscale -f"
+    echo "  Status:   sudo systemctl status wardenclyffescale"
+    echo "  Logs:     sudo journalctl -u wardenclyffescale -f"
     echo ""
 else
     # New install: run interactive installer
@@ -139,15 +139,15 @@ else
     # (Needed because stdin is consumed when script is piped via curl)
     sudo ./install_service.sh < /dev/tty
     
-    # Install wolfctl CLI tool to /usr/local/bin
+    # Install wardenclyffectl CLI tool to /usr/local/bin
     echo ""
-    echo "Installing wolfctl CLI tool..."
-    if [ -f "$INSTALL_DIR/target/release/wolfctl" ]; then
-        sudo cp "$INSTALL_DIR/target/release/wolfctl" /usr/local/bin/wolfctl
-        sudo chmod +x /usr/local/bin/wolfctl
-        echo "✓ wolfctl installed to /usr/local/bin/wolfctl"
+    echo "Installing wardenclyffectl CLI tool..."
+    if [ -f "$INSTALL_DIR/target/release/wardenclyffectl" ]; then
+        sudo cp "$INSTALL_DIR/target/release/wardenclyffectl" /usr/local/bin/wardenclyffectl
+        sudo chmod +x /usr/local/bin/wardenclyffectl
+        echo "✓ wardenclyffectl installed to /usr/local/bin/wardenclyffectl"
     else
-        echo "⚠ wolfctl binary not found (may not have been built)"
+        echo "⚠ wardenclyffectl binary not found (may not have been built)"
     fi
     
     echo ""
@@ -155,8 +155,8 @@ else
     echo "  Installation Complete!"
     echo "  $(printf '%0.s─' {1..50})"
     echo "  Connect:  mariadb -h 127.0.0.1 -P 8007 -u USER -p"
-    echo "  Status:   sudo systemctl status wolfscale"
-    echo "  Logs:     sudo journalctl -u wolfscale -f"
-    echo "  Cluster:  wolfctl list servers"
+    echo "  Status:   sudo systemctl status wardenclyffescale"
+    echo "  Logs:     sudo journalctl -u wardenclyffescale -f"
+    echo "  Cluster:  wardenclyffectl list servers"
     echo ""
 fi

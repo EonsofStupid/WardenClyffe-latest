@@ -1,7 +1,7 @@
 <?php
-$page_title = '💻 Terminal — WolfStack Docs';
+$page_title = '💻 Terminal — WardenClyffe Docs';
 $page_desc = 'Full web-based SSH terminal for any node or container';
-$active = 'wolfstack-terminal.php';
+$active = 'wardenclyffe-terminal.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -12,8 +12,8 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
-                <img src="images/screenshots/terminal.png" alt="WolfStack web terminal — SSH in browser" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
-                <p>WolfStack includes a full web-based terminal that lets you open SSH sessions to any node or container directly from the dashboard. No separate SSH client needed.</p>
+                <img src="images/screenshots/terminal.png" alt="WardenClyffe web terminal — SSH in browser" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
+                <p>WardenClyffe includes a full web-based terminal that lets you open SSH sessions to any node or container directly from the dashboard. No separate SSH client needed.</p>
                 <h3>Features</h3>
                 <ul>
                     <li>Open a shell on any managed node</li>
@@ -26,7 +26,7 @@ include 'includes/head.php';
                 </ul>
             </div>
 
-<div class="page-nav"><a href="wolfstack-cron.php" class="prev">&larr; Cron Jobs</a><a href="wolfstack-issues.php" class="next">Issues Scanner &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffe-cron.php" class="prev">&larr; Cron Jobs</a><a href="wardenclyffe-issues.php" class="next">Issues Scanner &rarr;</a></div>
         
     </main>
 <?php include 'includes/footer.php'; ?>

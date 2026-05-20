@@ -1,6 +1,6 @@
 <?php
-$page_title = '🚀 WolfScale Performance — WolfStack Docs';
-$page_desc = 'Performance tuning and benchmarks for WolfScale';
+$page_title = '🚀 WardenClyffeScale Performance — WardenClyffe Docs';
+$page_desc = 'Performance tuning and benchmarks for WardenClyffeScale';
 $active = 'performance.php';
 include 'includes/head.php';
 ?>
@@ -12,7 +12,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Performance</h2>
-                <p>WolfScale is built in Rust for maximum performance. The replication engine is asynchronous and non-blocking, with minimal overhead on the database.</p>
+                <p>WardenClyffeScale is built in Rust for maximum performance. The replication engine is asynchronous and non-blocking, with minimal overhead on the database.</p>
                 <h3>Benchmarks</h3>
                 <ul>
                     <li>Replication lag: &lt; 100ms typical</li>
@@ -24,8 +24,8 @@ include 'includes/head.php';
                 <ul>
                     <li>Use ROW-based binlog format for best performance</li>
                     <li>Enable GTID mode for efficient failover</li>
-                    <li>Place WolfScale nodes close to their database for low latency</li>
-                    <li>Use WolfNet for encrypted inter-node communication</li>
+                    <li>Place WardenClyffeScale nodes close to their database for low latency</li>
+                    <li>Use WardenClyffeNet for encrypted inter-node communication</li>
                 </ul>
             </div>
 

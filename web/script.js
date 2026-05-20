@@ -1,8 +1,8 @@
-// WolfStack website scripts v20
+// WardenClyffe website scripts v20
 
 // Theme: apply saved preference before paint
 (function () {
-    var t = localStorage.getItem('wolfscale-theme') || 'light';
+    var t = localStorage.getItem('wardenclyffescale-theme') || 'light';
     document.documentElement.setAttribute('data-theme', t);
 })();
 
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var cur = document.documentElement.getAttribute('data-theme') || 'light';
             var next = cur === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', next);
-            localStorage.setItem('wolfscale-theme', next);
+            localStorage.setItem('wardenclyffescale-theme', next);
         });
     }
 

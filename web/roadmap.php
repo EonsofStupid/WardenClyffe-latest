@@ -1,6 +1,6 @@
 <?php
-$page_title = '🗺️ Roadmap — WolfStack Docs';
-$page_desc = 'What we are working on and planning for future WolfStack releases';
+$page_title = '🗺️ Roadmap — WardenClyffe Docs';
+$page_desc = 'What we are working on and planning for future WardenClyffe releases';
 $active = 'roadmap.php';
 include 'includes/head.php';
 ?>
@@ -14,11 +14,11 @@ include 'includes/head.php';
                     <div style="font-size:3rem;margin-bottom:1rem;">🔒</div>
                     <h2>Patreon Members Only</h2>
                     <p style="max-width:500px;margin:1rem auto;color:var(--text-secondary);font-size:1.05rem;">
-                        The full WolfStack roadmap is available exclusively to our Patreon supporters on Discord.
+                        The full WardenClyffe roadmap is available exclusively to our Patreon supporters on Discord.
                     </p>
                     <p style="max-width:500px;margin:1rem auto;color:var(--text-secondary);">
                         Become a Patron to get access to the roadmap channel, vote on upcoming features, and help shape
-                        the future of WolfStack.
+                        the future of WardenClyffe.
                     </p>
                     <div style="margin-top:2rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
                         <a href="https://www.patreon.com/15362110/join" target="_blank"

@@ -1,7 +1,7 @@
 //! MySQL Protocol Proxy
 //!
 //! Implements a MySQL/MariaDB wire protocol proxy that allows applications
-//! to connect to WolfScale as if it were a regular MySQL server.
+//! to connect to WardenClyffeScale as if it were a regular MySQL server.
 
 mod server;
 mod protocol;

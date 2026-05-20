@@ -1,7 +1,7 @@
 <?php
-$page_title = '🥽 VR Server Room — WolfStack Docs';
+$page_title = '🥽 VR Server Room — WardenClyffe Docs';
 $page_desc = 'Walk through your infrastructure in virtual reality. The 3D Server Room renders your entire cluster as a virtual data centre with live status LEDs, interactive terminals, and VR headset support.';
-$active = 'wolfstack-vr.php';
+$active = 'wardenclyffe-vr.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -11,11 +11,11 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
-                <p>WolfStack&rsquo;s 3D Server Room is an interactive virtual data centre that visualises your entire infrastructure as physical server racks you can walk through, inspect, and manage &mdash; both on a regular screen and in <strong>virtual reality</strong> with a VR headset.</p>
+                <p>WardenClyffe&rsquo;s 3D Server Room is an interactive virtual data centre that visualises your entire infrastructure as physical server racks you can walk through, inspect, and manage &mdash; both on a regular screen and in <strong>virtual reality</strong> with a VR headset.</p>
                 <p>Every node in your cluster is rendered as a server rack. Each rack contains individual server units representing the host machine and every Docker container, LXC container, and VM running on it. Status LEDs, container names, and cluster groupings update in real time.</p>
 
                 <div style="margin:24px 0;border-radius:12px;overflow:hidden;border:1px solid var(--border-color);aspect-ratio:16/9;">
-                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/QHoaes2mzPU" title="WolfStack VR Server Room" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="display:block;"></iframe>
+                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/QHoaes2mzPU" title="WardenClyffe VR Server Room" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="display:block;"></iframe>
                 </div>
             </div>
 
@@ -164,7 +164,7 @@ include 'includes/head.php';
                     <li>Racks are grouped by cluster with colour-coded accent strips (red, blue, green, amber, etc.)</li>
                     <li>Cluster name labels float above each group of racks</li>
                     <li>Server hostnames are displayed vertically on the side of each rack</li>
-                    <li>Supports mixed WolfStack and Proxmox clusters in the same view</li>
+                    <li>Supports mixed WardenClyffe and Proxmox clusters in the same view</li>
                 </ul>
             </div>
 
@@ -182,7 +182,7 @@ include 'includes/head.php';
                 </ul>
             </div>
 
-<div class="page-nav"><a href="wolfstack-wolfnote.php" class="prev">&larr; WolfNote Integration</a><a href="wolfdisk.php" class="next">WolfDisk &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffe-wardenclyffenote.php" class="prev">&larr; WardenClyffeNote Integration</a><a href="wardenclyffedisk.php" class="next">WardenClyffeDisk &rarr;</a></div>
 
     </main>
 <?php include 'includes/footer.php'; ?>

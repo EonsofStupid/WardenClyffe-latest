@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-Static documentation and marketing website for the Wolf product suite, hosted at **wolfscale.org**. No build system, no framework, no package manager — plain HTML, CSS, and vanilla JavaScript served as static files.
+Static documentation and marketing website for the WardenClyffe product suite, hosted at **wardenclyffescale.org**. No build system, no framework, no package manager — plain HTML, CSS, and vanilla JavaScript served as static files.
 
 ## Serving Locally
 
@@ -20,7 +20,7 @@ python3 -m http.server 8080    # then visit http://localhost:8080
 - **`styles.css`** — Shared stylesheet. Uses CSS custom properties for theming (dark default, light via `[data-theme="light"]`). Red accent palette (`--accent-primary: #dc2626`).
 - **`script.js`** — Shared JS: theme toggle (persisted to `localStorage`), mobile sidebar, support banner injection, copy-to-clipboard for code blocks.
 - **`_sidebar.html`** — Canonical sidebar navigation source, but **not dynamically included** — the sidebar markup is copy-pasted into every doc page. When updating navigation, every HTML file must be updated.
-- **`sitemap.xml`** / **`robots.txt`** — SEO files for wolfscale.org.
+- **`sitemap.xml`** / **`robots.txt`** — SEO files for wardenclyffescale.org.
 
 ### Doc Pages (~40 HTML files)
 
@@ -38,17 +38,17 @@ Each page follows an identical template:
 
 | Section | Pages | Description |
 |---|---|---|
-| WolfStack | `wolfstack*.html`, `wolfrun.html`, `proxmox.html`, `app-store.html` | Server management dashboard docs |
-| WolfScale | `quickstart.html`, `features.html`, `architecture.html`, `how-it-works.html`, `binlog.html`, `load-balancer.html`, `configuration.html`, `performance.html`, `cli.html`, `troubleshooting.html` | Database replication & load balancer |
-| WolfDisk | `wolfdisk.html` | Disk replication & sharing |
-| WolfNet | `wolfnet.html`, `wolfnet-global.html`, `wolfnet-vpn.html` | Private networking / VPN |
-| WolfProxy | `wolfproxy.html` | NGINX-compatible reverse proxy |
-| WolfServe | `wolfserve.html` | Apache2-compatible web server |
+| WardenClyffe | `wardenclyffe*.html`, `wardenclyfferun.html`, `proxmox.html`, `app-store.html` | Server management dashboard docs |
+| WardenClyffeScale | `quickstart.html`, `features.html`, `architecture.html`, `how-it-works.html`, `binlog.html`, `load-balancer.html`, `configuration.html`, `performance.html`, `cli.html`, `troubleshooting.html` | Database replication & load balancer |
+| WardenClyffeDisk | `wardenclyffedisk.html` | Disk replication & sharing |
+| WardenClyffeNet | `wardenclyffenet.html`, `wardenclyffenet-global.html`, `wardenclyffenet-vpn.html` | Private networking / VPN |
+| WardenClyffeProxy | `wardenclyffeproxy.html` | NGINX-compatible reverse proxy |
+| WardenClyffeServe | `wardenclyffeserve.html` | Apache2-compatible web server |
 | Company | `about.html`, `roadmap.html`, `contact.html`, `glossary.html`, `licensing.html`, `enterprise.html`, `support.html` | Corporate/info pages |
 
 ## Key Patterns
 
-- **Theme system**: Dark/light toggle via `data-theme` attribute on `<html>`. All colors reference CSS variables. Theme preference stored in `localStorage` key `wolfscale-theme`.
+- **Theme system**: Dark/light toggle via `data-theme` attribute on `<html>`. All colors reference CSS variables. Theme preference stored in `localStorage` key `wardenclyffescale-theme`.
 - **Code blocks**: Use `<div class="code-block">` with a `<button onclick="copyCode(this)">Copy</button>` and `<code>` element inside.
 - **Support banner**: Injected at top of every page by `script.js` (except `support.html`). Adjusts sidebar top offset.
 - **No templating**: Sidebar and boilerplate are duplicated across all files. The `_sidebar.html` file exists as a reference but isn't loaded dynamically.
@@ -59,4 +59,4 @@ Each page follows an identical template:
 - **`images/`** — Product screenshots and logos
 - **`favicon.png`** — Site favicon (536KB — oversized)
 - **`slide1.png`**, **`slide2.png`** — Landing page hero images
-- **Logo**: `images/wolfstack-logo.png` (400x110, 23KB)
+- **Logo**: `images/wardenclyffe-logo.png` (400x110, 23KB)

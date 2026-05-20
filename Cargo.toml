@@ -1,12 +1,12 @@
 [package]
-name = "wolfscale"
+name = "wardenclyffescale"
 version = "5.5.8"
 edition = "2021"
-authors = ["WolfScale Team"]
+authors = ["WardenClyffeScale Team"]
 description = "Distributed MariaDB synchronization manager"
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/wolfscale/wolfscale"
+repository = "https://github.com/wardenclyffescale/wardenclyffescale"
 keywords = ["database", "mariadb", "replication", "distributed", "sync"]
 categories = ["database", "network-programming"]
 
@@ -92,12 +92,12 @@ rand = "0.8"
 criterion = "0.5"
 
 [[bin]]
-name = "wolfscale"
+name = "wardenclyffescale"
 path = "src/main.rs"
 
 [[bin]]
-name = "wolfctl"
-path = "src/bin/wolfctl.rs"
+name = "wardenclyffectl"
+path = "src/bin/wardenclyffectl.rs"
 
 [features]
 default = []

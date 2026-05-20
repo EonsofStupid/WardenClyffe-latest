@@ -1,0 +1,2790 @@
+//! WardenClyffeDisk FUSE Filesystem Implementation
+//!
+//! Implements the fuser::Filesystem trait to provide a mountable
+//! distributed filesystem.
+
+use std::collections::{HashMap, HashSet};
+use std::ffi::OsStr;
+use std::sync::{Arc, RwLock};
+use std::time::{Duration, Instant, SystemTime};
+
+use fuser::{
+    FileAttr, FileType, Filesystem, ReplyAttr, ReplyData, ReplyDirectory, ReplyEntry, ReplyOpen,
+    ReplyWrite, Request,
+};
+use tracing::{debug, info, warn};
+
+use crate::cluster::ClusterManager;
+use crate::config::Config;
+use crate::error::Result;
+use crate::network::peer::PeerManager;
+use crate::network::protocol::{
+    ChunkRefMsg, CreateDirMsg, CreateFileMsg, CreateSymlinkMsg, DeleteDirMsg, DeleteFileMsg,
+    FileSyncMsg, IndexOperation, IndexUpdateMsg, Message, ReadRequestMsg, RenameFileMsg,
+    SetAttrMsg, WriteRequestMsg,
+};
+use crate::storage::{ChunkStore, FileEntry, FileIndex, InodeTable};
+
+/// Messages for the async replication queue
+enum ReplicationMsg {
+    /// Send a chunk or sync metadata to all followers
+    Broadcast(Message),
+}
+
+/// TTL for attribute caching
+const TTL: Duration = Duration::from_secs(30);
+
+/// Root inode number
+const ROOT_INODE: u64 = 1;
+
+/// Minimum interval between index saves (debounce)
+const INDEX_SAVE_INTERVAL: Duration = Duration::from_secs(5);
+
+/// Per-inode write buffer for coalescing small FUSE writes into full chunks
+struct WriteBuffer {
+    /// Accumulated data not yet stored as chunks
+    data: Vec<u8>,
+    /// File offset where this buffer starts
+    base_offset: u64,
+}
+
+/// Client write-back cache entry.
+/// Buffers writes locally so FUSE returns instantly; data is forwarded
+/// to the leader on flush/release. This is the same pattern NFS and SMB use.
+struct ClientWriteEntry {
+    /// Path of the file being written
+    path: String,
+    /// Buffered write segments: (offset, data)
+    segments: Vec<(u64, Vec<u8>)>,
+    /// Current known file size (updated optimistically)
+    size: u64,
+    /// Whether a setattr (truncation) needs forwarding
+    pending_truncate: Option<u64>,
+}
+
+/// WardenClyffeDisk FUSE Filesystem
+pub struct WardenClyffeDiskFS {
+    /// Configuration
+    config: Config,
+
+    /// Chunk storage backend (shared for replication)
+    chunk_store: Arc<ChunkStore>,
+
+    /// File metadata index (shared for replication)
+    file_index: Arc<RwLock<FileIndex>>,
+
+    /// Inode to path mapping (shared for replication)
+    inode_table: Arc<RwLock<InodeTable>>,
+
+    /// Next available inode number (shared for replication)
+    next_inode: Arc<RwLock<u64>>,
+
+    /// Open file handles (fh -> inode)
+    open_files: RwLock<HashMap<u64, u64>>,
+
+    /// Next file handle
+    next_fh: RwLock<u64>,
+
+    /// Cluster manager for leader/follower state
+    cluster: Option<Arc<ClusterManager>>,
+
+    /// Peer manager for network communication
+    peer_manager: Option<Arc<PeerManager>>,
+
+    /// Per-inode write buffers for coalescing small writes
+    write_buffers: RwLock<HashMap<u64, WriteBuffer>>,
+
+    /// Inodes that have been written to and need replication on release
+    dirty_inodes: RwLock<HashSet<u64>>,
+
+    /// Timestamp of last index save (for debouncing)
+    last_index_save: RwLock<Instant>,
+
+    /// Whether the index has been modified since last save
+    index_dirty: RwLock<bool>,
+
+    /// Async replication queue — write() pushes chunks here
+    /// Bounded channel (SyncSender) to prevent OOM during massive writes
+    replication_tx: Option<std::sync::mpsc::SyncSender<ReplicationMsg>>,
+
+    /// Client-side write-back cache (client/follower nodes only).
+    /// Writes are buffered here and only forwarded to the leader on flush/release.
+    /// This prevents FUSE from blocking on every write(), keeping Dolphin responsive.
+    client_write_cache: RwLock<HashMap<u64, ClientWriteEntry>>,
+}
+
+impl WardenClyffeDiskFS {
+    /// Create a new WardenClyffeDisk filesystem (standalone mode)
+    pub fn new(config: Config) -> Result<Self> {
+        // Create chunk store and file index for standalone mode
+        std::fs::create_dir_all(config.chunks_dir())?;
+        std::fs::create_dir_all(config.index_dir())?;
+
+        let chunk_store = Arc::new(ChunkStore::new(
+            config.chunks_dir(),
+            config.replication.chunk_size,
+        )?);
+        let file_index = Arc::new(RwLock::new(FileIndex::load_or_create(&config.index_dir())?));
+
+        // Build inode table from index
+        let (inode_table, max_inode) = {
+            let index = file_index.read().unwrap();
+            InodeTable::from_index(&index)
+        };
+        let inode_table = Arc::new(RwLock::new(inode_table));
+        let next_inode = Arc::new(RwLock::new(max_inode + 1));
+
+        Self::with_cluster(
+            config,
+            None,
+            None,
+            file_index,
+            chunk_store,
+            inode_table,
+            next_inode,
+        )
+    }
+
+    /// Create a new WardenClyffeDisk filesystem with cluster support
+    pub fn with_cluster(
+        config: Config,
+        cluster: Option<Arc<ClusterManager>>,
+        peer_manager: Option<Arc<PeerManager>>,
+        file_index: Arc<RwLock<FileIndex>>,
+        chunk_store: Arc<ChunkStore>,
+        inode_table: Arc<RwLock<InodeTable>>,
+        next_inode: Arc<RwLock<u64>>,
+    ) -> Result<Self> {
+        info!("Initializing WardenClyffeDisk filesystem");
+
+        // Ensure data directories exist
+        std::fs::create_dir_all(config.chunks_dir())?;
+        std::fs::create_dir_all(config.index_dir())?;
+
+        // Start async replication thread if we have a peer manager
+        let replication_tx = if let Some(ref pm) = peer_manager {
+            // Use a bounded channel to prevent unlimited memory growth during fast writes
+            // 500 chunks * 1MB = ~500MB max buffer.
+            // If full, we drop chunks (lossy) but block on metadata (reliable).
+            let (tx, rx) = std::sync::mpsc::sync_channel::<ReplicationMsg>(500);
+            let pm_clone = pm.clone();
+            let cluster_clone = cluster.clone();
+            std::thread::Builder::new()
+                .name("replication-sender".into())
+                .spawn(move || {
+                    while let Ok(msg) = rx.recv() {
+                        // Ensure connections before sending
+                        if let Some(ref cluster) = cluster_clone {
+                            let peers = cluster.peers();
+                            for peer in &peers {
+                                if pm_clone.get(&peer.node_id).is_none() {
+                                    let _ = pm_clone.connect(&peer.node_id, &peer.address);
+                                }
+                            }
+                        }
+                        match msg {
+                            ReplicationMsg::Broadcast(m) => {
+                                // Optimization: Don't send heavy chunks to clients (they don't store them)
+                                match m {
+                                    crate::network::protocol::Message::StoreChunk(_) => {
+                                        if let Some(ref cluster) = cluster_clone {
+                                            for peer in cluster.peers() {
+                                                if !peer.is_client {
+                                                    let _ = pm_clone.send_to(&peer.node_id, &m);
+                                                }
+                                            }
+                                        } else {
+                                            // Fallback if no cluster info (unlikely)
+                                            pm_clone.broadcast(&m);
+                                        }
+                                    }
+                                    _ => {
+                                        pm_clone.broadcast(&m);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    info!("Replication sender thread exiting");
+                })?;
+            Some(tx)
+        } else {
+            None
+        };
+
+        Ok(Self {
+            config,
+            chunk_store,
+            file_index,
+            inode_table,
+            next_inode,
+            open_files: RwLock::new(HashMap::new()),
+            next_fh: RwLock::new(1),
+            cluster,
+            peer_manager,
+            write_buffers: RwLock::new(HashMap::new()),
+            dirty_inodes: RwLock::new(HashSet::new()),
+            last_index_save: RwLock::new(Instant::now()),
+            index_dirty: RwLock::new(false),
+            replication_tx,
+            client_write_cache: RwLock::new(HashMap::new()),
+        })
+    }
+
+    /// Check if this node is the leader (or standalone)
+    fn is_leader(&self) -> bool {
+        match &self.cluster {
+            Some(cluster) => cluster.is_leader(),
+            None => true, // Standalone mode = always "leader"
+        }
+    }
+
+    /// Check if this node is a client (no local data, proxy to leader)
+    fn is_client(&self) -> bool {
+        match &self.cluster {
+            Some(cluster) => cluster.state() == crate::cluster::ClusterState::Client,
+            None => false,
+        }
+    }
+
+    /// Send a request to the leader with automatic reconnection on failure.
+    /// If the first attempt fails (e.g. stale connection after leader restart),
+    /// drops the cached connection, reconnects, and retries once.
+    fn request_leader(&self, msg: &Message) -> std::result::Result<Message, i32> {
+        let (cluster, peer_manager) = match (&self.cluster, &self.peer_manager) {
+            (Some(c), Some(p)) => (c, p),
+            _ => return Err(libc::EIO),
+        };
+
+        let leader_id = cluster.leader_id().ok_or(libc::ENOENT)?;
+        let leader_addr = cluster.leader_address().ok_or(libc::ENOENT)?;
+
+        // First attempt
+        let conn = peer_manager
+            .get_or_connect_leader(&leader_id, &leader_addr)
+            .map_err(|_| libc::EIO)?;
+
+        match conn.request(msg) {
+            Ok(response) => return Ok(response),
+            Err(e) => {
+                tracing::warn!("Leader request failed (will reconnect): {}", e);
+                peer_manager.disconnect_leader(&leader_id);
+            }
+        }
+
+        // Retry with fresh connection
+        let conn = peer_manager
+            .get_or_connect_leader(&leader_id, &leader_addr)
+            .map_err(|e| {
+                tracing::error!("Failed to reconnect to leader: {}", e);
+                libc::EIO
+            })?;
+
+        conn.request(msg).map_err(|e| {
+            tracing::error!("Leader request failed after reconnect: {}", e);
+            peer_manager.disconnect_leader(&leader_id);
+            libc::EIO
+        })
+    }
+
+    /// Forward a read to the leader (for client mode)
+    fn forward_read_to_leader(
+        &self,
+        path: &str,
+        offset: u64,
+        size: u32,
+    ) -> std::result::Result<Vec<u8>, i32> {
+        let msg = Message::ReadRequest(ReadRequestMsg {
+            path: path.to_string(),
+            offset,
+            size,
+        });
+
+        match self.request_leader(&msg)? {
+            Message::ClientResponse(resp) if resp.success => Ok(resp.data.unwrap_or_default()),
+            Message::ClientResponse(resp) => {
+                warn!("Read forward failed: {:?}", resp.error);
+                Err(libc::EIO)
+            }
+            _ => Err(libc::EIO),
+        }
+    }
+
+    /// Forward a file creation to the leader
+    fn forward_create_to_leader(
+        &self,
+        path: &str,
+        mode: u32,
+        uid: u32,
+        gid: u32,
+    ) -> std::result::Result<(), i32> {
+        let msg = Message::CreateFile(CreateFileMsg {
+            path: path.to_string(),
+            mode,
+            uid,
+            gid,
+        });
+
+        match self.request_leader(&msg)? {
+            Message::FileOpResponse(resp) if resp.success => Ok(()),
+            Message::FileOpResponse(resp) => {
+                warn!("Leader rejected create: {:?}", resp.error);
+                Err(libc::EIO)
+            }
+            _ => Err(libc::EIO),
+        }
+    }
+
+    /// Forward a write operation to the leader
+    fn forward_write_to_leader(
+        &self,
+        path: &str,
+        offset: u64,
+        data: &[u8],
+    ) -> std::result::Result<u32, i32> {
+        info!(
+            "Forwarding write to leader for path: {} (offset: {}, size: {})",
+            path,
+            offset,
+            data.len()
+        );
+
+        let msg = Message::WriteRequest(WriteRequestMsg {
+            path: path.to_string(),
+            offset,
+            data: data.to_vec(),
+        });
+
+        match self.request_leader(&msg)? {
+            Message::ClientResponse(resp) if resp.success => Ok(data.len() as u32),
+            Message::ClientResponse(resp) => {
+                warn!("Leader rejected write: {:?}", resp.error);
+                Err(libc::EIO)
+            }
+            _ => Err(libc::EIO),
+        }
+    }
+
+    /// Forward a directory creation to the leader
+    fn forward_mkdir_to_leader(
+        &self,
+        path: &str,
+        mode: u32,
+        uid: u32,
+        gid: u32,
+    ) -> std::result::Result<(), i32> {
+        let msg = Message::CreateDir(CreateDirMsg {
+            path: path.to_string(),
+            mode,
+            uid,
+            gid,
+        });
+
+        match self.request_leader(&msg)? {
+            Message::FileOpResponse(resp) if resp.success => Ok(()),
+            _ => Err(libc::EIO),
+        }
+    }
+
+    /// Forward a setattr operation to the leader (for truncation, chmod, etc.)
+    fn forward_setattr_to_leader(
+        &self,
+        path: &str,
+        size: Option<u64>,
+        permissions: Option<u32>,
+        uid: Option<u32>,
+        gid: Option<u32>,
+        modified_ms: Option<u64>,
+    ) -> std::result::Result<(), i32> {
+        info!(
+            "Forwarding setattr to leader for path: {} (size={:?})",
+            path, size
+        );
+
+        let msg = Message::SetAttr(SetAttrMsg {
+            path: path.to_string(),
+            permissions,
+            uid,
+            gid,
+            size,
+            modified_ms,
+        });
+
+        match self.request_leader(&msg)? {
+            Message::FileOpResponse(resp) if resp.success => Ok(()),
+            Message::FileOpResponse(resp) => {
+                warn!("Leader rejected setattr: {:?}", resp.error);
+                Err(libc::EIO)
+            }
+            _ => Err(libc::EIO),
+        }
+    }
+
+    /// Forward a file deletion to the leader
+    fn forward_unlink_to_leader(&self, path: &str) -> std::result::Result<(), i32> {
+        let msg = Message::DeleteFile(DeleteFileMsg {
+            path: path.to_string(),
+        });
+
+        match self.request_leader(&msg)? {
+            Message::FileOpResponse(resp) if resp.success => Ok(()),
+            _ => Err(libc::EIO),
+        }
+    }
+
+    /// Broadcast an index update to all followers (leader only)
+    fn broadcast_index_update(&self, operation: IndexOperation) {
+        if !self.is_leader() {
+            return;
+        }
+
+        if let Some(ref cluster) = self.cluster {
+            let op_path = match &operation {
+                IndexOperation::Upsert { path, .. } => std::path::PathBuf::from(path),
+                IndexOperation::Delete { path } => std::path::PathBuf::from(path),
+                IndexOperation::Mkdir { path, .. } => std::path::PathBuf::from(path),
+                IndexOperation::Rename { to_path, .. } => std::path::PathBuf::from(to_path),
+            };
+            let is_delete = matches!(&operation, IndexOperation::Delete { .. });
+            let version = if is_delete {
+                cluster.record_deletion(op_path)
+            } else {
+                cluster.increment_index_version(op_path)
+            };
+            let msg = Message::IndexUpdate(IndexUpdateMsg { version, operation });
+
+            // Queue for async broadcast
+            if let Some(ref tx) = self.replication_tx {
+                let _ = tx.send(ReplicationMsg::Broadcast(msg));
+            }
+        }
+    }
+
+    /// Queue a single chunk for async replication to followers.
+    /// Non-blocking: just pushes to the channel, the background thread handles sends.
+    fn stream_chunk_to_followers(
+        &self,
+        _path: &std::path::Path,
+        hash: &[u8; 32],
+        data: &[u8],
+        _offset: u64,
+        _size: u32,
+    ) {
+        if !self.is_leader() {
+            return;
+        }
+
+        if let Some(ref tx) = self.replication_tx {
+            let msg = Message::StoreChunk(crate::network::protocol::StoreChunkMsg {
+                hash: *hash,
+                data: data.to_vec(),
+            });
+            // Try to send non-blocking. If queue is full, drop the chunk.
+            // Followers will fetch missing chunks on-demand via GetChunk.
+            match tx.try_send(ReplicationMsg::Broadcast(msg)) {
+                Ok(_) => {}
+                Err(std::sync::mpsc::TrySendError::Full(_)) => {
+                    tracing::debug!(
+                        "Replication queue full, dropping chunk push (follower will fetch later)"
+                    );
+                }
+                Err(e) => {
+                    tracing::warn!("Failed to queue replication chunk: {}", e);
+                }
+            }
+        }
+    }
+
+    /// Forward a directory deletion to the leader
+    fn forward_rmdir_to_leader(&self, path: &str) -> std::result::Result<(), i32> {
+        let msg = Message::DeleteDir(DeleteDirMsg {
+            path: path.to_string(),
+        });
+
+        match self.request_leader(&msg)? {
+            Message::FileOpResponse(resp) if resp.success => Ok(()),
+            _ => Err(libc::EIO),
+        }
+    }
+
+    /// Forward a file rename to the leader
+    fn forward_rename_to_leader(
+        &self,
+        from_path: &str,
+        to_path: &str,
+    ) -> std::result::Result<(), i32> {
+        let msg = Message::RenameFile(RenameFileMsg {
+            from_path: from_path.to_string(),
+            to_path: to_path.to_string(),
+        });
+
+        match self.request_leader(&msg)? {
+            Message::FileOpResponse(resp) if resp.success => Ok(()),
+            _ => Err(libc::EIO),
+        }
+    }
+
+    /// Forward a symlink creation to the leader
+    fn forward_symlink_to_leader(
+        &self,
+        link_path: &str,
+        target: &str,
+    ) -> std::result::Result<(), i32> {
+        let msg = Message::CreateSymlink(CreateSymlinkMsg {
+            link_path: link_path.to_string(),
+            target: target.to_string(),
+        });
+
+        match self.request_leader(&msg)? {
+            Message::FileOpResponse(resp) if resp.success => Ok(()),
+            _ => Err(libc::EIO),
+        }
+    }
+
+    /// Allocate a new inode
+    fn allocate_inode(&self) -> u64 {
+        let mut next = self.next_inode.write().unwrap();
+        let inode = *next;
+        *next += 1;
+        inode
+    }
+
+    /// Allocate a new file handle
+    fn allocate_fh(&self) -> u64 {
+        let mut next = self.next_fh.write().unwrap();
+        let fh = *next;
+        *next += 1;
+        fh
+    }
+
+    /// Flush the write buffer for a given inode, storing accumulated data as chunks.
+    /// Also streams any flushed chunks to followers for streaming replication.
+    fn flush_write_buffer(&self, ino: u64) {
+        let buffer = {
+            let mut buffers = self.write_buffers.write().unwrap();
+            buffers.remove(&ino)
+        };
+
+        if let Some(buffer) = buffer {
+            if buffer.data.is_empty() {
+                return;
+            }
+
+            // Get the path for this inode
+            let path = {
+                let inode_table = self.inode_table.read().unwrap();
+                match inode_table.get_path(ino) {
+                    Some(p) => p.clone(),
+                    None => return,
+                }
+            };
+
+            // Collect chunks for streaming replication
+            let mut flushed_chunks: Vec<([u8; 32], Vec<u8>, u64, u32)> = Vec::new();
+
+            // Store the buffered data as chunks
+            let mut file_index = self.file_index.write().unwrap();
+            if let Some(entry) = file_index.get_mut(&path) {
+                let mut offset = buffer.base_offset;
+                let chunk_size = self.config.replication.chunk_size;
+                let mut pos = 0;
+
+                while pos < buffer.data.len() {
+                    let end = (pos + chunk_size).min(buffer.data.len());
+                    let chunk_data = &buffer.data[pos..end];
+
+                    match self.chunk_store.store(chunk_data) {
+                        Ok(hash) => {
+                            let chunk_len = chunk_data.len() as u32;
+                            entry.chunks.push(crate::storage::ChunkRef {
+                                hash,
+                                offset,
+                                size: chunk_len,
+                            });
+                            // Queue for streaming replication
+                            flushed_chunks.push((hash, chunk_data.to_vec(), offset, chunk_len));
+                        }
+                        Err(e) => {
+                            warn!("Failed to flush write buffer chunk: {}", e);
+                            return;
+                        }
+                    }
+
+                    offset += chunk_data.len() as u64;
+                    pos = end;
+                }
+
+                let new_end = buffer.base_offset + buffer.data.len() as u64;
+                if new_end > entry.size {
+                    entry.size = new_end;
+                }
+                entry.modified = SystemTime::now();
+            }
+            drop(file_index);
+
+            // Stream final chunks to followers (the tail end of the file)
+            for (hash, chunk_data, offset, size) in &flushed_chunks {
+                self.stream_chunk_to_followers(&path, hash, chunk_data, *offset, *size);
+            }
+
+            *self.index_dirty.write().unwrap() = true;
+        }
+    }
+
+    /// Mark an inode as dirty (needs replication on release)
+    fn mark_dirty(&self, ino: u64) {
+        self.dirty_inodes.write().unwrap().insert(ino);
+        *self.index_dirty.write().unwrap() = true;
+    }
+
+    /// Replicate a dirty inode's final state to followers and clear dirty flag.
+    /// With streaming replication, most chunks have already been sent during write().
+    /// This only needs to send the final index metadata so followers know the file
+    /// is complete, plus any remaining partial chunk from the write buffer.
+    fn replicate_dirty(&self, ino: u64) {
+        if !self.is_leader() {
+            return;
+        }
+
+        let was_dirty = self.dirty_inodes.write().unwrap().remove(&ino);
+        if !was_dirty {
+            return;
+        }
+
+        // Get path and entry for replication
+        let (path, entry) = {
+            let inode_table = self.inode_table.read().unwrap();
+            let file_index = self.file_index.read().unwrap();
+            match inode_table.get_path(ino) {
+                Some(p) => match file_index.get(p) {
+                    Some(e) => (p.clone(), e.clone()),
+                    None => return,
+                },
+                None => return,
+            }
+        };
+
+        // With streaming replication, chunks were already sent during write().
+        // Now send the final FileSync with full metadata + chunk refs so
+        // followers can assemble the complete file index entry.
+        // Only include chunk_data for any chunks that might not have been
+        // streamed yet (e.g. the final partial chunk from flush_write_buffer).
+        self.broadcast_file_sync_final(&path, &entry);
+    }
+
+    /// Broadcast final file metadata to followers after all chunks have been streamed.
+    /// Non-blocking: queues the message for the background replication thread.
+    fn broadcast_file_sync_final(&self, path: &std::path::Path, entry: &FileEntry) {
+        if !self.is_leader() {
+            return;
+        }
+
+        if let Some(ref tx) = self.replication_tx {
+            let modified_ms = entry
+                .modified
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_millis() as u64;
+
+            let chunk_refs: Vec<_> = entry
+                .chunks
+                .iter()
+                .map(|c| ChunkRefMsg {
+                    hash: c.hash,
+                    offset: c.offset,
+                    size: c.size,
+                })
+                .collect();
+
+            let msg = Message::FileSync(FileSyncMsg {
+                path: path.to_string_lossy().to_string(),
+                is_dir: entry.is_dir,
+                size: entry.size,
+                permissions: entry.permissions,
+                uid: entry.uid,
+                gid: entry.gid,
+                modified_ms,
+                chunks: chunk_refs,
+                chunk_data: Vec::new(),
+            });
+
+            debug!(
+                "Queuing FileSync for {} ({} bytes, {} chunks)",
+                path.display(),
+                entry.size,
+                entry.chunks.len()
+            );
+            let _ = tx.send(ReplicationMsg::Broadcast(msg));
+        }
+    }
+
+    /// Save the index to disk if enough time has passed since last save
+    fn maybe_save_index(&self) {
+        let is_dirty = *self.index_dirty.read().unwrap();
+        if !is_dirty {
+            return;
+        }
+
+        let should_save = {
+            let last_save = self.last_index_save.read().unwrap();
+            last_save.elapsed() >= INDEX_SAVE_INTERVAL
+        };
+
+        if should_save {
+            if let Ok(index) = self.file_index.read() {
+                let _ = index.save(&self.config.index_dir());
+            }
+            *self.last_index_save.write().unwrap() = Instant::now();
+            *self.index_dirty.write().unwrap() = false;
+        }
+    }
+
+    /// Force save the index to disk regardless of debounce timer
+    #[allow(dead_code)]
+    fn force_save_index(&self) {
+        let is_dirty = *self.index_dirty.read().unwrap();
+        if !is_dirty {
+            return;
+        }
+
+        if let Ok(index) = self.file_index.read() {
+            let _ = index.save(&self.config.index_dir());
+        }
+        *self.last_index_save.write().unwrap() = Instant::now();
+        *self.index_dirty.write().unwrap() = false;
+    }
+
+    /// Drain the client write-back cache for a given inode, forwarding all
+    /// buffered writes to the leader. Called on flush()/release().
+    ///
+    /// This is where the actual network I/O happens. By deferring it to
+    /// file close, we keep individual write() calls instant (no FUSE blocking).
+    fn drain_client_writes(&self, ino: u64) -> std::result::Result<(), i32> {
+        let cache_entry = {
+            let mut cache = self.client_write_cache.write().unwrap();
+            cache.remove(&ino)
+        };
+
+        let entry = match cache_entry {
+            Some(e) => e,
+            None => return Ok(()), // Nothing buffered for this inode
+        };
+
+        info!(
+            "Draining client write cache for ino={} path={} ({} segments, {} bytes, truncate={:?})",
+            ino,
+            entry.path,
+            entry.segments.len(),
+            entry.size,
+            entry.pending_truncate
+        );
+
+        // Step 1: Forward pending truncation to leader first
+        if let Some(trunc_size) = entry.pending_truncate {
+            if let Err(e) = self.forward_setattr_to_leader(
+                &entry.path,
+                Some(trunc_size),
+                None,
+                None,
+                None,
+                None,
+            ) {
+                warn!(
+                    "Failed to forward truncation to leader for {}: {}",
+                    entry.path, e
+                );
+                return Err(e);
+            }
+        }
+
+        // Step 2: Sort segments by offset and coalesce adjacent/overlapping ones
+        // to minimize the number of round-trips over WardenClyffeNet
+        let mut segments = entry.segments;
+        if segments.is_empty() {
+            return Ok(());
+        }
+
+        segments.sort_by_key(|(off, _)| *off);
+
+        // Coalesce contiguous segments
+        let mut coalesced: Vec<(u64, Vec<u8>)> = Vec::new();
+        for (offset, data) in segments {
+            if let Some(last) = coalesced.last_mut() {
+                let last_end = last.0 + last.1.len() as u64;
+                if offset <= last_end {
+                    // Overlapping or contiguous — merge
+                    if offset < last_end {
+                        // Overlapping: extend with only the non-overlapping part
+                        let overlap = (last_end - offset) as usize;
+                        if data.len() > overlap {
+                            last.1.extend_from_slice(&data[overlap..]);
+                        }
+                    } else {
+                        // Exactly contiguous
+                        last.1.extend_from_slice(&data);
+                    }
+                    continue;
+                }
+            }
+            coalesced.push((offset, data));
+        }
+
+        // Step 3: Forward each coalesced segment to the leader
+        for (offset, data) in &coalesced {
+            if let Err(e) = self.forward_write_to_leader(&entry.path, *offset, data) {
+                warn!(
+                    "Failed to forward write to leader for {} at offset {}: {}",
+                    entry.path, offset, e
+                );
+                return Err(e);
+            }
+        }
+
+        info!(
+            "Successfully drained {} write segments to leader for {}",
+            coalesced.len(),
+            entry.path
+        );
+        Ok(())
+    }
+
+    /// Get root directory attributes
+    fn root_attr(&self) -> FileAttr {
+        FileAttr {
+            ino: ROOT_INODE,
+            size: 0,
+            blocks: 0,
+            atime: SystemTime::now(),
+            mtime: SystemTime::now(),
+            ctime: SystemTime::now(),
+            crtime: SystemTime::now(),
+            kind: FileType::Directory,
+            perm: 0o777,
+            nlink: 2,
+            uid: unsafe { libc::getuid() },
+            gid: unsafe { libc::getgid() },
+            rdev: 0,
+            blksize: 4096,
+            flags: 0,
+        }
+    }
+
+    /// Convert FileEntry to FileAttr
+    fn entry_to_attr(&self, entry: &FileEntry, inode: u64) -> FileAttr {
+        FileAttr {
+            ino: inode,
+            size: entry.size,
+            blocks: entry.size.div_ceil(512),
+            atime: entry.accessed,
+            mtime: entry.modified,
+            ctime: entry.modified,
+            crtime: entry.created,
+            kind: if entry.is_dir {
+                FileType::Directory
+            } else {
+                FileType::RegularFile
+            },
+            perm: entry.permissions as u16,
+            nlink: if entry.is_dir { 2 } else { 1 },
+            uid: entry.uid,
+            gid: entry.gid,
+            rdev: 0,
+            blksize: 4096,
+            flags: 0,
+        }
+    }
+}
+
+impl Filesystem for WardenClyffeDiskFS {
+    fn statfs(&mut self, _req: &Request, _ino: u64, reply: fuser::ReplyStatfs) {
+        // Report disk space from the underlying storage partition
+        let path = self.config.chunks_dir();
+        let c_path = match std::ffi::CString::new(path.to_string_lossy().as_bytes()) {
+            Ok(p) => p,
+            Err(_) => {
+                // Fallback: report large virtual filesystem
+                reply.statfs(
+                    1 << 30, // blocks
+                    1 << 30, // bfree
+                    1 << 30, // bavail
+                    0,       // files
+                    1 << 20, // ffree
+                    4096,    // bsize
+                    255,     // namelen
+                    4096,    // frsize
+                );
+                return;
+            }
+        };
+
+        let mut stat: libc::statvfs = unsafe { std::mem::zeroed() };
+        let ret = unsafe { libc::statvfs(c_path.as_ptr(), &mut stat) };
+
+        if ret == 0 {
+            reply.statfs(
+                stat.f_blocks,         // total blocks
+                stat.f_bfree,          // free blocks
+                stat.f_bavail,         // available blocks (non-root)
+                stat.f_files,          // total inodes
+                stat.f_ffree,          // free inodes
+                stat.f_bsize as u32,   // block size
+                stat.f_namemax as u32, // max name length
+                stat.f_frsize as u32,  // fragment size
+            );
+        } else {
+            // Fallback: report large virtual filesystem
+            reply.statfs(1 << 30, 1 << 30, 1 << 30, 0, 1 << 20, 4096, 255, 4096);
+        }
+    }
+
+    fn lookup(&mut self, _req: &Request, parent: u64, name: &OsStr, reply: ReplyEntry) {
+        let name_str = name.to_string_lossy();
+        debug!("lookup: parent={}, name={}", parent, name_str);
+
+        let inode_table = self.inode_table.read().unwrap();
+        let file_index = self.file_index.read().unwrap();
+
+        // Get parent path
+        let parent_path = match inode_table.get_path(parent) {
+            Some(p) => p.clone(),
+            None => {
+                reply.error(libc::ENOENT);
+                return;
+            }
+        };
+
+        // Build child path
+        let child_path =
+            if parent_path.as_os_str().is_empty() || parent_path == std::path::Path::new("/") {
+                std::path::PathBuf::from(name)
+            } else {
+                parent_path.join(name)
+            };
+
+        // Look up in index
+        if let Some(entry) = file_index.get(&child_path) {
+            if let Some(inode) = inode_table.get_inode(&child_path) {
+                let attr = self.entry_to_attr(entry, inode);
+                reply.entry(&TTL, &attr, 0);
+                return;
+            }
+        }
+
+        reply.error(libc::ENOENT);
+    }
+
+    fn getattr(&mut self, _req: &Request, ino: u64, reply: ReplyAttr) {
+        debug!("getattr: ino={}", ino);
+
+        if ino == ROOT_INODE {
+            reply.attr(&TTL, &self.root_attr());
+            return;
+        }
+
+        let inode_table = self.inode_table.read().unwrap();
+        let file_index = self.file_index.read().unwrap();
+
+        if let Some(path) = inode_table.get_path(ino) {
+            if let Some(entry) = file_index.get(path) {
+                let attr = self.entry_to_attr(entry, ino);
+                reply.attr(&TTL, &attr);
+                return;
+            }
+        }
+
+        reply.error(libc::ENOENT);
+    }
+
+    fn setattr(
+        &mut self,
+        _req: &Request,
+        ino: u64,
+        mode: Option<u32>,
+        uid: Option<u32>,
+        gid: Option<u32>,
+        size: Option<u64>,
+        atime: Option<fuser::TimeOrNow>,
+        mtime: Option<fuser::TimeOrNow>,
+        _ctime: Option<SystemTime>,
+        _fh: Option<u64>,
+        _crtime: Option<SystemTime>,
+        _chgtime: Option<SystemTime>,
+        _bkuptime: Option<SystemTime>,
+        _flags: Option<u32>,
+        reply: ReplyAttr,
+    ) {
+        debug!("setattr: ino={}, size={:?}, mode={:?}", ino, size, mode);
+
+        if ino == ROOT_INODE {
+            reply.attr(&TTL, &self.root_attr());
+            return;
+        }
+
+        let path = {
+            let inode_table = self.inode_table.read().unwrap();
+            match inode_table.get_path(ino) {
+                Some(p) => p.clone(),
+                None => {
+                    reply.error(libc::ENOENT);
+                    return;
+                }
+            }
+        };
+
+        // Clear any write buffer for this inode on truncation
+        if size.is_some() {
+            let mut buffers = self.write_buffers.write().unwrap();
+            buffers.remove(&ino);
+        }
+
+        // Handle changes on non-leader nodes.
+        // For truncation during file copy, we defer forwarding to the leader
+        // and just update local state. The truncation will be sent as part of
+        // the write-back drain on flush/release. This keeps Dolphin responsive.
+        if !self.is_leader() {
+            if let Some(new_size) = size {
+                // Record pending truncation in the write-back cache
+                let mut cache = self.client_write_cache.write().unwrap();
+                let cache_entry = cache.entry(ino).or_insert_with(|| ClientWriteEntry {
+                    path: path.to_string_lossy().to_string(),
+                    segments: Vec::new(),
+                    size: new_size,
+                    pending_truncate: None,
+                });
+                cache_entry.pending_truncate = Some(new_size);
+                // Clear any buffered writes past the truncation point
+                if new_size == 0 {
+                    cache_entry.segments.clear();
+                } else {
+                    cache_entry.segments.retain(|(off, _)| *off < new_size);
+                }
+                cache_entry.size = new_size;
+            } else if mode.is_some() || uid.is_some() || gid.is_some() {
+                // Non-truncation setattr (chmod, chown) — forward synchronously.
+                // These are rare and fast, so blocking is OK.
+                let mtime_ms = mtime.map(|m| {
+                    let t = match m {
+                        fuser::TimeOrNow::SpecificTime(t) => t,
+                        fuser::TimeOrNow::Now => SystemTime::now(),
+                    };
+                    t.duration_since(std::time::UNIX_EPOCH)
+                        .unwrap_or_default()
+                        .as_millis() as u64
+                });
+
+                if let Err(e) = self.forward_setattr_to_leader(
+                    &path.to_string_lossy(),
+                    None, // no size change
+                    mode,
+                    uid,
+                    gid,
+                    mtime_ms,
+                ) {
+                    warn!("Failed to forward setattr to leader: {}", e);
+                    reply.error(e);
+                    return;
+                }
+            }
+
+            // Update local entry
+            let mut file_index = self.file_index.write().unwrap();
+            if let Some(entry) = file_index.get_mut(&path) {
+                if let Some(new_size) = size {
+                    if new_size == 0 {
+                        for chunk in &entry.chunks {
+                            let _ = self.chunk_store.delete(&chunk.hash);
+                        }
+                        entry.chunks.clear();
+                    }
+                    entry.size = new_size;
+                }
+                if let Some(m) = mode {
+                    entry.permissions = m;
+                }
+                if let Some(u) = uid {
+                    entry.uid = u;
+                }
+                if let Some(g) = gid {
+                    entry.gid = g;
+                }
+                let now = SystemTime::now();
+                if let Some(a) = atime {
+                    entry.accessed = match a {
+                        fuser::TimeOrNow::SpecificTime(t) => t,
+                        fuser::TimeOrNow::Now => now,
+                    };
+                }
+                if let Some(m) = mtime {
+                    entry.modified = match m {
+                        fuser::TimeOrNow::SpecificTime(t) => t,
+                        fuser::TimeOrNow::Now => now,
+                    };
+                }
+                let attr = self.entry_to_attr(entry, ino);
+                reply.attr(&TTL, &attr);
+            } else {
+                reply.error(libc::ENOENT);
+            }
+            return;
+        }
+
+        // Leader: handle locally
+        let mut file_index = self.file_index.write().unwrap();
+        let entry = match file_index.get_mut(&path) {
+            Some(e) => e,
+            None => {
+                reply.error(libc::ENOENT);
+                return;
+            }
+        };
+
+        // Handle size change (truncation)
+        if let Some(new_size) = size {
+            if new_size == 0 {
+                // Full truncation: delete all chunks
+                for chunk in &entry.chunks {
+                    let _ = self.chunk_store.delete(&chunk.hash);
+                }
+                entry.chunks.clear();
+                entry.size = 0;
+            } else if new_size < entry.size {
+                // Partial truncation: remove chunks beyond new size
+                entry.chunks.retain(|chunk| chunk.offset < new_size);
+                entry.size = new_size;
+            } else {
+                // Extending: just update size (sparse file)
+                entry.size = new_size;
+            }
+        }
+
+        if let Some(m) = mode {
+            entry.permissions = m;
+        }
+        if let Some(u) = uid {
+            entry.uid = u;
+        }
+        if let Some(g) = gid {
+            entry.gid = g;
+        }
+
+        let now = SystemTime::now();
+        if let Some(a) = atime {
+            entry.accessed = match a {
+                fuser::TimeOrNow::SpecificTime(t) => t,
+                fuser::TimeOrNow::Now => now,
+            };
+        }
+        if let Some(m) = mtime {
+            entry.modified = match m {
+                fuser::TimeOrNow::SpecificTime(t) => t,
+                fuser::TimeOrNow::Now => now,
+            };
+        }
+
+        let attr = self.entry_to_attr(entry, ino);
+
+        // Drop lock before side effects
+        drop(file_index);
+
+        *self.index_dirty.write().unwrap() = true;
+
+        // Broadcast truncation to followers (non-blocking via replication queue)
+        if size.is_some() {
+            let file_index = self.file_index.read().unwrap();
+            if let Some(entry) = file_index.get(&path) {
+                let entry_clone = entry.clone();
+                drop(file_index);
+                self.broadcast_file_sync_final(&path, &entry_clone);
+            }
+        }
+
+        reply.attr(&TTL, &attr);
+    }
+
+    fn read(
+        &mut self,
+        _req: &Request,
+        ino: u64,
+        _fh: u64,
+        offset: i64,
+        size: u32,
+        _flags: i32,
+        _lock_owner: Option<u64>,
+        reply: ReplyData,
+    ) {
+        debug!("read: ino={}, offset={}, size={}", ino, offset, size);
+
+        let path = {
+            let inode_table = self.inode_table.read().unwrap();
+            match inode_table.get_path(ino) {
+                Some(p) => p.clone(),
+                None => {
+                    reply.error(libc::ENOENT);
+                    return;
+                }
+            }
+        };
+
+        // Client mode: forward read to leader (no local chunks)
+        // Also forward if follower is in dirty state (initial sync not yet complete)
+        let sync_not_complete = match &self.cluster {
+            Some(cluster) => !cluster.is_leader() && !cluster.is_sync_complete(),
+            None => false,
+        };
+        if self.is_client() || sync_not_complete {
+            match self.forward_read_to_leader(&path.to_string_lossy(), offset as u64, size) {
+                Ok(data) => reply.data(&data),
+                Err(errno) => reply.error(errno),
+            }
+            return;
+        }
+
+        let entry = {
+            let file_index = self.file_index.read().unwrap();
+            match file_index.get(&path) {
+                Some(e) => e.clone(),
+                None => {
+                    reply.error(libc::ENOENT);
+                    return;
+                }
+            }
+        };
+
+        // For followers: ensure all chunks needed for this read exist locally.
+        // The initial sync only transfers the file index (metadata + chunk refs),
+        // not the actual chunk data. Fetch any missing chunks from the leader on demand.
+        if !self.is_leader() {
+            let end_offset = offset as u64 + size as u64;
+            for chunk in &entry.chunks {
+                let chunk_end = chunk.offset + chunk.size as u64;
+                // Skip chunks outside our read range
+                if chunk_end <= offset as u64 || chunk.offset >= end_offset {
+                    continue;
+                }
+                // If chunk is missing locally, fetch from leader
+                if !self.chunk_store.exists(&chunk.hash) {
+                    debug!(
+                        "Chunk {} missing locally, fetching from leader",
+                        hex::encode(chunk.hash)
+                    );
+                    let msg = crate::network::protocol::Message::GetChunk(
+                        crate::network::protocol::GetChunkMsg { hash: chunk.hash },
+                    );
+                    match self.request_leader(&msg) {
+                        Ok(crate::network::protocol::Message::ChunkData(resp)) => {
+                            if let Some(data) = resp.data {
+                                if let Err(e) = self.chunk_store.store_with_hash(&chunk.hash, &data)
+                                {
+                                    warn!("Failed to cache fetched chunk: {}", e);
+                                } else {
+                                    debug!(
+                                        "Fetched and cached chunk {} from leader ({} bytes)",
+                                        hex::encode(chunk.hash),
+                                        data.len()
+                                    );
+                                }
+                            }
+                        }
+                        Ok(_) => {
+                            warn!("Unexpected response fetching chunk from leader");
+                        }
+                        Err(e) => {
+                            warn!("Failed to fetch chunk from leader: errno {}", e);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Read data from chunks
+        match self
+            .chunk_store
+            .read(&entry.chunks, offset as u64, size as usize)
+        {
+            Ok(mut data) => {
+                // Overlay any buffered-but-unflushed write data for read-after-write consistency
+                let buffers = self.write_buffers.read().unwrap();
+                if let Some(buffer) = buffers.get(&ino) {
+                    if !buffer.data.is_empty() {
+                        let read_start = offset as u64;
+                        let read_end = read_start + size as u64;
+                        let buf_start = buffer.base_offset;
+                        let buf_end = buf_start + buffer.data.len() as u64;
+
+                        // Check for overlap between read range and buffer
+                        if buf_start < read_end && buf_end > read_start {
+                            let overlap_start = read_start.max(buf_start);
+                            let overlap_end = read_end.min(buf_end);
+
+                            let result_offset = (overlap_start - read_start) as usize;
+                            let buf_offset = (overlap_start - buf_start) as usize;
+                            let overlap_len = (overlap_end - overlap_start) as usize;
+
+                            // Ensure result vector is large enough
+                            if data.len() < result_offset + overlap_len {
+                                data.resize(result_offset + overlap_len, 0);
+                            }
+
+                            data[result_offset..result_offset + overlap_len].copy_from_slice(
+                                &buffer.data[buf_offset..buf_offset + overlap_len],
+                            );
+                        }
+                    }
+                }
+
+                reply.data(&data);
+            }
+            Err(e) => {
+                warn!("Read error: {}", e);
+                reply.error(e.to_errno());
+            }
+        }
+    }
+
+    fn write(
+        &mut self,
+        _req: &Request,
+        ino: u64,
+        _fh: u64,
+        offset: i64,
+        data: &[u8],
+        _write_flags: u32,
+        _flags: i32,
+        _lock_owner: Option<u64>,
+        reply: ReplyWrite,
+    ) {
+        debug!("write: ino={}, offset={}, size={}", ino, offset, data.len());
+
+        // Get the path for this inode
+        let path = {
+            let inode_table = self.inode_table.read().unwrap();
+            match inode_table.get_path(ino) {
+                Some(p) => p.clone(),
+                None => {
+                    reply.error(libc::ENOENT);
+                    return;
+                }
+            }
+        };
+
+        // If we're a follower or client, buffer locally (write-back cache).
+        // This returns instantly to FUSE so Dolphin stays responsive.
+        // Data is forwarded to the leader on flush()/release().
+        if !self.is_leader() {
+            let written = data.len() as u32;
+            let new_end = offset as u64 + written as u64;
+
+            // Buffer the write data
+            {
+                let mut cache = self.client_write_cache.write().unwrap();
+                let entry = cache.entry(ino).or_insert_with(|| ClientWriteEntry {
+                    path: path.to_string_lossy().to_string(),
+                    segments: Vec::new(),
+                    size: 0,
+                    pending_truncate: None,
+                });
+                entry.segments.push((offset as u64, data.to_vec()));
+                if new_end > entry.size {
+                    entry.size = new_end;
+                }
+            }
+
+            // Update local index entry size so getattr returns correct size
+            {
+                let mut file_index = self.file_index.write().unwrap();
+                if let Some(entry) = file_index.get_mut(&path) {
+                    if new_end > entry.size {
+                        entry.size = new_end;
+                    }
+                    entry.modified = SystemTime::now();
+                }
+            }
+
+            reply.written(written);
+            return;
+        }
+
+        // We're the leader - buffer the write for coalescing
+        let chunk_size = self.config.replication.chunk_size;
+
+        // Collect chunks that were flushed during this write for streaming replication
+        let mut flushed_chunks: Vec<([u8; 32], Vec<u8>, u64, u32)> = Vec::new();
+
+        {
+            let mut buffers = self.write_buffers.write().unwrap();
+            let buffer = buffers.entry(ino).or_insert_with(|| WriteBuffer {
+                data: Vec::new(),
+                base_offset: offset as u64,
+            });
+
+            // Check if write is contiguous with existing buffer
+            let buffer_end = buffer.base_offset + buffer.data.len() as u64;
+            if offset as u64 == buffer_end {
+                // Contiguous: just append
+                buffer.data.extend_from_slice(data);
+            } else {
+                // Non-contiguous: flush existing buffer to chunks, start new one
+                if !buffer.data.is_empty() {
+                    let old_data = std::mem::take(&mut buffer.data);
+                    let old_offset = buffer.base_offset;
+
+                    // Store old buffer data as chunks
+                    let path_for_flush = path.clone();
+                    let mut file_index = self.file_index.write().unwrap();
+                    if let Some(entry) = file_index.get_mut(&path_for_flush) {
+                        let mut pos = 0;
+                        let mut off = old_offset;
+                        while pos < old_data.len() {
+                            let end = (pos + chunk_size).min(old_data.len());
+                            let chunk_data = &old_data[pos..end];
+                            match self.chunk_store.store(chunk_data) {
+                                Ok(hash) => {
+                                    let chunk_len = chunk_data.len() as u32;
+                                    entry.chunks.push(crate::storage::ChunkRef {
+                                        hash,
+                                        offset: off,
+                                        size: chunk_len,
+                                    });
+                                    // Queue for streaming replication
+                                    flushed_chunks.push((
+                                        hash,
+                                        chunk_data.to_vec(),
+                                        off,
+                                        chunk_len,
+                                    ));
+                                }
+                                Err(e) => {
+                                    warn!("Failed to flush non-contiguous buffer: {}", e);
+                                    break;
+                                }
+                            }
+                            off += chunk_data.len() as u64;
+                            pos = end;
+                        }
+                        let new_end = old_offset + old_data.len() as u64;
+                        if new_end > entry.size {
+                            entry.size = new_end;
+                        }
+                        entry.modified = SystemTime::now();
+                    }
+                }
+
+                // Start new buffer
+                buffer.data = data.to_vec();
+                buffer.base_offset = offset as u64;
+            }
+
+            // Flush complete chunks from buffer while it exceeds chunk_size
+            while buffer.data.len() >= chunk_size {
+                let chunk_data: Vec<u8> = buffer.data.drain(..chunk_size).collect();
+                let flush_offset = buffer.base_offset;
+                buffer.base_offset += chunk_size as u64;
+
+                match self.chunk_store.store(&chunk_data) {
+                    Ok(hash) => {
+                        let mut file_index = self.file_index.write().unwrap();
+                        if let Some(entry) = file_index.get_mut(&path) {
+                            entry.chunks.push(crate::storage::ChunkRef {
+                                hash,
+                                offset: flush_offset,
+                                size: chunk_size as u32,
+                            });
+                            let new_end = flush_offset + chunk_size as u64;
+                            if new_end > entry.size {
+                                entry.size = new_end;
+                            }
+                            entry.modified = SystemTime::now();
+                        }
+                        // Queue for streaming replication
+                        flushed_chunks.push((hash, chunk_data, flush_offset, chunk_size as u32));
+                    }
+                    Err(e) => {
+                        warn!("Failed to flush full chunk from buffer: {}", e);
+                    }
+                }
+            }
+        }
+
+        // Stream flushed chunks to followers immediately (streaming replication)
+        for (hash, chunk_data, offset, size) in &flushed_chunks {
+            self.stream_chunk_to_followers(&path, hash, chunk_data, *offset, *size);
+        }
+
+        // Update file size to include buffered data
+        {
+            let buffers = self.write_buffers.read().unwrap();
+            if let Some(buffer) = buffers.get(&ino) {
+                let buffered_end = buffer.base_offset + buffer.data.len() as u64;
+                let mut file_index = self.file_index.write().unwrap();
+                if let Some(entry) = file_index.get_mut(&path) {
+                    if buffered_end > entry.size {
+                        entry.size = buffered_end;
+                    }
+                    entry.modified = SystemTime::now();
+                }
+            }
+        }
+
+        // If chunks were streamed, also send metadata update so file appears on followers
+        if !flushed_chunks.is_empty() {
+            let entry = {
+                let file_index = self.file_index.read().unwrap();
+                file_index.get(&path).cloned()
+            };
+            if let Some(entry) = entry {
+                self.broadcast_file_sync_final(&path, &entry);
+            }
+        }
+
+        // Mark as dirty for final index sync on release
+        self.mark_dirty(ino);
+
+        reply.written(data.len() as u32);
+    }
+
+    fn readdir(
+        &mut self,
+        _req: &Request,
+        ino: u64,
+        _fh: u64,
+        offset: i64,
+        mut reply: ReplyDirectory,
+    ) {
+        debug!("readdir: ino={}, offset={}", ino, offset);
+
+        let inode_table = self.inode_table.read().unwrap();
+        let file_index = self.file_index.read().unwrap();
+
+        // Get directory path
+        let dir_path = if ino == ROOT_INODE {
+            std::path::PathBuf::new()
+        } else {
+            match inode_table.get_path(ino) {
+                Some(p) => p.clone(),
+                None => {
+                    reply.error(libc::ENOENT);
+                    return;
+                }
+            }
+        };
+
+        let mut entries = vec![
+            (ino, FileType::Directory, ".".to_string()),
+            (ino, FileType::Directory, "..".to_string()),
+        ];
+
+        // Find children
+        for (path, entry) in file_index.iter() {
+            if let Some(parent) = path.parent() {
+                let parent_matches = if ino == ROOT_INODE {
+                    parent.as_os_str().is_empty()
+                } else {
+                    parent == dir_path
+                };
+
+                if parent_matches {
+                    if let Some(name) = path.file_name() {
+                        let child_inode = inode_table.get_inode(path).unwrap_or(0);
+                        let file_type = if entry.is_dir {
+                            FileType::Directory
+                        } else {
+                            FileType::RegularFile
+                        };
+                        entries.push((child_inode, file_type, name.to_string_lossy().to_string()));
+                    }
+                }
+            }
+        }
+
+        // Return entries starting from offset
+        for (i, (inode, file_type, name)) in entries.iter().enumerate().skip(offset as usize) {
+            if reply.add(*inode, (i + 1) as i64, *file_type, name) {
+                break;
+            }
+        }
+
+        reply.ok();
+    }
+
+    fn mkdir(
+        &mut self,
+        req: &Request,
+        parent: u64,
+        name: &OsStr,
+        mode: u32,
+        _umask: u32,
+        reply: ReplyEntry,
+    ) {
+        let name_str = name.to_string_lossy();
+        debug!(
+            "mkdir: parent={}, name={}, mode={:o}",
+            parent, name_str, mode
+        );
+
+        // Get parent path first (needed for forwarding)
+        let parent_path = {
+            let inode_table = self.inode_table.read().unwrap();
+            if parent == ROOT_INODE {
+                std::path::PathBuf::new()
+            } else {
+                match inode_table.get_path(parent) {
+                    Some(p) => p.clone(),
+                    None => {
+                        reply.error(libc::ENOENT);
+                        return;
+                    }
+                }
+            }
+        };
+
+        let dir_path = parent_path.join(name);
+
+        // If not leader, forward to leader
+        if !self.is_leader() {
+            info!("Forwarding mkdir to leader: {:?}", dir_path);
+            match self.forward_mkdir_to_leader(
+                &dir_path.to_string_lossy(),
+                mode,
+                req.uid(),
+                req.gid(),
+            ) {
+                Ok(()) => {
+                    // Create local entry to reflect the change (will be synced properly later)
+                    let now = SystemTime::now();
+                    let entry = FileEntry {
+                        size: 0,
+                        is_dir: true,
+                        permissions: mode,
+                        uid: req.uid(),
+                        gid: req.gid(),
+                        created: now,
+                        modified: now,
+                        accessed: now,
+                        chunks: Vec::new(),
+                        symlink_target: None,
+                    };
+                    let inode = self.allocate_inode();
+                    self.inode_table
+                        .write()
+                        .unwrap()
+                        .insert(inode, dir_path.clone());
+                    self.file_index
+                        .write()
+                        .unwrap()
+                        .insert(dir_path, entry.clone());
+                    let attr = self.entry_to_attr(&entry, inode);
+                    reply.entry(&TTL, &attr, 0);
+                }
+                Err(errno) => reply.error(errno),
+            }
+            return;
+        }
+
+        // Leader: execute locally
+        let mut inode_table = self.inode_table.write().unwrap();
+        let mut file_index = self.file_index.write().unwrap();
+
+        // Check if already exists
+        if file_index.contains(&dir_path) {
+            reply.error(libc::EEXIST);
+            return;
+        }
+
+        // Create entry
+        let now = SystemTime::now();
+        let entry = FileEntry {
+            size: 0,
+            is_dir: true,
+            permissions: mode,
+            uid: req.uid(),
+            gid: req.gid(),
+            created: now,
+            modified: now,
+            accessed: now,
+            chunks: Vec::new(),
+            symlink_target: None,
+        };
+
+        // Allocate inode and add to tables
+        let inode = self.allocate_inode();
+        let dir_path_str = dir_path.to_string_lossy().to_string();
+        inode_table.insert(inode, dir_path.clone());
+        file_index.insert(dir_path, entry.clone());
+
+        // Drop locks before broadcast
+        drop(inode_table);
+        drop(file_index);
+
+        let attr = self.entry_to_attr(&entry, inode);
+
+        // Broadcast mkdir to followers
+        self.broadcast_index_update(IndexOperation::Mkdir {
+            path: dir_path_str,
+            permissions: mode,
+        });
+
+        reply.entry(&TTL, &attr, 0);
+    }
+
+    fn create(
+        &mut self,
+        req: &Request,
+        parent: u64,
+        name: &OsStr,
+        mode: u32,
+        _umask: u32,
+        _flags: i32,
+        reply: fuser::ReplyCreate,
+    ) {
+        let name_str = name.to_string_lossy();
+        debug!(
+            "create: parent={}, name={}, mode={:o}",
+            parent, name_str, mode
+        );
+
+        // Get parent path first (needed for forwarding)
+        let parent_path = {
+            let inode_table = self.inode_table.read().unwrap();
+            if parent == ROOT_INODE {
+                std::path::PathBuf::new()
+            } else {
+                match inode_table.get_path(parent) {
+                    Some(p) => p.clone(),
+                    None => {
+                        reply.error(libc::ENOENT);
+                        return;
+                    }
+                }
+            }
+        };
+
+        let file_path = parent_path.join(name);
+
+        // If not leader, forward to leader
+        if !self.is_leader() {
+            info!("Forwarding create to leader: {:?}", file_path);
+            match self.forward_create_to_leader(
+                &file_path.to_string_lossy(),
+                mode,
+                req.uid(),
+                req.gid(),
+            ) {
+                Ok(()) => {
+                    // Create local entry to reflect the change
+                    let now = SystemTime::now();
+                    let entry = FileEntry {
+                        size: 0,
+                        is_dir: false,
+                        permissions: mode,
+                        uid: req.uid(),
+                        gid: req.gid(),
+                        created: now,
+                        modified: now,
+                        accessed: now,
+                        chunks: Vec::new(),
+                        symlink_target: None,
+                    };
+                    let inode = self.allocate_inode();
+                    self.inode_table
+                        .write()
+                        .unwrap()
+                        .insert(inode, file_path.clone());
+                    self.file_index
+                        .write()
+                        .unwrap()
+                        .insert(file_path, entry.clone());
+                    let fh = self.allocate_fh();
+                    self.open_files.write().unwrap().insert(fh, inode);
+                    let attr = self.entry_to_attr(&entry, inode);
+                    reply.created(&TTL, &attr, 0, fh, 0);
+                }
+                Err(errno) => reply.error(errno),
+            }
+            return;
+        }
+
+        // Leader: execute locally
+        let mut inode_table = self.inode_table.write().unwrap();
+        let mut file_index = self.file_index.write().unwrap();
+
+        // Check if already exists
+        if file_index.contains(&file_path) {
+            reply.error(libc::EEXIST);
+            return;
+        }
+
+        // Create entry
+        let now = SystemTime::now();
+        let entry = FileEntry {
+            size: 0,
+            is_dir: false,
+            permissions: mode,
+            uid: req.uid(),
+            gid: req.gid(),
+            created: now,
+            modified: now,
+            accessed: now,
+            chunks: Vec::new(),
+            symlink_target: None,
+        };
+
+        // Allocate inode and add to tables
+        let inode = self.allocate_inode();
+        let file_path_str = file_path.to_string_lossy().to_string();
+        inode_table.insert(inode, file_path.clone());
+        file_index.insert(file_path, entry.clone());
+
+        // Drop locks before broadcast
+        drop(inode_table);
+        drop(file_index);
+
+        // Allocate file handle
+        let fh = self.allocate_fh();
+        self.open_files.write().unwrap().insert(fh, inode);
+
+        let attr = self.entry_to_attr(&entry, inode);
+
+        // Broadcast file creation to followers
+        self.broadcast_index_update(IndexOperation::Upsert {
+            path: file_path_str,
+            size: 0,
+            modified_ms: now
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_millis() as u64,
+            permissions: mode,
+            chunks: vec![],
+        });
+
+        reply.created(&TTL, &attr, 0, fh, 0);
+    }
+
+    fn unlink(&mut self, _req: &Request, parent: u64, name: &OsStr, reply: fuser::ReplyEmpty) {
+        let name_str = name.to_string_lossy();
+        debug!("unlink: parent={}, name={}", parent, name_str);
+
+        // Get parent path first (needed for forwarding)
+        let parent_path = {
+            let inode_table = self.inode_table.read().unwrap();
+            if parent == ROOT_INODE {
+                std::path::PathBuf::new()
+            } else {
+                match inode_table.get_path(parent) {
+                    Some(p) => p.clone(),
+                    None => {
+                        reply.error(libc::ENOENT);
+                        return;
+                    }
+                }
+            }
+        };
+
+        let file_path = parent_path.join(name);
+
+        // If not leader, forward to leader
+        if !self.is_leader() {
+            info!("Forwarding unlink to leader: {:?}", file_path);
+            match self.forward_unlink_to_leader(&file_path.to_string_lossy()) {
+                Ok(()) => {
+                    // Remove local entry
+                    let mut inode_table = self.inode_table.write().unwrap();
+                    let mut file_index = self.file_index.write().unwrap();
+                    if let Some(entry) = file_index.remove(&file_path) {
+                        for chunk in &entry.chunks {
+                            let _ = self.chunk_store.delete(&chunk.hash);
+                        }
+                    }
+                    inode_table.remove_path(&file_path);
+                    reply.ok();
+                }
+                Err(errno) => reply.error(errno),
+            }
+            return;
+        }
+
+        // Leader: execute locally
+        let mut inode_table = self.inode_table.write().unwrap();
+        let mut file_index = self.file_index.write().unwrap();
+
+        // Check exists and is not a directory
+        match file_index.get(&file_path) {
+            Some(entry) if entry.is_dir => {
+                reply.error(libc::EISDIR);
+                return;
+            }
+            None => {
+                reply.error(libc::ENOENT);
+                return;
+            }
+            _ => {}
+        }
+
+        // Look up the inode for this file BEFORE removing it (needed to clear write buffers)
+        let file_ino = inode_table.get_inode(&file_path);
+
+        // Clear any pending write buffers and dirty flags for the deleted inode
+        // (prevents stale streaming replication data from being sent after delete)
+        if let Some(ino) = file_ino {
+            self.write_buffers.write().unwrap().remove(&ino);
+            self.dirty_inodes.write().unwrap().remove(&ino);
+        }
+
+        // Remove from index and inode table
+        if let Some(entry) = file_index.remove(&file_path) {
+            // Delete chunks
+            for chunk in &entry.chunks {
+                let _ = self.chunk_store.delete(&chunk.hash);
+            }
+        }
+        inode_table.remove_path(&file_path);
+
+        // Drop locks before broadcast
+        drop(file_index);
+        drop(inode_table);
+
+        // Broadcast delete to followers via IndexUpdate
+        self.broadcast_index_update(IndexOperation::Delete {
+            path: file_path.to_string_lossy().to_string(),
+        });
+
+        // Also broadcast FileSync delete signal (size=u64::MAX) to ensure
+        // followers clean up even if stale streaming data arrives out of order
+        // (non-blocking via replication queue)
+        self.broadcast_file_sync_final(
+            &file_path,
+            &FileEntry {
+                size: u64::MAX,
+                is_dir: false,
+                permissions: 0,
+                uid: 0,
+                gid: 0,
+                modified: SystemTime::now(),
+                created: SystemTime::now(),
+                accessed: SystemTime::now(),
+                chunks: Vec::new(),
+                symlink_target: None,
+            },
+        );
+
+        reply.ok();
+    }
+
+    fn rmdir(&mut self, _req: &Request, parent: u64, name: &OsStr, reply: fuser::ReplyEmpty) {
+        let name_str = name.to_string_lossy();
+        debug!("rmdir: parent={}, name={}", parent, name_str);
+
+        // Get parent path first (needed for forwarding)
+        let parent_path = {
+            let inode_table = self.inode_table.read().unwrap();
+            if parent == ROOT_INODE {
+                std::path::PathBuf::new()
+            } else {
+                match inode_table.get_path(parent) {
+                    Some(p) => p.clone(),
+                    None => {
+                        reply.error(libc::ENOENT);
+                        return;
+                    }
+                }
+            }
+        };
+
+        let dir_path = parent_path.join(name);
+
+        // If not leader, forward to leader
+        if !self.is_leader() {
+            info!("Forwarding rmdir to leader: {:?}", dir_path);
+            match self.forward_rmdir_to_leader(&dir_path.to_string_lossy()) {
+                Ok(()) => {
+                    // Remove local entry
+                    let mut inode_table = self.inode_table.write().unwrap();
+                    let mut file_index = self.file_index.write().unwrap();
+                    file_index.remove(&dir_path);
+                    inode_table.remove_path(&dir_path);
+                    reply.ok();
+                }
+                Err(errno) => reply.error(errno),
+            }
+            return;
+        }
+
+        // Leader: execute locally
+        let mut inode_table = self.inode_table.write().unwrap();
+        let mut file_index = self.file_index.write().unwrap();
+
+        // Check exists and is a directory
+        match file_index.get(&dir_path) {
+            Some(entry) if !entry.is_dir => {
+                reply.error(libc::ENOTDIR);
+                return;
+            }
+            None => {
+                reply.error(libc::ENOENT);
+                return;
+            }
+            _ => {}
+        }
+
+        // Check directory is empty
+        for path in file_index.paths() {
+            if let Some(parent) = path.parent() {
+                if parent == dir_path {
+                    reply.error(libc::ENOTEMPTY);
+                    return;
+                }
+            }
+        }
+
+        // Remove from index and inode table
+        file_index.remove(&dir_path);
+        inode_table.remove_path(&dir_path);
+
+        // Drop locks before broadcast
+        drop(file_index);
+        drop(inode_table);
+
+        // Broadcast delete to followers
+        self.broadcast_index_update(IndexOperation::Delete {
+            path: dir_path.to_string_lossy().to_string(),
+        });
+
+        reply.ok();
+    }
+
+    fn rename(
+        &mut self,
+        _req: &Request,
+        parent: u64,
+        name: &OsStr,
+        newparent: u64,
+        newname: &OsStr,
+        _flags: u32,
+        reply: fuser::ReplyEmpty,
+    ) {
+        let name_str = name.to_string_lossy();
+        let newname_str = newname.to_string_lossy();
+        debug!(
+            "rename: parent={}, name={}, newparent={}, newname={}",
+            parent, name_str, newparent, newname_str
+        );
+
+        // Get source and destination paths
+        let (from_path, to_path) = {
+            let inode_table = self.inode_table.read().unwrap();
+
+            let parent_path = if parent == ROOT_INODE {
+                std::path::PathBuf::new()
+            } else {
+                match inode_table.get_path(parent) {
+                    Some(p) => p.clone(),
+                    None => {
+                        reply.error(libc::ENOENT);
+                        return;
+                    }
+                }
+            };
+
+            let newparent_path = if newparent == ROOT_INODE {
+                std::path::PathBuf::new()
+            } else {
+                match inode_table.get_path(newparent) {
+                    Some(p) => p.clone(),
+                    None => {
+                        reply.error(libc::ENOENT);
+                        return;
+                    }
+                }
+            };
+
+            (parent_path.join(name), newparent_path.join(newname))
+        };
+
+        // If not leader, forward to leader
+        if !self.is_leader() {
+            info!(
+                "Forwarding rename to leader: {:?} -> {:?}",
+                from_path, to_path
+            );
+            match self
+                .forward_rename_to_leader(&from_path.to_string_lossy(), &to_path.to_string_lossy())
+            {
+                Ok(()) => {
+                    // Update local entries
+                    let mut inode_table = self.inode_table.write().unwrap();
+                    let mut file_index = self.file_index.write().unwrap();
+
+                    if let Some(entry) = file_index.remove(&from_path) {
+                        file_index.insert(to_path.clone(), entry);
+                    }
+
+                    if let Some(ino) = inode_table.get_inode(&from_path) {
+                        inode_table.remove_path(&from_path);
+                        inode_table.insert(ino, to_path);
+                    }
+
+                    reply.ok();
+                }
+                Err(errno) => reply.error(errno),
+            }
+            return;
+        }
+
+        // Leader: execute locally
+        let mut inode_table = self.inode_table.write().unwrap();
+        let mut file_index = self.file_index.write().unwrap();
+
+        // Check source exists
+        let entry = match file_index.get(&from_path) {
+            Some(e) => e.clone(),
+            None => {
+                reply.error(libc::ENOENT);
+                return;
+            }
+        };
+
+        // Check destination and handle overwrite
+        if let Some(target_entry) = file_index.get(&to_path) {
+            if target_entry.is_dir {
+                // Check if directory is empty
+                let has_children = file_index.paths().any(|p| {
+                    if let Some(parent) = p.parent() {
+                        parent == to_path
+                    } else {
+                        false
+                    }
+                });
+
+                if has_children {
+                    reply.error(libc::ENOTEMPTY);
+                    return;
+                }
+            }
+
+            // Delete target chunks
+            for chunk in &target_entry.chunks {
+                let _ = self.chunk_store.delete(&chunk.hash);
+            }
+
+            // Remove target from inode table
+            if let Some(target_ino) = inode_table.get_inode(&to_path) {
+                inode_table.remove_inode(target_ino);
+            }
+
+            // Remove target from index
+            file_index.remove(&to_path);
+        }
+
+        // Move entry
+        file_index.remove(&from_path);
+        file_index.insert(to_path.clone(), entry);
+
+        // Update inode table for source
+        if let Some(ino) = inode_table.get_inode(&from_path) {
+            inode_table.remove_path(&from_path);
+            inode_table.insert(ino, to_path.clone());
+        }
+
+        drop(file_index);
+        drop(inode_table);
+
+        // Broadcast rename to followers
+        self.broadcast_index_update(IndexOperation::Rename {
+            from_path: from_path.to_string_lossy().to_string(),
+            to_path: to_path.to_string_lossy().to_string(),
+        });
+
+        reply.ok();
+    }
+
+    fn open(&mut self, _req: &Request, ino: u64, _flags: i32, reply: ReplyOpen) {
+        debug!("open: ino={}", ino);
+
+        // Verify file exists
+        let inode_table = self.inode_table.read().unwrap();
+        if inode_table.get_path(ino).is_none() && ino != ROOT_INODE {
+            reply.error(libc::ENOENT);
+            return;
+        }
+
+        let fh = self.allocate_fh();
+        self.open_files.write().unwrap().insert(fh, ino);
+        reply.opened(fh, 0);
+    }
+
+    fn release(
+        &mut self,
+        _req: &Request,
+        ino: u64,
+        fh: u64,
+        _flags: i32,
+        _lock_owner: Option<u64>,
+        _flush: bool,
+        reply: fuser::ReplyEmpty,
+    ) {
+        debug!("release: ino={}, fh={}", ino, fh);
+        self.open_files.write().unwrap().remove(&fh);
+
+        // Drain client write-back cache to leader (client/follower nodes)
+        if !self.is_leader() {
+            if let Err(e) = self.drain_client_writes(ino) {
+                warn!("Failed to drain client writes on release: {}", e);
+                // Don't fail release — the file is already closed locally.
+                // The error was logged and the data is lost (same as NFS async error).
+            }
+        }
+
+        // Flush any pending write buffer for this inode
+        self.flush_write_buffer(ino);
+
+        // Replicate to followers if this inode was modified (deferred from write)
+        self.replicate_dirty(ino);
+
+        // Debounced index save (only saves if enough time has passed)
+        self.maybe_save_index();
+
+        reply.ok();
+    }
+
+    fn symlink(
+        &mut self,
+        req: &Request,
+        parent: u64,
+        link_name: &OsStr,
+        target: &std::path::Path,
+        reply: ReplyEntry,
+    ) {
+        let link_name_str = link_name.to_string_lossy();
+        let target_str = target.to_string_lossy();
+        debug!(
+            "symlink: parent={}, name={}, target={}",
+            parent, link_name_str, target_str
+        );
+
+        // Get parent path
+        let parent_path = {
+            let inode_table = self.inode_table.read().unwrap();
+            if parent == ROOT_INODE {
+                std::path::PathBuf::new()
+            } else {
+                match inode_table.get_path(parent) {
+                    Some(p) => p.clone(),
+                    None => {
+                        reply.error(libc::ENOENT);
+                        return;
+                    }
+                }
+            }
+        };
+
+        let link_path = parent_path.join(link_name);
+
+        // If not leader, forward to leader
+        if !self.is_leader() {
+            info!(
+                "Forwarding symlink to leader: {:?} -> {}",
+                link_path, target_str
+            );
+            match self.forward_symlink_to_leader(&link_path.to_string_lossy(), &target_str) {
+                Ok(()) => {
+                    // Create local entry
+                    let now = SystemTime::now();
+                    let entry = FileEntry {
+                        size: target_str.len() as u64,
+                        is_dir: false,
+                        permissions: 0o777,
+                        uid: req.uid(),
+                        gid: req.gid(),
+                        created: now,
+                        modified: now,
+                        accessed: now,
+                        chunks: Vec::new(),
+                        symlink_target: Some(target_str.to_string()),
+                    };
+                    let inode = self.allocate_inode();
+                    self.inode_table
+                        .write()
+                        .unwrap()
+                        .insert(inode, link_path.clone());
+                    self.file_index
+                        .write()
+                        .unwrap()
+                        .insert(link_path, entry.clone());
+
+                    // Return symlink attributes with FileType::Symlink
+                    let attr = FileAttr {
+                        ino: inode,
+                        size: entry.size,
+                        blocks: 0,
+                        atime: entry.accessed,
+                        mtime: entry.modified,
+                        ctime: entry.modified,
+                        crtime: entry.created,
+                        kind: FileType::Symlink,
+                        perm: entry.permissions as u16,
+                        nlink: 1,
+                        uid: entry.uid,
+                        gid: entry.gid,
+                        rdev: 0,
+                        blksize: 4096,
+                        flags: 0,
+                    };
+                    reply.entry(&TTL, &attr, 0);
+                }
+                Err(errno) => reply.error(errno),
+            }
+            return;
+        }
+
+        // Leader: create symlink locally
+        let now = SystemTime::now();
+        let entry = FileEntry {
+            size: target_str.len() as u64,
+            is_dir: false,
+            permissions: 0o777,
+            uid: req.uid(),
+            gid: req.gid(),
+            created: now,
+            modified: now,
+            accessed: now,
+            chunks: Vec::new(),
+            symlink_target: Some(target_str.to_string()),
+        };
+
+        let inode = self.allocate_inode();
+        self.inode_table
+            .write()
+            .unwrap()
+            .insert(inode, link_path.clone());
+        self.file_index
+            .write()
+            .unwrap()
+            .insert(link_path.clone(), entry.clone());
+
+        info!("Created symlink: {:?} -> {}", link_path, target_str);
+
+        let attr = FileAttr {
+            ino: inode,
+            size: entry.size,
+            blocks: 0,
+            atime: entry.accessed,
+            mtime: entry.modified,
+            ctime: entry.modified,
+            crtime: entry.created,
+            kind: FileType::Symlink,
+            perm: entry.permissions as u16,
+            nlink: 1,
+            uid: entry.uid,
+            gid: entry.gid,
+            rdev: 0,
+            blksize: 4096,
+            flags: 0,
+        };
+        reply.entry(&TTL, &attr, 0);
+    }
+
+    fn readlink(&mut self, _req: &Request, ino: u64, reply: fuser::ReplyData) {
+        debug!("readlink: ino={}", ino);
+
+        let path = {
+            let inode_table = self.inode_table.read().unwrap();
+            match inode_table.get_path(ino) {
+                Some(p) => p.clone(),
+                None => {
+                    reply.error(libc::ENOENT);
+                    return;
+                }
+            }
+        };
+
+        let file_index = self.file_index.read().unwrap();
+        match file_index.get(&path) {
+            Some(entry) => {
+                if let Some(ref target) = entry.symlink_target {
+                    reply.data(target.as_bytes());
+                } else {
+                    reply.error(libc::EINVAL); // Not a symlink
+                }
+            }
+            None => reply.error(libc::ENOENT),
+        }
+    }
+
+    fn link(
+        &mut self,
+        req: &Request,
+        ino: u64,
+        newparent: u64,
+        newname: &OsStr,
+        reply: ReplyEntry,
+    ) {
+        let newname_str = newname.to_string_lossy();
+        debug!(
+            "link: ino={}, newparent={}, newname={}",
+            ino, newparent, newname_str
+        );
+
+        // Get source path
+        let source_path = {
+            let inode_table = self.inode_table.read().unwrap();
+            match inode_table.get_path(ino) {
+                Some(p) => p.clone(),
+                None => {
+                    reply.error(libc::ENOENT);
+                    return;
+                }
+            }
+        };
+
+        // Get destination parent path
+        let newparent_path = {
+            let inode_table = self.inode_table.read().unwrap();
+            if newparent == ROOT_INODE {
+                std::path::PathBuf::new()
+            } else {
+                match inode_table.get_path(newparent) {
+                    Some(p) => p.clone(),
+                    None => {
+                        reply.error(libc::ENOENT);
+                        return;
+                    }
+                }
+            }
+        };
+
+        let link_path = newparent_path.join(newname);
+
+        // Get source entry
+        let source_entry = {
+            let file_index = self.file_index.read().unwrap();
+            match file_index.get(&source_path) {
+                Some(e) => e.clone(),
+                None => {
+                    reply.error(libc::ENOENT);
+                    return;
+                }
+            }
+        };
+
+        // Can't hard link directories
+        if source_entry.is_dir {
+            reply.error(libc::EPERM);
+            return;
+        }
+
+        // Create a copy of the source entry at the new path
+        let now = SystemTime::now();
+        let new_entry = FileEntry {
+            size: source_entry.size,
+            is_dir: false,
+            permissions: source_entry.permissions,
+            uid: req.uid(),
+            gid: req.gid(),
+            created: now,
+            modified: source_entry.modified,
+            accessed: now,
+            chunks: source_entry.chunks.clone(),
+            symlink_target: None,
+        };
+
+        let inode = self.allocate_inode();
+        self.inode_table
+            .write()
+            .unwrap()
+            .insert(inode, link_path.clone());
+        self.file_index
+            .write()
+            .unwrap()
+            .insert(link_path.clone(), new_entry.clone());
+
+        info!("Created hard link: {:?} -> {:?}", link_path, source_path);
+
+        let attr = self.entry_to_attr(&new_entry, inode);
+        reply.entry(&TTL, &attr, 0);
+    }
+
+    fn mknod(
+        &mut self,
+        req: &Request,
+        parent: u64,
+        name: &OsStr,
+        mode: u32,
+        _umask: u32,
+        _rdev: u32,
+        reply: ReplyEntry,
+    ) {
+        let name_str = name.to_string_lossy();
+        debug!(
+            "mknod: parent={}, name={}, mode={:o}",
+            parent, name_str, mode
+        );
+
+        // Get parent path
+        let parent_path = {
+            let inode_table = self.inode_table.read().unwrap();
+            if parent == ROOT_INODE {
+                std::path::PathBuf::new()
+            } else {
+                match inode_table.get_path(parent) {
+                    Some(p) => p.clone(),
+                    None => {
+                        reply.error(libc::ENOENT);
+                        return;
+                    }
+                }
+            }
+        };
+
+        let file_path = parent_path.join(name);
+
+        // Check if path already exists
+        {
+            let file_index = self.file_index.read().unwrap();
+            if file_index.contains(&file_path) {
+                reply.error(libc::EEXIST);
+                return;
+            }
+        }
+
+        // Extract file type from mode
+        let file_type = mode & libc::S_IFMT;
+
+        // We only support regular files via mknod (same as create)
+        if file_type != libc::S_IFREG && file_type != 0 {
+            warn!("mknod: unsupported file type {:o}", file_type);
+            reply.error(libc::ENOTSUP);
+            return;
+        }
+
+        // Create regular file entry
+        let permissions = mode & 0o7777;
+        let now = SystemTime::now();
+        let entry = FileEntry {
+            size: 0,
+            is_dir: false,
+            permissions,
+            uid: req.uid(),
+            gid: req.gid(),
+            created: now,
+            modified: now,
+            accessed: now,
+            chunks: Vec::new(),
+            symlink_target: None,
+        };
+
+        let inode = self.allocate_inode();
+        self.inode_table
+            .write()
+            .unwrap()
+            .insert(inode, file_path.clone());
+        self.file_index
+            .write()
+            .unwrap()
+            .insert(file_path.clone(), entry.clone());
+
+        info!("Created file via mknod: {:?}", file_path);
+
+        let attr = self.entry_to_attr(&entry, inode);
+        reply.entry(&TTL, &attr, 0);
+    }
+
+    /// Check file access permissions.
+    /// Dolphin calls this before most file operations. Returning OK for all
+    /// since our getattr already reports correct permissions.
+    fn access(&mut self, _req: &Request, ino: u64, mask: i32, reply: fuser::ReplyEmpty) {
+        debug!("access: ino={}, mask={:#o}", ino, mask);
+
+        // For root inode, always allow
+        if ino == ROOT_INODE {
+            reply.ok();
+            return;
+        }
+
+        // Check inode exists
+        let inode_table = self.inode_table.read().unwrap();
+        if inode_table.get_path(ino).is_some() {
+            reply.ok();
+        } else {
+            reply.error(libc::ENOENT);
+        }
+    }
+
+    /// Get an extended attribute.
+    /// Dolphin queries xattrs (e.g. security.selinux, user.mime_type).
+    /// We don't support xattrs, so return ENODATA (attribute not found).
+    fn getxattr(
+        &mut self,
+        _req: &Request,
+        ino: u64,
+        name: &OsStr,
+        _size: u32,
+        reply: fuser::ReplyXattr,
+    ) {
+        debug!("getxattr: ino={}, name={:?}", ino, name);
+        reply.error(libc::ENODATA);
+    }
+
+    /// List extended attribute names.
+    /// Return empty list (size 0) since we don't support xattrs.
+    fn listxattr(&mut self, _req: &Request, ino: u64, size: u32, reply: fuser::ReplyXattr) {
+        debug!("listxattr: ino={}, size={}", ino, size);
+        if size == 0 {
+            // Return the buffer size needed (0 = no xattrs)
+            reply.size(0);
+        } else {
+            // Return empty data
+            reply.data(&[]);
+        }
+    }
+
+    /// Set an extended attribute.
+    /// Return ENOSYS to indicate xattrs are not supported. This tells
+    /// the VFS layer to stop trying, preventing repeated calls.
+    fn setxattr(
+        &mut self,
+        _req: &Request,
+        ino: u64,
+        name: &OsStr,
+        _value: &[u8],
+        _flags: i32,
+        _position: u32,
+        reply: fuser::ReplyEmpty,
+    ) {
+        debug!("setxattr: ino={}, name={:?}", ino, name);
+        reply.error(libc::ENOSYS);
+    }
+
+    /// Remove an extended attribute.
+    fn removexattr(&mut self, _req: &Request, ino: u64, name: &OsStr, reply: fuser::ReplyEmpty) {
+        debug!("removexattr: ino={}, name={:?}", ino, name);
+        reply.error(libc::ENOSYS);
+    }
+
+    /// Pre-allocate or deallocate space for a file.
+    /// Dolphin/KIO may call this before writing. We treat it as a no-op
+    /// since our chunk-based storage doesn't benefit from pre-allocation.
+    fn fallocate(
+        &mut self,
+        _req: &Request,
+        ino: u64,
+        _fh: u64,
+        offset: i64,
+        length: i64,
+        mode: i32,
+        reply: fuser::ReplyEmpty,
+    ) {
+        debug!(
+            "fallocate: ino={}, offset={}, length={}, mode={}",
+            ino, offset, length, mode
+        );
+
+        // Mode 0 = allocate space, which we can just accept as no-op
+        // FALLOC_FL_KEEP_SIZE (1) = allocate but don't change size, also no-op
+        // FALLOC_FL_PUNCH_HOLE (2) = deallocate, we don't support
+        if mode & 0x02 != 0 {
+            // Punch hole not supported
+            reply.error(libc::ENOSYS);
+            return;
+        }
+
+        reply.ok();
+    }
+
+    /// Synchronize file contents to storage.
+    /// Flush any buffered writes for the given inode.
+    fn fsync(
+        &mut self,
+        _req: &Request,
+        ino: u64,
+        _fh: u64,
+        _datasync: bool,
+        reply: fuser::ReplyEmpty,
+    ) {
+        debug!("fsync: ino={}, datasync={}", ino, _datasync);
+
+        // Flush write buffer if this node is the leader
+        if self.is_leader() {
+            self.flush_write_buffer(ino);
+        }
+
+        reply.ok();
+    }
+
+    /// Server-side file copy. Return ENOSYS to tell the kernel to fall back
+    /// to read+write copying. This is fine for correctness; the kernel
+    /// handles it transparently.
+    fn copy_file_range(
+        &mut self,
+        _req: &Request,
+        _ino_in: u64,
+        _fh_in: u64,
+        _offset_in: i64,
+        _ino_out: u64,
+        _fh_out: u64,
+        _offset_out: i64,
+        _len: u64,
+        _flags: u32,
+        reply: fuser::ReplyWrite,
+    ) {
+        debug!("copy_file_range: not supported, falling back to read+write");
+        reply.error(libc::ENOSYS);
+    }
+
+    /// Flush is called on each close() of a file descriptor.
+    /// Dolphin may have multiple fds open; flush write buffers to ensure
+    /// data is persisted.
+    fn flush(
+        &mut self,
+        _req: &Request,
+        ino: u64,
+        _fh: u64,
+        _lock_owner: u64,
+        reply: fuser::ReplyEmpty,
+    ) {
+        debug!("flush: ino={}", ino);
+
+        if self.is_leader() {
+            self.flush_write_buffer(ino);
+        } else {
+            // Drain client write-back cache to leader.
+            // flush() is called when a file descriptor is closed (e.g. dup2),
+            // which can happen multiple times before release().
+            if let Err(e) = self.drain_client_writes(ino) {
+                warn!("Failed to drain client writes on flush: {}", e);
+                reply.error(libc::EIO);
+                return;
+            }
+        }
+
+        reply.ok();
+    }
+
+    /// Open a directory. Dolphin calls this before readdir.
+    fn opendir(&mut self, _req: &Request, ino: u64, _flags: i32, reply: ReplyOpen) {
+        debug!("opendir: ino={}", ino);
+
+        if ino == ROOT_INODE {
+            reply.opened(0, 0);
+            return;
+        }
+
+        let inode_table = self.inode_table.read().unwrap();
+        if inode_table.get_path(ino).is_some() {
+            reply.opened(0, 0);
+        } else {
+            reply.error(libc::ENOENT);
+        }
+    }
+
+    /// Release (close) a directory.
+    fn releasedir(
+        &mut self,
+        _req: &Request,
+        ino: u64,
+        _fh: u64,
+        _flags: i32,
+        reply: fuser::ReplyEmpty,
+    ) {
+        debug!("releasedir: ino={}", ino);
+        reply.ok();
+    }
+}

@@ -1,18 +1,18 @@
-name: WolfDisk — Build Release Binaries
+name: WardenClyffeDisk — Build Release Binaries
 
 on:
   push:
     branches: [main]
     paths:
-      - 'wolfdisk/Cargo.toml'
-      - 'wolfdisk/src/**'
-      - 'wolfdisk/Cross.toml'
-      - '.github/workflows/wolfdisk-release.yml'
+      - 'wardenclyffedisk/Cargo.toml'
+      - 'wardenclyffedisk/src/**'
+      - 'wardenclyffedisk/Cross.toml'
+      - '.github/workflows/wardenclyffedisk-release.yml'
   workflow_dispatch:
 
 defaults:
   run:
-    working-directory: wolfdisk
+    working-directory: wardenclyffedisk
 
 jobs:
   build:
@@ -49,16 +49,16 @@ jobs:
       - name: Package binaries
         run: |
           mkdir -p dist
-          cp target/${{ matrix.target }}/release/wolfdisk dist/wolfdisk-${{ matrix.arch }}
-          cp target/${{ matrix.target }}/release/wolfdiskctl dist/wolfdiskctl-${{ matrix.arch }}
-          chmod +x dist/wolfdisk-${{ matrix.arch }}
-          chmod +x dist/wolfdiskctl-${{ matrix.arch }}
+          cp target/${{ matrix.target }}/release/wardenclyffedisk dist/wardenclyffedisk-${{ matrix.arch }}
+          cp target/${{ matrix.target }}/release/wardenclyffediskctl dist/wardenclyffediskctl-${{ matrix.arch }}
+          chmod +x dist/wardenclyffedisk-${{ matrix.arch }}
+          chmod +x dist/wardenclyffediskctl-${{ matrix.arch }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: wolfdisk-${{ matrix.arch }}
-          path: wolfdisk/dist/*
+          name: wardenclyffedisk-${{ matrix.arch }}
+          path: wardenclyffedisk/dist/*
 
   release:
     needs: build
@@ -71,7 +71,7 @@ jobs:
       - name: Get version
         id: version
         run: echo "version=$(grep '^version' Cargo.toml | head -1 | sed 's/.*\"\(.*\)\".*/\1/')" >> "$GITHUB_OUTPUT"
-        working-directory: wolfdisk
+        working-directory: wardenclyffedisk
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -83,7 +83,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION="v${{ steps.version.outputs.version }}-wolfdisk"
+          VERSION="v${{ steps.version.outputs.version }}-wardenclyffedisk"
 
           # Delete existing release if it exists (update scenario)
           gh release delete "$VERSION" --yes 2>/dev/null || true
@@ -91,10 +91,10 @@ jobs:
 
           # Create release with binaries
           gh release create "$VERSION" \
-            --title "WolfDisk ${{ steps.version.outputs.version }}" \
+            --title "WardenClyffeDisk ${{ steps.version.outputs.version }}" \
             --notes "Prebuilt static binaries for Linux x86_64 and aarch64 (ARM64/Raspberry Pi 4+)." \
-            dist/wolfdisk-x86_64 \
-            dist/wolfdisk-aarch64 \
-            dist/wolfdiskctl-x86_64 \
-            dist/wolfdiskctl-aarch64
+            dist/wardenclyffedisk-x86_64 \
+            dist/wardenclyffedisk-aarch64 \
+            dist/wardenclyffediskctl-x86_64 \
+            dist/wardenclyffediskctl-aarch64
         working-directory: .

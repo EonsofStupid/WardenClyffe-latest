@@ -1,6 +1,6 @@
 <?php
-$page_title = '🔍 Troubleshooting — WolfStack Docs';
-$page_desc = 'Common issues and solutions for WolfScale and WolfStack';
+$page_title = '🔍 Troubleshooting — WardenClyffe Docs';
+$page_desc = 'Common issues and solutions for WardenClyffeScale and WardenClyffe';
 $active = 'troubleshooting.php';
 include 'includes/head.php';
 ?>
@@ -12,9 +12,9 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Common Issues</h2>
-                <h3>WolfScale won&rsquo;t connect to peers</h3>
+                <h3>WardenClyffeScale won&rsquo;t connect to peers</h3>
                 <ul>
-                    <li>Ensure WolfNet is running: <code>systemctl status wolfnet</code></li>
+                    <li>Ensure WardenClyffeNet is running: <code>systemctl status wardenclyffenet</code></li>
                     <li>Check that ports are open between nodes</li>
                     <li>Verify the cluster name matches in config.toml</li>
                 </ul>
@@ -24,18 +24,18 @@ include 'includes/head.php';
                     <li>Ensure the database isn&rsquo;t under heavy write load</li>
                     <li>Verify binlog format is set to ROW</li>
                 </ul>
-                <h3>WolfStack dashboard not loading</h3>
+                <h3>WardenClyffe dashboard not loading</h3>
                 <ul>
-                    <li>Check the service: <code>systemctl status wolfstack</code></li>
+                    <li>Check the service: <code>systemctl status wardenclyffe</code></li>
                     <li>Verify port 8553 is accessible</li>
-                    <li>Check logs: <code>journalctl -u wolfstack -f</code></li>
+                    <li>Check logs: <code>journalctl -u wardenclyffe -f</code></li>
                 </ul>
                 <h3>Containers can&rsquo;t ping across nodes</h3>
                 <ul>
-                    <li>Ensure WolfNet is running on all nodes</li>
+                    <li>Ensure WardenClyffeNet is running on all nodes</li>
                     <li>Check routes: <code>ip route | grep 10.10.10</code></li>
-                    <li>Restart WolfStack: <code>systemctl restart wolfstack</code></li>
-                    <li>Update WolfNet connections from cluster settings</li>
+                    <li>Restart WardenClyffe: <code>systemctl restart wardenclyffe</code></li>
+                    <li>Update WardenClyffeNet connections from cluster settings</li>
                 </ul>
             </div>
 

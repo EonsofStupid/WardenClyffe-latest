@@ -1,7 +1,7 @@
 <?php
-$page_title = '🔐 WolfNet VPN — WolfStack Docs';
-$page_desc = 'Built-in VPN &mdash; securely access your entire infrastructure from anywhere with WolfNet remote access';
-$active = 'wolfnet-vpn.php';
+$page_title = '🔐 WardenClyffeNet VPN — WardenClyffe Docs';
+$page_desc = 'Built-in VPN &mdash; securely access your entire infrastructure from anywhere with WardenClyffeNet remote access';
+$active = 'wardenclyffenet-vpn.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -12,29 +12,29 @@ include 'includes/head.php';
 
                 <div class="content-section">
                     <h2>What Is It?</h2>
-                    <p>WolfNet isn&rsquo;t just a cluster networking layer &mdash; it&rsquo;s a <strong>full
-                            VPN</strong> built directly into your infrastructure. Any device running WolfNet can
+                    <p>WardenClyffeNet isn&rsquo;t just a cluster networking layer &mdash; it&rsquo;s a <strong>full
+                            VPN</strong> built directly into your infrastructure. Any device running WardenClyffeNet can
                         securely join your private network from anywhere in the world, giving you instant access to
                         every server, container, and VM as if you were sat in the office.</p>
                     <p>There&rsquo;s no extra software to install, no separate VPN server to manage, and no complex
-                        configuration. If you&rsquo;re already running WolfStack, <strong>you already have a
+                        configuration. If you&rsquo;re already running WardenClyffe, <strong>you already have a
                             VPN</strong>.</p>
                 </div>
 
                 <div class="content-section">
-                    <h2>Why WolfNet VPN?</h2>
+                    <h2>Why WardenClyffeNet VPN?</h2>
                     <table>
                         <thead>
                             <tr>
                                 <th>Feature</th>
-                                <th>WolfNet VPN</th>
+                                <th>WardenClyffeNet VPN</th>
                                 <th>Traditional VPN</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td><strong>Setup</strong></td>
-                                <td>One command (<code>wolfnetctl join</code>)</td>
+                                <td>One command (<code>wardenclyffenetctl join</code>)</td>
                                 <td>Server install, certificates, client config</td>
                             </tr>
                             <tr>
@@ -54,7 +54,7 @@ include 'includes/head.php';
                             </tr>
                             <tr>
                                 <td><strong>Extra software</strong></td>
-                                <td>None &mdash; included with WolfStack</td>
+                                <td>None &mdash; included with WardenClyffe</td>
                                 <td>Separate VPN server + clients</td>
                             </tr>
                             <tr>
@@ -68,11 +68,11 @@ include 'includes/head.php';
 
                 <div class="content-section">
                     <h2>How It Works</h2>
-                    <p>WolfNet creates a TUN-based Layer 3 encrypted mesh network. When a remote device joins, it is
+                    <p>WardenClyffeNet creates a TUN-based Layer 3 encrypted mesh network. When a remote device joins, it is
                         assigned a <code>10.10.10.x</code> address on the same private subnet as your cluster. All
                         traffic between peers is encrypted end-to-end.</p>
                     <ol>
-                        <li><strong>Cluster nodes</strong> run WolfNet as part of WolfStack and are interconnected
+                        <li><strong>Cluster nodes</strong> run WardenClyffeNet as part of WardenClyffe and are interconnected
                             automatically</li>
                         <li><strong>Remote devices</strong> (laptops, workstations, phones) join the same network using
                             an invite token</li>
@@ -85,29 +85,29 @@ include 'includes/head.php';
 
                 <div class="content-section">
                     <h2>Getting Started</h2>
-                    <h3>1. Generate an invite token on any WolfStack node</h3>
+                    <h3>1. Generate an invite token on any WardenClyffe node</h3>
                     <div class="code-block">
                         <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                                 onclick="copyCode(this)">Copy</button></div>
-                        <pre><code>wolfnetctl invite</code></pre>
+                        <pre><code>wardenclyffenetctl invite</code></pre>
                     </div>
                     <p>This outputs a secure token that encodes the network key and the endpoint address of the inviting
                         node.</p>
 
                     <h3>2. Join from your remote machine</h3>
-                    <p>Install WolfNet on your laptop or workstation, then join:</p>
+                    <p>Install WardenClyffeNet on your laptop or workstation, then join:</p>
                     <div class="code-block">
                         <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                                 onclick="copyCode(this)">Copy</button></div>
-                        <pre><code># Install WolfNet standalone
-curl -sSL https://raw.githubusercontent.com/wolfsoftwaresystemsltd/WolfScale/master/wolfnet/install.sh | sudo bash
+                        <pre><code># Install WardenClyffeNet standalone
+curl -sSL https://raw.githubusercontent.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale/master/wardenclyffenet/install.sh | sudo bash
 
 # Join the network
-wolfnetctl join &lt;token&gt;</code></pre>
+wardenclyffenetctl join &lt;token&gt;</code></pre>
                     </div>
 
                     <h3>3. You&rsquo;re connected</h3>
-                    <p>Your device receives a WolfNet IP address (e.g. <code>10.10.10.5</code>) and can immediately
+                    <p>Your device receives a WardenClyffeNet IP address (e.g. <code>10.10.10.5</code>) and can immediately
                         reach all cluster resources:</p>
                     <div class="code-block">
                         <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
@@ -121,7 +121,7 @@ ssh admin@10.10.10.2
 # Access a web service running on a container
 curl http://10.10.10.3:8080
 
-# Open the WolfStack dashboard
+# Open the WardenClyffe dashboard
 firefox https://10.10.10.1:9443</code></pre>
                     </div>
                 </div>
@@ -133,7 +133,7 @@ firefox https://10.10.10.1:9443</code></pre>
                             travelling without a corporate VPN appliance</li>
                         <li><strong>Development</strong> &mdash; Connect your dev machine directly to staging/production
                             servers, databases, and containers</li>
-                        <li><strong>Multi-site access</strong> &mdash; Join WolfNet networks spanning multiple clusters
+                        <li><strong>Multi-site access</strong> &mdash; Join WardenClyffeNet networks spanning multiple clusters
                             and data centres from a single laptop</li>
                         <li><strong>Emergency admin</strong> &mdash; Quickly join the network from any machine to
                             diagnose and fix issues</li>
@@ -160,21 +160,21 @@ firefox https://10.10.10.1:9443</code></pre>
 
                 <div class="content-section">
                     <h2>Managing Remote Peers</h2>
-                    <p>View all connected peers and their status from the WolfStack dashboard under <strong>Global
-                            WolfNet</strong>, or from the command line:</p>
+                    <p>View all connected peers and their status from the WardenClyffe dashboard under <strong>Global
+                            WardenClyffeNet</strong>, or from the command line:</p>
                     <div class="code-block">
                         <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                                 onclick="copyCode(this)">Copy</button></div>
                         <pre><code># List all connected peers
-wolfnetctl peers
+wardenclyffenetctl peers
 
 # Remove a peer
-wolfnetctl remove &lt;peer-ip&gt;</code></pre>
+wardenclyffenetctl remove &lt;peer-ip&gt;</code></pre>
                     </div>
                 </div>
 
-                <div class="page-nav"><a href="wolfnet-global.php" class="prev">&larr; Global WolfNet Access</a><a
-                        href="wolfproxy.php" class="next">WolfProxy &rarr;</a></div>
+                <div class="page-nav"><a href="wardenclyffenet-global.php" class="prev">&larr; Global WardenClyffeNet Access</a><a
+                        href="wardenclyffeproxy.php" class="next">WardenClyffeProxy &rarr;</a></div>
             
     </main>
 <?php include 'includes/footer.php'; ?>

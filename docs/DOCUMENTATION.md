@@ -1,12 +1,12 @@
-# WolfScale Documentation
+# WardenClyffeScale Documentation
 
 ## Overview
 
-**WolfScale** is a high-performance, Rust-based distributed MariaDB synchronization manager. It keeps multiple MariaDB database servers in sync using a Write-Ahead Log (WAL), enabling consistent data across geographically distributed or high-availability database clusters.
+**WardenClyffeScale** is a high-performance, Rust-based distributed MariaDB synchronization manager. It keeps multiple MariaDB database servers in sync using a Write-Ahead Log (WAL), enabling consistent data across geographically distributed or high-availability database clusters.
 
-## What Problem Does WolfScale Solve?
+## What Problem Does WardenClyffeScale Solve?
 
-When running multiple MariaDB instances that need to stay synchronized, traditional replication methods can be complex to manage and may have consistency issues. WolfScale provides:
+When running multiple MariaDB instances that need to stay synchronized, traditional replication methods can be complex to manage and may have consistency issues. WardenClyffeScale provides:
 
 - **Strong Consistency**: All writes go through a single leader, ensuring all nodes see the same data in the same order
 - **Automatic Recovery**: Nodes that disconnect can automatically catch up when they rejoin
@@ -15,11 +15,11 @@ When running multiple MariaDB instances that need to stay synchronized, traditio
 
 ---
 
-## WolfScale vs Galera Cluster
+## WardenClyffeScale vs Galera Cluster
 
 ### Comparison Overview
 
-| Aspect              | WolfScale                        | Galera Cluster                        |
+| Aspect              | WardenClyffeScale                        | Galera Cluster                        |
 |---------------------|----------------------------------|---------------------------------------|
 | Replication Model   | Leader-based (single writer)     | Multi-master (any node can write)     |
 | Conflict Handling   | No conflicts (single leader)     | Certification-based conflict detection|
@@ -28,7 +28,7 @@ When running multiple MariaDB instances that need to stay synchronized, traditio
 | Network Tolerance   | WAL catch-up for partitions      | Stricter network requirements         |
 | Implementation      | Standalone Rust binary           | Patched MariaDB (wsrep)               |
 
-### WolfScale Advantages
+### WardenClyffeScale Advantages
 
 | Advantage              | Description                                              |
 |------------------------|----------------------------------------------------------|
@@ -48,7 +48,7 @@ When running multiple MariaDB instances that need to stay synchronized, traditio
 | Mature                 | Battle-tested in production environments                 |
 | Built-in               | Included in MariaDB Galera Cluster distribution          |
 
-### When to Choose WolfScale
+### When to Choose WardenClyffeScale
 
 - Your application naturally routes writes to a primary location
 - You want simpler operations and debugging
@@ -68,25 +68,25 @@ When running multiple MariaDB instances that need to stay synchronized, traditio
 
 ### Recommended Setup: Co-located Deployment
 
-**WolfScale should be installed on the same machine as each MariaDB server.** This is the ideal configuration for several reasons:
+**WardenClyffeScale should be installed on the same machine as each MariaDB server.** This is the ideal configuration for several reasons:
 
 **3-Node Cluster Example:**
 
-| Server   | Role     | WolfScale | MariaDB   | Notes                          |
+| Server   | Role     | WardenClyffeScale | MariaDB   | Notes                          |
 |----------|----------|-----------|-----------|--------------------------------|
 | Server A | Leader   | node-1    | localhost | Handles all writes             |
 | Server B | Follower | node-2    | localhost | Receives replication from leader|
 | Server C | Follower | node-3    | localhost | Receives replication from leader|
 
-Each server runs both WolfScale and MariaDB locally. WolfScale connects to MariaDB via localhost.
+Each server runs both WardenClyffeScale and MariaDB locally. WardenClyffeScale connects to MariaDB via localhost.
 
-### Why Co-locate WolfScale with MariaDB?
+### Why Co-locate WardenClyffeScale with MariaDB?
 
 | Benefit             | Description                                                   |
 |---------------------|---------------------------------------------------------------|
 | Minimal Latency     | Local socket/localhost connections are faster than network    |
 | Reliability         | No additional network hops that could fail                    |
-| Simpler Networking  | Only WolfScale cluster ports need to be exposed               |
+| Simpler Networking  | Only WardenClyffeScale cluster ports need to be exposed               |
 | Better Security     | MariaDB can bind to localhost only, reducing attack surface   |
 | Easier Management   | Each server is self-contained with both components            |
 
@@ -102,34 +102,34 @@ port = 3306
 
 | Port   | Purpose                          | Expose To                      |
 |--------|----------------------------------|--------------------------------|
-| 7654   | WolfScale cluster communication  | Other cluster nodes only       |
-| 8080   | WolfScale HTTP API               | Application servers / internal |
+| 7654   | WardenClyffeScale cluster communication  | Other cluster nodes only       |
+| 8080   | WardenClyffeScale HTTP API               | Application servers / internal |
 | 3306   | MariaDB                          | Localhost only (no external)   |
 
-### Alternative: Dedicated WolfScale Server (Not Recommended)
+### Alternative: Dedicated WardenClyffeScale Server (Not Recommended)
 
-Running WolfScale on a separate server from MariaDB is possible but adds:
+Running WardenClyffeScale on a separate server from MariaDB is possible but adds:
 - Additional network latency for every database operation
 - Another point of failure
 - More complex firewall rules (MariaDB must be network-accessible)
 
 Only consider this if you have constraints that prevent installation on database servers.
 
-### Hybrid Architecture: WolfScale + Galera Clusters
+### Hybrid Architecture: WardenClyffeScale + Galera Clusters
 
-WolfScale can bridge two separate Galera clusters for cross-datacenter replication:
+WardenClyffeScale can bridge two separate Galera clusters for cross-datacenter replication:
 
 | Datacenter 1               | Datacenter 2               |
 |----------------------------|----------------------------|
 | Galera Cluster A (3 nodes) | Galera Cluster B (3 nodes) |
-| WolfScale Leader on DB3    | WolfScale Follower on DB4  |
+| WardenClyffeScale Leader on DB3    | WardenClyffeScale Follower on DB4  |
 
-WolfScale replicates between clusters over WAN. Galera handles replication within each cluster.
+WardenClyffeScale replicates between clusters over WAN. Galera handles replication within each cluster.
 
 **How it works:**
-1. Install WolfScale Leader on one node in Cluster A
-2. Install WolfScale Follower on one node in Cluster B
-3. WolfScale replicates writes between clusters over WAN
+1. Install WardenClyffeScale Leader on one node in Cluster A
+2. Install WardenClyffeScale Follower on one node in Cluster B
+3. WardenClyffeScale replicates writes between clusters over WAN
 4. Galera handles replication within each cluster internally
 
 **Benefits:**
@@ -137,18 +137,18 @@ WolfScale replicates between clusters over WAN. Galera handles replication withi
 | Benefit | Description |
 |---------|-------------|
 | **Cross-DC Sync** | Bridge two datacenters or regions |
-| **Best of Both** | Galera for local HA, WolfScale for geo-replication |
-| **Simpler WAN Traffic** | Only WolfScale traffic crosses WAN, not Galera |
+| **Best of Both** | Galera for local HA, WardenClyffeScale for geo-replication |
+| **Simpler WAN Traffic** | Only WardenClyffeScale traffic crosses WAN, not Galera |
 | **Conflict-Free** | Single write path through leader cluster |
 
 **Considerations:**
-- All writes must go to the cluster with the WolfScale leader
+- All writes must go to the cluster with the WardenClyffeScale leader
 - The follower cluster is effectively read-only for replicated data
 - Plan for which cluster should be primary during normal operations
 
 ### Binlog Replication Mode (v3.0+)
 
-For existing databases where you can't route writes through WolfScale's proxy, use **binlog mode** to capture writes directly from the binary log:
+For existing databases where you can't route writes through WardenClyffeScale's proxy, use **binlog mode** to capture writes directly from the binary log:
 
 ```toml
 [replication]
@@ -169,20 +169,20 @@ server_id = 1001  # Unique ID (must not conflict with existing replica IDs)
 | Amazon RDS MySQL | ✓ | Enable binlog retention |
 
 **How it works:**
-1. WolfScale connects to the database as a replica (like a MySQL slave)
+1. WardenClyffeScale connects to the database as a replica (like a MySQL slave)
 2. Reads the binary log stream in real-time
 3. Converts binlog events to WAL entries
-4. Replicates to WolfScale followers as normal
+4. Replicates to WardenClyffeScale followers as normal
 
 **Requirements:**
 - Binary logging must be enabled (`log_bin = mysql-bin`)
 - Recommended: `binlog_format = MIXED` or `STATEMENT`
 - The `server_id` must be unique across all replicas
 
-**Easy Setup with wolfctl:**
+**Easy Setup with wardenclyffectl:**
 
 ```bash
-wolfctl binlog-setup
+wardenclyffectl binlog-setup
 ```
 
 This command connects to your database, detects the current binlog position, and outputs the config snippet to add to your config.toml.
@@ -203,34 +203,34 @@ This command connects to your database, detects the current binlog position, and
    systemctl restart mariadb
    ```
    
-   > **Note:** For Galera clusters, you only need to enable binlog on ONE node - the one WolfScale will connect to.
+   > **Note:** For Galera clusters, you only need to enable binlog on ONE node - the one WardenClyffeScale will connect to.
 
 1. **Initial Data Sync** (for new clusters without existing data):
    ```bash
    # On source database - dump with binlog position
    mariadb-dump --single-transaction --master-data=2 --all-databases > dump.sql
    
-   # Import on WolfScale target cluster
+   # Import on WardenClyffeScale target cluster
    mariadb < dump.sql
    ```
 
 2. **Configure Binlog Mode:**
    ```bash
    # Detect binlog position and generate config
-   wolfctl binlog-setup
+   wardenclyffectl binlog-setup
    
-   # Add the output to /etc/wolfscale/config.toml
+   # Add the output to /etc/wardenclyffescale/config.toml
    ```
 
-3. **Start WolfScale:**
+3. **Start WardenClyffeScale:**
    ```bash
-   systemctl restart wolfscale
+   systemctl restart wardenclyffescale
    
    # Monitor replication
-   wolfctl stats
+   wardenclyffectl stats
    ```
 
-**Important:** Only run WolfScale binlog mode on ONE node per source cluster - all cluster nodes have identical data.
+**Important:** Only run WardenClyffeScale binlog mode on ONE node per source cluster - all cluster nodes have identical data.
 
 ---
 
@@ -238,7 +238,7 @@ This command connects to your database, detects the current binlog position, and
 
 ### How Nodes Communicate
 
-WolfScale uses a heartbeat-based protocol for cluster communication. All nodes participate in health monitoring:
+WardenClyffeScale uses a heartbeat-based protocol for cluster communication. All nodes participate in health monitoring:
 
 **Leader Heartbeats:**
 1. The leader broadcasts heartbeats to all followers every 500ms (configurable)
@@ -281,7 +281,7 @@ When a node joins the cluster:
 
 ### Auto-Discovery (v5.4.0+)
 
-WolfScale nodes can automatically find each other via UDP broadcast, eliminating the need to manually configure peer addresses:
+WardenClyffeScale nodes can automatically find each other via UDP broadcast, eliminating the need to manually configure peer addresses:
 
 | Feature | Description |
 |---------|-------------|
@@ -307,16 +307,16 @@ peers = []                      # Optional: seed nodes for faster initial discov
 5. After 30 seconds of no heartbeat, the node is automatically removed from membership
 
 **When to use `cluster_name`:**
-- Multiple WolfScale clusters on the same network
+- Multiple WardenClyffeScale clusters on the same network
 - Separate dev/staging/production environments
 - Preventing accidental cross-cluster joins
 
 **Load Balancer Auto-Discovery:**
 The load balancer can also discover cluster nodes automatically:
 ```bash
-wolfscale load-balancer --listen 0.0.0.0:3306
+wardenclyffescale load-balancer --listen 0.0.0.0:3306
 # Optionally filter by cluster name:
-wolfscale load-balancer --listen 0.0.0.0:3306 --cluster-name production
+wardenclyffescale load-balancer --listen 0.0.0.0:3306 --cluster-name production
 ```
 
 ---
@@ -325,7 +325,7 @@ wolfscale load-balancer --listen 0.0.0.0:3306 --cluster-name production
 
 ### Deterministic Leader Election
 
-WolfScale uses **deterministic leader election** based on node ID. No voting is required - the node with the lexicographically lowest ID among active, synced nodes becomes leader automatically.
+WardenClyffeScale uses **deterministic leader election** based on node ID. No voting is required - the node with the lexicographically lowest ID among active, synced nodes becomes leader automatically.
 
 **How it works:**
 1. Followers detect missed heartbeats from the leader (timeout: approximately 3x heartbeat interval)
@@ -343,8 +343,8 @@ WolfScale uses **deterministic leader election** based on node ID. No voting is 
 | **Simple implementation** | No complex consensus protocol needed |
 
 **Example:**
-- If `wolftest1` (leader) goes down, and `wolftest2` and `wolftest3` remain
-- `wolftest2` will become leader because `"wolftest2" < "wolftest3"`
+- If `wardenclyffetest1` (leader) goes down, and `wardenclyffetest2` and `wardenclyffetest3` remain
+- `wardenclyffetest2` will become leader because `"wardenclyffetest2" < "wardenclyffetest3"`
 
 ### Node Rejoin Behavior
 
@@ -359,11 +359,11 @@ When a previously failed node rejoins the cluster:
 **Important:** A node must be fully synced before it can become leader. This prevents a returning node with stale data from immediately stealing leadership.
 
 **Example scenario:**
-- `wolftest1` (lowest ID) was leader, goes down
-- `wolftest2` becomes the new leader
-- `wolftest1` comes back online - it joins as a follower
-- `wolftest1` syncs from `wolftest2` until caught up
-- Once `wolftest1` is **Active** and synced, it can reclaim leadership
+- `wardenclyffetest1` (lowest ID) was leader, goes down
+- `wardenclyffetest2` becomes the new leader
+- `wardenclyffetest1` comes back online - it joins as a follower
+- `wardenclyffetest1` syncs from `wardenclyffetest2` until caught up
+- Once `wardenclyffetest1` is **Active** and synced, it can reclaim leadership
 
 ### Database Health Monitoring
 
@@ -375,18 +375,18 @@ The leader continuously monitors local database health:
 | **Connection failure** | Triggers leader step-down |
 | **Upgrade/maintenance** | Automatically fails over to next node |
 
-This ensures that if you stop MariaDB for an upgrade, WolfScale automatically promotes another node to leader, preventing write failures.
+This ensures that if you stop MariaDB for an upgrade, WardenClyffeScale automatically promotes another node to leader, preventing write failures.
 
 ### Disaster Recovery and WAL Catch-Up
 
 When a node goes down while writes continue on the new leader, the returning node uses **WAL catch-up** to synchronize:
 
 **The Scenario:**
-1. `wolftest1` (leader) goes down - writes stop on its database
-2. `wolftest2` becomes leader - writes continue on wolftest2's database
-3. `wolftest1` returns - its database is now "behind"
+1. `wardenclyffetest1` (leader) goes down - writes stop on its database
+2. `wardenclyffetest2` becomes leader - writes continue on wardenclyffetest2's database
+3. `wardenclyffetest1` returns - its database is now "behind"
 
-**How WolfScale Handles This:**
+**How WardenClyffeScale Handles This:**
 
 | Step | What Happens                                                     |
 |------|------------------------------------------------------------------|
@@ -405,13 +405,13 @@ When a node goes down while writes continue on the new leader, the returning nod
 
 ### Adding New Nodes to Existing Clusters
 
-When adding a fresh node to a cluster that already has data, the WAL won't contain the complete history. Use `wolfctl migrate` to copy the database:
+When adding a fresh node to a cluster that already has data, the WAL won't contain the complete history. Use `wardenclyffectl migrate` to copy the database:
 
 | Step | Command                                      |
 |------|----------------------------------------------|
-| 1    | Install WolfScale on new node                |
-| 2    | `wolfctl migrate --from 10.0.10.111:8080`    |
-| 3    | `systemctl start wolfscale`                  |
+| 1    | Install WardenClyffeScale on new node                |
+| 2    | `wardenclyffectl migrate --from 10.0.10.111:8080`    |
+| 3    | `systemctl start wardenclyffescale`                  |
 
 **What happens during migration:**
 
@@ -426,22 +426,22 @@ When adding a fresh node to a cluster that already has data, the WAL won't conta
 **NeedsMigration Status:**
 - Nodes that can't catch up via WAL enter `NEEDS_MIGRATION` status
 - These nodes won't participate in cluster operations
-- Run `wolfctl migrate` to resolve this status
+- Run `wardenclyffectl migrate` to resolve this status
 - After migration, node transitions to `Syncing` then `Active`
 
 **When Migration is NOT Needed:**
 
-If your new node already has the data, WolfScale will sync normally via WAL:
+If your new node already has the data, WardenClyffeScale will sync normally via WAL:
 
 | Scenario                                | Action Required         |
 |-----------------------------------------|-------------------------|
-| Manually restored mysqldump first       | Just start WolfScale    |
-| Cloned VM from existing node            | Just start WolfScale    |
-| Database already has all the data       | Just start WolfScale    |
-| Empty database, WAL covers the gap      | Just start WolfScale    |
-| Empty database, WAL too old for gap     | Run `wolfctl migrate`   |
+| Manually restored mysqldump first       | Just start WardenClyffeScale    |
+| Cloned VM from existing node            | Just start WardenClyffeScale    |
+| Database already has all the data       | Just start WardenClyffeScale    |
+| Empty database, WAL covers the gap      | Just start WardenClyffeScale    |
+| Empty database, WAL too old for gap     | Run `wardenclyffectl migrate`   |
 
-The `wolfctl migrate` command is only needed when the new node's database is empty AND the WAL has been rotated/truncated so it doesn't contain the historical entries needed.
+The `wardenclyffectl migrate` command is only needed when the new node's database is empty AND the WAL has been rotated/truncated so it doesn't contain the historical entries needed.
 
 ---
 
@@ -462,7 +462,7 @@ id = "primary"     # Will become leader over "replica1"
 ### Recommended Configuration
 
 [node]
-id = "wolftest1"                     # Unique node ID (lowest wins election)
+id = "wardenclyffetest1"                     # Unique node ID (lowest wins election)
 bind_address = "0.0.0.0:7654"        # Accept connections from any IP
 advertise_address = "10.0.10.112:7654"  # CRITICAL: Your actual IP
 
@@ -476,7 +476,7 @@ peers = [                             # List other cluster members
 [database]
 host = "localhost"
 port = 3306
-user = "wolfscale"
+user = "wardenclyffescale"
 password = "secure_password"
 
 ### Critical Configuration Notes
@@ -492,13 +492,13 @@ password = "secure_password"
 
 ## User Setup
 
-Before using WolfScale, you need to create MariaDB users on **each node** in the cluster.
+Before using WardenClyffeScale, you need to create MariaDB users on **each node** in the cluster.
 
 ### Required Users
 
 | User | Purpose | Where to Create |
 |------|---------|-----------------|
-| WolfScale internal user | Used by WolfScale to connect to local MariaDB | All nodes |
+| WardenClyffeScale internal user | Used by WardenClyffeScale to connect to local MariaDB | All nodes |
 | Application users | Your application's database access | All nodes |
 
 ### Creating Users
@@ -508,9 +508,9 @@ Run these commands on **each node** by connecting directly to local MariaDB:
 # Connect to local MariaDB as root
 sudo mariadb -u root
 
-# Create WolfScale internal user (matches config [database] section)
-CREATE USER 'wolfscale'@'localhost' IDENTIFIED BY 'your_secure_password';
-GRANT ALL PRIVILEGES ON *.* TO 'wolfscale'@'localhost';
+# Create WardenClyffeScale internal user (matches config [database] section)
+CREATE USER 'wardenclyffescale'@'localhost' IDENTIFIED BY 'your_secure_password';
+GRANT ALL PRIVILEGES ON *.* TO 'wardenclyffescale'@'localhost';
 
 # Create application user(s)
 CREATE USER 'appuser'@'%' IDENTIFIED BY 'app_password';
@@ -526,7 +526,7 @@ EXIT;
 ### Why Users Must Exist on All Nodes
 
 - Each node runs its own MariaDB instance
-- WolfScale proxy connects to the local MariaDB
+- WardenClyffeScale proxy connects to the local MariaDB
 - When clients connect to any node, they authenticate against that node's MariaDB
 - Users must have the same credentials on all nodes for seamless failover
 
@@ -594,7 +594,7 @@ For distributed primary key generation without coordination:
 
 ### 5. Automatic Leader Election (Failover)
 
-WolfScale uses Raft-style leader election to automatically promote a follower to leader when the current leader goes down.
+WardenClyffeScale uses Raft-style leader election to automatically promote a follower to leader when the current leader goes down.
 
 **How it works:**
 
@@ -622,7 +622,7 @@ never_leader = false              # Set to true for read-only replica
 curl http://localhost:8080/cluster
 
 # View logs for election messages
-wolfscale start --log-level debug
+wardenclyffescale start --log-level debug
 
 **Cluster Sizing Guide:**
 
@@ -634,7 +634,7 @@ wolfscale start --log-level debug
 | 5     | 4 node failures   | Recommended for production      |
 | 7     | 6 node failures   | High availability               |
 
-**Note:** WolfScale doesn't use quorum - only one node needs to survive. While the cluster can run on a single remaining node, it's recommended to maintain at least 2 active nodes for redundancy.
+**Note:** WardenClyffeScale doesn't use quorum - only one node needs to survive. While the cluster can run on a single remaining node, it's recommended to maintain at least 2 active nodes for redundancy.
 
 **Geo-Distribution:** Nodes can be deployed across different data centers or regions for:
 - **Low-latency reads** - Connect to your nearest node
@@ -644,7 +644,7 @@ wolfscale start --log-level debug
 
 ### Complete 3-Node Cluster Example
 
-All nodes use the same peer list - WolfScale ignores its own address:
+All nodes use the same peer list - WardenClyffeScale ignores its own address:
 
 **All Nodes - Same Cluster Section:**
 
@@ -694,7 +694,7 @@ Client -> Follower -> Leader -> Replication -> Response
 
 ### 7. MySQL Proxy Mode
 
-Every WolfScale node includes a **built-in MySQL protocol proxy**, allowing applications to connect as if it were a regular MariaDB server:
+Every WardenClyffeScale node includes a **built-in MySQL protocol proxy**, allowing applications to connect as if it were a regular MariaDB server:
 
 mysql -h any-node -P 8007 -u user -p
 
@@ -730,24 +730,24 @@ mysql -h any-node -P 8007 -u user -p
 
 You can also run a dedicated proxy on a separate machine:
 
-wolfscale proxy --listen 0.0.0.0:8007 --config wolfscale.toml
+wardenclyffescale proxy --listen 0.0.0.0:8007 --config wardenclyffescale.toml
 
 ---
 
 ## Configuration
 
-### Configuration File (`wolfscale.toml`)
+### Configuration File (`wardenclyffescale.toml`)
 
 [node]
 id = "node-1"                      # Unique node identifier
 bind_address = "0.0.0.0:7654"      # What to listen on
 advertise_address = "10.0.10.10:7654"  # Address other nodes use to reach this node
-data_dir = "/var/lib/wolfscale/node-1"
+data_dir = "/var/lib/wardenclyffescale/node-1"
 
 [database]
 host = "localhost"
 port = 3306
-user = "wolfscale"
+user = "wardenclyffescale"
 password = "your-password"
 database = "myapp"
 pool_size = 10
@@ -780,14 +780,14 @@ bind_address = "0.0.0.0:3307"      # MySQL proxy port
 
 | Command | Description |
 |---------|-------------|
-| `wolfscale init` | Create a new configuration file |
-| `wolfscale start --bootstrap` | Start as the initial leader |
-| `wolfscale start` | Start as a follower |
-| `wolfscale join <leader:port>` | Join an existing cluster |
-| `wolfscale status` | Check cluster status |
-| `wolfscale info` | Show node configuration details |
-| `wolfscale validate` | Validate configuration file |
-| `wolfscale proxy --listen ADDR` | Start MySQL protocol proxy |
+| `wardenclyffescale init` | Create a new configuration file |
+| `wardenclyffescale start --bootstrap` | Start as the initial leader |
+| `wardenclyffescale start` | Start as a follower |
+| `wardenclyffescale join <leader:port>` | Join an existing cluster |
+| `wardenclyffescale status` | Check cluster status |
+| `wardenclyffescale info` | Show node configuration details |
+| `wardenclyffescale validate` | Validate configuration file |
+| `wardenclyffescale proxy --listen ADDR` | Start MySQL protocol proxy |
 
 ---
 
@@ -795,15 +795,15 @@ bind_address = "0.0.0.0:3307"      # MySQL proxy port
 
 ### Choose Your Setup Path
 
-> **All cluster nodes MUST have identical data before starting WolfScale.** WolfScale replicates new changes only — it does NOT sync existing data between nodes.
+> **All cluster nodes MUST have identical data before starting WardenClyffeScale.** WardenClyffeScale replicates new changes only — it does NOT sync existing data between nodes.
 
 | Option 1: Brand New | Option 2: Backup & Restore | Option 3: Binlog Mode |
 |---------------------|---------------------------|----------------------|
 | **Empty databases** | **Can take source offline** | **Live database, no downtime** |
 | Create the cluster | mysqldump your existing database | Use Binlog Mode |
-| Point your software to the MySQL proxy | Set up empty WolfScale cluster | Replicate live from your existing database |
-| Start using WolfScale immediately | Restore to leader via proxy | Works with Galera clusters too |
-| | Data replicates to all nodes | Switch to WolfScale when ready |
+| Point your software to the MySQL proxy | Set up empty WardenClyffeScale cluster | Replicate live from your existing database |
+| Start using WardenClyffeScale immediately | Restore to leader via proxy | Works with Galera clusters too |
+| | Data replicates to all nodes | Switch to WardenClyffeScale when ready |
 
 ### Quick Start with `run.sh`
 
@@ -817,7 +817,7 @@ Use the included `run.sh` script for development and testing:
 
 ### Installing as a System Service
 
-Use `install_service.sh` to install WolfScale as a systemd service:
+Use `install_service.sh` to install WardenClyffeScale as a systemd service:
 
 # Install as cluster node
 sudo ./install_service.sh node
@@ -825,7 +825,7 @@ sudo ./install_service.sh node
 # Install as MySQL proxy
 sudo ./install_service.sh proxy
 
-**Interactive Configuration:** If no `wolfscale.toml` exists, the installer will ask:
+**Interactive Configuration:** If no `wardenclyffescale.toml` exists, the installer will ask:
 - Node ID (defaults to hostname)
 - Bind address for cluster communication
 - Whether this is the first/bootstrap node
@@ -835,19 +835,19 @@ sudo ./install_service.sh proxy
 
 **Service Commands:**
 
-sudo systemctl start wolfscale      # Start
-sudo systemctl stop wolfscale       # Stop
-sudo systemctl enable wolfscale     # Start on boot
-sudo systemctl status wolfscale     # Check status
-sudo journalctl -u wolfscale -f     # View logs
+sudo systemctl start wardenclyffescale      # Start
+sudo systemctl stop wardenclyffescale       # Stop
+sudo systemctl enable wardenclyffescale     # Start on boot
+sudo systemctl status wardenclyffescale     # Check status
+sudo journalctl -u wardenclyffescale -f     # View logs
 
 **File Locations:**
 | Path | Description |
 |------|-------------|
-| `/opt/wolfscale/wolfscale` | Binary |
-| `/opt/wolfscale/wolfscale.toml` | Configuration |
-| `/var/lib/wolfscale/` | Data directory |
-| `/var/log/wolfscale/` | Log files |
+| `/opt/wardenclyffescale/wardenclyffescale` | Binary |
+| `/opt/wardenclyffescale/wardenclyffescale.toml` | Configuration |
+| `/var/lib/wardenclyffescale/` | Data directory |
+| `/var/log/wardenclyffescale/` | Log files |
 
 ---
 
@@ -857,22 +857,22 @@ sudo journalctl -u wolfscale -f     # View logs
 
 On the new machine, initialize a configuration file:
 
-wolfscale init --node-id node-2 --output wolfscale.toml
+wardenclyffescale init --node-id node-2 --output wardenclyffescale.toml
 
 ### Step 2: Configure the New Node
 
-Edit `wolfscale.toml` on the new node:
+Edit `wardenclyffescale.toml` on the new node:
 
 [node]
 id = "node-2"                           # Must be unique across cluster
 bind_address = "0.0.0.0:7654"
 advertise_address = "10.0.10.11:7654"   # THIS node's reachable IP
-data_dir = "/var/lib/wolfscale/node-2"
+data_dir = "/var/lib/wardenclyffescale/node-2"
 
 [database]
 host = "localhost"                       # Local MariaDB on this node
 port = 3306
-user = "wolfscale"
+user = "wardenclyffescale"
 password = "your-password"
 database = "myapp"
 
@@ -882,7 +882,7 @@ peers = ["10.0.10.10:7654", "10.0.10.12:7654"]  # All OTHER nodes (with ports!)
 
 ### Step 3: Join the Cluster
 
-wolfscale join leader-host:7654
+wardenclyffescale join leader-host:7654
 
 This will:
 1. Connect to the leader and register as a follower
@@ -892,8 +892,8 @@ This will:
 ### Alternative: Install as a Service
 
 sudo ./scripts/install-service.sh --node-id node-2
-sudo nano /etc/wolfscale/wolfscale.toml  # Add leader to peers
-sudo systemctl start wolfscale
+sudo nano /etc/wardenclyffescale/wardenclyffescale.toml  # Add leader to peers
+sudo systemctl start wardenclyffescale
 
 ### Configuration Comparison
 
@@ -901,7 +901,7 @@ sudo systemctl start wolfscale
 |---------|-----------------|-------------------|
 | `--bootstrap` flag | Yes (first start) | No |
 | `cluster.peers` | `[]` (empty) | `["leader-ip:7654"]` |
-| How to start | `wolfscale start --bootstrap` | `wolfscale join leader:7654` |
+| How to start | `wardenclyffescale start --bootstrap` | `wardenclyffescale join leader:7654` |
 
 ### Verify the Cluster
 
@@ -930,17 +930,17 @@ When you add a new node with no data in its local MariaDB:
 If `retention_hours = 168` (7 days), WAL entries older than 7 days are deleted. For established clusters:
 
 # Option 1: New cluster with complete WAL - just join
-wolfscale join leader:7654
+wardenclyffescale join leader:7654
 
 # Option 2: Established cluster with pruned WAL - restore backup first
 # Step 1: Get a database dump from an existing node
-mysqldump -h existing-node -u wolfscale -p myapp > backup.sql
+mysqldump -h existing-node -u wardenclyffescale -p myapp > backup.sql
 
 # Step 2: Restore to the new node's local MariaDB
-mysql -u wolfscale -p myapp < backup.sql
+mysql -u wardenclyffescale -p myapp < backup.sql
 
-# Step 3: Now join - WolfScale catches up from the backup point
-wolfscale join leader:7654
+# Step 3: Now join - WardenClyffeScale catches up from the backup point
+wardenclyffescale join leader:7654
 
 > **Tip:** For production clusters, consider using longer `retention_hours` or keeping database backups readily available for new node provisioning.
 
@@ -978,21 +978,21 @@ curl http://localhost:8080/cluster   # Cluster info
 
 ---
 
-## WolfCtl CLI Tool
+## WardenClyffeCtl CLI Tool
 
-`wolfctl` is a command-line tool for managing and monitoring WolfScale clusters.
+`wardenclyffectl` is a command-line tool for managing and monitoring WardenClyffeScale clusters.
 
 ### Installation
 
-The `wolfctl` binary is automatically installed to `/usr/local/bin` when using the setup script. For manual installations:
+The `wardenclyffectl` binary is automatically installed to `/usr/local/bin` when using the setup script. For manual installations:
 
-sudo cp target/release/wolfctl /usr/local/bin/
+sudo cp target/release/wardenclyffectl /usr/local/bin/
 
 ### Commands
 
 #### List Cluster Servers
 
-wolfctl list servers
+wardenclyffectl list servers
 
 Shows status of all nodes in the cluster:
 - Node ID and address
@@ -1002,20 +1002,20 @@ Shows status of all nodes in the cluster:
 
 #### Show Node Status
 
-wolfctl status
+wardenclyffectl status
 
 Shows status of the local node.
 
 #### Promote/Demote
 
-wolfctl promote    # Request leader promotion
-wolfctl demote     # Step down from leadership
-wolfctl check-config         # Validate configuration file
-wolfctl check-config -f /path/to/config.toml  # Check specific file
+wardenclyffectl promote    # Request leader promotion
+wardenclyffectl demote     # Step down from leadership
+wardenclyffectl check-config         # Validate configuration file
+wardenclyffectl check-config -f /path/to/config.toml  # Check specific file
 
 #### Live Statistics
 
-wolfctl stats
+wardenclyffectl stats
 
 Shows live throughput statistics, updating every second until Ctrl+C:
 - Node ID and role (Leader/Follower)
@@ -1028,7 +1028,7 @@ Shows live throughput statistics, updating every second until Ctrl+C:
 
 The `check-config` command validates your configuration file and reports issues:
 
-wolfctl check-config
+wardenclyffectl check-config
 
 It checks for:
 - **Typos** in key names (e.g., `dvertise_address` instead of `advertise_address`)
@@ -1040,19 +1040,19 @@ It checks for:
 
 | Option | Description |
 |--------|-------------|
-| `-c, --config <PATH>` | Path to config file (default: `/etc/wolfscale/config.toml`) |
+| `-c, --config <PATH>` | Path to config file (default: `/etc/wardenclyffescale/config.toml`) |
 | `-e, --endpoint <URL>` | API endpoint to connect to (overrides config) |
 
 ### Examples
 
 # Check cluster status from any node
-wolfctl list servers
+wardenclyffectl list servers
 
 # Connect to a specific node's API
-wolfctl -e http://192.168.1.10:8080 list servers
+wardenclyffectl -e http://192.168.1.10:8080 list servers
 
 # Quick health check
-wolfctl status
+wardenclyffectl status
 
 ---
 
@@ -1066,7 +1066,7 @@ wolfctl status
 
 ## Directory Structure
 
-/var/lib/wolfscale/<node-id>/
+/var/lib/wardenclyffescale/<node-id>/
 ├── wal/           # Write-ahead log segments
 ├── state/         # SQLite state database
 └── data/          # Other runtime data
@@ -1093,11 +1093,11 @@ cargo test
 
 ### Creating Backups
 
-When creating backups with `mysqldump`, use these options for reliable replication with WolfScale:
+When creating backups with `mysqldump`, use these options for reliable replication with WardenClyffeScale:
 
 ```bash
 #!/bin/bash
-# backup.sh - WolfScale-compatible backup script
+# backup.sh - WardenClyffeScale-compatible backup script
 
 DATABASE="mydb"
 BACKUP_FILE="backup_$(date +%Y%m%d_%H%M%S).sql"
@@ -1129,10 +1129,10 @@ echo "Backup saved to: $BACKUP_FILE"
 
 ### Restoring Backups
 
-Restore backups directly through WolfScale's MySQL proxy (port 3307) to replicate to all nodes:
+Restore backups directly through WardenClyffeScale's MySQL proxy (port 3307) to replicate to all nodes:
 
 ```bash
-# Restore through WolfScale (recommended - replicates to all nodes)
+# Restore through WardenClyffeScale (recommended - replicates to all nodes)
 mysql -h leader-ip -P 3307 -u root -p mydb < backup.sql
 
 # Or restore directly to MariaDB on the leader only
@@ -1147,7 +1147,7 @@ To backup all databases:
 #!/bin/bash
 # full_backup.sh - Complete cluster backup
 
-BACKUP_DIR="/var/backups/wolfscale"
+BACKUP_DIR="/var/backups/wardenclyffescale"
 DATE=$(date +%Y%m%d_%H%M%S)
 mkdir -p "$BACKUP_DIR"
 
@@ -1176,18 +1176,18 @@ echo "Full backup saved to: $BACKUP_DIR/full_backup_$DATE.sql.gz"
 The easiest way to optimize MariaDB is to run the auto-tuner:
 
 ```bash
-sudo wolfctl tune-mariadb
+sudo wardenclyffectl tune-mariadb
 ```
 
 This command will:
 - Detect your system's RAM and calculate optimal buffer pool size (70%)
 - Detect CPU cores for thread pool configuration  
-- Create `/etc/mysql/mariadb.conf.d/99-wolfscale.cnf`
+- Create `/etc/mysql/mariadb.conf.d/99-wardenclyffescale.cnf`
 - Restart MariaDB automatically
 
 Use `--dry-run` to preview changes without applying them.
 
-### MariaDB Tuning for WolfScale
+### MariaDB Tuning for WardenClyffeScale
 
 If you prefer manual configuration, optimize your MariaDB instances with these settings:
 
@@ -1213,14 +1213,14 @@ innodb_flush_log_at_trx_commit = 2
 # Avoid double buffering
 innodb_flush_method = O_DIRECT
 
-# Disable if using WolfScale replication instead of binlog
+# Disable if using WardenClyffeScale replication instead of binlog
 sync_binlog = 0
 ```
 
 #### Connections & Threading
 
 ```ini
-# Enough for connection pool + WolfScale connections
+# Enough for connection pool + WardenClyffeScale connections
 max_connections = 500
 
 # Match CPU cores
@@ -1232,7 +1232,7 @@ thread_handling = pool-of-threads
 
 #### Query Cache (Disable)
 
-WolfScale handles consistency, so query cache can cause stale reads:
+WardenClyffeScale handles consistency, so query cache can cause stale reads:
 
 ```ini
 query_cache_type = 0
@@ -1249,14 +1249,14 @@ slow_query_log = 0                    # Or set slow_query_time = 5
 #### Bulk Insert Optimizations
 
 ```ini
-# Fastest for bulk inserts with WolfScale
+# Fastest for bulk inserts with WardenClyffeScale
 innodb_autoinc_lock_mode = 2
 bulk_insert_buffer_size = 256M
 ```
 
 ### Recommended my.cnf Settings
 
-Add to `/etc/mysql/mariadb.conf.d/99-wolfscale.cnf`:
+Add to `/etc/mysql/mariadb.conf.d/99-wardenclyffescale.cnf`:
 
 ```ini
 [mariadb]
@@ -1285,11 +1285,11 @@ bulk_insert_buffer_size = 256M
 
 Then restart MariaDB: `sudo systemctl restart mariadb`
 
-### WolfScale Tuning
+### WardenClyffeScale Tuning
 
 #### WAL Settings
 
-In `wolfscale.toml`:
+In `wardenclyffescale.toml`:
 
 ```toml
 [wal]
@@ -1341,6 +1341,6 @@ heartbeat_interval_ms = 250  # Default: 500
 ## Support
 
 - **Discord:** [Join our community](https://discord.gg/q9qMjHjUQY)
-- **Website:** [wolf.uk.com](https://wolf.uk.com)
-- **Issues:** [GitHub Issues](https://github.com/wolfsoftwaresystemsltd/WolfScale/issues)
+- **Website:** [wardenclyffe.uk.com](https://wardenclyffe.uk.com)
+- **Issues:** [GitHub Issues](https://github.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale/issues)
 - **Support Us:** [Patreon](https://www.patreon.com/15362110/join)

@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# WolfScale Service Installation Script
+# WardenClyffeScale Service Installation Script
 #
-# This script installs WolfScale as a systemd service.
+# This script installs WardenClyffeScale as a systemd service.
 #
 # Usage:
 #   sudo ./install-service.sh [options]
@@ -10,7 +10,7 @@
 # Options:
 #   --node-id ID        Node identifier (default: node-1)
 #   --config PATH       Path to configuration file
-#   --user USER         User to run the service as (default: wolfscale)
+#   --user USER         User to run the service as (default: wardenclyffescale)
 #   --bootstrap         Configure as bootstrap/leader node
 #   --uninstall         Remove the service and cleanup
 #   --help              Show this help message
@@ -20,11 +20,11 @@ set -e
 
 # Default values
 NODE_ID="node-1"
-SERVICE_USER="wolfscale"
-INSTALL_DIR="/opt/wolfscale"
-CONFIG_DIR="/etc/wolfscale"
-DATA_DIR="/var/lib/wolfscale"
-LOG_DIR="/var/log/wolfscale"
+SERVICE_USER="wardenclyffescale"
+INSTALL_DIR="/opt/wardenclyffescale"
+CONFIG_DIR="/etc/wardenclyffescale"
+DATA_DIR="/var/lib/wardenclyffescale"
+LOG_DIR="/var/log/wardenclyffescale"
 CONFIG_FILE=""
 BOOTSTRAP=""
 UNINSTALL=false
@@ -75,7 +75,7 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --help)
-            echo "WolfScale Service Installation Script"
+            echo "WardenClyffeScale Service Installation Script"
             echo ""
             echo "Usage:"
             echo "  sudo $0 [options]"
@@ -83,7 +83,7 @@ while [[ $# -gt 0 ]]; do
             echo "Options:"
             echo "  --node-id ID        Node identifier (default: node-1)"
             echo "  --config PATH       Path to configuration file"
-            echo "  --user USER         User to run the service as (default: wolfscale)"
+            echo "  --user USER         User to run the service as (default: wardenclyffescale)"
             echo "  --bootstrap         Configure as bootstrap/leader node"
             echo "  --uninstall         Remove the service and cleanup"
             echo "  --help              Show this help message"
@@ -108,29 +108,29 @@ fi
 
 # Uninstall mode
 if [[ "$UNINSTALL" == true ]]; then
-    echo "Uninstalling WolfScale service..."
+    echo "Uninstalling WardenClyffeScale service..."
     
     # Stop and disable service
-    if systemctl is-active --quiet wolfscale; then
-        systemctl stop wolfscale
+    if systemctl is-active --quiet wardenclyffescale; then
+        systemctl stop wardenclyffescale
         print_status "Service stopped"
     fi
     
-    if systemctl is-enabled --quiet wolfscale 2>/dev/null; then
-        systemctl disable wolfscale
+    if systemctl is-enabled --quiet wardenclyffescale 2>/dev/null; then
+        systemctl disable wardenclyffescale
         print_status "Service disabled"
     fi
     
     # Remove service file
-    if [[ -f /etc/systemd/system/wolfscale.service ]]; then
-        rm /etc/systemd/system/wolfscale.service
+    if [[ -f /etc/systemd/system/wardenclyffescale.service ]]; then
+        rm /etc/systemd/system/wardenclyffescale.service
         systemctl daemon-reload
         print_status "Service file removed"
     fi
     
     # Ask about data removal
     echo ""
-    read -p "Remove WolfScale binary from ${INSTALL_DIR}? [y/N] " -n 1 -r
+    read -p "Remove WardenClyffeScale binary from ${INSTALL_DIR}? [y/N] " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         rm -rf "$INSTALL_DIR"
@@ -151,12 +151,12 @@ if [[ "$UNINSTALL" == true ]]; then
         print_status "Configuration directory removed"
     fi
     
-    print_status "WolfScale service uninstalled"
+    print_status "WardenClyffeScale service uninstalled"
     exit 0
 fi
 
 echo "=========================================="
-echo "  WolfScale Service Installer"
+echo "  WardenClyffeScale Service Installer"
 echo "=========================================="
 echo ""
 echo "Node ID:     $NODE_ID"
@@ -173,13 +173,13 @@ echo ""
 
 # Check for binary
 BINARY=""
-if [[ -f "${PROJECT_DIR}/target/release/wolfscale" ]]; then
-    BINARY="${PROJECT_DIR}/target/release/wolfscale"
-elif [[ -f "${PROJECT_DIR}/target/debug/wolfscale" ]]; then
-    BINARY="${PROJECT_DIR}/target/debug/wolfscale"
+if [[ -f "${PROJECT_DIR}/target/release/wardenclyffescale" ]]; then
+    BINARY="${PROJECT_DIR}/target/release/wardenclyffescale"
+elif [[ -f "${PROJECT_DIR}/target/debug/wardenclyffescale" ]]; then
+    BINARY="${PROJECT_DIR}/target/debug/wardenclyffescale"
     print_warning "Using debug build. Consider using release build for production."
 else
-    print_error "WolfScale binary not found. Please build first:"
+    print_error "WardenClyffeScale binary not found. Please build first:"
     echo "  cd ${PROJECT_DIR} && cargo build --release"
     exit 1
 fi
@@ -203,20 +203,20 @@ mkdir -p "$LOG_DIR"
 print_status "Created directories"
 
 # Copy binary
-cp "$BINARY" "$INSTALL_DIR/wolfscale"
-chmod 755 "$INSTALL_DIR/wolfscale"
-print_status "Installed binary to $INSTALL_DIR/wolfscale"
+cp "$BINARY" "$INSTALL_DIR/wardenclyffescale"
+chmod 755 "$INSTALL_DIR/wardenclyffescale"
+print_status "Installed binary to $INSTALL_DIR/wardenclyffescale"
 
 # Create or copy configuration
 if [[ -n "$CONFIG_FILE" && -f "$CONFIG_FILE" ]]; then
-    cp "$CONFIG_FILE" "$CONFIG_DIR/wolfscale.toml"
+    cp "$CONFIG_FILE" "$CONFIG_DIR/wardenclyffescale.toml"
     print_status "Copied configuration from $CONFIG_FILE"
-elif [[ -f "$CONFIG_DIR/wolfscale.toml" ]]; then
+elif [[ -f "$CONFIG_DIR/wardenclyffescale.toml" ]]; then
     print_status "Using existing configuration"
 else
     # Generate default configuration
-    cat > "$CONFIG_DIR/wolfscale.toml" << EOF
-# WolfScale Configuration
+    cat > "$CONFIG_DIR/wardenclyffescale.toml" << EOF
+# WardenClyffeScale Configuration
 # Generated by install-service.sh
 
 [node]
@@ -227,7 +227,7 @@ data_dir = "${DATA_DIR}/${NODE_ID}"
 [database]
 host = "localhost"
 port = 3306
-user = "wolfscale"
+user = "wardenclyffescale"
 password = "changeme"
 database = "myapp"
 pool_size = 10
@@ -255,30 +255,30 @@ cors_enabled = false
 [logging]
 level = "info"
 format = "pretty"
-file = "${LOG_DIR}/wolfscale.log"
+file = "${LOG_DIR}/wardenclyffescale.log"
 EOF
     print_status "Created default configuration"
-    print_warning "Edit $CONFIG_DIR/wolfscale.toml to configure database connection"
+    print_warning "Edit $CONFIG_DIR/wardenclyffescale.toml to configure database connection"
 fi
 
 # Set ownership
 chown -R "$SERVICE_USER:$SERVICE_USER" "$DATA_DIR"
 chown -R "$SERVICE_USER:$SERVICE_USER" "$LOG_DIR"
-chown root:root "$CONFIG_DIR/wolfscale.toml"
-chmod 640 "$CONFIG_DIR/wolfscale.toml"
+chown root:root "$CONFIG_DIR/wardenclyffescale.toml"
+chmod 640 "$CONFIG_DIR/wardenclyffescale.toml"
 
 print_status "Set file permissions"
 
 # Create systemd service file
-EXEC_START="$INSTALL_DIR/wolfscale --config $CONFIG_DIR/wolfscale.toml --log-level info start"
+EXEC_START="$INSTALL_DIR/wardenclyffescale --config $CONFIG_DIR/wardenclyffescale.toml --log-level info start"
 if [[ -n "$BOOTSTRAP" ]]; then
     EXEC_START="$EXEC_START --bootstrap"
 fi
 
-cat > /etc/systemd/system/wolfscale.service << EOF
+cat > /etc/systemd/system/wardenclyffescale.service << EOF
 [Unit]
-Description=WolfScale - Distributed MariaDB Synchronization Manager
-Documentation=https://github.com/wolfscale/wolfscale
+Description=WardenClyffeScale - Distributed MariaDB Synchronization Manager
+Documentation=https://github.com/wardenclyffescale/wardenclyffescale
 After=network.target mariadb.service
 Wants=mariadb.service
 
@@ -303,7 +303,7 @@ ReadOnlyPaths=${CONFIG_DIR}
 # Logging
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=wolfscale
+SyslogIdentifier=wardenclyffescale
 
 # Resource limits
 LimitNOFILE=65535
@@ -320,8 +320,8 @@ systemctl daemon-reload
 print_status "Reloaded systemd"
 
 # Enable service
-systemctl enable wolfscale
-print_status "Enabled wolfscale service"
+systemctl enable wardenclyffescale
+print_status "Enabled wardenclyffescale service"
 
 echo ""
 echo "=========================================="
@@ -331,20 +331,20 @@ echo ""
 echo "Next steps:"
 echo ""
 echo "1. Edit the configuration file:"
-echo "   sudo nano $CONFIG_DIR/wolfscale.toml"
+echo "   sudo nano $CONFIG_DIR/wardenclyffescale.toml"
 echo ""
 echo "2. Set up the MariaDB user and database:"
 echo "   mysql -u root -p"
-echo "   CREATE USER 'wolfscale'@'localhost' IDENTIFIED BY 'your-password';"
-echo "   GRANT ALL PRIVILEGES ON myapp.* TO 'wolfscale'@'localhost';"
+echo "   CREATE USER 'wardenclyffescale'@'localhost' IDENTIFIED BY 'your-password';"
+echo "   GRANT ALL PRIVILEGES ON myapp.* TO 'wardenclyffescale'@'localhost';"
 echo "   FLUSH PRIVILEGES;"
 echo ""
 echo "3. Start the service:"
-echo "   sudo systemctl start wolfscale"
+echo "   sudo systemctl start wardenclyffescale"
 echo ""
 echo "4. Check the status:"
-echo "   sudo systemctl status wolfscale"
-echo "   sudo journalctl -u wolfscale -f"
+echo "   sudo systemctl status wardenclyffescale"
+echo "   sudo journalctl -u wardenclyffescale -f"
 echo ""
 echo "5. Access the API:"
 echo "   curl http://localhost:8080/health"

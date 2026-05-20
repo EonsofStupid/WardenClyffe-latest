@@ -1,7 +1,7 @@
 <?php
-$page_title = '💾 WolfDisk — WolfStack Docs';
-$page_desc = 'WolfDisk — Distributed filesystem for sharing and replicating files across your Linux network. FUSE-based, S3-compatible, with automatic leader election and failover.';
-$active = 'wolfdisk.php';
+$page_title = '💾 WardenClyffeDisk — WardenClyffe Docs';
+$page_desc = 'WardenClyffeDisk — Distributed filesystem for sharing and replicating files across your Linux network. FUSE-based, S3-compatible, with automatic leader election and failover.';
+$active = 'wardenclyffedisk.php';
 include 'includes/head.php';
 ?>
 
@@ -13,13 +13,13 @@ include 'includes/head.php';
             <!-- ===== Overview ===== -->
             <div class="content-section">
                 <h2>Overview</h2>
-                <p>WolfDisk is a distributed file system that provides easy-to-use shared and replicated storage across
+                <p>WardenClyffeDisk is a distributed file system that provides easy-to-use shared and replicated storage across
                     Linux machines. Mount a shared directory on any number of servers and have your data automatically
                     synchronised. Built on the same proven consensus mechanisms as <a
-                        href="quickstart.php">WolfScale</a>.</p>
+                        href="quickstart.php">WardenClyffeScale</a>.</p>
 
                 <p>🎬 <strong>Watch the overview video:</strong> <a href="https://www.youtube.com/watch?v=qjGhqldvhp4"
-                        target="_blank">WolfDisk on YouTube</a></p>
+                        target="_blank">WardenClyffeDisk on YouTube</a></p>
 
                 <h3>Key Features</h3>
                 <ul>
@@ -45,7 +45,7 @@ include 'includes/head.php';
             <!-- ===== Node Roles ===== -->
             <div class="content-section">
                 <h2>Node Roles</h2>
-                <p>Every WolfDisk node operates in one of four roles:</p>
+                <p>Every WardenClyffeDisk node operates in one of four roles:</p>
                 <table>
                     <thead>
                         <tr>
@@ -96,7 +96,7 @@ include 'includes/head.php';
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                             onclick="copyCode(this)">Copy</button></div>
-                    <pre><code>curl -sSL https://raw.githubusercontent.com/wolfsoftwaresystemsltd/WolfScale/main/wolfdisk/setup.sh | bash</code></pre>
+                    <pre><code>curl -sSL https://raw.githubusercontent.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale/main/wardenclyffedisk/setup.sh | bash</code></pre>
                 </div>
                 <p>The installer will prompt you for:</p>
                 <ul>
@@ -106,10 +106,10 @@ include 'includes/head.php';
                     <li><strong>Discovery method</strong> — Auto-discovery (UDP multicast), manual peers, or standalone
                     </li>
                     <li><strong>Mount path</strong> — Where to mount the filesystem (default:
-                        <code>/mnt/wolfdisk</code>)</li>
+                        <code>/mnt/wardenclyffedisk</code>)</li>
                 </ul>
                 <div class="info-box">
-                    <p>⚠️ <strong>Compilation note:</strong> The installer compiles WolfDisk from source using Rust.
+                    <p>⚠️ <strong>Compilation note:</strong> The installer compiles WardenClyffeDisk from source using Rust.
                         This is CPU-intensive and may take several minutes. Please wait for it to complete.</p>
                 </div>
             </div>
@@ -125,14 +125,14 @@ include 'includes/head.php';
 
                 <div class="info-box" style="border-left: 4px solid #e74c3c; background: rgba(231, 76, 60, 0.1);">
                     <p>⚠️ <strong>Running in an LXC Container?</strong></p>
-                    <p>WolfDisk <strong>requires</strong> the following features to be enabled in your container settings. Without these, WolfDisk <strong>will not start</strong>:</p>
+                    <p>WardenClyffeDisk <strong>requires</strong> the following features to be enabled in your container settings. Without these, WardenClyffeDisk <strong>will not start</strong>:</p>
                     <ul>
-                        <li>✅ <strong>TUN/TAP Device</strong> — Required for WolfDisk networking (<code>/dev/net/tun</code>)</li>
+                        <li>✅ <strong>TUN/TAP Device</strong> — Required for WardenClyffeDisk networking (<code>/dev/net/tun</code>)</li>
                         <li>✅ <strong>FUSE</strong> — Required for the FUSE filesystem mount (<code>/dev/fuse</code>)</li>
                     </ul>
-                    <p><strong>WolfStack:</strong> Go to the container → Settings → enable TUN/TAP Device and FUSE → save → reboot the container.</p>
+                    <p><strong>WardenClyffe:</strong> Go to the container → Settings → enable TUN/TAP Device and FUSE → save → reboot the container.</p>
                     <p><strong>Proxmox:</strong> Go to the container → Options → Features → enable <code>fuse</code> and <code>tun</code> → reboot the container.</p>
-                    <p>If installing via the WolfStack App Store, these settings are applied automatically.</p>
+                    <p>If installing via the WardenClyffe App Store, these settings are applied automatically.</p>
                 </div>
 
                 <h3>Install Dependencies</h3>
@@ -150,11 +150,11 @@ sudo dnf install fuse3-devel fuse3</code></pre>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                             onclick="copyCode(this)">Copy</button></div>
-                    <pre><code>git clone https://github.com/wolfsoftwaresystemsltd/WolfScale.git
-cd WolfScale/wolfdisk
+                    <pre><code>git clone https://github.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale.git
+cd WardenClyffeScale/wardenclyffedisk
 cargo build --release
-sudo cp target/release/wolfdisk /usr/local/bin/
-sudo cp target/release/wolfdiskctl /usr/local/bin/</code></pre>
+sudo cp target/release/wardenclyffedisk /usr/local/bin/
+sudo cp target/release/wardenclyffediskctl /usr/local/bin/</code></pre>
                 </div>
             </div>
 
@@ -165,7 +165,7 @@ sudo cp target/release/wolfdiskctl /usr/local/bin/</code></pre>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                             onclick="copyCode(this)">Copy</button></div>
-                    <pre><code>wolfdisk init -d /var/lib/wolfdisk</code></pre>
+                    <pre><code>wardenclyffedisk init -d /var/lib/wardenclyffedisk</code></pre>
                 </div>
 
                 <h3>2. Mount the Filesystem</h3>
@@ -173,17 +173,17 @@ sudo cp target/release/wolfdiskctl /usr/local/bin/</code></pre>
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                             onclick="copyCode(this)">Copy</button></div>
                     <pre><code># Foreground (for testing)
-sudo wolfdisk mount -m /mnt/wolfdisk
+sudo wardenclyffedisk mount -m /mnt/wardenclyffedisk
 
 # As a systemd service (recommended)
-sudo systemctl start wolfdisk</code></pre>
+sudo systemctl start wardenclyffedisk</code></pre>
                 </div>
 
                 <h3>3. Check Status</h3>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                             onclick="copyCode(this)">Copy</button></div>
-                    <pre><code>wolfdiskctl status</code></pre>
+                    <pre><code>wardenclyffediskctl status</code></pre>
                 </div>
 
                 <h3>4. Use It Like Any Directory</h3>
@@ -191,19 +191,19 @@ sudo systemctl start wolfdisk</code></pre>
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                             onclick="copyCode(this)">Copy</button></div>
                     <pre><code># Write files
-echo "Hello, WolfDisk!" > /mnt/wolfdisk/hello.txt
-cp /var/log/syslog /mnt/wolfdisk/
+echo "Hello, WardenClyffeDisk!" > /mnt/wardenclyffedisk/hello.txt
+cp /var/log/syslog /mnt/wardenclyffedisk/
 
 # Read files — automatically available on all nodes
-cat /mnt/wolfdisk/hello.txt
-ls -la /mnt/wolfdisk/</code></pre>
+cat /mnt/wardenclyffedisk/hello.txt
+ls -la /mnt/wardenclyffedisk/</code></pre>
                 </div>
             </div>
 
             <!-- ===== Configuration ===== -->
             <div class="content-section">
                 <h2>Configuration</h2>
-                <p>WolfDisk is configured via <code>/etc/wolfdisk/config.toml</code>. The installer creates this file
+                <p>WardenClyffeDisk is configured via <code>/etc/wardenclyffedisk/config.toml</code>. The installer creates this file
                     for you, or you can edit it manually:</p>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">toml</span><button class="copy-btn"
@@ -212,7 +212,7 @@ ls -la /mnt/wolfdisk/</code></pre>
 id = "node1"                    # Unique node identifier
 role = "auto"                   # auto, leader, follower, or client
 bind = "0.0.0.0:9500"           # IP and port for cluster communication
-data_dir = "/var/lib/wolfdisk"  # Where chunks and index are stored
+data_dir = "/var/lib/wardenclyffedisk"  # Where chunks and index are stored
 
 [cluster]
 # Auto-discovery (recommended for LAN)
@@ -227,7 +227,7 @@ factor = 3            # Number of copies (replicated mode)
 chunk_size = 4194304  # 4 MB chunks
 
 [mount]
-path = "/mnt/wolfdisk"
+path = "/mnt/wardenclyffedisk"
 allow_other = true    # Allow other users to access the mount
 
 # Optional: S3-compatible API
@@ -271,7 +271,7 @@ bind = "0.0.0.0:9878"
                         <tr>
                             <td></td>
                             <td><code>data_dir</code></td>
-                            <td><code>/var/lib/wolfdisk</code></td>
+                            <td><code>/var/lib/wardenclyffedisk</code></td>
                             <td>Directory for chunks, index, and WAL</td>
                         </tr>
                         <tr>
@@ -307,7 +307,7 @@ bind = "0.0.0.0:9878"
                         <tr>
                             <td><code>[mount]</code></td>
                             <td><code>path</code></td>
-                            <td><code>/mnt/wolfdisk</code></td>
+                            <td><code>/mnt/wardenclyffedisk</code></td>
                             <td>FUSE mount point</td>
                         </tr>
                         <tr>
@@ -347,18 +347,18 @@ bind = "0.0.0.0:9878"
             <!-- ===== Architecture ===== -->
             <div class="content-section">
                 <h2>Architecture</h2>
-                <p>WolfDisk is composed of several layers that work together:</p>
+                <p>WardenClyffeDisk is composed of several layers that work together:</p>
 
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">text</span></div>
                     <pre><code>┌───────────────────────────────────────────────────────────────┐
 │                      Linux Applications                       │
 ├───────────────────────────────────────────────────────────────┤
-│                    mount /mnt/wolfdisk                         │
+│                    mount /mnt/wardenclyffedisk                         │
 ├───────────────────────────────────────────────────────────────┤
 │                       FUSE (fuser)                             │
 ├───────────────────────────────────────────────────────────────┤
-│                     WolfDisk Core                              │
+│                     WardenClyffeDisk Core                              │
 │  ┌─────────────┐  ┌───────────────┐  ┌──────────────────────┐ │
 │  │  File Index  │  │  Chunk Store  │  │ Replication Engine   │ │
 │  │  (metadata)  │  │   (SHA256)    │  │ (leader election)    │ │
@@ -374,7 +374,7 @@ bind = "0.0.0.0:9878"
 
                 <h3>How It Works</h3>
                 <ol>
-                    <li><strong>FUSE Layer</strong> — Applications read/write to <code>/mnt/wolfdisk</code> like a
+                    <li><strong>FUSE Layer</strong> — Applications read/write to <code>/mnt/wardenclyffedisk</code> like a
                         normal directory. The FUSE driver intercepts all filesystem calls.</li>
                     <li><strong>Chunk Store</strong> — Files are split into 4 MB chunks, each identified by its SHA256
                         hash. Identical data is automatically deduplicated.</li>
@@ -390,7 +390,7 @@ bind = "0.0.0.0:9878"
             <!-- ===== Leader Failover ===== -->
             <div class="content-section">
                 <h2>Leader Election &amp; Failover</h2>
-                <p>WolfDisk uses deterministic leader election — <strong>no voting, no delays</strong>. The node with
+                <p>WardenClyffeDisk uses deterministic leader election — <strong>no voting, no delays</strong>. The node with
                     the lowest ID is always the leader.</p>
 
                 <h3>How Failover Works</h3>
@@ -495,12 +495,12 @@ Follower applies 5 changes, now at version 50</code></pre>
             <!-- ===== S3 API ===== -->
             <div class="content-section">
                 <h2>S3-Compatible API</h2>
-                <p>WolfDisk can optionally expose an S3-compatible REST API, allowing any S3 client (AWS CLI, rclone,
+                <p>WardenClyffeDisk can optionally expose an S3-compatible REST API, allowing any S3 client (AWS CLI, rclone,
                     MinIO Client, etc.) to read and write files. Both FUSE and S3 access the <strong>same underlying
                         data</strong> — files written via FUSE are instantly visible through S3, and vice versa.</p>
 
                 <h3>Enable S3</h3>
-                <p>Add to <code>/etc/wolfdisk/config.toml</code>:</p>
+                <p>Add to <code>/etc/wardenclyffedisk/config.toml</code>:</p>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">toml</span><button class="copy-btn"
                             onclick="copyCode(this)">Copy</button></div>
@@ -516,7 +516,7 @@ bind = "0.0.0.0:9878"
                 <table>
                     <thead>
                         <tr>
-                            <th>WolfDisk</th>
+                            <th>WardenClyffeDisk</th>
                             <th>S3 Equivalent</th>
                         </tr>
                     </thead>
@@ -613,7 +613,7 @@ curl -X PUT --data-binary @file.txt http://localhost:9878/mybucket/file.txt</cod
             <div class="content-section">
                 <h2>CLI Reference</h2>
 
-                <h3><code>wolfdisk</code> (Service Daemon)</h3>
+                <h3><code>wardenclyffedisk</code> (Service Daemon)</h3>
                 <table>
                     <thead>
                         <tr>
@@ -623,19 +623,19 @@ curl -X PUT --data-binary @file.txt http://localhost:9878/mybucket/file.txt</cod
                     </thead>
                     <tbody>
                         <tr>
-                            <td><code>wolfdisk init -d PATH</code></td>
-                            <td>Initialize a new WolfDisk data directory</td>
+                            <td><code>wardenclyffedisk init -d PATH</code></td>
+                            <td>Initialize a new WardenClyffeDisk data directory</td>
                         </tr>
                         <tr>
-                            <td><code>wolfdisk mount -m PATH</code></td>
+                            <td><code>wardenclyffedisk mount -m PATH</code></td>
                             <td>Mount the filesystem at the given path</td>
                         </tr>
                         <tr>
-                            <td><code>wolfdisk unmount -m PATH</code></td>
+                            <td><code>wardenclyffedisk unmount -m PATH</code></td>
                             <td>Unmount the filesystem</td>
                         </tr>
                         <tr>
-                            <td><code>wolfdisk status</code></td>
+                            <td><code>wardenclyffedisk status</code></td>
                             <td>Show node configuration</td>
                         </tr>
                     </tbody>
@@ -643,10 +643,10 @@ curl -X PUT --data-binary @file.txt http://localhost:9878/mybucket/file.txt</cod
                 <p>Options:</p>
                 <ul>
                     <li><code>--config PATH</code> — Path to config file (default:
-                        <code>/etc/wolfdisk/config.toml</code>)</li>
+                        <code>/etc/wardenclyffedisk/config.toml</code>)</li>
                 </ul>
 
-                <h3><code>wolfdiskctl</code> (Control Utility)</h3>
+                <h3><code>wardenclyffediskctl</code> (Control Utility)</h3>
                 <table>
                     <thead>
                         <tr>
@@ -656,16 +656,16 @@ curl -X PUT --data-binary @file.txt http://localhost:9878/mybucket/file.txt</cod
                     </thead>
                     <tbody>
                         <tr>
-                            <td><code>wolfdiskctl status</code></td>
+                            <td><code>wardenclyffediskctl status</code></td>
                             <td>Show live status from the running service (role, state, version, file count, size,
                                 peers)</td>
                         </tr>
                         <tr>
-                            <td><code>wolfdiskctl list servers</code></td>
+                            <td><code>wardenclyffediskctl list servers</code></td>
                             <td>List all discovered servers in the cluster with roles and status</td>
                         </tr>
                         <tr>
-                            <td><code>wolfdiskctl stats</code></td>
+                            <td><code>wardenclyffediskctl stats</code></td>
                             <td>Live cluster statistics dashboard (refreshes every second, Ctrl+C to exit)</td>
                         </tr>
                     </tbody>
@@ -673,7 +673,7 @@ curl -X PUT --data-binary @file.txt http://localhost:9878/mybucket/file.txt</cod
                 <p>Options:</p>
                 <ul>
                     <li><code>-s, --status-file PATH</code> — Path to status file (default:
-                        <code>/var/lib/wolfdisk/cluster_status.json</code>)</li>
+                        <code>/var/lib/wardenclyffedisk/cluster_status.json</code>)</li>
                 </ul>
             </div>
 
@@ -684,20 +684,20 @@ curl -X PUT --data-binary @file.txt http://localhost:9878/mybucket/file.txt</cod
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                             onclick="copyCode(this)">Copy</button></div>
-                    <pre><code># Start WolfDisk
-sudo systemctl start wolfdisk
+                    <pre><code># Start WardenClyffeDisk
+sudo systemctl start wardenclyffedisk
 
 # Check status
-sudo systemctl status wolfdisk
+sudo systemctl status wardenclyffedisk
 
 # View logs
-sudo journalctl -u wolfdisk -f
+sudo journalctl -u wardenclyffedisk -f
 
 # Enable on boot
-sudo systemctl enable wolfdisk
+sudo systemctl enable wardenclyffedisk
 
 # Restart after config change
-sudo systemctl restart wolfdisk</code></pre>
+sudo systemctl restart wardenclyffedisk</code></pre>
                 </div>
             </div>
 
@@ -715,7 +715,7 @@ sudo systemctl restart wolfdisk</code></pre>
 id = "node-a"
 role = "auto"
 bind = "192.168.1.10:9500"
-data_dir = "/var/lib/wolfdisk"
+data_dir = "/var/lib/wardenclyffedisk"
 
 [cluster]
 discovery = "udp://192.168.1.10:9501"
@@ -732,7 +732,7 @@ path = "/mnt/shared"</code></pre>
 id = "node-b"          # Higher ID → follower
 role = "auto"
 bind = "192.168.1.11:9500"
-data_dir = "/var/lib/wolfdisk"
+data_dir = "/var/lib/wardenclyffedisk"
 
 [cluster]
 discovery = "udp://192.168.1.11:9501"
@@ -762,23 +762,23 @@ path = "/mnt/shared"</code></pre>
             <div class="content-section">
                 <h2>Troubleshooting</h2>
 
-                <h3>WolfDisk fails to start in an LXC container</h3>
-                <p>If WolfDisk fails immediately or you see errors about <code>/dev/fuse</code> or <code>/dev/net/tun</code> not being available, the container is missing required device access:</p>
+                <h3>WardenClyffeDisk fails to start in an LXC container</h3>
+                <p>If WardenClyffeDisk fails immediately or you see errors about <code>/dev/fuse</code> or <code>/dev/net/tun</code> not being available, the container is missing required device access:</p>
                 <ol>
                     <li><strong>Stop</strong> the container</li>
                     <li>Go to the container's <strong>Settings</strong> page</li>
                     <li>Enable <strong>TUN/TAP Device</strong> and <strong>FUSE</strong></li>
                     <li>Save and <strong>start</strong> the container</li>
                 </ol>
-                <p>On Proxmox: <code>Options → Features → fuse, tun</code>. On WolfStack: <code>Settings → TUN/TAP Device ✅, FUSE ✅</code>.</p>
+                <p>On Proxmox: <code>Options → Features → fuse, tun</code>. On WardenClyffe: <code>Settings → TUN/TAP Device ✅, FUSE ✅</code>.</p>
 
                 <h3>Mount fails with "Transport endpoint not connected"</h3>
                 <p>The FUSE mount is stale. Unmount and remount:</p>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                             onclick="copyCode(this)">Copy</button></div>
-                    <pre><code>sudo fusermount -u -z /mnt/wolfdisk
-sudo systemctl restart wolfdisk</code></pre>
+                    <pre><code>sudo fusermount -u -z /mnt/wardenclyffedisk
+sudo systemctl restart wardenclyffedisk</code></pre>
                 </div>
 
                 <h3>Permission denied on mount</h3>
@@ -798,12 +798,12 @@ sudo systemctl restart wolfdisk</code></pre>
                 </ul>
 
                 <h3>Status file not found</h3>
-                <p>If <code>wolfdiskctl status</code> reports "Status file not found", the service is not running:</p>
+                <p>If <code>wardenclyffediskctl status</code> reports "Status file not found", the service is not running:</p>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                             onclick="copyCode(this)">Copy</button></div>
-                    <pre><code>sudo systemctl start wolfdisk
-sudo journalctl -u wolfdisk -f    # Check for errors</code></pre>
+                    <pre><code>sudo systemctl start wardenclyffedisk
+sudo journalctl -u wardenclyffedisk -f    # Check for errors</code></pre>
                 </div>
 
                 <h3>Client Reset</h3>
@@ -812,10 +812,10 @@ sudo journalctl -u wolfdisk -f    # Check for errors</code></pre>
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn"
                             onclick="copyCode(this)">Copy</button></div>
-                    <pre><code>sudo bash /opt/wolfscale-src/wolfdisk/reset_client.sh</code></pre>
+                    <pre><code>sudo bash /opt/wardenclyffescale-src/wardenclyffedisk/reset_client.sh</code></pre>
                 </div>
                 <div class="info-box">
-                    <p>⚠️ <strong>Warning:</strong> The reset script wipes <code>/var/lib/wolfdisk</code>. Only use it
+                    <p>⚠️ <strong>Warning:</strong> The reset script wipes <code>/var/lib/wardenclyffedisk</code>. Only use it
                         on <strong>client</strong> nodes. Running it on a leader or follower will cause <strong>data
                             loss</strong>.</p>
                 </div>
@@ -852,8 +852,8 @@ sudo journalctl -u wolfdisk -f    # Check for errors</code></pre>
                 </table>
             </div>
 
-            <div class="page-nav"><a href="wolfstack-ai.php" class="prev">&larr; AI Agent</a><a href="wolfnet.php"
-                    class="next">WolfNet &rarr;</a></div>
+            <div class="page-nav"><a href="wardenclyffe-ai.php" class="prev">&larr; AI Agent</a><a href="wardenclyffenet.php"
+                    class="next">WardenClyffeNet &rarr;</a></div>
 
         </main>
         <?php include 'includes/footer.php'; ?>

@@ -9,7 +9,7 @@ function smtp_send(string $to, string $subject, string $body, string $reply_to):
     $user = getenv('SMTP_USER') ?: '';
     $pass = getenv('SMTP_PASS') ?: '';
     $from = getenv('SMTP_FROM') ?: $user;
-    $from_name = 'WolfStack';
+    $from_name = 'WardenClyffe';
 
     if ($user === '' || $pass === '') return 'SMTP credentials not configured (set SMTP_USER and SMTP_PASS env vars)';
 
@@ -19,7 +19,7 @@ function smtp_send(string $to, string $subject, string $body, string $reply_to):
     $resp = smtp_read($sock);
     if (!str_starts_with($resp, '220')) return "Bad greeting: $resp";
 
-    smtp_write($sock, "EHLO wolfstack.org\r\n");
+    smtp_write($sock, "EHLO wardenclyffe.org\r\n");
     $resp = smtp_read($sock);
 
     smtp_write($sock, "STARTTLS\r\n");
@@ -29,7 +29,7 @@ function smtp_send(string $to, string $subject, string $body, string $reply_to):
     $crypto = stream_socket_enable_crypto($sock, true, STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT);
     if (!$crypto) return 'TLS handshake failed';
 
-    smtp_write($sock, "EHLO wolfstack.org\r\n");
+    smtp_write($sock, "EHLO wardenclyffe.org\r\n");
     $resp = smtp_read($sock);
 
     smtp_write($sock, "AUTH LOGIN\r\n");
@@ -57,7 +57,7 @@ function smtp_send(string $to, string $subject, string $body, string $reply_to):
     if (!str_starts_with($resp, '354')) return "DATA rejected: $resp";
 
     $date = date('r');
-    $msg_id = '<' . uniqid('ws-', true) . '@wolfstack.org>';
+    $msg_id = '<' . uniqid('ws-', true) . '@wardenclyffe.org>';
     $subject_enc = '=?UTF-8?B?' . base64_encode($subject) . '?=';
 
     $headers  = "Date: $date\r\n";

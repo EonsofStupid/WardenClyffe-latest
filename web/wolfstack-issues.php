@@ -1,7 +1,7 @@
 <?php
-$page_title = '⚠️ Issues Scanner — WolfStack Docs';
+$page_title = '⚠️ Issues Scanner — WardenClyffe Docs';
 $page_desc = 'AI-powered proactive server health monitoring and diagnostics';
-$active = 'wolfstack-issues.php';
+$active = 'wardenclyffe-issues.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -12,8 +12,8 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
-                <img src="images/screenshots/issues.png" alt="WolfStack issue detection and health monitoring" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
-                <p>WolfStack&rsquo;s Issues Scanner proactively scans your fleet for hardware, software, and configuration problems. Issues are categorised by severity (Critical, Warning, Info) and grouped by cluster.</p>
+                <img src="images/screenshots/issues.png" alt="WardenClyffe issue detection and health monitoring" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
+                <p>WardenClyffe&rsquo;s Issues Scanner proactively scans your fleet for hardware, software, and configuration problems. Issues are categorised by severity (Critical, Warning, Info) and grouped by cluster.</p>
                 <h3>What Gets Scanned</h3>
                 <ul>
                     <li><strong>CPU</strong> &mdash; High usage, thermal throttling</li>
@@ -33,7 +33,7 @@ include 'includes/head.php';
                 </ul>
             </div>
 
-<div class="page-nav"><a href="wolfstack-terminal.php" class="prev">&larr; Terminal</a><a href="wolfstack-alerting.php" class="next">Alerting &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffe-terminal.php" class="prev">&larr; Terminal</a><a href="wardenclyffe-alerting.php" class="next">Alerting &rarr;</a></div>
         
     </main>
 <?php include 'includes/footer.php'; ?>

@@ -1,4 +1,4 @@
-/* WolfScale Website Styles - Red Theme */
+/* WardenClyffeScale Website Styles - Red Theme */
 
 :root {
     --bg-primary: #1a1c22;
@@ -540,7 +540,7 @@ section {
 }
 
 /* Feature Links & Docs Grid */
-.why-wolfscale {
+.why-wardenclyffescale {
     background: var(--bg-primary);
 }
 
@@ -581,7 +581,7 @@ section {
     letter-spacing: 0.3px;
 }
 
-/* Feature Cards (WolfStack page) */
+/* Feature Cards (WardenClyffe page) */
 .feature-card {
     background: var(--bg-card);
     border: 1px solid var(--border-color);

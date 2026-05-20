@@ -1,7 +1,7 @@
 <?php
-$page_title = '⚙️ Settings — WolfStack Docs';
+$page_title = '⚙️ Settings — WardenClyffe Docs';
 $page_desc = 'Configure themes, alerting, Docker registries, node settings, and more';
-$active = 'wolfstack-settings.php';
+$active = 'wardenclyffe-settings.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -12,14 +12,14 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
-                <p>The Settings page is your central configuration hub for WolfStack. Access it from the gear icon in the bottom-left of the sidebar.</p>
-                <img src="images/settings-themes.png" alt="WolfStack Settings" style="width:100%;border-radius:10px;margin:1.5rem 0;border:1px solid var(--border-color);box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+                <p>The Settings page is your central configuration hub for WardenClyffe. Access it from the gear icon in the bottom-left of the sidebar.</p>
+                <img src="images/settings-themes.png" alt="WardenClyffe Settings" style="width:100%;border-radius:10px;margin:1.5rem 0;border:1px solid var(--border-color);box-shadow:0 8px 32px rgba(0,0,0,0.3);">
             </div>
             <div class="content-section">
                 <h2>Themes</h2>
-                <p>WolfStack includes multiple beautiful themes. Switch between them on the Themes tab:</p>
+                <p>WardenClyffe includes multiple beautiful themes. Switch between them on the Themes tab:</p>
                 <ul>
-                    <li><strong>WolfStack Dark</strong> &mdash; The default dark theme with red accents</li>
+                    <li><strong>WardenClyffe Dark</strong> &mdash; The default dark theme with red accents</li>
                     <li><strong>Midnight</strong> &mdash; Deep blue/black theme</li>
                     <li><strong>Glass</strong> &mdash; Glassmorphism with frosted effects and deep shadows</li>
                     <li><strong>Amber Terminal</strong> &mdash; Retro amber-on-black terminal aesthetic</li>
@@ -46,7 +46,7 @@ include 'includes/head.php';
             </div>
             <div class="content-section">
                 <h2>Docker Registry</h2>
-                <p>Configure private Docker registry credentials so WolfStack can pull images from your private registries. Add registry URLs, usernames, and passwords/tokens from the <strong>Docker</strong> tab.</p>
+                <p>Configure private Docker registry credentials so WardenClyffe can pull images from your private registries. Add registry URLs, usernames, and passwords/tokens from the <strong>Docker</strong> tab.</p>
             </div>
             <div class="content-section">
                 <h2>Node Settings</h2>
@@ -54,8 +54,8 @@ include 'includes/head.php';
                 <ul>
                     <li><strong>Hostname &amp; Address</strong> &mdash; View and modify node connection details</li>
                     <li><strong>Cluster assignment</strong> &mdash; Move nodes between clusters</li>
-                    <li><strong>WolfStack version</strong> &mdash; View installed and latest versions, upgrade from the dashboard</li>
-                    <li><strong>WolfNet configuration</strong> &mdash; View and manage WolfNet peer details</li>
+                    <li><strong>WardenClyffe version</strong> &mdash; View installed and latest versions, upgrade from the dashboard</li>
+                    <li><strong>WardenClyffeNet configuration</strong> &mdash; View and manage WardenClyffeNet peer details</li>
                     <li><strong>Delete node</strong> &mdash; Remove a node from the cluster</li>
                 </ul>
             </div>
@@ -63,12 +63,12 @@ include 'includes/head.php';
                 <h2>Cluster Settings</h2>
                 <ul>
                     <li><strong>Cluster name</strong> &mdash; Rename your cluster</li>
-                    <li><strong>WolfNet connections</strong> &mdash; Click <strong>🔗 Update WolfNet Connections</strong> to automatically configure encrypted mesh networking between all nodes in the cluster</li>
+                    <li><strong>WardenClyffeNet connections</strong> &mdash; Click <strong>🔗 Update WardenClyffeNet Connections</strong> to automatically configure encrypted mesh networking between all nodes in the cluster</li>
                     <li><strong>Cluster secret</strong> &mdash; View or regenerate the cluster authentication secret</li>
                 </ul>
             </div>
 
-<div class="page-nav"><a href="wolfstack-ai.php" class="prev">&larr; AI Agent</a><a href="index.php" class="next">Home &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffe-ai.php" class="prev">&larr; AI Agent</a><a href="index.php" class="next">Home &rarr;</a></div>
         
     </main>
 <?php include 'includes/footer.php'; ?>

@@ -1,8 +1,8 @@
 <?php
-$page_title = 'WolfFlow Automation — WolfStack Docs';
-$page_desc = 'WolfFlow — visual workflow automation for WolfStack. Design, schedule, and execute multi-step infrastructure automation across your entire cluster with a drag-and-drop editor.';
-$page_keywords = 'WolfFlow, workflow automation, infrastructure automation, cron, scheduling, visual editor, WolfStack, n8n, devops, runbook, orchestration';
-$active = 'wolfflow.php';
+$page_title = 'WardenClyffeFlow Automation — WardenClyffe Docs';
+$page_desc = 'WardenClyffeFlow — visual workflow automation for WardenClyffe. Design, schedule, and execute multi-step infrastructure automation across your entire cluster with a drag-and-drop editor.';
+$page_keywords = 'WardenClyffeFlow, workflow automation, infrastructure automation, cron, scheduling, visual editor, WardenClyffe, n8n, devops, runbook, orchestration';
+$active = 'wardenclyffeflow.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -12,14 +12,14 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h1>Overview</h1>
-                <p>WolfFlow is WolfStack&rsquo;s visual workflow automation engine. It lets you design multi-step runbooks in a drag-and-drop editor, schedule them with cron expressions, and execute them across your entire infrastructure &mdash; all from the WolfStack dashboard.</p>
+                <p>WardenClyffeFlow is WardenClyffe&rsquo;s visual workflow automation engine. It lets you design multi-step runbooks in a drag-and-drop editor, schedule them with cron expressions, and execute them across your entire infrastructure &mdash; all from the WardenClyffe dashboard.</p>
 
-                <p>Think of it as <strong>n8n or Rundeck built directly into your server management platform</strong>. No external dependencies, no separate services to install &mdash; WolfFlow runs inside WolfStack and has full access to every node, container, and VM in your cluster.</p>
+                <p>Think of it as <strong>n8n or Rundeck built directly into your server management platform</strong>. No external dependencies, no separate services to install &mdash; WardenClyffeFlow runs inside WardenClyffe and has full access to every node, container, and VM in your cluster.</p>
 
                 <h3>Key Features</h3>
                 <ul>
                     <li><strong>Visual workflow editor</strong> &mdash; Drag-and-drop canvas with a toolbox of built-in actions, step-by-step flow, and per-step configuration</li>
-                    <li><strong>16 built-in action types</strong> &mdash; Update packages, update WolfStack, restart services, run shell commands, clean logs, check disk space, restart containers, Docker prune, HTTP requests, Docker image updates, NetBird management, TrueNAS snapshots, Unifi device control, conditional branching, and more</li>
+                    <li><strong>16 built-in action types</strong> &mdash; Update packages, update WardenClyffe, restart services, run shell commands, clean logs, check disk space, restart containers, Docker prune, HTTP requests, Docker image updates, NetBird management, TrueNAS snapshots, Unifi device control, conditional branching, and more</li>
                     <li><strong>Flexible targeting</strong> &mdash; Execute on a single node, all nodes, a specific cluster, hand-picked nodes, or individual containers and VMs</li>
                     <li><strong>Cron scheduling</strong> &mdash; Full 5-field cron expressions with quick presets (daily, hourly, weekly, etc.) or manual-only execution</li>
                     <li><strong>Parallel cross-node execution</strong> &mdash; Steps run on all target nodes simultaneously, with results collected per-node before moving to the next step</li>
@@ -33,7 +33,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>The Visual Editor</h2>
-                <p>WolfFlow&rsquo;s editor is a three-panel layout designed for fast workflow creation:</p>
+                <p>WardenClyffeFlow&rsquo;s editor is a three-panel layout designed for fast workflow creation:</p>
 
                 <h3>Left Panel &mdash; Toolbox</h3>
                 <p>Eight action cards, each colour-coded by type. Click or drag an action to add it as a new step in your workflow.</p>
@@ -64,7 +64,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Action Types</h2>
-                <p>WolfFlow includes 16 built-in actions that cover the most common infrastructure automation tasks:</p>
+                <p>WardenClyffeFlow includes 16 built-in actions that cover the most common infrastructure automation tasks:</p>
 
                 <div class="table-wrapper">
                     <table class="data-table">
@@ -82,8 +82,8 @@ include 'includes/head.php';
                                 <td>None</td>
                             </tr>
                             <tr>
-                                <td><strong>Update WolfStack</strong></td>
-                                <td>Pulls and installs the latest WolfStack from GitHub</td>
+                                <td><strong>Update WardenClyffe</strong></td>
+                                <td>Pulls and installs the latest WardenClyffe from GitHub</td>
                                 <td><code>channel</code> &mdash; Branch name (default: master)</td>
                             </tr>
                             <tr>
@@ -160,7 +160,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Execution Targets</h2>
-                <p>WolfFlow supports five targeting scopes. Set a default target at the workflow level, then optionally override it per step.</p>
+                <p>WardenClyffeFlow supports five targeting scopes. Set a default target at the workflow level, then optionally override it per step.</p>
 
                 <div class="table-wrapper">
                     <table class="data-table">
@@ -174,12 +174,12 @@ include 'includes/head.php';
                         <tbody>
                             <tr>
                                 <td><strong>Local</strong></td>
-                                <td>Execute only on the primary WolfStack node</td>
+                                <td>Execute only on the primary WardenClyffe node</td>
                                 <td>Single-node maintenance, leader-only tasks</td>
                             </tr>
                             <tr>
                                 <td><strong>All Nodes</strong></td>
-                                <td>Execute on every online WolfStack node</td>
+                                <td>Execute on every online WardenClyffe node</td>
                                 <td>Fleet-wide updates, log cleanup, disk checks</td>
                             </tr>
                             <tr>
@@ -215,7 +215,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Scheduling</h2>
-                <p>WolfFlow uses standard 5-field cron expressions (UTC) for scheduling:</p>
+                <p>WardenClyffeFlow uses standard 5-field cron expressions (UTC) for scheduling:</p>
                 <div class="code-block" style="margin:0.5rem 0 1rem 0;">
                     <div class="code-header"><span class="code-lang">format</span></div>
                     <pre><code>minute  hour  day-of-month  month  day-of-week</code></pre>
@@ -300,15 +300,15 @@ include 'includes/head.php';
                 <h3>How Workflows Execute</h3>
                 <ol>
                     <li><strong>Trigger</strong> &mdash; A workflow runs either on its cron schedule or when you click <strong>Run Now</strong></li>
-                    <li><strong>Resolve targets</strong> &mdash; WolfFlow resolves the target scope into a list of online nodes</li>
+                    <li><strong>Resolve targets</strong> &mdash; WardenClyffeFlow resolves the target scope into a list of online nodes</li>
                     <li><strong>Execute steps sequentially</strong> &mdash; Each step runs on all target nodes <strong>in parallel</strong>, then results are collected before the next step begins</li>
-                    <li><strong>Remote execution</strong> &mdash; For remote nodes, commands are sent via the WolfStack node proxy API with cluster secret authentication</li>
+                    <li><strong>Remote execution</strong> &mdash; For remote nodes, commands are sent via the WardenClyffe node proxy API with cluster secret authentication</li>
                     <li><strong>Collect results</strong> &mdash; Each step records per-node status (success/failure), output, and duration</li>
                     <li><strong>Email results</strong> &mdash; If an email address is configured, an HTML report is sent with a detailed step-by-step breakdown</li>
                 </ol>
 
                 <h3>Task Log Integration</h3>
-                <p>Every workflow execution appears in WolfStack&rsquo;s main task log with live progress updates. You can see:</p>
+                <p>Every workflow execution appears in WardenClyffe&rsquo;s main task log with live progress updates. You can see:</p>
                 <ul>
                     <li>Which step is currently executing</li>
                     <li>Per-node status with colour-coded badges (success, failed, running)</li>
@@ -317,7 +317,7 @@ include 'includes/head.php';
                 </ul>
 
                 <h3>Run History</h3>
-                <p>WolfFlow keeps a history of the last 500 workflow runs. Each run record includes:</p>
+                <p>WardenClyffeFlow keeps a history of the last 500 workflow runs. Each run record includes:</p>
                 <ul>
                     <li>Workflow name and run ID</li>
                     <li>Trigger type (Manual or Scheduled)</li>
@@ -329,7 +329,7 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Email Notifications</h2>
-                <p>When an email address is set on a workflow, WolfFlow sends an HTML-formatted results email after every run. The email includes:</p>
+                <p>When an email address is set on a workflow, WardenClyffeFlow sends an HTML-formatted results email after every run. The email includes:</p>
                 <ul>
                     <li><strong>Status header</strong> &mdash; Workflow name, overall status (Completed/Failed/Partial Failure), and trigger type</li>
                     <li><strong>Duration</strong> &mdash; Total execution time</li>
@@ -361,17 +361,17 @@ Step 4: Docker Prune            [on failure: Continue]
 Email results to: admin@example.com</code></pre>
                 </div>
 
-                <h3>Staged WolfStack Update</h3>
+                <h3>Staged WardenClyffe Update</h3>
                 <div class="code-block" style="margin:0.5rem 0 1rem 0;">
                     <div class="code-header"><span class="code-lang">workflow</span></div>
                     <pre><code>Schedule: Manual only
 Target:   Specific Nodes (staging-node-01)
 
-Step 1: Update WolfStack        [on failure: Abort]
+Step 1: Update WardenClyffe        [on failure: Abort]
          channel: master
 
 Step 2: Run Shell Command        [on failure: Abort]
-         command: systemctl status wolfstack
+         command: systemctl status wardenclyffe
          timeout_secs: 30
 
 -- After verifying staging, run a second workflow
@@ -415,7 +415,7 @@ Email results to: oncall@example.com</code></pre>
 
             <div class="content-section">
                 <h2>REST API</h2>
-                <p>WolfFlow exposes a full REST API for programmatic access:</p>
+                <p>WardenClyffeFlow exposes a full REST API for programmatic access:</p>
 
                 <div class="table-wrapper">
                     <table class="data-table">
@@ -428,52 +428,52 @@ Email results to: oncall@example.com</code></pre>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><code>/api/wolfflow/workflows</code></td>
+                                <td><code>/api/wardenclyffeflow/workflows</code></td>
                                 <td>GET</td>
                                 <td>List all workflows (optional <code>?cluster=</code> filter)</td>
                             </tr>
                             <tr>
-                                <td><code>/api/wolfflow/workflows</code></td>
+                                <td><code>/api/wardenclyffeflow/workflows</code></td>
                                 <td>POST</td>
                                 <td>Create a new workflow</td>
                             </tr>
                             <tr>
-                                <td><code>/api/wolfflow/workflows/{id}</code></td>
+                                <td><code>/api/wardenclyffeflow/workflows/{id}</code></td>
                                 <td>GET</td>
                                 <td>Get a workflow by ID</td>
                             </tr>
                             <tr>
-                                <td><code>/api/wolfflow/workflows/{id}</code></td>
+                                <td><code>/api/wardenclyffeflow/workflows/{id}</code></td>
                                 <td>PUT</td>
                                 <td>Update a workflow</td>
                             </tr>
                             <tr>
-                                <td><code>/api/wolfflow/workflows/{id}</code></td>
+                                <td><code>/api/wardenclyffeflow/workflows/{id}</code></td>
                                 <td>DELETE</td>
                                 <td>Delete a workflow</td>
                             </tr>
                             <tr>
-                                <td><code>/api/wolfflow/workflows/{id}/run</code></td>
+                                <td><code>/api/wardenclyffeflow/workflows/{id}/run</code></td>
                                 <td>POST</td>
                                 <td>Trigger a workflow manually</td>
                             </tr>
                             <tr>
-                                <td><code>/api/wolfflow/runs</code></td>
+                                <td><code>/api/wardenclyffeflow/runs</code></td>
                                 <td>GET</td>
                                 <td>List execution history (<code>?workflow_id=</code> and <code>?limit=</code> filters)</td>
                             </tr>
                             <tr>
-                                <td><code>/api/wolfflow/runs/{id}</code></td>
+                                <td><code>/api/wardenclyffeflow/runs/{id}</code></td>
                                 <td>GET</td>
                                 <td>Get a single run with full step results</td>
                             </tr>
                             <tr>
-                                <td><code>/api/wolfflow/toolbox</code></td>
+                                <td><code>/api/wardenclyffeflow/toolbox</code></td>
                                 <td>GET</td>
                                 <td>List available actions with field definitions</td>
                             </tr>
                             <tr>
-                                <td><code>/api/wolfflow/infrastructure</code></td>
+                                <td><code>/api/wardenclyffeflow/infrastructure</code></td>
                                 <td>GET</td>
                                 <td>Full infrastructure tree (clusters, nodes, containers, VMs)</td>
                             </tr>
@@ -481,23 +481,23 @@ Email results to: oncall@example.com</code></pre>
                     </table>
                 </div>
 
-                <p>All endpoints require a valid <code>wolfstack_session</code> cookie. Inter-node execution uses the <code>X-WolfStack-Secret</code> header for authentication.</p>
+                <p>All endpoints require a valid <code>wardenclyffe_session</code> cookie. Inter-node execution uses the <code>X-WardenClyffe-Secret</code> header for authentication.</p>
             </div>
 
             <div class="content-section">
                 <h2>Configuration &amp; Persistence</h2>
-                <p>WolfFlow stores all data as JSON files:</p>
+                <p>WardenClyffeFlow stores all data as JSON files:</p>
                 <ul>
-                    <li><code>/etc/wolfstack/wolfflow/workflows.json</code> &mdash; All workflow definitions</li>
-                    <li><code>/etc/wolfstack/wolfflow/runs.json</code> &mdash; Execution history (last 500 runs)</li>
+                    <li><code>/etc/wardenclyffe/wardenclyffeflow/workflows.json</code> &mdash; All workflow definitions</li>
+                    <li><code>/etc/wardenclyffe/wardenclyffeflow/runs.json</code> &mdash; Execution history (last 500 runs)</li>
                 </ul>
-                <p>Data is loaded on startup and saved automatically after every create, update, delete, or run operation. The <code>/etc/wolfstack/wolfflow/</code> directory is created automatically if it doesn&rsquo;t exist.</p>
-                <p>Back up the <code>/etc/wolfstack/wolfflow/</code> directory to preserve your workflows and run history.</p>
+                <p>Data is loaded on startup and saved automatically after every create, update, delete, or run operation. The <code>/etc/wardenclyffe/wardenclyffeflow/</code> directory is created automatically if it doesn&rsquo;t exist.</p>
+                <p>Back up the <code>/etc/wardenclyffe/wardenclyffeflow/</code> directory to preserve your workflows and run history.</p>
             </div>
 
             <div class="content-section">
-                <h2>WolfFlow vs. Cron Jobs</h2>
-                <p>WolfStack already has a <a href="wolfstack-cron.php">Cron Jobs</a> page for managing system crontabs. WolfFlow is a higher-level tool that builds on top of that concept:</p>
+                <h2>WardenClyffeFlow vs. Cron Jobs</h2>
+                <p>WardenClyffe already has a <a href="wardenclyffe-cron.php">Cron Jobs</a> page for managing system crontabs. WardenClyffeFlow is a higher-level tool that builds on top of that concept:</p>
 
                 <div class="table-wrapper">
                     <table class="data-table">
@@ -505,7 +505,7 @@ Email results to: oncall@example.com</code></pre>
                             <tr>
                                 <th>Feature</th>
                                 <th>Cron Jobs</th>
-                                <th>WolfFlow</th>
+                                <th>WardenClyffeFlow</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -520,10 +520,10 @@ Email results to: oncall@example.com</code></pre>
                         </tbody>
                     </table>
                 </div>
-                <p>Use Cron Jobs for simple, single-node tasks. Use WolfFlow for multi-step, multi-node automation with visibility and failure handling.</p>
+                <p>Use Cron Jobs for simple, single-node tasks. Use WardenClyffeFlow for multi-step, multi-node automation with visibility and failure handling.</p>
             </div>
 
-<div class="page-nav"><a href="wolfstack-cron.php" class="prev">&larr; Cron Jobs</a><a href="wolfstack-ai.php" class="next">AI Agent &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffe-cron.php" class="prev">&larr; Cron Jobs</a><a href="wardenclyffe-ai.php" class="next">AI Agent &rarr;</a></div>
 
     </main>
 <?php include 'includes/footer.php'; ?>

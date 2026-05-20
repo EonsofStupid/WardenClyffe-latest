@@ -1046,7 +1046,7 @@ async fn handle_dump_info(
     
     Json(DumpInfoResponse {
         lsn: self_node.last_applied_lsn,
-        database: "wolfscale".to_string(), // TODO: get from config
+        database: "wardenclyffescale".to_string(), // TODO: get from config
         node_id: state.node_id.clone(),
     })
 }

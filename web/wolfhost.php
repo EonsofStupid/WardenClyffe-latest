@@ -1,7 +1,7 @@
 <?php
-$page_title = 'WolfHost — Enterprise Web Hosting Plugin for WolfStack';
-$page_desc = 'WolfHost transforms WolfStack into a complete web hosting business platform. Manage customers, hosting plans, billing, domains, FTP, SSL, databases, email, app installer, container provisioning, and a white-label customer portal.';
-$active = 'wolfhost.php';
+$page_title = 'WardenClyffeHost — Enterprise Web Hosting Plugin for WardenClyffe';
+$page_desc = 'WardenClyffeHost transforms WardenClyffe into a complete web hosting business platform. Manage customers, hosting plans, billing, domains, FTP, SSL, databases, email, app installer, container provisioning, and a white-label customer portal.';
+$active = 'wardenclyffehost.php';
 $page_css = '.wh-feature-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -80,7 +80,7 @@ include 'includes/head.php';
     <main class="wiki-content" style="max-width:1100px;">
 
             <div class="content-section">
-                <h2>WolfHost</h2>
+                <h2>WardenClyffeHost</h2>
                 <div class="wh-badge-row">
                     <div class="wh-badge wh-badge-enterprise">
                         <span style="font-size:1.1rem;">&#128273;</span>
@@ -88,17 +88,17 @@ include 'includes/head.php';
                     </div>
                     <div class="wh-badge wh-badge-dev">
                         <span style="font-size:1.1rem;">&#128679;</span>
-                        <span><strong>In Development</strong> &mdash; WolfHost is currently under active development and not yet available for download.</span>
+                        <span><strong>In Development</strong> &mdash; WardenClyffeHost is currently under active development and not yet available for download.</span>
                     </div>
                 </div>
                 <p style="font-size:1.05rem;color:var(--text-secondary);line-height:1.8;margin-bottom:1rem;">
-                    WolfHost is an <strong>enterprise WolfStack plugin</strong> that transforms your server into a complete web hosting business platform.
+                    WardenClyffeHost is an <strong>enterprise WardenClyffe plugin</strong> that transforms your server into a complete web hosting business platform.
                     Manage customers, create hosting plans, handle billing, provision containers across your cluster, and give your customers a
                     fully white-labelled self-service portal to manage their websites, domains, FTP accounts, SSL certificates, databases,
-                    email, and one-click apps &mdash; all from within WolfStack.
+                    email, and one-click apps &mdash; all from within WardenClyffe.
                 </p>
                 <div style="display:flex;gap:12px;flex-wrap:wrap;">
-                    <a href="wolfstack-plugins.php" class="btn" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);text-decoration:none;font-size:0.85rem;font-weight:600;">&#128268; Plugin System</a>
+                    <a href="wardenclyffe-plugins.php" class="btn" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);text-decoration:none;font-size:0.85rem;font-weight:600;">&#128268; Plugin System</a>
                     <a href="enterprise.php" class="btn" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:linear-gradient(135deg,#dc2626,#ef4444);border:none;border-radius:8px;color:white;text-decoration:none;font-size:0.85rem;font-weight:600;">Enterprise Licensing</a>
                 </div>
             </div>
@@ -106,19 +106,19 @@ include 'includes/head.php';
             <!-- Architecture -->
             <div class="content-section">
                 <h2>How It Works</h2>
-                <p>WolfHost runs as a WolfStack plugin with three components: an admin API integrated into the WolfStack dashboard,
+                <p>WardenClyffeHost runs as a WardenClyffe plugin with three components: an admin API integrated into the WardenClyffe dashboard,
                    a customer-facing self-service portal, and a provisioning engine that creates and configures containers across your cluster.</p>
                 <div class="wh-arch-diagram">
                     <div class="wh-arch-boxes">
-                        <div class="wh-arch-box" style="border-color:rgba(220,38,38,0.3);">&#128100; Admin<br><small style="font-weight:400;color:var(--text-muted);">WolfStack Dashboard</small></div>
+                        <div class="wh-arch-box" style="border-color:rgba(220,38,38,0.3);">&#128100; Admin<br><small style="font-weight:400;color:var(--text-muted);">WardenClyffe Dashboard</small></div>
                         <div class="wh-arch-arrow">&rarr;</div>
-                        <div class="wh-arch-box" style="border-color:rgba(59,130,246,0.3);">&#9881; WolfHost API<br><small style="font-weight:400;color:var(--text-muted);">Port 9200</small></div>
+                        <div class="wh-arch-box" style="border-color:rgba(59,130,246,0.3);">&#9881; WardenClyffeHost API<br><small style="font-weight:400;color:var(--text-muted);">Port 9200</small></div>
                         <div class="wh-arch-arrow">&rarr;</div>
                         <div class="wh-arch-box" style="border-color:rgba(168,85,247,0.3);">&#128230; Provisioning<br><small style="font-weight:400;color:var(--text-muted);">LXC Containers</small></div>
                         <div class="wh-arch-arrow">&rarr;</div>
                         <div class="wh-arch-box" style="border-color:rgba(16,185,129,0.3);">&#127760; Customer Portal<br><small style="font-weight:400;color:var(--text-muted);">Port 8443</small></div>
                     </div>
-                    <p style="font-size:0.82rem;color:var(--text-muted);margin-top:1rem;">Admin manages hosting through WolfStack. WolfHost provisions containers across the cluster. Customers access their own portal.</p>
+                    <p style="font-size:0.82rem;color:var(--text-muted);margin-top:1rem;">Admin manages hosting through WardenClyffe. WardenClyffeHost provisions containers across the cluster. Customers access their own portal.</p>
                 </div>
             </div>
 
@@ -160,7 +160,7 @@ include 'includes/head.php';
                     </div>
                     <div class="wh-feature-card">
                         <h4>&#128196; Support Tickets</h4>
-                        <p>Built-in ticketing system with priority levels and status tracking. Customers submit tickets from the portal; admins respond from the WolfStack dashboard.</p>
+                        <p>Built-in ticketing system with priority levels and status tracking. Customers submit tickets from the portal; admins respond from the WardenClyffe dashboard.</p>
                     </div>
                     <div class="wh-feature-card">
                         <h4>&#128187; Customer Portal</h4>
@@ -168,7 +168,7 @@ include 'includes/head.php';
                     </div>
                     <div class="wh-feature-card">
                         <h4>&#128640; Container Provisioning</h4>
-                        <p>Automatically provision LXC containers for each customer across your WolfStack cluster. Smart node selection picks the least-loaded server. Full LAMP stack setup inside the container. Live provisioning logs streamed in real time via SSE. Works with both native LXC and Proxmox.</p>
+                        <p>Automatically provision LXC containers for each customer across your WardenClyffe cluster. Smart node selection picks the least-loaded server. Full LAMP stack setup inside the container. Live provisioning logs streamed in real time via SSE. Works with both native LXC and Proxmox.</p>
                     </div>
                     <div class="wh-feature-card">
                         <h4>&#128279; Reverse Proxy</h4>
@@ -184,11 +184,11 @@ include 'includes/head.php';
                     </div>
                     <div class="wh-feature-card">
                         <h4>&#127912; White-Label Branding</h4>
-                        <p>Fully customise the customer portal with your company name, logo, accent colour, tagline, support email, terms URL, custom CSS, and favicon. Your customers see your brand, not WolfHost.</p>
+                        <p>Fully customise the customer portal with your company name, logo, accent colour, tagline, support email, terms URL, custom CSS, and favicon. Your customers see your brand, not WardenClyffeHost.</p>
                     </div>
                     <div class="wh-feature-card">
                         <h4>&#128747; Multi-Server Cluster</h4>
-                        <p>WolfHost integrates with the WolfStack cluster. View all nodes, container stats, and provision new containers across any server in the cluster. Supports both WolfStack native and Proxmox nodes.</p>
+                        <p>WardenClyffeHost integrates with the WardenClyffe cluster. View all nodes, container stats, and provision new containers across any server in the cluster. Supports both WardenClyffe native and Proxmox nodes.</p>
                     </div>
                     <div class="wh-feature-card">
                         <h4>&#128451; Central Database Server</h4>
@@ -204,7 +204,7 @@ include 'includes/head.php';
                     </div>
                     <div class="wh-feature-card">
                         <h4>&#128640; Proxmox Integration</h4>
-                        <p>WolfHost auto-detects Proxmox hosts and uses <code>pct</code> for container management. Provision containers, start/stop guests, and manage hosting across Proxmox clusters.</p>
+                        <p>WardenClyffeHost auto-detects Proxmox hosts and uses <code>pct</code> for container management. Provision containers, start/stop guests, and manage hosting across Proxmox clusters.</p>
                     </div>
                     <div class="wh-feature-card">
                         <h4>&#128274; Two-Factor Auth</h4>
@@ -216,7 +216,7 @@ include 'includes/head.php';
                     </div>
                     <div class="wh-feature-card">
                         <h4>&#128268; DirectAdmin Backend</h4>
-                        <p>Attach an existing DirectAdmin server as a backend. WolfHost acts as a <strong>white-label frontend</strong> to DirectAdmin &mdash; customers see domains, email, databases, DNS, and files from DA transparently through the WolfHost portal. If DirectAdmin is later removed, WolfHost takes over management natively with no customer disruption.</p>
+                        <p>Attach an existing DirectAdmin server as a backend. WardenClyffeHost acts as a <strong>white-label frontend</strong> to DirectAdmin &mdash; customers see domains, email, databases, DNS, and files from DA transparently through the WardenClyffeHost portal. If DirectAdmin is later removed, WardenClyffeHost takes over management natively with no customer disruption.</p>
                     </div>
                     <div class="wh-feature-card">
                         <h4>&#127760; DNS Record Management</h4>
@@ -229,26 +229,26 @@ include 'includes/head.php';
             <div class="content-section">
                 <h2>Documentation</h2>
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
-                    <a href="wolfhost-admin.php" style="display:block;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:1.2rem;text-decoration:none;color:var(--text-primary);transition:all 0.2s ease;">
+                    <a href="wardenclyffehost-admin.php" style="display:block;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:1.2rem;text-decoration:none;color:var(--text-primary);transition:all 0.2s ease;">
                         <strong style="display:block;margin-bottom:4px;">&#128100; Admin Dashboard</strong>
                         <span style="font-size:0.82rem;color:var(--text-secondary);">Customer, plan, invoice, ticket, and server management</span>
                     </a>
-                    <a href="wolfhost-portal.php" style="display:block;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:1.2rem;text-decoration:none;color:var(--text-primary);transition:all 0.2s ease;">
+                    <a href="wardenclyffehost-portal.php" style="display:block;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:1.2rem;text-decoration:none;color:var(--text-primary);transition:all 0.2s ease;">
                         <strong style="display:block;margin-bottom:4px;">&#127760; Customer Portal</strong>
                         <span style="font-size:0.82rem;color:var(--text-secondary);">White-label self-service portal and branding</span>
                     </a>
-                    <a href="wolfhost-provisioning.php" style="display:block;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:1.2rem;text-decoration:none;color:var(--text-primary);transition:all 0.2s ease;">
+                    <a href="wardenclyffehost-provisioning.php" style="display:block;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:1.2rem;text-decoration:none;color:var(--text-primary);transition:all 0.2s ease;">
                         <strong style="display:block;margin-bottom:4px;">&#128640; Provisioning</strong>
                         <span style="font-size:0.82rem;color:var(--text-secondary);">Container provisioning, reverse proxy, and mail server</span>
                     </a>
-                    <a href="wolfhost-setup.php" style="display:block;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:1.2rem;text-decoration:none;color:var(--text-primary);transition:all 0.2s ease;">
+                    <a href="wardenclyffehost-setup.php" style="display:block;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:1.2rem;text-decoration:none;color:var(--text-primary);transition:all 0.2s ease;">
                         <strong style="display:block;margin-bottom:4px;">&#9881; Setup &amp; Configuration</strong>
                         <span style="font-size:0.82rem;color:var(--text-secondary);">Installation, configuration, and technical details</span>
                     </a>
                 </div>
             </div>
 
-            <div class="page-nav"><a href="wolfstack-plugins.php" class="prev">&larr; Plugin System</a><a href="wolfhost-admin.php" class="next">Admin Dashboard &rarr;</a></div>
+            <div class="page-nav"><a href="wardenclyffe-plugins.php" class="prev">&larr; Plugin System</a><a href="wardenclyffehost-admin.php" class="next">Admin Dashboard &rarr;</a></div>
 
     </main>
 <?php include 'includes/footer.php'; ?>

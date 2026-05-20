@@ -1,6 +1,6 @@
 <?php
-$page_title = '🏗️ WolfScale Architecture — WolfStack Docs';
-$page_desc = 'Technical architecture of WolfScale database replication';
+$page_title = '🏗️ WardenClyffeScale Architecture — WardenClyffe Docs';
+$page_desc = 'Technical architecture of WardenClyffeScale database replication';
 $active = 'architecture.php';
 include 'includes/head.php';
 ?>
@@ -12,11 +12,11 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Architecture Overview</h2>
-                <p>WolfScale uses a peer-to-peer architecture where each node connects to the database it manages and communicates with other WolfScale nodes to synchronise changes.</p>
+                <p>WardenClyffeScale uses a peer-to-peer architecture where each node connects to the database it manages and communicates with other WardenClyffeScale nodes to synchronise changes.</p>
                 <h3>Components</h3>
                 <ul>
                     <li><strong>Replication Engine</strong> &mdash; Reads binlog events and forwards to peers</li>
-                    <li><strong>Peer Discovery</strong> &mdash; Auto-discovers nodes via WolfNet or manual configuration</li>
+                    <li><strong>Peer Discovery</strong> &mdash; Auto-discovers nodes via WardenClyffeNet or manual configuration</li>
                     <li><strong>Load Balancer</strong> &mdash; Routes queries to healthy nodes</li>
                     <li><strong>Health Checker</strong> &mdash; Monitors node liveness and replication lag</li>
                     <li><strong>Conflict Resolver</strong> &mdash; Handles concurrent writes to the same rows</li>

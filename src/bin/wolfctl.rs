@@ -1,22 +1,22 @@
-//! WolfCtl - Command line tool for managing WolfScale clusters
+//! WardenClyffeCtl - Command line tool for managing WardenClyffeScale clusters
 //!
 //! Usage:
-//!   wolfctl list servers     - Show cluster node status
-//!   wolfctl status           - Show local node status
-//!   wolfctl promote          - Promote this node to leader
-//!   wolfctl demote           - Demote this node from leader
+//!   wardenclyffectl list servers     - Show cluster node status
+//!   wardenclyffectl status           - Show local node status
+//!   wardenclyffectl promote          - Promote this node to leader
+//!   wardenclyffectl demote           - Demote this node from leader
 
 use clap::{Parser, Subcommand};
 use serde::Deserialize;
 use std::path::PathBuf;
 
-/// WolfScale Cluster Control Tool
+/// WardenClyffeScale Cluster Control Tool
 #[derive(Parser)]
-#[command(name = "wolfctl")]
-#[command(about = "Control and monitor WolfScale clusters", long_about = None)]
+#[command(name = "wardenclyffectl")]
+#[command(about = "Control and monitor WardenClyffeScale clusters", long_about = None)]
 struct Cli {
     /// Path to config file
-    #[arg(short, long, default_value = "/etc/wolfscale/config.toml")]
+    #[arg(short, long, default_value = "/etc/wardenclyffescale/config.toml")]
     config: PathBuf,
 
     /// API endpoint to connect to (overrides config)
@@ -42,7 +42,7 @@ enum Commands {
     Demote,
     /// Migrate database from another node (for adding new nodes to existing clusters)
     Migrate {
-        /// Source node address (e.g., 10.0.10.111:8080 or http://wolftest1:8080)
+        /// Source node address (e.g., 10.0.10.111:8080 or http://wardenclyffetest1:8080)
         #[arg(long)]
         from: String,
     },
@@ -74,9 +74,9 @@ enum Commands {
         #[arg(long)]
         password: Option<String>,
     },
-    /// Auto-tune MariaDB for optimal WolfScale performance
+    /// Auto-tune MariaDB for optimal WardenClyffeScale performance
     TuneMariadb {
-        /// Output file path (default: /etc/mysql/mariadb.conf.d/99-wolfscale.cnf)
+        /// Output file path (default: /etc/mysql/mariadb.conf.d/99-wardenclyffescale.cnf)
         #[arg(long)]
         output: Option<String>,
         /// Don't restart MariaDB after creating config
@@ -352,7 +352,7 @@ async fn list_servers(endpoint: &str) -> Result<(), Box<dyn std::error::Error>> 
 
     // Print header
     println!();
-    println!("WolfScale Cluster Status (wolfctl v{})", env!("CARGO_PKG_VERSION"));
+    println!("WardenClyffeScale Cluster Status (wardenclyffectl v{})", env!("CARGO_PKG_VERSION"));
     println!("========================================");
     println!();
     println!("Total: {} nodes  |  Active: {}", 
@@ -540,7 +540,7 @@ struct WalConfig {
 
 fn check_config(path: &PathBuf) -> Result<(), Box<dyn std::error::Error>> {
     println!();
-    println!("\x1b[1;36m  WolfScale Configuration Check\x1b[0m");
+    println!("\x1b[1;36m  WardenClyffeScale Configuration Check\x1b[0m");
     println!("  {}", "─".repeat(50));
     println!();
 
@@ -683,7 +683,7 @@ struct DumpInfo {
 }
 
 async fn migrate(source: &str, config_path: &PathBuf) -> Result<(), Box<dyn std::error::Error>> {
-    println!("\x1b[1;36mWolfScale Database Migration\x1b[0m");
+    println!("\x1b[1;36mWardenClyffeScale Database Migration\x1b[0m");
     println!("============================\n");
 
     // Normalize source address
@@ -733,7 +733,7 @@ async fn migrate(source: &str, config_path: &PathBuf) -> Result<(), Box<dyn std:
     }
 
     // Save dump to temp file
-    let temp_path = std::env::temp_dir().join("wolfscale_migration.sql");
+    let temp_path = std::env::temp_dir().join("wardenclyffescale_migration.sql");
     let dump_bytes = dump_response.bytes().await?;
     std::fs::write(&temp_path, &dump_bytes)?;
     println!("  Downloaded {} bytes", dump_bytes.len());
@@ -759,7 +759,7 @@ async fn migrate(source: &str, config_path: &PathBuf) -> Result<(), Box<dyn std:
     println!("\x1b[32m✓ Migration complete!\x1b[0m");
     println!();
     println!("The database has been migrated from the source node.");
-    println!("You can now start WolfScale - it will sync from LSN {}.", dump_info.lsn);
+    println!("You can now start WardenClyffeScale - it will sync from LSN {}.", dump_info.lsn);
     println!();
 
     Ok(())
@@ -775,7 +775,7 @@ async fn binlog_setup(
     password: Option<String>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     println!();
-    println!("\x1b[1;36m  WolfScale Binlog Replication Setup\x1b[0m");
+    println!("\x1b[1;36m  WardenClyffeScale Binlog Replication Setup\x1b[0m");
     println!("  {}", "─".repeat(50));
     println!();
 
@@ -859,7 +859,7 @@ async fn binlog_setup(
     // Generate unique server ID (based on last octet of host IP + random)
     let server_id = 1001 + (std::process::id() % 1000);
 
-    println!("\x1b[1;33mAdd this to your WolfScale config.toml:\x1b[0m");
+    println!("\x1b[1;33mAdd this to your WardenClyffeScale config.toml:\x1b[0m");
     println!();
     println!("  [replication]");
     println!("  mode = \"binlog\"");
@@ -891,14 +891,14 @@ fn set_log_level(level: &str) -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // Create systemd drop-in directory
-    let dropin_dir = "/etc/systemd/system/wolfscale.service.d";
+    let dropin_dir = "/etc/systemd/system/wardenclyffescale.service.d";
     let dropin_file = format!("{}/logging.conf", dropin_dir);
     
     // Check if running as root
     if !nix::unistd::Uid::effective().is_root() {
         println!("\x1b[1;33mNote:\x1b[0m This command requires sudo to modify systemd configuration.");
         println!();
-        println!("Run: sudo wolfctl log-level {}", level);
+        println!("Run: sudo wardenclyffectl log-level {}", level);
         return Ok(());
     }
 
@@ -909,7 +909,7 @@ fn set_log_level(level: &str) -> Result<(), Box<dyn std::error::Error>> {
     let rust_log = if level_lower == "off" {
         "".to_string()
     } else {
-        format!("wolfscale={}", level_lower)
+        format!("wardenclyffescale={}", level_lower)
     };
 
     // Write drop-in file
@@ -931,18 +931,18 @@ fn set_log_level(level: &str) -> Result<(), Box<dyn std::error::Error>> {
         return Err("Failed to reload systemd".into());
     }
 
-    println!("Restarting wolfscale service...");
+    println!("Restarting wardenclyffescale service...");
     let restart = std::process::Command::new("systemctl")
-        .args(["restart", "wolfscale"])
+        .args(["restart", "wardenclyffescale"])
         .status()?;
     
     if !restart.success() {
-        return Err("Failed to restart wolfscale service".into());
+        return Err("Failed to restart wardenclyffescale service".into());
     }
 
     println!("\x1b[1;32m✓\x1b[0m Service restarted with new log level");
     println!();
-    println!("View logs: sudo journalctl -u wolfscale -f");
+    println!("View logs: sudo journalctl -u wardenclyffescale -f");
     
     Ok(())
 }
@@ -992,7 +992,7 @@ async fn show_stats(endpoint: &str) -> Result<(), Box<dyn std::error::Error>> {
         
         // Header
         println!();
-        println!("  \x1b[1;36mWolfScale Live Statistics\x1b[0m");
+        println!("  \x1b[1;36mWardenClyffeScale Live Statistics\x1b[0m");
         println!("  {}",  "=".repeat(50));
         println!();
         
@@ -1201,7 +1201,7 @@ async fn show_stats(endpoint: &str) -> Result<(), Box<dyn std::error::Error>> {
             }
             Err(e) => {
                 println!("  \x1b[31mConnection Error: {}\x1b[0m", e);
-                println!("  Is WolfScale running?");
+                println!("  Is WardenClyffeScale running?");
                 println!("  \x1b[2mCtrl+C to exit\x1b[0m");
             }
         }
@@ -1241,7 +1241,7 @@ async fn show_lb_stats(endpoint: &str) -> Result<(), Box<dyn std::error::Error>>
         
         // Header
         println!();
-        println!("  \x1b[1;35mWolfScale Load Balancer Statistics\x1b[0m");
+        println!("  \x1b[1;35mWardenClyffeScale Load Balancer Statistics\x1b[0m");
         println!("  {}", "=".repeat(50));
         println!();
         
@@ -1394,8 +1394,8 @@ async fn reset_cluster(endpoint: &str, force: bool) -> Result<(), Box<dyn std::e
     println!();
     println!("Reset complete: {} succeeded, {} failed", success_count, error_count);
     println!();
-    println!("\x1b[1;33mIMPORTANT: You must restart all WolfScale services!\x1b[0m");
-    println!("  sudo systemctl restart wolfscale");
+    println!("\x1b[1;33mIMPORTANT: You must restart all WardenClyffeScale services!\x1b[0m");
+    println!("  sudo systemctl restart wardenclyffescale");
     println!();
     
     Ok(())
@@ -1479,7 +1479,7 @@ fn tune_mariadb(
     dry_run: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
     println!();
-    println!("\x1b[1;36m  WolfScale MariaDB Auto-Tuner\x1b[0m");
+    println!("\x1b[1;36m  WardenClyffeScale MariaDB Auto-Tuner\x1b[0m");
     println!("  {}", "─".repeat(50));
     println!();
 
@@ -1505,8 +1505,8 @@ fn tune_mariadb(
     println!("  thread_pool_size = {}", cpu_cores);
 
     // Generate config content
-    let config_content = format!(r#"# WolfScale MariaDB Performance Tuning
-# Auto-generated by: wolfctl tune-mariadb
+    let config_content = format!(r#"# WardenClyffeScale MariaDB Performance Tuning
+# Auto-generated by: wardenclyffectl tune-mariadb
 # Generated: {}
 
 [mariadb]
@@ -1524,7 +1524,7 @@ max_connections = 500
 thread_pool_size = {}
 thread_handling = pool-of-threads
 
-# Disable query cache (WolfScale handles consistency)
+# Disable query cache (WardenClyffeScale handles consistency)
 query_cache_type = 0
 query_cache_size = 0
 
@@ -1538,7 +1538,7 @@ bulk_insert_buffer_size = 256M
         cpu_cores, cpu_cores
     );
 
-    let output_path = output.unwrap_or_else(|| "/etc/mysql/mariadb.conf.d/99-wolfscale.cnf".to_string());
+    let output_path = output.unwrap_or_else(|| "/etc/mysql/mariadb.conf.d/99-wardenclyffescale.cnf".to_string());
     
     if dry_run {
         println!();
@@ -1575,7 +1575,7 @@ bulk_insert_buffer_size = 256M
             if e.kind() == std::io::ErrorKind::PermissionDenied {
                 println!("\x1b[1;31m✗\x1b[0m Permission denied. Try running with sudo:");
                 println!();
-                println!("  sudo wolfctl tune-mariadb");
+                println!("  sudo wardenclyffectl tune-mariadb");
                 return Ok(());
             }
             return Err(e.into());

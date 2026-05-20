@@ -1,4 +1,4 @@
-//! WolfScale - Distributed MariaDB Synchronization Manager
+//! WardenClyffeScale - Distributed MariaDB Synchronization Manager
 //!
 //! A high-performance, Rust-based distributed database synchronization manager
 //! that keeps multiple MariaDB databases in sync using a Write-Ahead Log (WAL)
@@ -6,7 +6,7 @@
 //!
 //! # Architecture
 //!
-//! WolfScale uses a leader-based replication model where one node coordinates
+//! WardenClyffeScale uses a leader-based replication model where one node coordinates
 //! all writes and replicates them to follower nodes. This ensures strong
 //! consistency while maintaining high performance.
 //!
@@ -34,12 +34,12 @@ pub mod binlog;
 pub mod tuning;
 pub mod lb;
 
-pub use config::WolfScaleConfig;
+pub use config::WardenClyffeScaleConfig;
 pub use error::{Error, Result};
 
 /// Re-export commonly used types
 pub mod prelude {
-    pub use crate::config::WolfScaleConfig;
+    pub use crate::config::WardenClyffeScaleConfig;
     pub use crate::error::{Error, Result};
     pub use crate::wal::LogEntry;
     pub use crate::wal::{WalWriter, WalReader};

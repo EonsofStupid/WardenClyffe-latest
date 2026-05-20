@@ -1,8 +1,8 @@
-// WolfScale Website Scripts
+// WardenClyffeScale Website Scripts
 
 // Apply saved theme immediately to prevent flash
 (function () {
-    const savedTheme = localStorage.getItem('wolfscale-theme') || 'dark';
+    const savedTheme = localStorage.getItem('wardenclyffescale-theme') || 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
 })();
 
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function setTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('wolfscale-theme', theme);
+        localStorage.setItem('wardenclyffescale-theme', theme);
     }
 
     if (themeToggle) {

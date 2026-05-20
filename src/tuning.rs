@@ -1,14 +1,14 @@
 //! Auto-tuning module
 //!
 //! Detects hardware capabilities and calculates optimal configuration values.
-//! Reserves resources for MariaDB while optimizing WolfScale performance.
+//! Reserves resources for MariaDB while optimizing WardenClyffeScale performance.
 
 use sysinfo::System;
 
 /// Tuned configuration values based on hardware detection
 #[derive(Debug, Clone)]
 pub struct TunedConfig {
-    /// Number of WolfScale worker threads
+    /// Number of WardenClyffeScale worker threads
     pub worker_threads: usize,
     /// WAL batch size
     pub batch_size: usize,
@@ -50,28 +50,28 @@ pub fn detect_ram_mb() -> u64 {
 /// Auto-tune configuration based on detected hardware
 ///
 /// Allocation strategy:
-/// - WolfScale gets 25% of CPU cores (min 1, max 8)
-/// - WolfScale gets 15% of RAM for buffers
+/// - WardenClyffeScale gets 25% of CPU cores (min 1, max 8)
+/// - WardenClyffeScale gets 15% of RAM for buffers
 /// - MariaDB gets the remaining resources
 pub fn auto_tune() -> TunedConfig {
     let cores = detect_cpu_cores();
     let ram_mb = detect_ram_mb();
     
-    // CPU: Use 25% of cores for WolfScale, min 1, max 8
+    // CPU: Use 25% of cores for WardenClyffeScale, min 1, max 8
     // This leaves 75% for MariaDB query threads
     let worker_threads = (cores / 4).clamp(1, 8);
     
     // Replication workers: Same as worker threads, but at least 2 for parallel replication
     let replication_workers = worker_threads.max(2);
     
-    // RAM: Allocate 15% for WolfScale buffers
+    // RAM: Allocate 15% for WardenClyffeScale buffers
     // MariaDB should get ~70% via innodb_buffer_pool_size
-    let wolfscale_ram_mb = ram_mb * 15 / 100;
+    let wardenclyffescale_ram_mb = ram_mb * 15 / 100;
     
     // Batch size: Scale with allocated RAM
-    // ~1000 entries per GB of allocated WolfScale RAM
+    // ~1000 entries per GB of allocated WardenClyffeScale RAM
     // Min 100, max 10000
-    let batch_size = ((wolfscale_ram_mb / 1024) * 1000)
+    let batch_size = ((wardenclyffescale_ram_mb / 1024) * 1000)
         .max(100)
         .min(10000) as usize;
     
@@ -104,7 +104,7 @@ pub fn auto_tune() -> TunedConfig {
 pub fn tuning_summary(config: &TunedConfig) -> String {
     format!(
         "Detected: {} cores, {} MB RAM\n\
-         WolfScale: {} worker threads, {} replication workers\n\
+         WardenClyffeScale: {} worker threads, {} replication workers\n\
          Buffers: batch_size={}, channel_buffer={}",
         config.detected_cores,
         config.detected_ram_mb,

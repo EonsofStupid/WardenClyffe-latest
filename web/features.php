@@ -1,6 +1,6 @@
 <?php
-$page_title = '✨ WolfScale Features — WolfStack Docs';
-$page_desc = 'Complete feature list for WolfScale database replication and load balancing';
+$page_title = '✨ WardenClyffeScale Features — WardenClyffe Docs';
+$page_desc = 'Complete feature list for WardenClyffeScale database replication and load balancing';
 $active = 'features.php';
 include 'includes/head.php';
 ?>
@@ -19,7 +19,7 @@ include 'includes/head.php';
                     <li><strong>Binary Log Replication</strong> &mdash; Uses MySQL binlog for efficient, low-latency sync</li>
                     <li><strong>Conflict Resolution</strong> &mdash; Automatic handling of write conflicts</li>
                     <li><strong>Geographic Distribution</strong> &mdash; Run nodes across data centres</li>
-                    <li><strong>Zero Configuration</strong> &mdash; Auto-discovery of peers via WolfNet</li>
+                    <li><strong>Zero Configuration</strong> &mdash; Auto-discovery of peers via WardenClyffeNet</li>
                     <li><strong>Health Monitoring</strong> &mdash; Real-time node health and lag monitoring</li>
                 </ul>
                 <h3>Supported Databases</h3>

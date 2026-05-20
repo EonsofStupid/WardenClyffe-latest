@@ -1,11 +1,11 @@
-//! WolfScale Error Types
+//! WardenClyffeScale Error Types
 
 use thiserror::Error;
 
-/// Result type alias for WolfScale operations
+/// Result type alias for WardenClyffeScale operations
 pub type Result<T> = std::result::Result<T, Error>;
 
-/// WolfScale error types
+/// WardenClyffeScale error types
 #[derive(Error, Debug)]
 pub enum Error {
     // Configuration errors

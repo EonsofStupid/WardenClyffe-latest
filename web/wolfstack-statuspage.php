@@ -1,7 +1,7 @@
 <?php
-$page_title = '📟 Status Pages — WolfStack Docs';
-$page_desc = 'Built-in uptime monitoring and public status pages with HTTP, TCP, Ping, Container, and WolfRun monitors';
-$active = 'wolfstack-statuspage.php';
+$page_title = '📟 Status Pages — WardenClyffe Docs';
+$page_desc = 'Built-in uptime monitoring and public status pages with HTTP, TCP, Ping, Container, and WardenClyffeRun monitors';
+$active = 'wardenclyffe-statuspage.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -12,18 +12,18 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
-                <img src="images/screenshots/statuspage.png" alt="WolfStack public status pages with uptime monitoring" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
-                <p>WolfStack includes a full-featured uptime monitoring system with public-facing status pages &mdash; all built in, no third-party tools required. Create monitors for your services, build beautiful branded status pages, and keep your users informed with automatic incident tracking.</p>
+                <img src="images/screenshots/statuspage.png" alt="WardenClyffe public status pages with uptime monitoring" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
+                <p>WardenClyffe includes a full-featured uptime monitoring system with public-facing status pages &mdash; all built in, no third-party tools required. Create monitors for your services, build beautiful branded status pages, and keep your users informed with automatic incident tracking.</p>
                 <p>Status pages are <strong>cluster-scoped</strong>: each cluster has its own pool of monitors, pages, and incidents. Configuration syncs automatically between nodes in the same cluster.</p>
 
                 <div class="info-box" style="margin-top:1.25rem;">
-                    <strong>No extra tools needed</strong> &mdash; WolfStack replaces external monitoring services like UptimeRobot, Betterstack, or Cachet. Your monitoring data stays on your own infrastructure.
+                    <strong>No extra tools needed</strong> &mdash; WardenClyffe replaces external monitoring services like UptimeRobot, Betterstack, or Cachet. Your monitoring data stays on your own infrastructure.
                 </div>
             </div>
 
             <div class="content-section">
                 <h2>Monitor Types</h2>
-                <p>WolfStack supports five types of monitors. All monitors share a global pool and can be assigned to one or more status pages.</p>
+                <p>WardenClyffe supports five types of monitors. All monitors share a global pool and can be assigned to one or more status pages.</p>
 
                 <h3>HTTP Monitor</h3>
                 <p>Checks a URL and verifies the response status code. Supports HTTPS with self-signed certificate handling.</p>
@@ -54,10 +54,10 @@ include 'includes/head.php';
                     <li><strong>Node</strong> &mdash; Optional target node (for multi-node clusters)</li>
                 </ul>
 
-                <h3>WolfRun Monitor</h3>
-                <p>Monitors orchestrated services deployed through <a href="wolfrun.php">WolfRun</a>. Checks that enough healthy instances are running.</p>
+                <h3>WardenClyffeRun Monitor</h3>
+                <p>Monitors orchestrated services deployed through <a href="wardenclyfferun.php">WardenClyffeRun</a>. Checks that enough healthy instances are running.</p>
                 <ul>
-                    <li><strong>Service ID</strong> &mdash; The WolfRun service to monitor</li>
+                    <li><strong>Service ID</strong> &mdash; The WardenClyffeRun service to monitor</li>
                     <li><strong>Minimum Instances</strong> &mdash; Required number of healthy instances</li>
                 </ul>
             </div>
@@ -124,20 +124,20 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Dedicated Status Page Port</h2>
-                <p>WolfStack serves public status pages on a <strong>dedicated port (8550)</strong> in addition to the main dashboard port (8553). This allows you to:</p>
+                <p>WardenClyffe serves public status pages on a <strong>dedicated port (8550)</strong> in addition to the main dashboard port (8553). This allows you to:</p>
                 <ul>
                     <li>Point a public domain directly at port 8550 for status pages only</li>
                     <li>Keep the main dashboard on a separate, firewalled port</li>
                     <li>No authentication required &mdash; status pages are designed to be public</li>
                 </ul>
                 <div class="info-box" style="margin-top:1rem;">
-                    <strong>Tip:</strong> Use <a href="wolfproxy.php">WolfProxy</a> to reverse-proxy <code>status.yourdomain.com</code> to port 8550 for a clean public URL with SSL.
+                    <strong>Tip:</strong> Use <a href="wardenclyffeproxy.php">WardenClyffeProxy</a> to reverse-proxy <code>status.yourdomain.com</code> to port 8550 for a clean public URL with SSL.
                 </div>
             </div>
 
             <div class="content-section">
                 <h2>Incident Management</h2>
-                <p>WolfStack includes both automatic and manual incident tracking.</p>
+                <p>WardenClyffe includes both automatic and manual incident tracking.</p>
 
                 <h3>Automatic Incidents</h3>
                 <p>When a monitor transitions to <strong>Degraded</strong> or <strong>Down</strong>, an incident is automatically created. When the monitor returns to <strong>Up</strong>, the incident is automatically resolved. These are clearly marked as auto-created in the admin interface.</p>
@@ -172,7 +172,7 @@ include 'includes/head.php';
                 <ol class="numbered-list">
                     <li>
                         <strong>Create a monitor</strong>
-                        <p>Go to <strong>Datacenter &rarr; Status Pages &rarr; Monitors</strong> and click <strong>Add Monitor</strong>. Choose a type (HTTP, TCP, Ping, Container, or WolfRun), configure the target, and save.</p>
+                        <p>Go to <strong>Datacenter &rarr; Status Pages &rarr; Monitors</strong> and click <strong>Add Monitor</strong>. Choose a type (HTTP, TCP, Ping, Container, or WardenClyffeRun), configure the target, and save.</p>
                     </li>
                     <li>
                         <strong>Create a status page</strong>
@@ -184,7 +184,7 @@ include 'includes/head.php';
                     </li>
                     <li>
                         <strong>Set up a public domain (optional)</strong>
-                        <p>Use WolfProxy or any reverse proxy to point <code>status.yourdomain.com</code> at port 8550 for a clean, SSL-secured public URL.</p>
+                        <p>Use WardenClyffeProxy or any reverse proxy to point <code>status.yourdomain.com</code> at port 8550 for a clean, SSL-secured public URL.</p>
                     </li>
                 </ol>
             </div>
@@ -193,13 +193,13 @@ include 'includes/head.php';
                 <h2>Configuration Storage</h2>
                 <p>All status page data is stored as JSON files &mdash; no database required:</p>
                 <ul>
-                    <li><code>/etc/wolfstack/statuspage.json</code> &mdash; Monitors, pages, and incidents</li>
-                    <li><code>/etc/wolfstack/statuspage-uptime.json</code> &mdash; 90-day uptime history per monitor</li>
+                    <li><code>/etc/wardenclyffe/statuspage.json</code> &mdash; Monitors, pages, and incidents</li>
+                    <li><code>/etc/wardenclyffe/statuspage-uptime.json</code> &mdash; 90-day uptime history per monitor</li>
                 </ul>
                 <p>Configuration can be exported and imported via the API for backup or migration between clusters.</p>
             </div>
 
-<div class="page-nav"><a href="wolfstack-alerting.php" class="prev">&larr; Alerting &amp; Notifications</a><a href="wolfstack-backups.php" class="next">Backup &amp; Restore &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffe-alerting.php" class="prev">&larr; Alerting &amp; Notifications</a><a href="wardenclyffe-backups.php" class="next">Backup &amp; Restore &rarr;</a></div>
         
     </main>
 <?php include 'includes/footer.php'; ?>

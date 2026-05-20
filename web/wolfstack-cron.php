@@ -1,7 +1,7 @@
 <?php
-$page_title = '⏰ Cron Jobs — WolfStack Docs';
+$page_title = '⏰ Cron Jobs — WardenClyffe Docs';
 $page_desc = 'Schedule and manage cron tasks on any node from the web dashboard';
-$active = 'wolfstack-cron.php';
+$active = 'wardenclyffe-cron.php';
 include 'includes/head.php';
 ?>
 <body>
@@ -12,8 +12,8 @@ include 'includes/head.php';
 
             <div class="content-section">
                 <h2>Overview</h2>
-                <img src="images/screenshots/cron.png" alt="WolfStack cron job management" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
-                <p>WolfStack&rsquo;s Cron Manager lets you view, create, edit, and delete cron jobs on any node in your cluster from the web dashboard. No more SSH-ing into individual servers to manage scheduled tasks.</p>
+                <img src="images/screenshots/cron.png" alt="WardenClyffe cron job management" class="screenshot" loading="lazy" style="border-radius:12px;border:1px solid var(--border-color);margin:1.5rem 0;">
+                <p>WardenClyffe&rsquo;s Cron Manager lets you view, create, edit, and delete cron jobs on any node in your cluster from the web dashboard. No more SSH-ing into individual servers to manage scheduled tasks.</p>
                 <h3>Features</h3>
                 <ul>
                     <li>View all cron jobs for any user on any node</li>
@@ -24,7 +24,7 @@ include 'includes/head.php';
                 </ul>
             </div>
 
-<div class="page-nav"><a href="wolfstack-certificates.php" class="prev">&larr; Certificates</a><a href="wolfstack-terminal.php" class="next">Terminal &rarr;</a></div>
+<div class="page-nav"><a href="wardenclyffe-certificates.php" class="prev">&larr; Certificates</a><a href="wardenclyffe-terminal.php" class="next">Terminal &rarr;</a></div>
         
     </main>
 <?php include 'includes/footer.php'; ?>
