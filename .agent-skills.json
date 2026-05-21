@@ -1,0 +1,16 @@
+{
+  "$schema": "https://wardenclyffe.dev/schema/agent-skills/v1.json",
+  "description": "Project-local agent skill wrappers. The source of truth is docs/ai/WARDENCLYFFE_BASE_SKILL.md; wrappers point Codex, Claude, Cursor, and future agents at the same base skill.",
+  "baseSkill": "docs/ai/WARDENCLYFFE_BASE_SKILL.md",
+  "meshTouchpoints": "docs/ai/MCP_MESH_TOUCHPOINTS.md",
+  "intelligenceTouchpoints": "docs/ai/INTELLIGENCE_TOUCHPOINTS.md",
+  "currentMeshRegistry": "wardenclyffe/registry/context-mesh.yaml",
+  "wrappers": {
+    "codex": ".codex/skills/wardenclyffe-base/SKILL.md",
+    "claude": ".claude/skills/wardenclyffe-base/SKILL.md",
+    "cursorRule": ".cursor/rules/wardenclyffe-intelligence.mdc",
+    "cursorSkill": ".cursor/skills/wardenclyffe-base/SKILL.md",
+    "generic": ".agents/skills/wardenclyffe-base/SKILL.md"
+  }
+}
+

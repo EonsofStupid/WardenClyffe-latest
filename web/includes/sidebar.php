@@ -19,6 +19,8 @@ function nav_active($href, $active) {
                     <div class="dropdown-col">
                         <div class="dropdown-col-title">Getting Started</div>
                         <a href="app-store.php"<?= nav_active('app-store.php', $active) ?>>App Store</a>
+                        <a href="warden.php"<?= nav_active('warden.php', $active) ?>>Warden Server Manager</a>
+                        <a href="clyffe.php"<?= nav_active('clyffe.php', $active) ?>>Clyffe Customer Portal</a>
                         <a href="wardenclyffe-containers.php"<?= nav_active('wardenclyffe-containers.php', $active) ?>>Container Management</a>
                         <a href="download.php"<?= nav_active('download.php', $active) ?> style="font-weight:600;">Install</a>
                         <a href="live-usb.php"<?= nav_active('live-usb.php', $active) ?>>Live USB</a>

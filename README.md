@@ -1,39 +1,47 @@
-# 🐺 WardenClyffe — Server Clustering Tools Made Simple
+﻿# WardenClyffe - Warden Server Manager And Clyffe Customer Portal
 
 <div align="center">
 
-**Free tools for building robust, clustered server infrastructure**
+**A free, modern server and customer operations platform for Proxmox-backed infrastructure**
 
 [![Rust](https://img.shields.io/badge/rust-1.70%2B-orange.svg)](https://www.rust-lang.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Sponsor](https://img.shields.io/badge/Sponsor-❤-ea4aaa.svg)](https://github.com/sponsors/wardenclyffesoftwaresystemsltd)
+[![Sponsor](https://img.shields.io/badge/Sponsor-Heart-ea4aaa.svg)](https://github.com/sponsors/wardenclyffesoftwaresystemsltd)
 
-**[wardenclyffescale.org](https://wardenclyffescale.org)** • **[wardenclyffe.uk.com](https://wardenclyffe.uk.com)** • **[Discord](https://discord.gg/q9qMjHjUQY)** • **[Reddit](https://www.reddit.com/r/WardenClyffe/)**
+**[wardenclyffescale.org](https://wardenclyffescale.org)** | **[wardenclyffe.uk.com](https://wardenclyffe.uk.com)** | **[Discord](https://discord.gg/q9qMjHjUQY)** | **[Reddit](https://www.reddit.com/r/WardenClyffe/)**
 
-© WardenClyffe Software Systems Ltd
+Copyright 2024-2026 WardenClyffe Software Systems Ltd
 
 </div>
 
 ---
 
-WardenClyffe started as a database replication tool and has grown into a suite of server clustering utilities. Every tool runs as a single Rust binary, uses auto-discovery, and is designed to be simple to set up.
+WardenClyffe is being built as two coordinated product surfaces:
+
+- **Warden**: the operator/server-control platform for our hosts, Proxmox nodes, VMs, LXC containers, storage, networking, backups, AI operations, and automation.
+- **Clyffe**: the customer portal, knowledge base, tickets, CRM, and customer-safe service panel built on Warden's API.
+
+The first target is an internal, turnkey two-server deployment. Proxmox VE is the infrastructure substrate for KVM, LXC, storage, networking, backups, tasks, and consoles. WardenClyffe wraps that substrate with a modern product identity, tenant-safe APIs, customer panels, and AI-assisted operations.
+
+See [docs/WARDEN_CLYFFE_ARCHITECTURE.md](docs/WARDEN_CLYFFE_ARCHITECTURE.md) for the current architecture and product boundary.
 
 | Tool | Description | Status |
 |------|-------------|--------|
-| **[WardenClyffe](wardenclyffe/)** | Server, VM & container management dashboard with Proxmox integration | ✅ Available |
-| **[WardenClyffeScale](#wardenclyffescale--database-replication)** | MariaDB/MySQL replication, clustering & load balancing | ✅ Available |
-| **[WardenClyffeDisk](#wardenclyffedisk--distributed-filesystem)** | Disk sharing & replication across networks | ✅ Available |
-| **[WardenClyffeNet](#wardenclyffenet--private-networking)** | Secure private networking across the internet | ✅ Available |
+| **Warden** | Server, VM, LXC, storage, automation, and Proxmox-native operator panel | Pilot |
+| **Clyffe** | Customer portal, tickets, CRM, service panel, and knowledge base | Planned |
+| **[WardenClyffeScale](#wardenclyffescale--database-replication)** | MariaDB/MySQL replication, clustering, and load balancing | Existing component |
+| **[WardenClyffeDisk](#wardenclyffedisk--distributed-filesystem)** | Disk sharing and replication across networks | Existing component |
+| **[WardenClyffeNet](#wardenclyffenet--private-networking)** | Secure private networking across the internet | Existing component |
 
 ---
 
-## WardenClyffeScale — Database Replication
+## WardenClyffeScale â€” Database Replication
 
-**Database replication, clustering, and load balancing — the easy way**
+**Database replication, clustering, and load balancing â€” the easy way**
 
-WardenClyffeScale is a lightweight, high-availability replication layer for MariaDB/MySQL. It provides **automatic leader election** with deterministic failover, **WAL-based replication** for strong consistency, and a **MySQL-compatible proxy** for transparent routing—all in a single Rust binary.
+WardenClyffeScale is a lightweight, high-availability replication layer for MariaDB/MySQL. It provides **automatic leader election** with deterministic failover, **WAL-based replication** for strong consistency, and a **MySQL-compatible proxy** for transparent routingâ€”all in a single Rust binary.
 
-Works with MySQL, Percona, and Amazon RDS • **MariaDB recommended**
+Works with MySQL, Percona, and Amazon RDS â€¢ **MariaDB recommended**
 
 ### Why WardenClyffeScale?
 
@@ -41,10 +49,10 @@ Works with MySQL, Percona, and Amazon RDS • **MariaDB recommended**
 |---------|---------|
 | **Sub-Millisecond Replication** | Push-based replication faster than MySQL, MariaDB, or Galera |
 | **Zero Write Conflicts** | Single-leader model eliminates certification failures |
-| **Predictable Failover** | Lowest node ID always wins—you know exactly who becomes leader |
+| **Predictable Failover** | Lowest node ID always winsâ€”you know exactly who becomes leader |
 | **Safe Node Rejoin** | Returning nodes sync via WAL before taking leadership |
 | **Zero-Config Discovery** | Nodes find each other automatically via UDP broadcast |
-| **Transparent Proxy** | Connect via MySQL protocol—no application changes needed |
+| **Transparent Proxy** | Connect via MySQL protocolâ€”no application changes needed |
 | **Built-in Load Balancer** | Distribute connections across cluster nodes with automatic failover |
 | **Single Binary** | No patched databases, no complex dependencies |
 
@@ -55,11 +63,11 @@ Works with MySQL, Percona, and Amazon RDS • **MariaDB recommended**
 | MySQL Async | 100ms - seconds |
 | MySQL Semi-Sync | 10-50ms |
 | MariaDB Galera | 10-20ms |
-| **WardenClyffeScale** | **<1ms** ⚡ |
+| **WardenClyffeScale** | **<1ms** âš¡ |
 
 ### Quick Start
 
-> **All cluster nodes MUST have identical data before starting WardenClyffeScale.** WardenClyffeScale replicates new changes only — it does NOT sync existing data between nodes.
+> **All cluster nodes MUST have identical data before starting WardenClyffeScale.** WardenClyffeScale replicates new changes only â€” it does NOT sync existing data between nodes.
 
 ```bash
 # Install WardenClyffeScale on each server
@@ -68,20 +76,20 @@ curl -sSL https://raw.githubusercontent.com/wardenclyffesoftwaresystemsltd/Warde
 
 ### Load Balancer
 
-Install the load balancer directly on any server that needs database access. It auto-discovers your cluster — no configuration needed.
+Install the load balancer directly on any server that needs database access. It auto-discovers your cluster â€” no configuration needed.
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale/main/setup_lb.sh | bash
 ```
 
 ```
-Web Server 1 ─── WardenClyffeScale LB ───┐
-             (auto-discovers)    │
-                                 │
-Web Server 2 ─── WardenClyffeScale LB ───┼──► WardenClyffeScale DB Cluster
-             (auto-discovers)    │
-                                 │
-Web Server 3 ─── WardenClyffeScale LB ───┘
+Web Server 1 â”€â”€â”€ WardenClyffeScale LB â”€â”€â”€â”
+             (auto-discovers)    â”‚
+                                 â”‚
+Web Server 2 â”€â”€â”€ WardenClyffeScale LB â”€â”€â”€â”¼â”€â”€â–º WardenClyffeScale DB Cluster
+             (auto-discovers)    â”‚
+                                 â”‚
+Web Server 3 â”€â”€â”€ WardenClyffeScale LB â”€â”€â”€â”˜
              (auto-discovers)
 ```
 
@@ -96,9 +104,9 @@ wardenclyffectl reset --force    # Reset WAL and state (DESTRUCTIVE)
 
 ---
 
-## WardenClyffeDisk — Distributed Filesystem
+## WardenClyffeDisk â€” Distributed Filesystem
 
-**Disk sharing and replication across networks — the easy way**
+**Disk sharing and replication across networks â€” the easy way**
 
 WardenClyffeDisk is a FUSE-based distributed filesystem that shares and replicates files across Linux servers. Mount a shared directory on any number of machines and have your data automatically synchronised. Supports leader, follower, and client modes.
 
@@ -106,7 +114,7 @@ WardenClyffeDisk is a FUSE-based distributed filesystem that shares and replicat
 
 | Feature | Benefit |
 |---------|---------|
-| **FUSE-Based** | Mount as a regular filesystem—works with any application |
+| **FUSE-Based** | Mount as a regular filesystemâ€”works with any application |
 | **Automatic Replication** | Files sync to all nodes automatically |
 | **Content-Addressed Storage** | Efficient deduplication via SHA256 chunking |
 | **Leader-Follower Model** | Strong consistency with automatic failover |
@@ -124,38 +132,38 @@ curl -sSL https://raw.githubusercontent.com/wardenclyffesoftwaresystemsltd/Warde
 
 | Role | Storage | Description |
 |------|---------|-------------|
-| **Leader** | ✅ Local | Primary node — accepts writes, replicates to followers |
-| **Follower** | ✅ Local | Receives replicated data, can become leader on failover |
-| **Client** | ❌ None | Mount-only — reads/writes forwarded to leader, no local data |
-| **Auto** | ✅ Local | Auto-election — lowest ID becomes leader |
+| **Leader** | âœ… Local | Primary node â€” accepts writes, replicates to followers |
+| **Follower** | âœ… Local | Receives replicated data, can become leader on failover |
+| **Client** | âŒ None | Mount-only â€” reads/writes forwarded to leader, no local data |
+| **Auto** | âœ… Local | Auto-election â€” lowest ID becomes leader |
 
 See [`wardenclyffedisk/README.md`](wardenclyffedisk/README.md) for full documentation.
 
 ---
 
-## WardenClyffeNet — Private Networking
+## WardenClyffeNet â€” Private Networking
 
-WardenClyffeNet creates a secure, encrypted private network between your machines over the internet. Machines on WardenClyffeNet can see each other as if they were on the same LAN, but all traffic is encrypted with modern cryptography (X25519 + ChaCha20-Poly1305 — the same crypto as WireGuard).
+WardenClyffeNet creates a secure, encrypted private network between your machines over the internet. Machines on WardenClyffeNet can see each other as if they were on the same LAN, but all traffic is encrypted with modern cryptography (X25519 + ChaCha20-Poly1305 â€” the same crypto as WireGuard).
 
 ### Why WardenClyffeNet?
 
 | Feature | Benefit |
 |---------|---------|
 | **WireGuard-Class Crypto** | X25519 key exchange + ChaCha20-Poly1305 AEAD encryption |
-| **Mesh Networking** | Every node can reach every other node directly — no single point of failure |
-| **Invite/Join System** | Connect new peers with a single token — no manual key exchange |
-| **Relay Forwarding** | Nodes behind NAT can communicate through a relay — no port forwarding needed |
+| **Mesh Networking** | Every node can reach every other node directly â€” no single point of failure |
+| **Invite/Join System** | Connect new peers with a single token â€” no manual key exchange |
+| **Relay Forwarding** | Nodes behind NAT can communicate through a relay â€” no port forwarding needed |
 | **Gateway Mode** | Route internet traffic through a gateway node with NAT masquerading |
 | **LAN Auto-Discovery** | Nodes find each other automatically on the same network |
 | **TUN-Based** | Uses kernel TUN interfaces for near-native performance |
-| **Hostname/DynDNS** | Use hostnames in endpoints — re-resolved every 60s for dynamic IPs |
-| **Single Binary** | No dependencies — just `wardenclyffenet` and `wardenclyffenetctl` |
+| **Hostname/DynDNS** | Use hostnames in endpoints â€” re-resolved every 60s for dynamic IPs |
+| **Single Binary** | No dependencies â€” just `wardenclyffenet` and `wardenclyffenetctl` |
 | **Systemd Service** | Runs as a background service with automatic startup |
 
 ### Quick Start
 
 ```bash
-# Interactive installer — downloads binary, generates keys, creates systemd service
+# Interactive installer â€” downloads binary, generates keys, creates systemd service
 curl -sSL https://raw.githubusercontent.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale/main/wardenclyffenet/setup.sh | sudo bash
 ```
 
@@ -168,7 +176,7 @@ The installer will:
 
 ### Easy Peer Setup (Invite/Join)
 
-Connect two machines in seconds — no manual key exchange:
+Connect two machines in seconds â€” no manual key exchange:
 
 ```bash
 # On the first machine (the one with a public IP / port forwarding):
@@ -179,7 +187,7 @@ sudo wardenclyffenet invite
 # Copy that command and run it on the second machine:
 sudo wardenclyffenet --config /etc/wardenclyffenet/config.toml join eyJwa...
 
-# It will output a reverse token — run that on the first machine:
+# It will output a reverse token â€” run that on the first machine:
 sudo wardenclyffenet --config /etc/wardenclyffenet/config.toml join eyJlc...
 
 # Restart WardenClyffeNet on both:
@@ -195,24 +203,24 @@ WardenClyffeNet supports **relay forwarding** so machines behind NAT firewalls c
 ```
 Laptop (behind NAT)          Server (public IP)           Home PC (behind NAT)
     10.0.10.1                   10.0.10.2                   10.0.10.3
-        │                           │                           │
-        └───── encrypted UDP ──────►│◄────── encrypted UDP ─────┘
-                                    │
+        â”‚                           â”‚                           â”‚
+        â””â”€â”€â”€â”€â”€ encrypted UDP â”€â”€â”€â”€â”€â”€â–ºâ”‚â—„â”€â”€â”€â”€â”€â”€ encrypted UDP â”€â”€â”€â”€â”€â”˜
+                                    â”‚
                              Relay forwards
                             packets between
-                           Laptop ◄──► Home PC
+                           Laptop â—„â”€â”€â–º Home PC
 ```
 
 **How it works:**
 1. Both the laptop and home PC connect to the server (which has a public IP)
 2. When the laptop sends a packet to the home PC, the server detects it's not the destination
 3. The server decrypts, re-encrypts for the home PC, and forwards it
-4. This happens automatically — no configuration needed
+4. This happens automatically â€” no configuration needed
 5. Any node that can be reached by both parties can act as a relay
 
 ### Peer Discovery Methods
 
-WardenClyffeNet supports three ways to find and connect to peers — mix and match as needed:
+WardenClyffeNet supports three ways to find and connect to peers â€” mix and match as needed:
 
 | Method | Use Case | Config |
 |--------|----------|--------|
@@ -220,7 +228,7 @@ WardenClyffeNet supports three ways to find and connect to peers — mix and mat
 | **Static IP** | VPS, dedicated servers, data centres | `endpoint = "203.0.113.5:9600"` |
 | **Hostname / DynDNS** | Home broadband, dynamic IPs | `endpoint = "myhome.dyndns.org:9600"` |
 
-Hostnames are resolved on startup and **re-resolved every 60 seconds**, so DynDNS changes are picked up automatically. Works with any DNS provider — DynDNS, No-IP, Cloudflare, DuckDNS, or your own domain.
+Hostnames are resolved on startup and **re-resolved every 60 seconds**, so DynDNS changes are picked up automatically. Works with any DNS provider â€” DynDNS, No-IP, Cloudflare, DuckDNS, or your own domain.
 
 ### Multi-Server Deployment (Static IPs)
 
@@ -230,36 +238,36 @@ Link multiple standalone servers across different locations into a single Warden
 Server A (London)              Server B (New York)           Server C (Tokyo)
   Public: 203.0.113.5            Public: 198.51.100.10         Public: 192.0.2.50
   WardenClyffeNet: 10.0.10.1             WardenClyffeNet: 10.0.10.2            WardenClyffeNet: 10.0.10.3
-       │                              │                             │
-       └────── encrypted UDP ────────►│◄───── encrypted UDP ────────┘
+       â”‚                              â”‚                             â”‚
+       â””â”€â”€â”€â”€â”€â”€ encrypted UDP â”€â”€â”€â”€â”€â”€â”€â”€â–ºâ”‚â—„â”€â”€â”€â”€â”€ encrypted UDP â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 1. Install WardenClyffeNet on each server, giving each a unique WardenClyffeNet IP
 2. Use `sudo wardenclyffenet invite` on one server to generate invite tokens
 3. Run the invite command on each other server to exchange keys
-4. Restart WardenClyffeNet — PEX automatically propagates the full mesh topology
+4. Restart WardenClyffeNet â€” PEX automatically propagates the full mesh topology
 
-> 💡 **You don't need a full mesh in the config.** Each server only needs to know about at least one other server. PEX shares the rest automatically within 30 seconds.
+> ðŸ’¡ **You don't need a full mesh in the config.** Each server only needs to know about at least one other server. PEX shares the rest automatically within 30 seconds.
 
 ### Architecture
 
 ```
 Machine A (10.0.10.1)          Machine B (10.0.10.2)
-┌─────────────────┐            ┌─────────────────┐
-│  wardenclyffenet0 (TUN) │◄──────────►│  wardenclyffenet0 (TUN) │
-│  10.0.10.1/24   │  Encrypted │  10.0.10.2/24   │
-│  ChaCha20-Poly  │  UDP/9600  │  ChaCha20-Poly  │
-└─────────────────┘            └─────────────────┘
-         ▲                              ▲
-         │       Encrypted UDP          │
-         └──────────┬───────────────────┘
-                    │
-           ┌────────▼────────┐
-           │  Machine C      │
-           │  (Gateway)      │
-           │  10.0.10.3/24   │
-           │  NAT → Internet │
-           └─────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”            â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  wardenclyffenet0 (TUN) â”‚â—„â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–ºâ”‚  wardenclyffenet0 (TUN) â”‚
+â”‚  10.0.10.1/24   â”‚  Encrypted â”‚  10.0.10.2/24   â”‚
+â”‚  ChaCha20-Poly  â”‚  UDP/9600  â”‚  ChaCha20-Poly  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜            â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â–²                              â–²
+         â”‚       Encrypted UDP          â”‚
+         â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                    â”‚
+           â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”
+           â”‚  Machine C      â”‚
+           â”‚  (Gateway)      â”‚
+           â”‚  10.0.10.3/24   â”‚
+           â”‚  NAT â†’ Internet â”‚
+           â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### CLI Reference
@@ -318,7 +326,7 @@ name = "home-server"
 | Network Isolation | iptables firewall blocks all external inbound traffic |
 | Key Storage | Private keys stored with 0600 permissions |
 
-> ⚠️ **Proxmox/LXC Users:** The TUN device (`/dev/net/tun`) is blocked by default in LXC containers. See [wardenclyffescale.org/wardenclyffenet.html](https://wardenclyffescale.org/wardenclyffenet.html) for setup instructions.
+> âš ï¸ **Proxmox/LXC Users:** The TUN device (`/dev/net/tun`) is blocked by default in LXC containers. See [wardenclyffescale.org/wardenclyffenet.html](https://wardenclyffescale.org/wardenclyffenet.html) for setup instructions.
 
 ---
 
@@ -330,9 +338,9 @@ name = "home-server"
 | WardenClyffeScale    | Leader + Followers replicate via WAL            |
 | Database     | Each node has local MariaDB (localhost:3306)    |
 
-**Write Flow:** Client → Any Node → Forwarded to Leader → Replicated to All Nodes
+**Write Flow:** Client â†’ Any Node â†’ Forwarded to Leader â†’ Replicated to All Nodes
 
-**Read Flow:** Client → Any Node → Local Data (or forwarded to Leader if node is behind)
+**Read Flow:** Client â†’ Any Node â†’ Local Data (or forwarded to Leader if node is behind)
 
 ## Cluster Sizing
 
@@ -344,9 +352,9 @@ name = "home-server"
 | 5     | 4 node failures   | Recommended for production      |
 | 7     | 6 node failures   | High availability               |
 
-**Geo-Distribution:** Nodes can be deployed across different data centres or regions. Connect to your nearest node for low-latency reads — if the data isn't up-to-date, the request is automatically forwarded to the leader.
+**Geo-Distribution:** Nodes can be deployed across different data centres or regions. Connect to your nearest node for low-latency reads â€” if the data isn't up-to-date, the request is automatically forwarded to the leader.
 
-> **Note:** WardenClyffeScale doesn't use quorum — only one node needs to survive. While the cluster can run on a single remaining node, it's recommended to maintain at least 2 active nodes for redundancy.
+> **Note:** WardenClyffeScale doesn't use quorum â€” only one node needs to survive. While the cluster can run on a single remaining node, it's recommended to maintain at least 2 active nodes for redundancy.
 
 ## Documentation
 
@@ -360,22 +368,22 @@ name = "home-server"
 
 ## Support
 
-- ❤️ **Sponsor:** [Support development](https://github.com/sponsors/wardenclyffesoftwaresystemsltd)
-- 💬 **Discord:** [Join our community](https://discord.gg/q9qMjHjUQY)
-- 🔥 **Reddit:** [r/WardenClyffe](https://www.reddit.com/r/WardenClyffe/)
-- 🌐 **Website:** [wardenclyffe.uk.com](https://wardenclyffe.uk.com)
-- ⭐ **GitHub:** [Star this repo](https://github.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale)
-- 🐛 **Issues:** [Report a bug](https://github.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale/issues)
+- â¤ï¸ **Sponsor:** [Support development](https://github.com/sponsors/wardenclyffesoftwaresystemsltd)
+- ðŸ’¬ **Discord:** [Join our community](https://discord.gg/q9qMjHjUQY)
+- ðŸ”¥ **Reddit:** [r/WardenClyffe](https://www.reddit.com/r/WardenClyffe/)
+- ðŸŒ **Website:** [wardenclyffe.uk.com](https://wardenclyffe.uk.com)
+- â­ **GitHub:** [Star this repo](https://github.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale)
+- ðŸ› **Issues:** [Report a bug](https://github.com/wardenclyffesoftwaresystemsltd/WardenClyffeScale/issues)
 
 ---
 
 ## License
 
-[MIT License](LICENSE) — Free to use, modify, and distribute without restriction.
+[MIT License](LICENSE) â€” Free to use, modify, and distribute without restriction.
 
-© 2024-2026 [WardenClyffe Software Systems Ltd](https://wardenclyffe.uk.com/)
+Â© 2024-2026 [WardenClyffe Software Systems Ltd](https://wardenclyffe.uk.com/)
 
-## ⚠️ Disclaimer
+## âš ï¸ Disclaimer
 
 **USE AT YOUR OWN RISK.** This software is provided "as is" without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement. In no event shall WardenClyffe Software Systems Ltd be liable for any claim, damages, or other liability arising from the use of this software.
 
