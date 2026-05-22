@@ -10,6 +10,16 @@ Warden and Clyffe are not separate ideas. They are the two faces of WardenClyffe
 - Warden owns infrastructure authority.
 - Clyffe consumes scoped Warden APIs on behalf of customers.
 
+Canonical module labels:
+
+- **Module 1: Warden** - Proxmox UI manager, operator control plane, Warden API,
+  infrastructure graph, and MCP mesh observatory.
+- **Module 2: Clyffe** - customer portal, customer knowledge base, tickets,
+  CRM, and customer-safe service panel.
+
+Use module labels in planning only. Durable code, APIs, schemas, and UI copy
+should use Warden and Clyffe.
+
 ## Internal-First Goal
 
 The first target is a turnkey WardenClyffe deployment for our own two servers.
@@ -32,12 +42,22 @@ Responsibilities:
 
 - Discover and manage Proxmox nodes and clusters.
 - Manage VMs, LXC containers, templates, backups, snapshots, networks, storage, and firewalls.
+- Manage public IP ingress, domains, TLS, edge routes, and route health.
 - Provide fleet health, logs, metrics, alerts, status pages, and issue scans.
 - Run approved automation and provisioning workflows.
 - Host the infrastructure AI assistant and MCP meshnode.
 - Own credentials, audit logs, tenant boundaries, and infrastructure inventory.
 
 Warden may talk directly to Proxmox APIs, local Linux tools, WardenClyffeNet, WardenClyffeDisk, Qdrant, PostgreSQL, and other internal services.
+
+Warden also owns private operator workspaces:
+
+- **Warden Operator Capsule** is the secret-sensitive shell for bootstrap and
+  host/operator work.
+- **Warden Devstation** is the private hosted VS Code/Cursor/Codex/Claude
+  workstation for daily development.
+
+These are not customer workspaces.
 
 ### Clyffe
 
@@ -49,6 +69,9 @@ Responsibilities:
 - Provide safe actions such as start, stop, restart, console access, rebuild from approved template, backup restore request, and support request.
 - Provide a customer knowledge base and AI-assisted help surface.
 - Provide customer tickets, account history, service notes, contact records, and CRM-style relationship tracking.
+- Later provide **Clyffe Code**, a tenant-safe hosted coding workspace service
+  derived from the Warden Devstation pattern but created from clean templates
+  with no operator auth state or secrets.
 - Track customer service ownership across VMs, containers, domains, backups, support plans, and managed operations.
 - Never expose Proxmox directly.
 - Never bypass Warden's API, permissions, audit log, or rate limits.
@@ -76,6 +99,7 @@ The Warden panel should be the command center for our servers.
 Core operator views:
 
 - Fleet: Proxmox nodes, native Warden nodes, health, metrics, alerts, and inventory.
+- Edge/DNS: public IPs, forwards, domains, TLS certificates, edge routes, and route probes.
 - Guests: VMs, LXC containers, templates, snapshots, backups, consoles, and ownership.
 - Customers: tenants, contacts, assigned services, support state, notes, and account health.
 - Tickets/CRM: queues, incidents, tasks, customer notes, internal notes, and escalation.
@@ -104,26 +128,45 @@ The first useful integration surfaces are:
 6. Console access with tenant guardrails.
 7. Backups, snapshots, and restores.
 
-## Data Layer Direction
+## Data Layer Options Under Review
 
-The Warden/Clyffe control plane should not be based on MariaDB just because WardenClyffeScale currently exists.
+This section is not a locked decision. These are evaluation tracks for the
+Warden/Clyffe control plane and should be revisited after a direct fit check
+against the Rust code, Go Warden work, Proxmox model, customer portal needs,
+and the two-server pilot.
 
-Recommended control-plane storage:
+Current candidates:
 
-- **PostgreSQL** for tenants, users, RBAC, inventory, Proxmox resources, audit logs, support records, and workflow state.
-- **Qdrant** for AI memory, project embeddings, semantic knowledge-base search, and Clyffy assistant retrieval.
-- **Object storage** for screenshots, generated reports, backups metadata exports, docs assets, and customer artifacts.
-- **Redis/Dragonfly or NATS** as optional infrastructure for sessions, queues, events, and long-running job coordination.
+- **MariaDB/MySQL-compatible stack** for database-management product surfaces,
+  managed customer databases, and places where MySQL compatibility matters.
+- **PostgreSQL-compatible stack** for relational control-plane records such as
+  tenants, users, RBAC, inventory, Proxmox resources, audit logs, support
+  records, tickets, CRM, billing links, and workflow state.
+- **SurrealDB** for graph/document/agent-memory experiments and projections
+  where its model genuinely helps.
+- **Qdrant** for vector retrieval, project embeddings, semantic knowledge-base
+  search, and Clyffy assistant retrieval.
+- **Object storage** for screenshots, generated reports, backup metadata
+  exports, docs assets, and customer artifacts.
+- **Dragonfly/Redis-compatible cache or NATS** for sessions, queues, events,
+  and long-running job coordination if those workloads need a separate layer.
 
-WardenClyffeScale can remain a separate database replication product or managed service offering. It should not define the primary Warden/Clyffe platform architecture.
+WardenClyffeScale can remain a separate database replication product or
+managed service offering. It should inform the platform, but it should not by
+itself decide the primary Warden/Clyffe storage backend.
 
-## Auth Direction
+## Auth Options Under Review
 
-The preferred identity direction is external OIDC-first auth instead of custom auth inside the server manager.
+This section is also not a locked decision. The likely direction is
+OIDC-first identity instead of custom auth inside the server manager, but the
+provider choice remains open.
 
-Candidate direction:
+Candidate tracks:
 
-- ZITADEL for modern self-hosted identity, organizations, projects, OIDC, and customer/operator separation.
+- ZITADEL for modern self-hosted identity, organizations, projects, OIDC, and
+  customer/operator separation.
+- Authentik because the Go Warden repo already has Authentik work and
+  templates.
 - Keycloak as a heavier enterprise alternative.
 - Ory as a composable alternative if we want to own more assembly.
 

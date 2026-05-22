@@ -1,0 +1,29 @@
+id: warden-devstation-01
+kind: warden_devstation
+vmid: 116
+hostname: warden-devstation-01
+ssh_alias: warden-devstation
+primary_user: wardenop
+network:
+  bridge: vmbr1
+  ip: 10.0.0.116/24
+  gateway: 10.0.0.1
+public_route: none
+proxmox:
+  host: server1
+  node: server1
+  type: qemu
+resources:
+  cores: 8
+  memory_mb: 16384
+  balloon_floor_mb: 8192
+  disk_gb: 160
+tooling:
+  status_helper: warden-devstation-status
+  workspace: /workspace/WardenClyffe-latest
+service_direction:
+  future_template: clyffe-code-workspace-template
+  future_product: Clyffe Code
+notes:
+  - Private VS Code/Cursor Remote-SSH target.
+  - Do not use as a customer workspace or template until personal auth state is removed.

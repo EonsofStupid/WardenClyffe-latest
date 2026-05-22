@@ -1,0 +1,61 @@
+---
+wardenclyffe_touchpoint:
+  version: 1
+  kind: host-access-profile
+  namespace: wardenclyffe.warden.operator_access.host.us_wi.foundation_01
+  owner: modules/warden/infrastructure/operator-access/hosts/foundation-01.yaml
+  module: module-01-warden
+---
+
+id: host.us-wi.foundation-01
+name: foundation-01
+aliases:
+  - server1
+kind: proxmox
+region: us-wi
+status: active
+
+network:
+  public_ip: 104.176.44.101
+  internal_bridge: vmbr1
+  internal_gateway: 10.0.0.1
+  operator_transport:
+    current: tailscale_dns
+    alias: server1
+
+ssh:
+  alias: server1
+  hostname: server1
+  port: 22
+  user: root
+  expected_host_key:
+    algorithm: ssh-ed25519
+    fingerprint_sha256: SHA256:vSWJ9KW9M+1w2my9hlCsmpIRnCgk7ClMjmVCiJL39Xc
+  credential_reference: ssh/warden-to-foundation-01
+  local_default_identity_file: ~/.ssh/warden_foundation_01_ed25519
+  intended_uses:
+    - host-local-proxmox-bootstrap
+    - pct-qm-helper-commands
+    - edge-and-dns-provisioning
+  restrictions:
+    - prefer-proxmox-api-for-inventory
+    - require-operator-approval-for-destructive-actions
+    - do-not-store-private-key-in-repo
+
+proxmox_api:
+  host_env: PROXMOX_HOST
+  port_env: PROXMOX_PORT
+  node_env: PROXMOX_NODE
+  token_id_env: PROXMOX_TOKEN_ID
+  token_secret_env: PROXMOX_TOKEN_SECRET
+  verify_tls_env: PROXMOX_VERIFY_TLS
+  credential_reference: platforms/proxmox/foundation-01/api-token
+  dev_fallback_env_file: E:/dev/clyffy/secrets/.env.proxmox
+
+warden:
+  first_probe: GET /api2/json/version
+  next_inventory:
+    - GET /api2/json/nodes
+    - GET /api2/json/cluster/resources?type=vm
+    - GET /api2/json/nodes/server1/status
+    - GET /api2/json/nodes/server1/storage

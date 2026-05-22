@@ -21,6 +21,9 @@ local.toml
 *.log
 logs/
 
+# Local operational exports
+ops/exports/
+
 # State and WAL data (production data)
 /data/
 *.db

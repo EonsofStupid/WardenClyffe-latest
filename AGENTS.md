@@ -24,6 +24,8 @@ WardenClyffe is being moved into a clean Warden/Clyffe product split:
 - **Warden** is the operator/server-control platform.
 - **Clyffe** is the customer portal, knowledge base, tickets, CRM, and
   customer-safe service panel.
+- **Module 1** is Warden. **Module 2** is Clyffe. Module numbers are planning
+  labels; product/code names should stay Warden and Clyffe.
 - Proxmox is the current infrastructure substrate for the internal
   two-server pilot.
 
@@ -39,10 +41,25 @@ Use this order when you need architecture or agent context:
 1. `docs/ai/WARDENCLYFFE_BASE_SKILL.md`
 2. `docs/ai/MCP_MESH_TOUCHPOINTS.md`
 3. `docs/ai/INTELLIGENCE_TOUCHPOINTS.md`
-4. `docs/WARDEN_CLYFFE_ARCHITECTURE.md`
-5. `docs/WARDEN_CLYFFE_PILOT_ROADMAP.md`
-6. `wardenclyffe/AGENTS.md` when working with or borrowing from the Go Warden repo
-7. `wardenclyffe/registry/context-mesh.yaml` for current Context Mesh/MCP registry shape
+4. `docs/WARDENCLYFFE_MODULE_MAP.md`
+5. `docs/WARDENCLYFFE_NAMING_CONVENTIONS.md`
+6. `docs/HYPERMODULAR_DDD_FOLDER_STRUCTURE.md`
+7. `docs/HOST_FLEET_AND_ONBOARDING.md` for host onboarding and fleet work
+8. `docs/PUBLIC_IP_HOMEBASE_FOUNDATION.md` for public IP, domain, edge, and Tailscale-exit work
+9. `docs/FOUNDATION_SERVICE_MATRIX.md` for VM/LXC app choices and configuration gates
+10. `docs/WARDEN_ESTABLISHMENT_POAM.md` for done/needed POA&M status and next live milestones
+11. `docs/WARDEN_OPERATOR_CAPSULE.md` for the Linux-first operator workspace and secret-handling capsule
+12. `docs/WARDEN_DEVSTATION_AND_CLYFFE_CODE.md` for the private VS Code VM and future hosted coding service
+13. `docs/MASTER_CLYFFY_ROLLOUT_PLAN.md` for master.clyffy.ai, Postgres update, and Clyffy route work
+14. `docs/FOUNDATION_APP_RESEARCH_2026_05.md` for primary-source app-stack research
+15. `docs/WARDEN_CLYFFE_ARCHITECTURE.md`
+16. `docs/PROXMOX_FREE_CHEATSHEET.md` for Proxmox management work
+17. `docs/WARDENCLYFFE_BACKEND_OPTIONS_2026_05.md` for backend evaluation
+18. `docs/GO_WARDEN_ABSORPTION_PLAN.md` when folding Go Warden into the root direction
+19. `docs/WARDEN_CLYFFE_PILOT_ROADMAP.md`
+20. `modules/README.md` for the root product module scaffold
+21. `wardenclyffe/AGENTS.md` when working with or borrowing from the Go Warden repo
+22. `wardenclyffe/registry/context-mesh.yaml` for current Context Mesh/MCP registry shape
 
 ## Agent Wrapper Rule
 
@@ -80,4 +97,3 @@ touchpoints for agents and future MCP mesh tooling. They should describe:
 
 Do not hardcode a second tool registry in prose. The current registry source
 is `wardenclyffe/registry/context-mesh.yaml` until a root registry is promoted.
-

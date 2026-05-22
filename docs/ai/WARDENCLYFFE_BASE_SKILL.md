@@ -21,6 +21,8 @@ This is the source skill that other AI wrappers should defer to.
 - Warden is the operator/server-control platform.
 - Clyffe is the customer portal, knowledge base, tickets, CRM, and
   customer-safe service panel.
+- Module 1 is Warden. Module 2 is Clyffe. Module numbers are planning labels,
+  not durable code names.
 - Proxmox is the current substrate for the internal two-server pilot.
 - The nested `wardenclyffe/` repo contains the active Go Warden scaffold and
   current Context Mesh registry.
@@ -41,11 +43,22 @@ Use this order when sources disagree:
 
 1. Live code and configs in the relevant subtree.
 2. Nearest `AGENTS.md`.
-3. `docs/WARDEN_CLYFFE_ARCHITECTURE.md`.
-4. `docs/WARDEN_CLYFFE_PILOT_ROADMAP.md`.
-5. `wardenclyffe/REGISTRY.md` and `wardenclyffe/registry/context-mesh.yaml`
+3. `docs/WARDENCLYFFE_MODULE_MAP.md`.
+4. `docs/WARDENCLYFFE_NAMING_CONVENTIONS.md`.
+5. `docs/HYPERMODULAR_DDD_FOLDER_STRUCTURE.md`.
+6. `docs/HOST_FLEET_AND_ONBOARDING.md`.
+7. `docs/PUBLIC_IP_HOMEBASE_FOUNDATION.md`.
+8. `docs/FOUNDATION_SERVICE_MATRIX.md`.
+9. `docs/WARDEN_ESTABLISHMENT_POAM.md`.
+10. `docs/WARDEN_OPERATOR_CAPSULE.md`.
+11. `docs/WARDEN_DEVSTATION_AND_CLYFFE_CODE.md`.
+12. `docs/MASTER_CLYFFY_ROLLOUT_PLAN.md`.
+13. `docs/FOUNDATION_APP_RESEARCH_2026_05.md`.
+14. `docs/WARDEN_CLYFFE_ARCHITECTURE.md`.
+15. `docs/WARDEN_CLYFFE_PILOT_ROADMAP.md`.
+16. `wardenclyffe/REGISTRY.md` and `wardenclyffe/registry/context-mesh.yaml`
    for the Go-side Warden/intelligence mesh.
-6. Wrapper files such as `CLAUDE.md` and `.cursor/rules/*.mdc`.
+17. Wrapper files such as `CLAUDE.md` and `.cursor/rules/*.mdc`.
 
 Wrappers are pointers. They are not authorities.
 
@@ -58,4 +71,3 @@ Update this file when:
 - a new agent family needs a wrapper,
 - the intelligence layer gets a new memory or routing contract,
 - a new repo-wide safety rule is needed.
-

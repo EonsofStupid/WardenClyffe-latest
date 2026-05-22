@@ -1,0 +1,34 @@
+{
+    email jessay@angrygaming.org
+}
+
+(dev_auth_allowlist) {
+    @blocked not remote_ip 65.99.96.220/32 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 100.64.0.0/10
+    respond @blocked "Forbidden" 403
+}
+
+warden.rrflow.ai {
+    reverse_proxy 10.0.0.102:9006
+}
+
+porter.rrflow.ai {
+    import dev_auth_allowlist
+    respond "Porter online: Caddy edge on Proxmox VM 501" 200
+}
+
+auth.rrflow.ai, sso.rrflow.ai, authentik.rrflow.ai {
+    import dev_auth_allowlist
+    reverse_proxy 10.0.0.103:9000
+}
+
+beeker.probablydns.com {
+    reverse_proxy /app* coolify-realtime:6001
+    reverse_proxy /terminal/ws* coolify-realtime:6002
+    reverse_proxy coolify:8080
+}
+
+clyffydb.probablydns.com {
+    encode zstd gzip
+    header -Server
+    reverse_proxy supabase-kong:8000
+}

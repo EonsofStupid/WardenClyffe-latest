@@ -23,7 +23,19 @@ WardenClyffe is being built as two coordinated product surfaces:
 
 The first target is an internal, turnkey two-server deployment. Proxmox VE is the infrastructure substrate for KVM, LXC, storage, networking, backups, tasks, and consoles. WardenClyffe wraps that substrate with a modern product identity, tenant-safe APIs, customer panels, and AI-assisted operations.
 
-See [docs/WARDEN_CLYFFE_ARCHITECTURE.md](docs/WARDEN_CLYFFE_ARCHITECTURE.md) for the current architecture and product boundary.
+Canonical alignment docs:
+
+- [Module map](docs/WARDENCLYFFE_MODULE_MAP.md): Module 1 is Warden, Module 2 is Clyffe.
+- [Naming conventions](docs/WARDENCLYFFE_NAMING_CONVENTIONS.md): boring product, API, database, and MCP names.
+- [DDD folder structure](docs/HYPERMODULAR_DDD_FOLDER_STRUCTURE.md): self-describing Warden/Clyffe module scaffold.
+- [Host fleet onboarding](docs/HOST_FLEET_AND_ONBOARDING.md): Wisconsin and Virginia host onboarding path.
+- [Public IP homebase](docs/PUBLIC_IP_HOMEBASE_FOUNDATION.md): domain, edge, public IP, remote host, and Tailscale-exit foundation.
+- [Foundation service matrix](docs/FOUNDATION_SERVICE_MATRIX.md): current VM/LXC services, app choices, and configuration gates.
+- [Foundation app research](docs/FOUNDATION_APP_RESEARCH_2026_05.md): May 2026 primary-source review of OPNsense, Authentik, Caddy, Traefik, DNS, Postgres, Qdrant, SurrealDB, and Infisical.
+- [Architecture](docs/WARDEN_CLYFFE_ARCHITECTURE.md): current Warden/Clyffe boundary.
+- [Proxmox free cheat sheet](docs/PROXMOX_FREE_CHEATSHEET.md): Warden's Proxmox API coverage map.
+- [Backend options review](docs/WARDENCLYFFE_BACKEND_OPTIONS_2026_05.md): MariaDB, Postgres, SurrealDB, Qdrant, Dragonfly, and distributed SQL review.
+- [Modern patterns](docs/WARDENCLYFFE_MODERN_PATTERNS_2026_05.md): May 2026 patterns to preserve.
 
 | Tool | Description | Status |
 |------|-------------|--------|

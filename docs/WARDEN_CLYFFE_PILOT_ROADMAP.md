@@ -11,6 +11,33 @@ Build a completely free, modern server/customer platform:
 
 Proxmox VE is the current infrastructure substrate. WardenClyffe should progressively replace the day-to-day Proxmox experience with a cleaner Warden/Clyffe product surface.
 
+## Foundation Inventory And App Stack
+
+The current VM/LXC inventory and the apps that need configuration are tracked in:
+
+- `docs/FOUNDATION_SERVICE_MATRIX.md`
+- `docs/FOUNDATION_APP_RESEARCH_2026_05.md`
+- `docs/PUBLIC_IP_HOMEBASE_FOUNDATION.md`
+- `docs/WARDEN_ESTABLISHMENT_POAM.md`
+- `docs/MASTER_CLYFFY_ROLLOUT_PLAN.md`
+
+Use those before opening new roadmap work. The short version:
+
+| Layer | Current direction | Status |
+|---|---|---|
+| Network boundary | OPNsense on VM `111` | correct choice, but live config audit and WireGuard/Unbound/ACL setup are still owed |
+| Identity | Authentik on LXC `103` | correct foundation choice, but passkeys, realms, OIDC clients, policies, certs, blueprints, and backups are still owed |
+| Public edge | Caddy on a dedicated edge LXC, proposed `115` | correct edge direction; current dependency on VM `501` must be removed |
+| Legacy edge | Traefik/Coolify on VM `501` | superseded for public ingress; keep only as app-local legacy until migrated |
+| DNS | PowerDNS LXC `109`, OPNsense Unbound, Cloudflare public records | correct direction; zone loading, sync job, CAA/DNSSEC, and backups are still owed |
+| Product data | Postgres LXC `110` | correct source-of-truth direction for Warden/Clyffe tenants, tickets, CRM, inventory, RBAC, audit |
+| AI retrieval | Qdrant LXC `106`, Harrier LXC `107` | correct retrieval direction; collections and ingestion pipeline still owed |
+| AI graph/projection | SurrealDB LXC `104` | keep for AI graph/reasoning projections, not customer/product truth |
+
+`master.clyffy.ai` is the first personal/master Clyffy rollout, not the final
+customer portal. Its DNS, edge, and Postgres update sequence is tracked
+separately so the later WardenClyffe/Clyffe customer namespace can stay clean.
+
 ## Phase 1: Two-Server Warden Pilot
 
 Required outcomes:
@@ -99,4 +126,3 @@ Target stack:
 - PostgreSQL as system-of-record.
 - Qdrant for vector search and AI memory.
 - Object storage for screenshots, attachments, reports, and generated assets.
-

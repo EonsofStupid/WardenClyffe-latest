@@ -52,6 +52,7 @@ copy the source of truth.
 
 - One registry owns tool names and endpoint contracts.
 - Markdown touchpoints explain how an agent should navigate to that registry.
+- Markdown touchpoint sync is described in `docs/ai/TOUCHPOINT_SYNC_PATTERN.md`.
 - Warden tools are operator-facing.
 - Clyffe tools are customer-safe and tenant-scoped.
 - Proxmox tools must be wrapped behind Warden policy and audit.
@@ -70,4 +71,3 @@ Use these as planned domain names unless the registry supersedes them:
 - `mcp.global.qdrant`
 - `mcp.global.surreal`
 - `mcp.global.postgres`
-

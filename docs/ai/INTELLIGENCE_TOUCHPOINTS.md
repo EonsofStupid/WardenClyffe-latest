@@ -15,8 +15,9 @@ understand WardenClyffe without inventing context every time.
 
 ## Memory Boundaries
 
-- PostgreSQL owns product truth: customers, tickets, CRM, service ownership,
-  billing references, audit, and infrastructure inventory.
+- The chosen product database layer owns product truth: customers, tickets,
+  CRM, service ownership, billing references, audit, and infrastructure
+  inventory.
 - Qdrant owns vector retrieval and semantic search.
 - SurrealDB may own AI graph/reasoning projections.
 - Markdown touchpoints route agents to those systems and document the contract.
@@ -41,6 +42,13 @@ A touchpoint should answer:
 - What is safe for an agent to change?
 - What requires operator approval?
 
+## Sync Pattern
+
+Use `docs/ai/TOUCHPOINT_SYNC_PATTERN.md` for the working Qdrant and
+SurrealDB projection pattern. Markdown touchpoints route agents and provide
+stable metadata; Qdrant stores vector retrieval; SurrealDB stores graph and
+reasoning projections where useful.
+
 ## Current Go-Side Intelligence References
 
 The nested Warden repo already includes intelligence scaffolding:
@@ -54,4 +62,3 @@ The nested Warden repo already includes intelligence scaffolding:
 - `wardenclyffe/.codex/hooks/`
 
 Use those as the reference pattern while this root repo is being organized.
-

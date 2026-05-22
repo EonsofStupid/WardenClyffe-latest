@@ -1,0 +1,27 @@
+[module]
+id = "module-01-warden"
+name = "Warden"
+slug = "warden"
+type = "product-module"
+audience = "operator"
+status = "scaffold"
+authority = "infrastructure"
+
+[owns]
+proxmox = true
+host_fleet = true
+warden_api = true
+mcp_mesh_observatory = true
+operator_audit = true
+automation = true
+
+[does_not_own]
+customer_portal = "Clyffe"
+customer_knowledge_base = "Clyffe"
+customer_ticket_ui = "Clyffe"
+
+[sources]
+go_warden = "wardenclyffe/"
+module_docs = "docs/WARDENCLYFFE_MODULE_MAP.md"
+proxmox_docs = "docs/PROXMOX_FREE_CHEATSHEET.md"
+

@@ -1,0 +1,30 @@
+name: wardenclyffe-caddy-edge
+
+services:
+  caddy-edge:
+    build:
+      context: .
+      dockerfile: Caddy.Dockerfile
+    image: wardenclyffe-caddy-edge:2.11.2
+    container_name: caddy-edge
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./data:/data
+      - ./config:/config
+    networks:
+      - coolify
+      - clyffydb
+
+networks:
+  coolify:
+    external: true
+  clyffydb:
+    external: true
+    name: gyxqa5w7hqztorkdckpe6pp7
