@@ -55,7 +55,8 @@ Warden also owns private operator workspaces:
 - **Warden Operator Capsule** is the secret-sensitive shell for bootstrap and
   host/operator work.
 - **Warden Devstation** is the private hosted VS Code/Cursor/Codex/Claude
-  workstation for daily development.
+  workstation for daily development, including a localhost-bound code-server
+  browser IDE reached through SSH forwarding.
 
 These are not customer workspaces.
 

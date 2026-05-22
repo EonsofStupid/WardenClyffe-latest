@@ -2,7 +2,10 @@
 clyffy_touchpoint:
   version: 2
   workspace_id: wardenclyffe.infra
+  project_key: mcp-mesh-touchpoints
+  persona: clyffy-operator
   kind: mcp-mesh
+  owner: docs/ai/MCP_MESH_TOUCHPOINTS.md
   current_registry: wardenclyffe/registry/context-mesh.yaml
   template_source: wardenclyffe/.agents/templates/mcp/l2-leaf-server
   observability:

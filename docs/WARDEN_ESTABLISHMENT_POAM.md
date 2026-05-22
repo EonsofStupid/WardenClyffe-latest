@@ -14,6 +14,8 @@ wardenclyffe_touchpoint:
     - docs/WARDENCLYFFE_CATALOG_REPO_BOUNDARY.md
     - docs/WARDEN_OPERATOR_CAPSULE.md
     - docs/WARDEN_DEVSTATION_AND_CLYFFE_CODE.md
+    - docs/CLYFFY_DYNAMIC_UI_SPEC.md
+    - docs/CLYFFY_DYNAMIC_UI_POAM.md
     - docs/MASTER_CLYFFY_ROLLOUT_PLAN.md
     - docs/WARDEN_CLYFFE_PILOT_ROADMAP.md
     - modules/warden/infrastructure/operator-capsule/README.md
@@ -64,7 +66,12 @@ Verified on 2026-05-22:
 | Capsule secret mount | `/run/warden-secrets` tmpfs, helper commands verified |
 | Warden devstation | VM `116`, `warden-devstation-01`, internal-only `10.0.0.116`, `onboot=1` |
 | Devstation toolchain | Ubuntu 26.04, Node 24 LTS, Codex CLI, Claude Code, Infisical CLI, GitHub CLI, SOPS, Rust, Go, Python, uv |
+| Devstation hosted editor | `code-server@wardenop`, private `127.0.0.1:8080`, local tunnel alias `warden-devstation-code` |
+| Devstation friendly aliases | `devstation.clyffy.ai` and `code.devstation.clyffy.ai` configured as local SSH aliases |
+| Clyffy dynamic UI planning | spec and sprint POA&M created |
 | Current public homebase | `104.176.44.101` |
+| Public jump DNS | `ssh.clyffy.ai` resolves to `104.176.44.101` as Cloudflare DNS-only |
+| Cloudflare DNS token source | Infisical Clyffy project root `cloudflare_api_key`; value must not be printed |
 | Planned clean edge | LXC `115`, not created yet |
 | Fozzy Caddy export | non-secret export saved under `ops/exports/fozzy-caddy-edge-20260522/` |
 | Planned master Clyffy app | LXC `120`, not created yet |
@@ -118,8 +125,11 @@ Verified on 2026-05-22:
 | WDN-DEV-003 | Devstation | Coding toolchain installed | Done | `warden-devstation-status` | Authenticate CLIs inside VM as needed |
 | WDN-DEV-004 | Devstation | Clyffe Code template direction documented | Done | `docs/WARDEN_DEVSTATION_AND_CLYFFE_CODE.md` | Do not template until personal auth state is separated |
 | WDN-DEV-005 | Devstation | Initial rollback snapshot captured | Done | `initial-devstation-toolchain-20260522` | Add recurring backup policy before relying on VM as sole work storage |
-| WDN-DEV-006 | Devstation | Snapshot/backup policy | Planned | initial snapshot exists; no recurring backup policy yet | Add before relying on VM as sole work storage |
-| WDN-DEV-007 | Devstation | WardenNet/WireGuard access path | Planned | currently SSH via `server1` jump | Add private VPN/ZTNA path later |
+| WDN-DEV-006 | Devstation | Private hosted browser IDE established | Done | `code-server@wardenop`, `warden-devstation-code`, local health probe | Keep SSH-tunneled only; do not publish directly |
+| WDN-DEV-007 | Devstation | Friendly local editor aliases | Done | `ssh devstation.clyffy.ai` reaches VM `116` | Use in VS Code/Cursor Remote-SSH |
+| WDN-DEV-008 | Devstation | Snapshot/backup policy | Planned | initial snapshot exists; no recurring backup policy yet | Add before relying on VM as sole work storage |
+| WDN-DEV-009 | Devstation | WardenNet/WireGuard access path | Planned | currently SSH via `server1` jump | Add private VPN/ZTNA path later |
+| WDN-DNS-005 | DNS | Public jump record `ssh.clyffy.ai` | Done | `ssh.clyffy.ai -> 104.176.44.101`, Cloudflare record `605ae29461a8db03d11bbe893e7e4974` | Keep DNS-only and non-proxied |
 | WDN-INV-001 | Inventory | Live guest inventory captured | Done | Proxmox API and `pct list` show current guests | Store inventory snapshots in Postgres |
 | WDN-INV-002 | Inventory | Host descriptor for Wisconsin foundation host | Done | `modules/warden/infrastructure/operator-access/hosts/foundation-01.yaml` | Promote descriptor shape to Warden data model |
 | WDN-INV-003 | Inventory | Virginia host descriptor | Planned | docs mention `host.us-va-cisco-01` | Add profile when access facts exist |
@@ -147,8 +157,14 @@ Verified on 2026-05-22:
 | WDN-CLYFFY-002 | Master Clyffy | LXC `120` provisioner guardrailed | Done | script defaults to `vmbr1` | Dry-run script from `server1` SSH path |
 | WDN-CLYFFY-003 | Master Clyffy | LXC `120` created | Blocked | VMID not present | Run provisioner after final review |
 | WDN-CLYFFY-004 | Master Clyffy | `clyffy-master` deployed and healthy | Blocked | LXC `120` not present | Build binary/env/service after LXC |
+| WDN-CLYFFY-005 | Master Clyffy | Dynamic UI spec and sprint POA&M | Done | `docs/CLYFFY_DYNAMIC_UI_SPEC.md`, `docs/CLYFFY_DYNAMIC_UI_POAM.md` | Implement mocked dynamic API contracts |
+| WDN-CLYFFY-006 | Master Clyffy | Dynamic home API | Planned | endpoint contract defined | Build `/api/clyffy/home` |
+| WDN-CLYFFY-007 | Master Clyffy | Dynamic workspace UI | Planned | local editor path verified | Build workspace cards/actions |
+| WDN-CLYFFY-008 | Master Clyffy | Node network graph UI | Planned | graph model specified | Build after inventory API |
 | WDN-CLYFFE-001 | Clyffe | Customer-safe boundary documented | Done | roadmap and architecture docs | Keep Clyffe API-only, no direct Proxmox |
 | WDN-CLYFFE-002 | Clyffe | Customer portal first slice | Planned | no app slice yet | Build after Warden inventory/API exists |
+| WDN-CLYFFE-003 | Clyffe Code | Local-app-first workspace plan | Done | `docs/superpowers/plans/2026-05-22-clyffe-code-local-editor.md` | Keep as internal proof |
+| WDN-CLYFFE-004 | Clyffe Code | Turnkey service spec and tier model | Done | `docs/CLYFFE_CODE_TURNKEY_SERVICE_SPEC.md` | Use Premium Pilot as first internal target after resource check |
 | WDN-CAT-001 | Catalog | Deployment catalog repo boundary defined | Done | `docs/WARDENCLYFFE_CATALOG_REPO_BOUNDARY.md` | Promote scaffold to dedicated repo/submodule |
 | WDN-CAT-002 | Catalog | Catalog workspace scaffold created | Done | `wardenclyffe-catalog/` | Add validation and point Warden at it |
 | WDN-CAT-003 | Catalog | Catalog templates moved to dedicated repo | Planned | scaffold exists but not separate git repo yet | Promote repo and set `WARDEN_CATALOG_DIR` |
@@ -170,25 +186,32 @@ The next methodical sequence is:
    only when secret-sensitive operator work needs those tools.
 3. Sync or push the local uncommitted WardenClyffe docs so the capsule and
    devstation clones have the same operating truth as this workstation.
-4. Use VS Code or Cursor Remote-SSH against `warden-devstation` for daily work.
+4. Use VS Code or Cursor Remote-SSH against `warden-devstation` for daily work,
+   or `ssh warden-devstation-code` plus
+   `http://127.0.0.1:18080/?folder=/workspace/WardenClyffe-latest` for the
+   private browser IDE.
 5. Run future live infrastructure commands from the capsule, using PowerShell
    only to launch the SSH session if needed.
 6. Run a read-only Warden host inventory snapshot from Proxmox API and SSH.
 7. Write the Postgres backup/restore runbook for LXC `110`.
 8. Take/schedule backup material for LXC `110`.
 9. Patch Postgres 17 only after backup verification.
-10. Finish the Fozzy exit gate and decide whether to accept a short public
+10. Resource-check whether `warden-devstation-01` can move to Premium Pilot
+    sizing on the Wisconsin host or should wait for the Virginia host.
+11. Finish the Fozzy exit gate and decide whether to accept a short public
    route outage or build the replacement edge first.
-11. Create the dedicated `wardenclyffe-catalog` repo and move deployment
+12. Create the dedicated `wardenclyffe-catalog` repo and move deployment
    templates/Caddy scaffold out of the Warden app repo.
-12. Create an LXC `115` Caddy edge provision/runbook.
-13. Provision LXC `115` and migrate one low-risk route.
-14. Provision LXC `120` for master Clyffy on `vmbr1`.
-15. Add internal PowerDNS records for `master.clyffy.ai`.
-16. Add Caddy route and TLS for `master.clyffy.ai`.
-17. Publish public Cloudflare `master.clyffy.ai -> 104.176.44.101`.
-18. Build Warden API/UI panels for host inventory, routes, DNS, certs, and
+13. Create an LXC `115` Caddy edge provision/runbook.
+14. Provision LXC `115` and migrate one low-risk route.
+15. Provision LXC `120` for master Clyffy on `vmbr1`.
+16. Add internal PowerDNS records for `master.clyffy.ai`.
+17. Add Caddy route and TLS for `master.clyffy.ai`.
+18. Publish public Cloudflare `master.clyffy.ai -> 104.176.44.101`.
+19. Build Warden API/UI panels for host inventory, routes, DNS, certs, and
     service health.
+20. Implement the mocked Clyffy dynamic API contracts.
+21. Build the Clyffy dynamic home shell against those contracts.
 
 ## Live Write Approval Classes
 
@@ -226,6 +249,7 @@ Warden is established for the two-server pilot when:
 - `docs/WARDENCLYFFE_CATALOG_REPO_BOUNDARY.md`
 - `docs/WARDEN_OPERATOR_CAPSULE.md`
 - `docs/WARDEN_DEVSTATION_AND_CLYFFE_CODE.md`
+- `docs/CLYFFE_CODE_TURNKEY_SERVICE_SPEC.md`
 - `docs/MASTER_CLYFFY_ROLLOUT_PLAN.md`
 - `modules/warden/infrastructure/operator-capsule/README.md`
 - `modules/warden/infrastructure/devstation/README.md`

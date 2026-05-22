@@ -66,7 +66,7 @@ DNS, backups, and Warden audit are configured as gates below.
 | `112` | `clyffy-bifrost` | LLM gateway | Keep | provider keys, Observatory wrapping, analytics, rate limits | internal AI service until tenant policy exists |
 | `113` | `observatory` | Helicone fork / LLM observability | Keep if maintained internally | OIDC gate, deploy completion, trace ingestion, retention, backups | useful for AIaaS operations |
 | `114` | `warden-operator-capsule` | Secret-safe Linux operator capsule | Keep | brokered secrets, restricted operator path, audit hardening | internal operator-only |
-| `116` | `warden-devstation-01` | Private VS Code/Cursor/Codex/Claude devstation | Keep | Remote-SSH daily workflow, snapshot/backup policy, WardenNet access | internal operator-only; Clyffe Code seed pattern |
+| `116` | `warden-devstation-01` | Private VS Code/Cursor/Codex/Claude devstation with SSH-tunneled code-server | Keep | backup policy, WardenNet access, future Warden UI lifecycle controls | internal operator-only; Clyffe Code seed pattern |
 | `115` | proposed `clyffy-edge` | Dedicated Caddy public edge | Build next | provision LXC, move Caddy off VM `501`, render routes from registry, health probes, rollback | required for customer domains |
 | `120` | proposed `clyffy-portal` | Clyffe/Clyffy customer/master surface | Build later | depends on identity, DNS, edge, CA, Warden API, Postgres schema | not started |
 | `500/501` | `fozzy` / `Fozzy` | dead legacy Coolify/Traefik/Caddy edge dependency | Replace | stop depending on it for public routing; migrate routes to LXC `115`; audit public forwards | not acceptable as final foundation |

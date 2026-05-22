@@ -2,6 +2,8 @@
 clyffy_touchpoint:
   version: 2
   workspace_id: wardenclyffe.infra
+  project_key: touchpoint-sync-pattern
+  persona: clyffy-operator
   kind: touchpoint-sync-pattern
   owner: docs/ai/TOUCHPOINT_SYNC_PATTERN.md
   mesh_registry: wardenclyffe/registry/context-mesh.yaml

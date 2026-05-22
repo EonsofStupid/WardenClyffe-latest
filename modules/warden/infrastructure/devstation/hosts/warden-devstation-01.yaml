@@ -3,6 +3,9 @@ kind: warden_devstation
 vmid: 116
 hostname: warden-devstation-01
 ssh_alias: warden-devstation
+friendly_ssh_aliases:
+  - devstation.clyffy.ai
+  - warden-devstation.clyffy.ai
 primary_user: wardenop
 network:
   bridge: vmbr1
@@ -21,9 +24,54 @@ resources:
 tooling:
   status_helper: warden-devstation-status
   workspace: /workspace/WardenClyffe-latest
+hosted_editor:
+  id: warden-devstation-code
+  runtime: code-server
+  version: 4.121.0
+  code_version: 1.121.0
+  systemd_unit: code-server@wardenop
+  status_helper: warden-devstation-code-status
+  service_user: wardenop
+  bind: 127.0.0.1:8080
+  access_model: ssh_local_forward
+  ssh_alias: warden-devstation-code
+  friendly_ssh_aliases:
+    - code.devstation.clyffy.ai
+    - code.warden-devstation.clyffy.ai
+  local_url: http://127.0.0.1:18080/?folder=/workspace/WardenClyffe-latest
+  public_route: none
+  auth_gate: ssh_proxyjump
+  code_server_auth: none
+  default_folder: /workspace/WardenClyffe-latest
+  user_data_dir: /workspace/.warden-code-server/data
+  extensions_dir: /workspace/.warden-code-server/extensions
+  seeded_extensions:
+    - rust-lang.rust-analyzer
+    - golang.go
+    - ms-python.python
+    - redhat.vscode-yaml
+    - tamasfe.even-better-toml
 service_direction:
   future_template: clyffe-code-workspace-template
   future_product: Clyffe Code
+dns_policy:
+  public_cloudflare:
+    - name: ssh.clyffy.ai
+      type: A
+      target: 104.176.44.101
+      proxied: false
+      status: live
+      provider_record_id: 605ae29461a8db03d11bbe893e7e4974
+      note: DNS-only public jump record; does not point at the private devstation.
+  private_dns_later:
+    - name: devstation.clyffy.ai
+      type: A
+      target: 10.0.0.116
+    - name: code.devstation.clyffy.ai
+      type: A
+      target: 10.0.0.116
 notes:
   - Private VS Code/Cursor Remote-SSH target.
+  - Private code-server browser IDE target through SSH forwarding only.
+  - Do not publish 10.0.0.116 in public Cloudflare DNS.
   - Do not use as a customer workspace or template until personal auth state is removed.

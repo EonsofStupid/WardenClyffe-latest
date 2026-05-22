@@ -2,7 +2,10 @@
 clyffy_touchpoint:
   version: 2
   workspace_id: wardenclyffe.infra
+  project_key: touchpoint-template
+  persona: clyffy-operator
   kind: template
+  owner: docs/ai/TOUCHPOINT_TEMPLATE.md
   mesh_registry: wardenclyffe/registry/context-mesh.yaml
 ---
 

@@ -11,6 +11,8 @@ wardenclyffe_touchpoint:
     - docs/FOUNDATION_SERVICE_MATRIX.md
     - docs/FOUNDATION_APP_RESEARCH_2026_05.md
     - docs/WARDEN_CLYFFE_PILOT_ROADMAP.md
+    - docs/CLYFFY_DYNAMIC_UI_SPEC.md
+    - docs/CLYFFY_DYNAMIC_UI_POAM.md
     - wardenclyffe/docs/infra-state.md
     - wardenclyffe/docs/decisions/0027-clyffy-ai-operator-estate-and-supabase-deprecation.md
 ---
@@ -239,6 +241,25 @@ Required model:
 This future UI must read through Warden/Clyffe APIs. It should not talk
 directly to Proxmox, Postgres admin endpoints, Qdrant, SurrealDB, PowerDNS, or
 Cloudflare from the browser.
+
+### Phase 7: Dynamic Clyffy UI
+
+Goal: make `master.clyffy.ai` populate from live contracts instead of static
+page copy.
+
+The controlling spec and sprint POA&M are:
+
+- `docs/CLYFFY_DYNAMIC_UI_SPEC.md`
+- `docs/CLYFFY_DYNAMIC_UI_POAM.md`
+
+Minimum dynamic cards:
+
+- current focus and blockers;
+- Warden Devstation and future Clyffe Code workspaces;
+- infrastructure health;
+- active POA&M/sprint state;
+- knowledge/touchpoint freshness;
+- assistant context and suggested next actions.
 
 ## Live Mutation Rule
 
