@@ -65,10 +65,10 @@ Verified on 2026-05-27:
 | Workstation WSL symlink | `~/warden-storage` resolves to `/mnt/warden/storage` |
 | Workstation WSL write test | write/read/delete passed under `scratch/` |
 | Shared project path | `/mnt/warden/storage/projects/WardenClyffe-latest` |
-| Shared project root commit | `138c9c4` |
-| Shared nested Go Warden commit | `cfbf845` |
-| Shared root Git status | clean with `--ignore-submodules=dirty` |
-| Shared nested Go Git status | clean |
+| Shared project root commit | verify with `git rev-parse --short HEAD` after each sync |
+| Shared nested Go Warden commit | `9d5162f` |
+| Shared root Git status | full SMB status timed out after 30s on 2026-05-27; commit and changed-file hashes verified |
+| Shared nested Go Git status | full SMB status timed out after 30s on 2026-05-27; commit and changed-file hashes verified |
 | Devstation mount | `/workspace/warden-storage` mounted and reads the same project path |
 | Capsule access | no kernel mount; brokered `smbclient` can read `projects/WardenClyffe-latest/AGENTS.md` without printing the secret |
 
@@ -111,6 +111,10 @@ Do not expose SMB, NFS, or raw storage services publicly. Workstation access
 must use private reachability such as WardenNet/WireGuard/Tailscale while
 headscale is being established, or an approved SSH tunnel. Remote-SSH into the
 devstation remains the clean daily coding path once the project has been synced.
+Git-heavy operations on the SMB working tree are now known to be slow enough
+to time out; prefer devstation-local clones for heavy branch/status work and
+use the share as the project sync/artifact authority until a Warden storage
+client replaces raw SMB.
 
 ## Directory Layout
 
