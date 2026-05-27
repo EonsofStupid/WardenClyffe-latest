@@ -82,8 +82,7 @@ The first devstation includes:
 ## Shared Storage
 
 The devstation keeps its local workspace at `/workspace/WardenClyffe-latest`.
-After `warden-shared-storage-01` is provisioned, mount the Warden shared storage
-client path at:
+The Warden shared storage client path is mounted at:
 
 ```text
 /workspace/warden-storage
@@ -92,6 +91,19 @@ client path at:
 Use that mount for portable project sync, artifacts, model/dataset caches, and
 agent-portable config. Do not move the devstation OS, personal auth state, or
 live database primary data onto the shared mount.
+
+Verified on 2026-05-27:
+
+| Check | Result |
+|---|---|
+| Mount | `//10.0.0.117/warden-storage` at `/workspace/warden-storage`, about `371 GiB` available |
+| Shared project | `/workspace/warden-storage/projects/WardenClyffe-latest` |
+| Shared project commit | `138c9c4` |
+| Shared project status | clean with `git status --short --ignore-submodules=dirty` |
+| Codex CLI | `codex-cli 0.133.0` |
+| Claude Code | `2.1.148` |
+| Infisical CLI | `0.43.86` |
+| GitHub CLI auth | not logged in yet; run `gh auth login` from devstation before GitHub write/push work |
 
 ## Connection Model
 

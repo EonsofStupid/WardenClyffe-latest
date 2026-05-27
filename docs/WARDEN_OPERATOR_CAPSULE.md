@@ -144,6 +144,21 @@ export WARDEN_SECRET_VIEW_ALLOWED=1
 - Any private export kept longer than bootstrap should be encrypted or moved to
   the secret backup location.
 
+### Shared Storage Bridge
+
+Verified on 2026-05-27:
+
+- The capsule remains an unprivileged LXC and does not kernel-mount
+  `/workspace/warden-storage`.
+- Use brokered `smbclient` or `rsync` for shared storage access from the
+  capsule.
+- A brokered `smbclient` check read
+  `projects/WardenClyffe-latest/AGENTS.md` from
+  `//10.0.0.117/warden-storage` using an Infisical-sourced temporary credential
+  file that was removed after use.
+- Do not make the capsule a daily coding workspace. It is for
+  secret-sensitive operator work.
+
 ### Audit
 
 Use two audit modes:

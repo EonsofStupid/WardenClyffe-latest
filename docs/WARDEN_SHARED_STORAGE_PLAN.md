@@ -48,12 +48,29 @@ Verified on 2026-05-26:
 | Service IP | `10.0.0.117/24` on `vmbr1` |
 | Server data root | `/srv/warden/storage` |
 | Export | internal SMB/CIFS share `warden-storage` |
-| Local WSL mount verified | `/home/hades/warden-storage`; target naming is `/mnt/warden/storage` with `~/warden-storage` symlink |
+| Local WSL mount verified | `/mnt/warden/storage` with `~/warden-storage` symlink |
 | Risk class | disk/storage write completed for bootstrap tier; future expansion still requires explicit apply step |
 | Preflight | passed on 2026-05-26 before provisioning CTID/VMID `117` |
 
 The 400 GB carve fits the current host, but it is a bootstrap tier. Do not use
 it to justify large model hoarding, cold backups, or customer storage promises.
+
+## Verified Client State
+
+Verified on 2026-05-27:
+
+| Client | Result |
+|---|---|
+| Workstation WSL | `warden-storage status` shows `/mnt/warden/storage` mounted from `//10.0.0.117/warden-storage` with about `371 GiB` available |
+| Workstation WSL symlink | `~/warden-storage` resolves to `/mnt/warden/storage` |
+| Workstation WSL write test | write/read/delete passed under `scratch/` |
+| Shared project path | `/mnt/warden/storage/projects/WardenClyffe-latest` |
+| Shared project root commit | `138c9c4` |
+| Shared nested Go Warden commit | `cfbf845` |
+| Shared root Git status | clean with `--ignore-submodules=dirty` |
+| Shared nested Go Git status | clean |
+| Devstation mount | `/workspace/warden-storage` mounted and reads the same project path |
+| Capsule access | no kernel mount; brokered `smbclient` can read `projects/WardenClyffe-latest/AGENTS.md` without printing the secret |
 
 ## Service
 
@@ -166,14 +183,13 @@ Completed bootstrap gate:
 
 Next implementation gate:
 
-1. Normalize local mount naming and install `warden-storage mount/status/path`.
-2. Sync `~/dev/WardenClyffe-latest` to
-   `/mnt/warden/storage/projects/WardenClyffe-latest`.
-3. Mount or bridge the share to `warden-devstation-01`.
-4. Keep capsule access secret-safe; if kernel CIFS stays blocked in the
+1. Keep the shared project path as the migration authority while local Windows
+   and WSL copies are reconciled.
+2. Mount or bridge the share to main Clyffy after its role is stable.
+3. Keep capsule access secret-safe; if kernel CIFS stays blocked in the
    unprivileged LXC, use brokered `rsync`/`smbclient` until capsule is promoted
    to a VM or another approved storage client shape.
-5. Add Windows `W:` only after private VPN/WardenNet routing is established.
+4. Add Windows `W:` only after private VPN/WardenNet routing is established.
 
 The disk carve is an explicit Warden write action. It should create a task,
 approval, and audit record once Warden has that workflow.

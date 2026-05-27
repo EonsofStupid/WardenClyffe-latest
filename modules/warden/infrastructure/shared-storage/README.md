@@ -37,6 +37,22 @@ This folder owns the Warden shared storage foundation.
 The storage service is internal-only. Do not publish SMB, NFS, or raw storage
 ports through Cloudflare, Caddy, OPNsense, or public NAT.
 
+## Verified Clients
+
+Verified on 2026-05-27:
+
+| Client | Status |
+|---|---|
+| Workstation WSL | mounted at `/mnt/warden/storage`; `~/warden-storage` symlink resolves there |
+| Shared root project | `/mnt/warden/storage/projects/WardenClyffe-latest`, commit `138c9c4`, clean Git status with `--ignore-submodules=dirty` |
+| Shared nested Go Warden | `wardenclyffe/`, commit `cfbf845`, clean Git status |
+| Warden Devstation | mounted at `/workspace/warden-storage`; can read the shared project and run Codex/Claude/Infisical |
+| Warden Operator Capsule | no kernel mount; brokered `smbclient` read verified for `projects/WardenClyffe-latest/AGENTS.md` |
+
+`gh auth status` on `warden-devstation-01` still reports not logged in. Treat
+GitHub write/push operations from devstation as blocked until the operator
+authenticates `gh` there.
+
 ## Preferred Shape
 
 The bootstrap shape is a dedicated storage LXC:
@@ -56,13 +72,14 @@ required before server2 is online, promote this boundary to a small VM.
 
 ## Client Order
 
-1. Normalize and verify the local WSL mount at `/mnt/warden/storage`.
-2. Sync the active repo to
+1. Use the shared project path for migration:
    `/mnt/warden/storage/projects/WardenClyffe-latest`.
-3. Mount from `warden-devstation-01` for daily coding workflows.
-4. Bridge or mount from `warden-operator-capsule` for operator workflows.
-5. Mount from main Clyffy after its role is stable.
-6. Mount from native Windows as `W:` only after WardenNet/WireGuard or another
+2. Use `warden-devstation-01` for daily coding workflows against
+   `/workspace/warden-storage/projects/WardenClyffe-latest`.
+3. Use brokered `smbclient`/`rsync` from `warden-operator-capsule` for
+   secret-sensitive operator workflows.
+4. Mount from main Clyffy after its role is stable.
+5. Mount from native Windows as `W:` only after WardenNet/WireGuard or another
    approved private path exists.
 
 The capsule is an unprivileged LXC. If kernel CIFS mounting remains blocked,
