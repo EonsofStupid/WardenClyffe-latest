@@ -152,6 +152,11 @@ Verified on 2026-05-27:
   `/workspace/warden-storage`.
 - Use brokered `smbclient` or `rsync` for shared storage access from the
   capsule.
+- Capsule hosts `/home/wardenop/bin/warden-storage-secret-broker` for
+  devstation remounts. The devstation key is restricted in `authorized_keys`
+  with `from="10.0.0.116"`, `restrict`, and a forced command.
+- The broker accepts only the original command `warden-storage-read-secret`.
+  Plain manual SSH to that broker key is rejected.
 - A brokered `smbclient` check read
   `projects/WardenClyffe-latest/AGENTS.md` from
   `//10.0.0.117/warden-storage` using an Infisical-sourced temporary credential

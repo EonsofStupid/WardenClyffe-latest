@@ -41,7 +41,7 @@ paths:
   server_client_mount: /workspace/warden-storage
   local_wsl_mount: /mnt/warden/storage
   local_wsl_symlink: ~/warden-storage
-  windows_client_drive: W:
+  windows_client_drive: "W:"
 
 exports:
   nfs_v4:
@@ -56,6 +56,21 @@ exports:
   sftp:
     status: planned
     scope: operator-breakglass
+
+client:
+  command: /usr/local/bin/warden-storage
+  config_file: /etc/warden/storage-client.env
+  temporary_credential_file: /run/warden-secrets/warden-shared-storage-01.smb
+  temporary_credential_removed_after_mount: true
+  installer: scripts/storage/install-warden-storage-client.sh
+  local_wsl_profile: local-wsl
+  devstation_profile: devstation
+  devstation_systemd_unit: warden-storage.service
+  devstation_broker:
+    host_alias: warden-storage-broker
+    capsule_forced_command: /home/wardenop/bin/warden-storage-secret-broker
+    original_command: warden-storage-read-secret
+    source_restriction: 10.0.0.116
 
 directories:
   - projects

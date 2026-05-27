@@ -63,14 +63,33 @@ Verified on 2026-05-27:
 |---|---|
 | Workstation WSL | `warden-storage status` shows `/mnt/warden/storage` mounted from `//10.0.0.117/warden-storage` with about `371 GiB` available |
 | Workstation WSL symlink | `~/warden-storage` resolves to `/mnt/warden/storage` |
-| Workstation WSL write test | write/read/delete passed under `scratch/` |
+| Workstation WSL remount | `warden-storage unmount && warden-storage mount` passed through the capsule/Infisical broker |
+| Workstation WSL write test | write/read/delete passed under `scratch/`; temporary CIFS credential file absent after mount |
 | Shared project path | `/mnt/warden/storage/projects/WardenClyffe-latest` |
 | Shared project root commit | verify with `git rev-parse --short HEAD` after each sync |
-| Shared nested Go Warden commit | `9d5162f` |
+| Shared nested Go Warden commit | verify with `git -C wardenclyffe rev-parse --short HEAD` after each sync |
 | Shared root Git status | full SMB status timed out after 30s on 2026-05-27; commit and changed-file hashes verified |
 | Shared nested Go Git status | full SMB status timed out after 30s on 2026-05-27; commit and changed-file hashes verified |
 | Devstation mount | `/workspace/warden-storage` mounted and reads the same project path |
-| Capsule access | no kernel mount; brokered `smbclient` can read `projects/WardenClyffe-latest/AGENTS.md` without printing the secret |
+| Devstation remount | enabled `warden-storage.service` restarted cleanly and remounted through the restricted capsule broker |
+| Devstation write test | write/read/delete passed under `scratch/`; temporary CIFS credential file absent after mount |
+| Capsule access | no kernel mount; brokered `smbclient` can read `projects/WardenClyffe-latest/AGENTS.md`; devstation uses a forced-command broker key |
+
+## Storage Module Contract
+
+The reliable storage module is intentionally boring:
+
+| Layer | Contract |
+|---|---|
+| Authority | server1 LXC `117`, `warden-shared-storage-01`, `/srv/warden/storage` |
+| Export | SMB3/CIFS `//10.0.0.117/warden-storage`, internal only |
+| Local WSL client | `/mnt/warden/storage` plus `~/warden-storage` |
+| Devstation client | `/workspace/warden-storage` managed by `warden-storage.service` |
+| Capsule | brokered access only; no kernel mount in the unprivileged LXC |
+| Secret source | Infisical secret `WARDEN_SHARED_STORAGE_01_SMB_PASSWORD` under `/warden/shared-storage/01` |
+| Client command | `/usr/local/bin/warden-storage` with `mount`, `status`, `unmount`, `path` |
+| Client config | `/etc/warden/storage-client.env`; no secrets |
+| Devstation broker | dedicated key `~/.ssh/warden-storage-broker_ed25519` can only run `warden-storage-read-secret` through a forced command on capsule |
 
 ## Service
 
@@ -89,6 +108,9 @@ Verified on 2026-05-27:
 | Local WSL convenience symlink | `~/warden-storage` |
 | Server-side data root | `/srv/warden/storage` |
 | Windows target | `W:` after private VPN or approved tunnel |
+| Client installer | `scripts/storage/install-warden-storage-client.sh` |
+| Client command source | `scripts/storage/warden-storage-client.sh` |
+| Capsule broker source | `scripts/storage/warden-storage-secret-broker.sh` |
 
 Use a dedicated storage LXC or storage VM boundary rather than installing file
 services directly on the Proxmox host. The default implementation target for
@@ -181,9 +203,12 @@ Completed bootstrap gate:
 4. LXC `117` was provisioned as `warden-shared-storage-01`.
 5. `/srv/warden/storage` was created with the planned directory layout.
 6. SMB/CIFS share `warden-storage` was configured internal-only.
-7. The WSL workstation mount was verified with write/read/delete at
-   `/home/hades/warden-storage`; normalize the final local path to
-   `/mnt/warden/storage` before broader sync.
+7. The WSL workstation mount was normalized to `/mnt/warden/storage` with
+   `~/warden-storage` as a symlink.
+8. The installable `warden-storage` command was deployed on WSL and devstation.
+9. Devstation persistent remount was established through `warden-storage.service`.
+10. Devstation uses a restricted capsule broker key instead of a stored SMB
+    password.
 
 Next implementation gate:
 

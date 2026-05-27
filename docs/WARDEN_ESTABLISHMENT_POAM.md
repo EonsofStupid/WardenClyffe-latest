@@ -78,7 +78,7 @@ Verified on 2026-05-22 and updated through the 2026-05-26 edge/storage work:
 | Devstation friendly aliases | `devstation.clyffy.ai` and `code.devstation.clyffy.ai` configured as local SSH aliases |
 | Shared storage | `warden-shared-storage-01`, LXC `117`, `10.0.0.117`, 400 GiB on `local-lvm`, internal-only SMB/CIFS share `warden-storage` |
 | Workstation WSL storage mount | `warden-storage status` shows `/mnt/warden/storage` mounted from `//10.0.0.117/warden-storage`; `~/warden-storage` resolves there |
-| Shared project authority | `/mnt/warden/storage/projects/WardenClyffe-latest`, root commit `138c9c4`, nested Go Warden commit `cfbf845`, clean Git status |
+| Shared project authority | `/mnt/warden/storage/projects/WardenClyffe-latest`; verify root and nested commits after each sync; full SMB Git status can time out |
 | Clyffy dynamic UI planning | spec and sprint POA&M created |
 | Clyffy MCP orchestrator | boundary captured; gateway planned in registry |
 | Current public homebase | `104.176.44.101` |
@@ -155,9 +155,10 @@ Verified on 2026-05-22 and updated through the 2026-05-26 edge/storage work:
 | WDN-STOR-004 | Shared storage | Read-only preflight helper created and run | Done | `scripts/storage/preflight-warden-shared-storage-01.sh`, passed on 2026-05-26 | Re-run immediately before any disk/storage write |
 | WDN-STOR-005 | Shared storage | 400 GiB storage service provisioned | Done | LXC `117`, `warden-shared-storage-01`, `/srv/warden/storage`, SMB share `warden-storage` | Keep as bootstrap tier until server2 is ready |
 | WDN-STOR-006 | Shared storage | Local WSL mount verified | Done | `/mnt/warden/storage`, `~/warden-storage` symlink, write/read/delete smoke test passed | Use `warden-storage status/mount/path/unmount` |
-| WDN-STOR-007 | Shared storage | Shared project synced and reconciled | Done | `/mnt/warden/storage/projects/WardenClyffe-latest`, root rev-parse and nested `9d5162f` verified, changed-file hashes verified; full SMB `git status` timed out | Treat as sync/artifact authority; use devstation-local clone for heavy Git |
-| WDN-STOR-008 | Shared storage | Devstation mount verified | Done | `/workspace/warden-storage`, shared project Git clean, Codex/Claude/Infisical present | Authenticate `gh` before GitHub write/push work |
-| WDN-STOR-011 | Shared storage | Capsule storage bridge verified | Done | brokered `smbclient` read of `projects/WardenClyffe-latest/AGENTS.md` | Keep capsule secret-sensitive; do not force daily coding there |
+| WDN-STOR-007 | Shared storage | Shared project synced and reconciled | Done | `/mnt/warden/storage/projects/WardenClyffe-latest`; rev-parse checks pass; full SMB `git status` can time out | Treat as sync/artifact authority; use devstation-local clone for heavy Git |
+| WDN-STOR-008 | Shared storage | Devstation mount verified | Done | `/workspace/warden-storage`, `warden-storage.service` enabled/active, restart/remount passed | Authenticate `gh` before GitHub write/push work |
+| WDN-STOR-011 | Shared storage | Capsule storage bridge verified | Done | brokered `smbclient` read plus restricted devstation broker key | Keep capsule secret-sensitive; do not force daily coding there |
+| WDN-STOR-012 | Shared storage | Boring client command installed | Done | `/usr/local/bin/warden-storage`, `/etc/warden/storage-client.env`, no temporary credential file left behind | Promote this client shape into Warden UI task/audit later |
 | WDN-STOR-009 | Shared storage | Workstation native Windows `W:` mount | Blocked | WardenNet/WireGuard/private tunnel not established | Do not expose SMB/NFS publicly |
 | WDN-STOR-010 | Shared storage | Server2 storage migration design | Planned | server2 build in progress | Verify NVMe/SSD/SAS inventory when online |
 | WDN-DNS-005 | DNS | Public jump record `ssh.clyffy.ai` | Done | `ssh.clyffy.ai -> 104.176.44.101`, Cloudflare record `605ae29461a8db03d11bbe893e7e4974` | Keep DNS-only and non-proxied |

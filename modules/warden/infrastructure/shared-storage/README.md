@@ -44,10 +44,12 @@ Verified on 2026-05-27:
 | Client | Status |
 |---|---|
 | Workstation WSL | mounted at `/mnt/warden/storage`; `~/warden-storage` symlink resolves there |
-| Shared root project | `/mnt/warden/storage/projects/WardenClyffe-latest`, commit `138c9c4`, clean Git status with `--ignore-submodules=dirty` |
-| Shared nested Go Warden | `wardenclyffe/`, commit `cfbf845`, clean Git status |
-| Warden Devstation | mounted at `/workspace/warden-storage`; can read the shared project and run Codex/Claude/Infisical |
-| Warden Operator Capsule | no kernel mount; brokered `smbclient` read verified for `projects/WardenClyffe-latest/AGENTS.md` |
+| Workstation WSL remount | `warden-storage unmount && warden-storage mount` passed through capsule/Infisical broker |
+| Shared root project | `/mnt/warden/storage/projects/WardenClyffe-latest`; verify with `git rev-parse --short HEAD`; full SMB status can time out |
+| Shared nested Go Warden | `wardenclyffe/`; verify with `git -C wardenclyffe rev-parse --short HEAD`; full SMB status can time out |
+| Warden Devstation | mounted at `/workspace/warden-storage`; `warden-storage.service` enabled and active |
+| Warden Devstation remount | `systemctl restart warden-storage.service` passed through restricted capsule broker |
+| Warden Operator Capsule | no kernel mount; brokered `smbclient` read verified for `projects/WardenClyffe-latest/AGENTS.md`; forced broker command serves devstation remounts |
 
 `gh auth status` on `warden-devstation-01` still reports not logged in. Treat
 GitHub write/push operations from devstation as blocked until the operator
@@ -103,18 +105,32 @@ write action.
 Use a boring command shape for workstation WSL access:
 
 ```bash
-scripts/storage/warden-storage-client.sh status
-scripts/storage/warden-storage-client.sh mount
-scripts/storage/warden-storage-client.sh path
-scripts/storage/warden-storage-client.sh unmount
+warden-storage status
+warden-storage mount
+warden-storage path
+warden-storage unmount
 ```
 
 The human-facing command should broker the SMB credential from the capsule and
 Infisical, write only a temporary CIFS credentials file under
 `/run/warden-secrets`, and avoid printing the secret. The root-only stdin helper
 is an internal implementation detail, not the command operators should run.
-Install or symlink the repo script as `warden-storage` on clients once the
-mount path is normalized.
+
+Install the command from the repo:
+
+```bash
+sudo scripts/storage/install-warden-storage-client.sh local-wsl
+sudo scripts/storage/install-warden-storage-client.sh devstation
+```
+
+The installer writes `/etc/warden/storage-client.env`. That file is client
+identity and path config only; it must not contain passwords or tokens.
+
+Devstation uses a dedicated SSH key named
+`~/.ssh/warden-storage-broker_ed25519` against capsule. Capsule restricts that
+key with `from="10.0.0.116"`, `restrict`, and the forced command
+`/home/wardenop/bin/warden-storage-secret-broker`. The accepted original
+command is `warden-storage-read-secret`; a plain manual SSH is rejected.
 
 ## Naming
 

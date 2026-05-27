@@ -101,6 +101,10 @@ Verified on 2026-05-27:
 | Shared project | `/workspace/warden-storage/projects/WardenClyffe-latest` |
 | Shared project commit | verify with `git rev-parse --short HEAD` after each sync |
 | Shared project status | clean with `git status --short --ignore-submodules=dirty` |
+| Storage client | `/usr/local/bin/warden-storage` |
+| Storage config | `/etc/warden/storage-client.env`, no secrets |
+| Storage service | `warden-storage.service` enabled and active |
+| Storage broker | restricted `warden-storage-broker` SSH key to capsule forced command |
 | Codex CLI | `codex-cli 0.133.0` |
 | Claude Code | `2.1.148` |
 | Infisical CLI | `0.43.86` |
