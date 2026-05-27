@@ -122,7 +122,8 @@ Target stack:
 
 - Astro for public site, docs, changelog, and knowledge base.
 - A real app frontend for Warden and Clyffe panels.
-- Rust API services for Warden control plane.
+- Go Warden API services first; Rust services stay parked/reference until the
+  Go source of truth is clean and verified.
 - PostgreSQL as system-of-record.
 - Qdrant for vector search and AI memory.
 - Object storage for screenshots, attachments, reports, and generated assets.

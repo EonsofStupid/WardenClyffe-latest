@@ -79,6 +79,20 @@ The first devstation includes:
 - Private `code-server` hosted editor with Rust, Go, Python, YAML, and TOML
   extensions seeded.
 
+## Shared Storage
+
+The devstation keeps its local workspace at `/workspace/WardenClyffe-latest`.
+After `warden-shared-storage-01` is provisioned, mount the Warden shared storage
+client path at:
+
+```text
+/workspace/warden-storage
+```
+
+Use that mount for portable project sync, artifacts, model/dataset caches, and
+agent-portable config. Do not move the devstation OS, personal auth state, or
+live database primary data onto the shared mount.
+
 ## Connection Model
 
 Use the local desktop only as the client:

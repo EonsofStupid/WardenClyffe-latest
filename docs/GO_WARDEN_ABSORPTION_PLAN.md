@@ -13,6 +13,17 @@ wardenclyffe_touchpoint:
 This plan folds the existing Go Warden work into the WardenClyffe direction
 without losing working behavior or confusing it with Clyffe.
 
+## Current Execution Decision
+
+As of the 2026-05-26 foundation reset, **Go Warden is the active implementation
+authority** for the next slice. Rust remains parked/reference material until the
+Go Warden source of truth, storage/workspace foundation, Proxmox coverage, and
+Warden/Clyffe boundaries are boring and verified.
+
+Do not start new Rust implementation work as part of this plan. When this file
+mentions Rust contracts below, treat them as future replacement criteria, not
+current execution instructions.
+
 ## Source Material
 
 Primary Go Warden sources:
@@ -36,7 +47,7 @@ explicitly about that repo.
 | Target | Role |
 |---|---|
 | `warden` | Module 1 operator app, Proxmox UI manager, Warden API |
-| `warden-mcp` | formal MCP server/gateway for Warden and Proxmox domains |
+| `warden-mcp` | formal MCP server/gateway for Warden and Proxmox domains; Go-side behavior first, Rust formalization later |
 | `clyffe` | Module 2 customer portal, customer-safe API consumer |
 | `context-mesh` | registry, policy, touchpoints, and observability contract |
 | `ai-memory` | Markdown touchpoints, SurrealDB projections, Qdrant vectors |
@@ -70,7 +81,7 @@ Absorb from Go:
 - lifecycle and snapshot actions
 - audit-after-action pattern
 
-Rust target should split this into:
+The eventual replacement target should split this into:
 
 ```text
 warden-proxmox-client
@@ -140,15 +151,16 @@ Clyffe should not inherit Warden's operator pages.
 ## Migration Rules
 
 - Port concepts, tests, and behavior before changing names.
-- Preserve working Go behavior as reference until Rust has tests.
+- Preserve working Go behavior as the active reference until a future
+  replacement has tests and operator approval.
 - Do not port secrets, local paths, or live credential examples.
 - Do not duplicate Proxmox policy in multiple services.
 - Do not let Clyffe call Proxmox directly.
 - Do not let AI memory become product truth.
 
-## Required Rust Contracts
+## Parked Future Contracts
 
-Minimum Rust contracts before replacing Go behavior:
+Minimum future contracts before replacing Go behavior:
 
 ```text
 ProxmoxClient
@@ -163,11 +175,14 @@ QdrantProjector
 SurrealProjector
 ```
 
-Each contract needs tests with fixture JSON from Proxmox-style responses.
+Each contract needs tests with fixture JSON from Proxmox-style responses. This
+section is intentionally parked until Go Warden is the clean, committed,
+operational source of truth.
 
 ## Success Criteria
 
-Go Warden can be considered absorbed when Rust Warden can:
+Go Warden can be considered ready for a replacement conversation when the next
+implementation can:
 
 1. show the same inventory as Go Warden.
 2. perform the same lifecycle actions with stricter task polling.
@@ -175,4 +190,3 @@ Go Warden can be considered absorbed when Rust Warden can:
 4. expose the same or better Context Mesh registry view.
 5. serve Clyffe through tenant-safe APIs.
 6. pass tests without relying on live Proxmox.
-
