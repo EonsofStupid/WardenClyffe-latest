@@ -124,3 +124,32 @@ route and backend health checks exist.
 - Warden owns route intent, approval, audit, health, and rollback.
 - Public records must point to the Warden-controlled public edge or public jump,
   never directly to private `10.0.0.0/24` service IPs.
+
+## Warden DNS Management Contract
+
+Warden DNS/domain management is not just a helper script. It is a bounded
+context and MCP/intelligence domain.
+
+| Layer | Responsibility |
+|---|---|
+| Authoring | Warden route/DNS intent records, reviewed before apply |
+| Public provider | Cloudflare zones and DNS records |
+| Internal provider | PowerDNS/OPNsense split-horizon records |
+| Edge | Caddy route and certificate state |
+| Product truth | Postgres tables for domains, records, routes, tasks, approvals, and audit |
+| Retrieval | Qdrant indexes domain runbooks, touchpoints, and operator guides |
+| Graph projection | SurrealDB links domains, zones, services, routes, certs, hosts, and agents |
+| MCP leaf | planned `mcp.global.dns` behind Warden policy |
+
+The DNS leaf should expose boring, idempotent tools:
+
+- `dns.zone_inventory`
+- `dns.record_inventory`
+- `dns.plan_record`
+- `dns.apply_record`
+- `dns.delete_record`
+- `dns.verify_record`
+- `dns.route_readiness`
+
+Write tools require Warden approval tasks, route health gates, and rollback
+material. Read tools may run directly once the operator token path is verified.

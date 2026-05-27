@@ -8,6 +8,7 @@ wardenclyffe_touchpoint:
   reads:
     - docs/WARDEN_ESTABLISHMENT_POAM.md
     - docs/WARDEN_OPERATOR_CAPSULE.md
+    - docs/WARDEN_REMOTE_AGENT_STREAMS.md
     - docs/CLYFFE_CODE_TURNKEY_SERVICE_SPEC.md
     - modules/warden/infrastructure/devstation/README.md
 ---
@@ -107,6 +108,7 @@ Verified on 2026-05-27:
 | Storage broker | restricted `warden-storage-broker` SSH key to capsule forced command |
 | Codex CLI | `codex-cli 0.133.0` |
 | Claude Code | `2.1.148` |
+| Agent stream helper | `scripts/agents/warden-agent-stream.sh` |
 | Infisical CLI | `0.43.86` |
 | GitHub CLI auth | not logged in yet; run `gh auth login` from devstation before GitHub write/push work |
 
@@ -144,6 +146,15 @@ scripts\local\open-warden-devstation-claude.cmd
 Warden Go exposes the same first-class launch surface at `/agent-workspaces`.
 The page renders desktop-app, devstation-agent, and capsule-agent launch
 commands without exposing secrets.
+
+Agent launchers use `scripts/agents/warden-agent-stream.sh` so Codex and
+Claude Code run on the remote Linux host. On devstation that helper attaches
+to a persistent `tmux` session when available; on hosts without `tmux`, it
+falls back to a direct SSH TTY stream.
+
+See `docs/WARDEN_REMOTE_AGENT_STREAMS.md` for the full remote-agent contract,
+including why Codex CLI app-server remote mode remains experimental until
+Warden owns tunnel, token, session, and audit policy.
 
 For the private browser IDE:
 

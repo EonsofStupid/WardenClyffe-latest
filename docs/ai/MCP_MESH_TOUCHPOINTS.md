@@ -108,6 +108,8 @@ Use these as planned domain names unless the registry supersedes them:
 
 - `mcp.global.warden`
 - `mcp.global.proxmox`
+- `mcp.global.dns`
+- `mcp.global.agent-runtime`
 - `mcp.global.clyffe`
 - `mcp.global.crm`
 - `mcp.global.support`

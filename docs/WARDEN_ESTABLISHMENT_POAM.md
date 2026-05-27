@@ -14,6 +14,7 @@ wardenclyffe_touchpoint:
     - docs/WARDENCLYFFE_CATALOG_REPO_BOUNDARY.md
     - docs/WARDEN_OPERATOR_CAPSULE.md
     - docs/WARDEN_DEVSTATION_AND_CLYFFE_CODE.md
+    - docs/WARDEN_REMOTE_AGENT_STREAMS.md
     - docs/WARDEN_SHARED_STORAGE_PLAN.md
     - docs/WARDEN_CLOUDFLARE_DNS_FOUNDATION.md
     - docs/CLYFFY_MCP_ORCHESTRATOR.md
@@ -76,6 +77,7 @@ Verified on 2026-05-22 and updated through the 2026-05-26 edge/storage work:
 | Devstation toolchain | Ubuntu 26.04, Node 24 LTS, Codex CLI, Claude Code, Infisical CLI, GitHub CLI, SOPS, Rust, Go, Python, uv |
 | Devstation hosted editor | private `code-server`, tunnel alias `warden-devstation-code` |
 | Devstation friendly aliases | `devstation.clyffy.ai` and `code.devstation.clyffy.ai` configured as local SSH aliases |
+| Remote agent streams | Codex/Claude launch through SSH into devstation/capsule using `scripts/agents/warden-agent-stream.sh`; both hosts have `tmux`; Codex app-server remote mode documented as experimental |
 | Shared storage | `warden-shared-storage-01`, LXC `117`, `10.0.0.117`, 400 GiB on `local-lvm`, internal-only SMB/CIFS share `warden-storage` |
 | Workstation WSL storage mount | `warden-storage status` shows `/mnt/warden/storage` mounted from `//10.0.0.117/warden-storage`; `~/warden-storage` resolves there |
 | Shared project authority | `/mnt/warden/storage/projects/WardenClyffe-latest`; verify root and nested commits after each sync; full SMB Git status can time out |
@@ -132,7 +134,7 @@ Verified on 2026-05-22 and updated through the 2026-05-26 edge/storage work:
 | WDN-ACC-003 | Access | Dedicated Warden SSH key installed | Done | `ssh server1` returns `root` and `server1` | Move away from root later to sudo-limited operator |
 | WDN-ACC-004 | Access | Infisical/keyring local workflow verified | In Progress | Infisical CLI installed in operator capsule | Authenticate/configure approved Infisical flow inside capsule |
 | WDN-CAP-001 | Operator capsule | LXC `114` provisioned internal-only | Done | `ssh warden-capsule`, `pct config 114` | Keep no public route |
-| WDN-CAP-002 | Operator capsule | Linux-first agent toolchain installed | Done | `warden-capsule-status` shows Codex, Claude, Infisical, SOPS, GitHub CLI | Authenticate CLIs inside capsule |
+| WDN-CAP-002 | Operator capsule | Linux-first agent toolchain installed | Done | `warden-capsule-status` shows Codex, Claude, Infisical, SOPS, GitHub CLI; `tmux 3.5a` installed | Authenticate CLIs inside capsule |
 | WDN-CAP-003 | Operator capsule | Secret tmpfs and helpers verified | Done | `warden-secret-write/list/remove` test left zero files | Use helpers for future secret material |
 | WDN-CAP-004 | Operator capsule | Malformed interrupted capsule key removed from `server1` | Done | no `warden-capsule-114-to-server1` authorized key entry | Design restricted operator path before re-adding |
 | WDN-CAP-005 | Operator capsule | Repo cloned into capsule workspace | Done | `/workspace/WardenClyffe-latest` | Sync/push local uncommitted docs before relying on clone as complete truth |
@@ -147,6 +149,7 @@ Verified on 2026-05-22 and updated through the 2026-05-26 edge/storage work:
 | WDN-DEV-006 | Devstation | Private browser IDE established | Done | `code-server`, `warden-devstation-code` | Keep SSH-tunneled only |
 | WDN-DEV-007 | Devstation | Friendly local editor aliases | Done | `ssh devstation.clyffy.ai` reaches VM `116` | Use in VS Code/Cursor Remote-SSH |
 | WDN-DEV-010 | Devstation | Warden agent workspace launch UI | Done | Go Warden `/agent-workspaces`; local launchers target `/workspace/warden-storage/projects/WardenClyffe-latest` | Convert copy-command launchers into audited open-intent tasks later |
+| WDN-DEV-011 | Devstation | Remote agent stream contract | Done | `docs/WARDEN_REMOTE_AGENT_STREAMS.md`, `scripts/agents/warden-agent-stream.sh`, Codex/Claude verified on devstation/capsule | Add Warden task/audit-backed open-intent actions |
 | WDN-DEV-008 | Devstation | Snapshot/backup policy | Planned | initial snapshot exists; no recurring backup policy yet | Add before relying on VM as sole work storage |
 | WDN-DEV-009 | Devstation | WardenNet/WireGuard access path | Planned | currently SSH via `server1` jump | Add private VPN/ZTNA path later |
 | WDN-STOR-001 | Shared storage | Server1 storage capacity verified | Done | `local-lvm` has about `1.20 TiB` available on 2026-05-26 | Keep 400 GiB carve only as bootstrap tier |
@@ -181,6 +184,7 @@ Verified on 2026-05-22 and updated through the 2026-05-26 edge/storage work:
 | WDN-DNS-004 | DNS | Public `master.clyffy.ai` A record | Blocked | no public A record | Apply only after backend and edge route answer |
 | WDN-DNS-006 | DNS | Canonical Cloudflare DNS token verified | Done | `WARDEN_CLOUDFLARE_DNS_ADMIN`, DNS record list `200` on 2026-05-26 | Use this secret for all Warden Cloudflare DNS helpers |
 | WDN-DNS-007 | DNS | Cloudflare domain inventory helper | Done | `scripts/dns/cloudflare-domain-inventory.sh` | Feed inventory into Warden DNS model later |
+| WDN-DNS-008 | DNS | DNS/domain MCP and intelligence boundary | Done | `docs/WARDEN_CLOUDFLARE_DNS_FOUNDATION.md`, `modules/warden/bounded-contexts/dns/README.md`, mesh registry `mcp.global.dns` | Build Postgres DNS intent tables and Warden UI tab |
 | WDN-EDGE-006 | Edge | Existing VM `111` separated from standalone Caddy scope | Done | Proxmox metadata corrected to `boundary;edge;needs-audit;warden` on 2026-05-26 | Audit as boundary/OPNsense candidate before any Warden-managed changes |
 | WDN-EDGE-007 | Edge/MCP | Edge cutover touchpoint created | Done | `modules/warden/bounded-contexts/edge/EDGE_CUTOVER_20260526.md`, synced-intent for Qdrant and SurrealDB | Build the actual sync worker next |
 | WDN-EDGE-008 | Edge/TLS | Cloudflare DNS-01 ACME working on standalone Caddy | Done | Caddy `v2.11.3`, `caddy-dns/cloudflare@v0.2.4`, Let's Encrypt `E8` certs for `clyffy.ai`, `rrflow.ai`, `probablydns.com`, and `effing.ai`; snapshot `caddy-dns01-cloudflare-working-20260526` | Rotate Cloudflare DNS token after bootstrap and expose cert state in Warden UI |
@@ -215,6 +219,7 @@ Verified on 2026-05-22 and updated through the 2026-05-26 edge/storage work:
 | WDN-MESH-006 | MCP/AI | SurrealDB v2 dynamic projection plan | Done | `docs/ai/SURREALDB_INTELLIGENCE_PROJECTION_V2.md`, `schemas/intelligence/surreal-touchpoint-projection.v2.surql` | Dry-run sync worker before live schema apply |
 | WDN-MESH-007 | MCP/AI | Public-safe self-hosted SurrealDB establishment plan | Done | `docs/SURREALDB_PUBLIC_SELF_HOSTING_PLAN.md` | Verify LXC `104`, add backups, Caddy/Auth/Warden proxy routes, then publish DNS |
 | WDN-MESH-008 | MCP/AI | Self-hosted SurrealDB persistence and export timer | Done | `docs/SURREALDB_SELF_HOSTED_RUNBOOK.md`, LXC `104` services | Resume cloud, export to capsule, import to staging first |
+| WDN-MESH-009 | MCP/AI | Agent runtime streams registered | Done | `docs/WARDEN_REMOTE_AGENT_STREAMS.md`, mesh registry `mcp.global.agent-runtime` | Implement status resources and open-intent task API |
 | WDN-OPS-001 | Ops | Backups required before customer service | Planned | service matrix gate | Write backup matrix by service |
 | WDN-OPS-002 | Ops | Observability for Warden actions | Planned | Observatory exists | Trace Warden actions and AI suggestions |
 | WDN-OPS-003 | Ops | Public TCP `:5432` exposure audited | Planned | public IP foundation flags it | Confirm/remove/justify forward |

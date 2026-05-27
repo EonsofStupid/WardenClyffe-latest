@@ -84,8 +84,12 @@ focused leaves:
 
 - `mcp.workspace.clyffy-master.authentik` for identity read/admin support;
 - `mcp.global.warden` for Warden control-plane status and approved actions;
+- `mcp.global.dns` for Cloudflare, PowerDNS, split DNS, route readiness, and
+  domain verification through Warden policy;
 - `mcp.global.proxmox` through Warden policy, never directly to customers;
 - `mcp.global.opnsense` for network/firewall/VPN intent;
+- `mcp.global.agent-runtime` for devstation/capsule agent stream status and
+  future audited open-intent actions;
 - `mcp.workspace.clyffy-master.bifrost` for provider/minion bridge actions;
 - `mcp.workspace.clyffy-master.observatory` for LLM traces, usage, spend, and quality;
 - `mcp.global.qdrant` for retrieval health and approved search;
@@ -146,6 +150,8 @@ Warden should expose these operator tabs for the orchestrator:
 | Clyffy Master | VM/LXC status, assistant runtime, model/embedder provider, active workspaces |
 | MCP Mesh | gateway status, leaf status, tool list, server cards, auth posture |
 | Intelligence | touchpoint inventory, Qdrant sync, SurrealDB projection, stale routes |
+| Domains | Cloudflare zones, PowerDNS records, split DNS intent, route readiness |
+| Agent Streams | devstation/capsule Codex and Claude streams, attach/open status |
 | Bifrost | provider bridge, minion bridge, rate limits, policy failures |
 | AI Observatory | traces, usage, cost/spend, provider health, prompt quality signals |
 | Tasks/Audit | Warden approvals, MCP calls, tool runs, failed/blocked actions |
@@ -158,7 +164,9 @@ Warden should expose these operator tabs for the orchestrator:
 4. Stand up Clyffy Master as the dedicated assistant runtime.
 5. Promote the Clyffy Master gateway as the orchestrator front door.
 6. Wrap Bifrost and Observatory as first-class WardenClyffe services.
-7. Build the sync worker from registry/touchpoints to Qdrant/SurrealDB using
+7. Promote DNS/domain management as `mcp.global.dns` behind Warden policy.
+8. Promote devstation/capsule agent stream status as `mcp.global.agent-runtime`.
+9. Build the sync worker from registry/touchpoints to Qdrant/SurrealDB using
    `docs/ai/SURREALDB_INTELLIGENCE_PROJECTION_V2.md` and the additive schema
    in `schemas/intelligence/surreal-touchpoint-projection.v2.surql`.
-8. Extend Warden UI tabs against generated status contracts.
+10. Extend Warden UI tabs against generated status contracts.
