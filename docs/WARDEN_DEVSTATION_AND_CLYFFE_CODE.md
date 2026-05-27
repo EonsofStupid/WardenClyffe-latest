@@ -52,6 +52,7 @@ Verified on 2026-05-22:
 | Memory | 16 GiB, balloon floor 8 GiB |
 | Disk | 160 GiB on `local-lvm` |
 | Workspace | `/workspace/WardenClyffe-latest` |
+| Shared workspace launch path | `/workspace/warden-storage/projects/WardenClyffe-latest` |
 | Status helper | `warden-devstation-status` |
 | Hosted editor helper | `warden-devstation-code-status` |
 | Initial snapshot | `initial-devstation-toolchain-20260522` |
@@ -98,7 +99,7 @@ Verified on 2026-05-27:
 |---|---|
 | Mount | `//10.0.0.117/warden-storage` at `/workspace/warden-storage`, about `371 GiB` available |
 | Shared project | `/workspace/warden-storage/projects/WardenClyffe-latest` |
-| Shared project commit | `138c9c4` |
+| Shared project commit | verify with `git rev-parse --short HEAD` after each sync |
 | Shared project status | clean with `git status --short --ignore-submodules=dirty` |
 | Codex CLI | `codex-cli 0.133.0` |
 | Claude Code | `2.1.148` |
@@ -111,7 +112,7 @@ Use the local desktop only as the client:
 
 ```bash
 ssh warden-devstation
-cd /workspace/WardenClyffe-latest
+cd /workspace/warden-storage/projects/WardenClyffe-latest
 warden-devstation-status
 ```
 
@@ -119,7 +120,7 @@ For VS Code or Cursor:
 
 ```text
 Remote-SSH target: devstation.clyffy.ai
-Workspace: /workspace/WardenClyffe-latest
+Workspace: /workspace/warden-storage/projects/WardenClyffe-latest
 ```
 
 The legacy alias `warden-devstation` remains valid. The friendly
@@ -132,7 +133,13 @@ Local launch helpers:
 ```cmd
 scripts\local\open-warden-devstation-vscode.cmd
 scripts\local\open-warden-devstation-cursor.cmd
+scripts\local\open-warden-devstation-codex.cmd
+scripts\local\open-warden-devstation-claude.cmd
 ```
+
+Warden Go exposes the same first-class launch surface at `/agent-workspaces`.
+The page renders desktop-app, devstation-agent, and capsule-agent launch
+commands without exposing secrets.
 
 For the private browser IDE:
 
@@ -143,7 +150,7 @@ ssh code.devstation.clyffy.ai
 Then open:
 
 ```text
-http://127.0.0.1:18080/?folder=/workspace/WardenClyffe-latest
+http://127.0.0.1:18080/?folder=/workspace/warden-storage/projects/WardenClyffe-latest
 ```
 
 `code.devstation.clyffy.ai` is an SSH config alias that forwards local desktop

@@ -146,6 +146,7 @@ Verified on 2026-05-22 and updated through the 2026-05-26 edge/storage work:
 | WDN-DEV-005 | Devstation | Initial rollback snapshot captured | Done | `initial-devstation-toolchain-20260522` | Add recurring backup policy before relying on VM as sole work storage |
 | WDN-DEV-006 | Devstation | Private browser IDE established | Done | `code-server`, `warden-devstation-code` | Keep SSH-tunneled only |
 | WDN-DEV-007 | Devstation | Friendly local editor aliases | Done | `ssh devstation.clyffy.ai` reaches VM `116` | Use in VS Code/Cursor Remote-SSH |
+| WDN-DEV-010 | Devstation | Warden agent workspace launch UI | Done | Go Warden `/agent-workspaces`; local launchers target `/workspace/warden-storage/projects/WardenClyffe-latest` | Convert copy-command launchers into audited open-intent tasks later |
 | WDN-DEV-008 | Devstation | Snapshot/backup policy | Planned | initial snapshot exists; no recurring backup policy yet | Add before relying on VM as sole work storage |
 | WDN-DEV-009 | Devstation | WardenNet/WireGuard access path | Planned | currently SSH via `server1` jump | Add private VPN/ZTNA path later |
 | WDN-STOR-001 | Shared storage | Server1 storage capacity verified | Done | `local-lvm` has about `1.20 TiB` available on 2026-05-26 | Keep 400 GiB carve only as bootstrap tier |
@@ -154,7 +155,7 @@ Verified on 2026-05-22 and updated through the 2026-05-26 edge/storage work:
 | WDN-STOR-004 | Shared storage | Read-only preflight helper created and run | Done | `scripts/storage/preflight-warden-shared-storage-01.sh`, passed on 2026-05-26 | Re-run immediately before any disk/storage write |
 | WDN-STOR-005 | Shared storage | 400 GiB storage service provisioned | Done | LXC `117`, `warden-shared-storage-01`, `/srv/warden/storage`, SMB share `warden-storage` | Keep as bootstrap tier until server2 is ready |
 | WDN-STOR-006 | Shared storage | Local WSL mount verified | Done | `/mnt/warden/storage`, `~/warden-storage` symlink, write/read/delete smoke test passed | Use `warden-storage status/mount/path/unmount` |
-| WDN-STOR-007 | Shared storage | Shared project synced and reconciled | Done | `/mnt/warden/storage/projects/WardenClyffe-latest`, root `138c9c4`, nested Go `cfbf845`, Git clean | Treat as migration authority while local copies are reconciled |
+| WDN-STOR-007 | Shared storage | Shared project synced and reconciled | Done | `/mnt/warden/storage/projects/WardenClyffe-latest`, Git clean after sync | Treat as migration authority while local copies are reconciled |
 | WDN-STOR-008 | Shared storage | Devstation mount verified | Done | `/workspace/warden-storage`, shared project Git clean, Codex/Claude/Infisical present | Authenticate `gh` before GitHub write/push work |
 | WDN-STOR-011 | Shared storage | Capsule storage bridge verified | Done | brokered `smbclient` read of `projects/WardenClyffe-latest/AGENTS.md` | Keep capsule secret-sensitive; do not force daily coding there |
 | WDN-STOR-009 | Shared storage | Workstation native Windows `W:` mount | Blocked | WardenNet/WireGuard/private tunnel not established | Do not expose SMB/NFS publicly |

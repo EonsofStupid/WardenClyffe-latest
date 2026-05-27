@@ -34,7 +34,7 @@ devstation service.
 
 ## Current State
 
-Verified on 2026-05-22:
+Verified on 2026-05-22 and updated through 2026-05-27:
 
 | Area | State |
 |---|---|
@@ -43,6 +43,7 @@ Verified on 2026-05-22:
 | Local Cursor | Cursor Remote-SSH and language extensions installed |
 | Browser IDE fallback | `code-server@wardenop` active on VM-local `127.0.0.1:8080` |
 | Browser IDE alias | `code.devstation.clyffy.ai` forwards to local `127.0.0.1:18080` |
+| Warden agent workspace UI | Go Warden `/agent-workspaces` lists VS Code, Cursor, Codex, Claude, devstation, capsule, and shared-storage launch points |
 | Cloudflare mutation | Done through Infisical-brokered `WARDEN_CLOUDFLARE_DNS_ADMIN` inside `warden-capsule`; token value not printed |
 | Public jump DNS | `ssh.clyffy.ai` resolves to `104.176.44.101` as DNS-only |
 | Master Clyffy app | LXC `120` not created |
@@ -58,6 +59,7 @@ Verified on 2026-05-22:
 | CLY-UX-003 | Local editor | Cursor Remote-SSH installed locally | Done | Cursor window title shows `WardenClyffe-latest [SSH]` | Use as AI coding local-app path |
 | CLY-UX-004 | Local editor | One-command local launchers | Done | `scripts/local/open-warden-devstation-*.cmd` | Pin shortcuts later |
 | CLY-UX-005 | Local editor | Browser IDE fallback | Done | `code-server@wardenop`, `code.devstation.clyffy.ai` | Keep fallback private |
+| CLY-UX-006 | Warden UI | Agent workspace launch page | Done | Go Warden `/agent-workspaces` with shared-storage path `/workspace/warden-storage/projects/WardenClyffe-latest` | Wire future open-intent actions to Warden task/audit |
 | CLY-DNS-001 | DNS | Public jump record helper | Done | `scripts/dns/upsert-cloudflare-a-record.sh` supports Infisical-brokered token | Use canonical Cloudflare token |
 | CLY-DNS-002 | DNS | `ssh.clyffy.ai` public DNS-only A record | Done | `ssh.clyffy.ai -> 104.176.44.101`, Cloudflare record `605ae29461a8db03d11bbe893e7e4974` | Keep DNS-only; do not proxy SSH |
 | CLY-DNS-003 | DNS | Private `devstation.clyffy.ai` split DNS | Planned | SSH alias exists now | Add after WardenNet/OPNsense split DNS |
@@ -94,9 +96,11 @@ Goal: make the current local-app path repeatable.
 
 Exit criteria:
 
-- VS Code opens `/workspace/WardenClyffe-latest` on `devstation.clyffy.ai`.
-- Cursor opens `/workspace/WardenClyffe-latest` on `devstation.clyffy.ai`.
+- VS Code opens `/workspace/warden-storage/projects/WardenClyffe-latest` on `devstation.clyffy.ai`.
+- Cursor opens `/workspace/warden-storage/projects/WardenClyffe-latest` on `devstation.clyffy.ai`.
 - Browser fallback opens through `code.devstation.clyffy.ai`.
+- Warden `/agent-workspaces` exposes Codex and Claude launch commands for the
+  devstation and capsule boundaries.
 - Cloudflare auth path is brokered through Infisical without printing tokens.
 - `ssh.clyffy.ai` resolves publicly to the homebase IP as DNS-only.
 
