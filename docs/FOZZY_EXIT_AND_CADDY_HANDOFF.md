@@ -19,12 +19,12 @@ small amount of useful Caddy configuration it still carries.
 
 ## Verified Facts
 
-Checked on 2026-05-22:
+Checked on 2026-05-22 and updated after the 2026-05-26 route cutover:
 
 | Item | Fact |
 |---|---|
 | Legacy VM | QEMU `501`, name `Fozzy`, IP `10.0.0.100/24`, bridge `vmbr1` |
-| Public NAT | host PREROUTING sends `:80`, `:443`, and `:5432` to `10.0.0.100` |
+| Public NAT | no longer points at VM `501`; `vmbr0:80` and `vmbr0:443` now forward to LXC `115` / `10.0.0.115` |
 | Caddy runtime | Docker container `caddy-edge` |
 | Caddy path on Fozzy | `/opt/wardenclyffe-caddy-edge` |
 | Repo standalone Caddy scaffold | `wardenclyffe/edge/caddy/` |
@@ -82,12 +82,13 @@ Do not destroy VM `501` until these are true:
 
 1. Non-secret Caddy config has been copied or confirmed identical to
    `wardenclyffe/edge/caddy/`.
-2. Public NAT for `:80` and `:443` has been moved to the new edge target or
-   the public outage is intentionally accepted.
-3. Public `:5432` forwarding has been removed or intentionally replaced.
+2. Public NAT for `:80` and `:443` has been moved to LXC `115`.
+3. Public `:5432` forwarding to VM `501` has been removed.
 4. Any needed secret/cert material has been captured outside git.
-5. The Warden POA&M marks the replacement edge step complete or explicitly
-   records the accepted outage.
+5. The Warden POA&M marks the replacement edge route gate complete.
+
+As of 2026-05-26, items 2, 3, and 5 are complete. The replacement edge has a
+post-TLS snapshot: `caddy-dns01-cloudflare-working-20260526`.
 
 Destructive command, only after the gate:
 
