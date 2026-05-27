@@ -43,7 +43,7 @@ Current public probes:
 
 | FQDN | DNS state | Public probe | Notes |
 |---|---|---|---|
-| `warden.rrflow.ai` | A record to `104.176.44.101` | `303` to `/login` | Warden is reachable |
+| `warden.rrflow.ai` | A record to `104.176.44.101` | `200` login HTML via `clyffy-edge` -> `10.0.0.102:9006` | Warden is reachable |
 | `porter.rrflow.ai` | A record to `104.176.44.101` | `200` status response | Caddy/Porter is reachable |
 | `auth.rrflow.ai` | A record to `104.176.44.101` | `302` to Authentik flow | Authentik is reachable |
 | `clyffy.ai` | Cloudflare proxied records | `200` at `/healthz` | Served by `clyffy-edge` with ACME DNS-01 origin TLS |

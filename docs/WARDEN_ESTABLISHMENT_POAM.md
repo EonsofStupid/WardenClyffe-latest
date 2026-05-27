@@ -172,6 +172,7 @@ Verified on 2026-05-22 and updated through the 2026-05-26 edge/storage work:
 | WDN-EDGE-002 | Edge | Fozzy Caddy config exported | Done | `docs/FOZZY_EXIT_AND_CADDY_HANDOFF.md`, `ops/exports/fozzy-caddy-edge-20260522/` | Do not copy `.env` into git |
 | WDN-EDGE-003 | Edge | Dedicated Caddy edge LXC `115` provisioned and health checked | Done | LXC `115` `clyffy-edge`, `10.0.0.115`, Caddy `v2.11.3`, `/healthz` OK, snapshots through `caddy-dns01-cloudflare-working-20260526` | Render runtime config from Warden route intent |
 | WDN-EDGE-004 | Edge | Move public HTTP/HTTPS off VM `501` | Done | `warden-edge-nat.service` routes `80/443` to `10.0.0.115`; rollback at `/root/warden-edge-cutover/20260526T193646Z/rollback.sh` | Keep rollback until Warden renders route state |
+| WDN-EDGE-009 | Edge | `warden.rrflow.ai` routed through standalone Caddy | Done | LXC `115` Caddy `@warden` reverse proxy to `10.0.0.102:9006`; backup `/etc/caddy/Caddyfile.pre-warden-route-20260527T053042Z`; public `/login` returns Warden HTML | Render route intent from Warden UI next |
 | WDN-EDGE-005 | Edge | Delete Fozzy VM `501` | Ready | public `80/443/5432` no longer points at `10.0.0.100` | Confirm no private dependency remains, then shut down/destroy |
 | WDN-DNS-001 | DNS | Public/internal DNS split documented | Done | public IP and master rollout docs | Keep public records on homebase IP |
 | WDN-DNS-002 | DNS | Cloudflare write helper created | Done | `scripts/upsert-master-clyffy-cloudflare.ps1` | Provide token via env/keyring before apply |
