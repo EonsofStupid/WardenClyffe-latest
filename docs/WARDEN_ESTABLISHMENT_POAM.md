@@ -76,10 +76,11 @@ Verified on 2026-05-22 and updated through the 2026-05-26 edge/storage work:
 | Warden devstation | VM `116`, `warden-devstation-01`, internal-only `10.0.0.116`, `onboot=1` |
 | Devstation toolchain | Ubuntu 26.04, Node 24 LTS, Codex CLI, Claude Code, Infisical CLI, GitHub CLI, SOPS, Rust, Go, Python, uv |
 | Devstation hosted editor | private `code-server`, tunnel alias `warden-devstation-code` |
-| Devstation friendly aliases | `devstation.clyffy.ai` and `code.devstation.clyffy.ai` configured as local SSH aliases |
+| Devstation friendly aliases | `devstation`, `devstation.clyffy.ai`, and `code.devstation.clyffy.ai` configured as local SSH aliases |
 | Remote agent streams | Codex/Claude launch through SSH into devstation/capsule using `scripts/agents/warden-agent-stream.sh`; both hosts have `tmux`; Codex app-server remote mode documented as experimental |
 | Shared storage | `warden-shared-storage-01`, LXC `117`, `10.0.0.117`, 400 GiB on `local-lvm`, internal-only SMB/CIFS share `warden-storage` |
 | Workstation WSL storage mount | `warden-storage status` shows `/mnt/warden/storage` mounted from `//10.0.0.117/warden-storage`; `~/warden-storage` resolves there |
+| Workstation Windows storage mount | `W:` maps to `\\10.0.0.117\warden-storage`; `W:\projects\WardenClyffe-latest` exists; endpoint installer verifies write/read/delete |
 | Shared project authority | `/mnt/warden/storage/projects/WardenClyffe-latest`; verify root and nested commits after each sync; full SMB Git status can time out |
 | Clyffy dynamic UI planning | spec and sprint POA&M created |
 | Clyffy MCP orchestrator | boundary captured; gateway planned in registry |
@@ -147,7 +148,7 @@ Verified on 2026-05-22 and updated through the 2026-05-26 edge/storage work:
 | WDN-DEV-004 | Devstation | Clyffe Code template direction documented | Done | `docs/WARDEN_DEVSTATION_AND_CLYFFE_CODE.md` | Do not template until personal auth state is separated |
 | WDN-DEV-005 | Devstation | Initial rollback snapshot captured | Done | `initial-devstation-toolchain-20260522` | Add recurring backup policy before relying on VM as sole work storage |
 | WDN-DEV-006 | Devstation | Private browser IDE established | Done | `code-server`, `warden-devstation-code` | Keep SSH-tunneled only |
-| WDN-DEV-007 | Devstation | Friendly local editor aliases | Done | `ssh devstation.clyffy.ai` reaches VM `116` | Use in VS Code/Cursor Remote-SSH |
+| WDN-DEV-007 | Devstation | Friendly local editor aliases | Done | `ssh devstation` and `ssh devstation.clyffy.ai` reach VM `116` | Use in VS Code/Cursor Remote-SSH |
 | WDN-DEV-010 | Devstation | Warden agent workspace launch UI | Done | Go Warden `/agent-workspaces`; local launchers target `/workspace/warden-storage/projects/WardenClyffe-latest` | Convert copy-command launchers into audited open-intent tasks later |
 | WDN-DEV-011 | Devstation | Remote agent stream contract | Done | `docs/WARDEN_REMOTE_AGENT_STREAMS.md`, `scripts/agents/warden-agent-stream.sh`, Codex/Claude verified on devstation/capsule | Add Warden task/audit-backed open-intent actions |
 | WDN-DEV-008 | Devstation | Snapshot/backup policy | Planned | initial snapshot exists; no recurring backup policy yet | Add before relying on VM as sole work storage |
@@ -162,7 +163,7 @@ Verified on 2026-05-22 and updated through the 2026-05-26 edge/storage work:
 | WDN-STOR-008 | Shared storage | Devstation mount verified | Done | `/workspace/warden-storage`, `warden-storage.service` enabled/active, restart/remount passed | Authenticate `gh` before GitHub write/push work |
 | WDN-STOR-011 | Shared storage | Capsule storage bridge verified | Done | brokered `smbclient` read plus restricted devstation broker key | Keep capsule secret-sensitive; do not force daily coding there |
 | WDN-STOR-012 | Shared storage | Boring client command installed | Done | `/usr/local/bin/warden-storage`, `/etc/warden/storage-client.env`, no temporary credential file left behind | Promote this client shape into Warden UI task/audit later |
-| WDN-STOR-009 | Shared storage | Workstation native Windows `W:` mount | Blocked | WardenNet/WireGuard/private tunnel not established | Do not expose SMB/NFS publicly |
+| WDN-STOR-009 | Shared storage | Workstation native Windows `W:` mount | Done | `scripts/local/install-warden-windows-ssot.cmd`; `W:` maps to `\\10.0.0.117\warden-storage`; write/read/delete passed | Run the same installer on each approved Windows endpoint after private reachability is present |
 | WDN-STOR-010 | Shared storage | Server2 storage migration design | Planned | server2 build in progress | Verify NVMe/SSD/SAS inventory when online |
 | WDN-DNS-005 | DNS | Public jump record `ssh.clyffy.ai` | Done | `ssh.clyffy.ai -> 104.176.44.101`, Cloudflare record `605ae29461a8db03d11bbe893e7e4974` | Keep DNS-only and non-proxied |
 | WDN-INV-001 | Inventory | Live guest inventory captured | Done | Proxmox API and `pct list` show current guests | Store inventory snapshots in Postgres |

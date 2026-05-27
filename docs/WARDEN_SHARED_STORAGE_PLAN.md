@@ -73,6 +73,8 @@ Verified on 2026-05-27:
 | Devstation mount | `/workspace/warden-storage` mounted and reads the same project path |
 | Devstation remount | enabled `warden-storage.service` restarted cleanly and remounted through the restricted capsule broker |
 | Devstation write test | write/read/delete passed under `scratch/`; temporary CIFS credential file absent after mount |
+| Workstation Windows native drive | `W:` maps to `\\10.0.0.117\warden-storage`; `W:\projects\WardenClyffe-latest` exists; write/read/delete passed |
+| Workstation Windows turnkey installer | `scripts/local/install-warden-windows-ssot.cmd` maps `W:`, installs `ssh devstation`, verifies the project path, and opens Explorer |
 | Capsule access | no kernel mount; brokered `smbclient` can read `projects/WardenClyffe-latest/AGENTS.md`; devstation uses a forced-command broker key |
 
 ## Storage Module Contract
@@ -84,6 +86,7 @@ The reliable storage module is intentionally boring:
 | Authority | server1 LXC `117`, `warden-shared-storage-01`, `/srv/warden/storage` |
 | Export | SMB3/CIFS `//10.0.0.117/warden-storage`, internal only |
 | Local WSL client | `/mnt/warden/storage` plus `~/warden-storage` |
+| Windows client | `W:` via `scripts/local/install-warden-windows-ssot.cmd` |
 | Devstation client | `/workspace/warden-storage` managed by `warden-storage.service` |
 | Capsule | brokered access only; no kernel mount in the unprivileged LXC |
 | Secret source | Infisical secret `WARDEN_SHARED_STORAGE_01_SMB_PASSWORD` under `/warden/shared-storage/01` |
@@ -107,7 +110,7 @@ The reliable storage module is intentionally boring:
 | Local WSL mount path | `/mnt/warden/storage` |
 | Local WSL convenience symlink | `~/warden-storage` |
 | Server-side data root | `/srv/warden/storage` |
-| Windows target | `W:` after private VPN or approved tunnel |
+| Windows target | `W:` over private reachability; no public SMB |
 | Client installer | `scripts/storage/install-warden-storage-client.sh` |
 | Client command source | `scripts/storage/warden-storage-client.sh` |
 | Capsule broker source | `scripts/storage/warden-storage-secret-broker.sh` |
@@ -127,7 +130,7 @@ promote the file-service boundary to a small VM.
 | Warden Devstation | `/workspace/warden-storage` | internal CIFS first; NFSv4 only if promoted to VM |
 | Main Clyffy VM | `/workspace/warden-storage` | internal CIFS first; NFSv4 only if promoted to VM |
 | Workstation WSL | `/mnt/warden/storage` plus `~/warden-storage` symlink | direct private reachability or approved tunnel; no public SMB |
-| Workstation Windows | `W:` later | private VPN/WardenNet first; no public SMB |
+| Workstation Windows | `W:` | private reachability only; install with `scripts/local/install-warden-windows-ssot.cmd`; no public SMB |
 
 Do not expose SMB, NFS, or raw storage services publicly. Workstation access
 must use private reachability such as WardenNet/WireGuard/Tailscale while
@@ -218,7 +221,9 @@ Next implementation gate:
 3. Keep capsule access secret-safe; if kernel CIFS stays blocked in the
    unprivileged LXC, use brokered `rsync`/`smbclient` until capsule is promoted
    to a VM or another approved storage client shape.
-4. Add Windows `W:` only after private VPN/WardenNet routing is established.
+4. Run `scripts/local/install-warden-windows-ssot.cmd` on each approved
+   Windows endpoint after the endpoint can privately reach `10.0.0.117:445`
+   and has the Warden SSH key/config needed to reach the capsule broker.
 
 The disk carve is an explicit Warden write action. It should create a task,
 approval, and audit record once Warden has that workflow.
