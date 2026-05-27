@@ -7,6 +7,7 @@ wardenclyffe_touchpoint:
   module: module-02-clyffe
   mesh_registry: wardenclyffe/registry/context-mesh.yaml
   reads:
+    - docs/CLYFFY_MCP_ORCHESTRATOR.md
     - docs/MASTER_CLYFFY_ROLLOUT_PLAN.md
     - docs/WARDEN_DEVSTATION_AND_CLYFFE_CODE.md
     - docs/CLYFFY_DYNAMIC_UI_POAM.md
@@ -55,7 +56,7 @@ remote devstation.
 | Surface | Audience | Owns | Must not do |
 |---|---|---|---|
 | Warden | operator | Proxmox, hosts, routes, DNS, certs, inventory, audit | expose raw operator power to customers |
-| Clyffy | owner/operator assistant | assistant state, project context, Clyffy workspaces, handoffs | become the customer portal or store product truth |
+| Clyffy | owner/operator assistant and MCP orchestrator | assistant state, generated context packs, Clyffy workspaces, handoffs, MCP gateway routing, intelligence projections | become the customer portal, store product truth, or use Markdown as durable memory |
 | Clyffe | customer/support | portal, KB, tickets, CRM, customer-safe service panel | talk directly to Proxmox or operator databases |
 | Clyffe Code | customer/developer | hosted dev workspaces through Warden APIs | expose host shell, raw Proxmox, or operator secrets |
 
@@ -65,9 +66,10 @@ remote devstation.
 |---|---|---|
 | Product truth | Postgres | tenants, accounts, tickets, CRM, services, RBAC, workspaces, billing refs, audit |
 | Infrastructure truth | Warden inventory API | hosts, nodes, guests, storage, networks, domains, certs, health, tasks |
-| Assistant retrieval | Qdrant | docs, KB, runbooks, touchpoints, project memory snippets |
+| Assistant retrieval | Qdrant | docs, KB, runbooks, touchpoint summaries, approved project memory snippets |
 | AI graph projection | SurrealDB | reasoning graph, workspace graph, agent handoff graph, touchpoint relationships |
-| Source docs | Markdown touchpoints | route agents to the right registry and context |
+| Generated context packs | Clyffy sync worker/runtime cache | current task context assembled from approved sources |
+| Source docs | Markdown touchpoints | route agents to the right registry and generated context surfaces |
 | Secrets | Infisical/keyring/brokered files | runtime only; never UI content |
 | Public route intent | Warden edge/DNS API | previews, public app URLs, private tunnel state |
 
@@ -87,6 +89,8 @@ Cards populate dynamically:
   Postgres, Qdrant, SurrealDB, Observability.
 - Knowledge: recent touchpoints, POA&M changes, unresolved decisions.
 - Assistant: chat, suggested actions, handoff history, linked source snippets.
+- Orchestrator: MCP gateway health, leaf health, Qdrant/SurrealDB sync age,
+  Bifrost/Observatory posture, blocked foundation gates.
 
 ### Workspace Detail
 
@@ -130,6 +134,7 @@ Warden/Clyffy needs a quiet content-control surface:
 - last ingestion time;
 - Qdrant collection status;
 - SurrealDB projection status.
+- generated context-pack status and source hashes.
 
 ## API Shape
 

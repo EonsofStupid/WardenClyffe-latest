@@ -60,6 +60,31 @@ Warden also owns private operator workspaces:
 
 These are not customer workspaces.
 
+### Clyffy MCP Orchestrator
+
+Clyffy is the main MCP orchestrator and assistant runtime for WardenClyffe. It
+does not replace Warden authority or Clyffe customer boundaries. It organizes
+the tool mesh, workspace memory, agent handoffs, Qdrant retrieval, SurrealDB
+graph projections, and Clyffy Master assistant workflows.
+
+The dedicated Clyffy Master runtime is the future `clyffy-master` service
+tracked in `docs/CLYFFY_MCP_ORCHESTRATOR.md` and
+`docs/MASTER_CLYFFY_ROLLOUT_PLAN.md`.
+
+The boundary is:
+
+```text
+OPNsense = network truth
+Authentik = human identity truth
+Better Auth = app-local auth/session/API layer
+Warden = infrastructure/control truth
+Bifrost = controlled bridge/orchestration gateway
+Clyffy = MCP orchestrator and assistant runtime
+Postgres = product truth
+Qdrant = retrieval memory
+SurrealDB = graph/reasoning projection
+```
+
 ### Clyffe
 
 Clyffe is for customers.

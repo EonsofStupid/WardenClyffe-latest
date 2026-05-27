@@ -10,6 +10,8 @@ wardenclyffe_touchpoint:
     - docs/CLYFFE_CODE_TURNKEY_SERVICE_SPEC.md
     - docs/WARDEN_ESTABLISHMENT_POAM.md
     - docs/MASTER_CLYFFY_ROLLOUT_PLAN.md
+    - docs/ai/INTELLIGENCE_LAYER_MODERNIZATION.md
+    - docs/ai/SURREALDB_INTELLIGENCE_PROJECTION_V2.md
     - docs/superpowers/plans/2026-05-22-clyffe-code-local-editor.md
 ---
 
@@ -41,7 +43,7 @@ Verified on 2026-05-22:
 | Local Cursor | Cursor Remote-SSH and language extensions installed |
 | Browser IDE fallback | `code-server@wardenop` active on VM-local `127.0.0.1:8080` |
 | Browser IDE alias | `code.devstation.clyffy.ai` forwards to local `127.0.0.1:18080` |
-| Cloudflare mutation | Done through Infisical-brokered `cloudflare_api_key` inside `warden-capsule`; token value not printed |
+| Cloudflare mutation | Done through Infisical-brokered `WARDEN_CLOUDFLARE_DNS_ADMIN` inside `warden-capsule`; token value not printed |
 | Public jump DNS | `ssh.clyffy.ai` resolves to `104.176.44.101` as DNS-only |
 | Master Clyffy app | LXC `120` not created |
 | Dedicated edge | LXC `115` not created |
@@ -56,7 +58,7 @@ Verified on 2026-05-22:
 | CLY-UX-003 | Local editor | Cursor Remote-SSH installed locally | Done | Cursor window title shows `WardenClyffe-latest [SSH]` | Use as AI coding local-app path |
 | CLY-UX-004 | Local editor | One-command local launchers | Done | `scripts/local/open-warden-devstation-*.cmd` | Pin shortcuts later |
 | CLY-UX-005 | Local editor | Browser IDE fallback | Done | `code-server@wardenop`, `code.devstation.clyffy.ai` | Keep fallback private |
-| CLY-DNS-001 | DNS | Public jump record helper | Done | `scripts/dns/upsert-cloudflare-a-record.sh` dry-run on devstation | Broker Cloudflare token |
+| CLY-DNS-001 | DNS | Public jump record helper | Done | `scripts/dns/upsert-cloudflare-a-record.sh` supports Infisical-brokered token | Use canonical Cloudflare token |
 | CLY-DNS-002 | DNS | `ssh.clyffy.ai` public DNS-only A record | Done | `ssh.clyffy.ai -> 104.176.44.101`, Cloudflare record `605ae29461a8db03d11bbe893e7e4974` | Keep DNS-only; do not proxy SSH |
 | CLY-DNS-003 | DNS | Private `devstation.clyffy.ai` split DNS | Planned | SSH alias exists now | Add after WardenNet/OPNsense split DNS |
 | CLY-INF-001 | Infra | Master Clyffy LXC `120` | Blocked | rollout plan exists; VMID absent | Provision after final infra review |
@@ -77,6 +79,9 @@ Verified on 2026-05-22:
 | CLY-AI-003 | Intelligence | Surreal projection health | Planned | Surreal LXC `104` exists | Add graph/status probe |
 | CLY-AI-004 | Intelligence | Clyffe Code workspace touchpoints | Done | `docs/CLYFFE_CODE_TURNKEY_SERVICE_SPEC.md`, workspace README | Keep workspace docs sync-enabled |
 | CLY-AI-005 | Intelligence | Workspace preflight projection | Planned | preflight shape documented | Generate preflight and project into Qdrant/SurrealDB |
+| CLY-AI-006 | Intelligence | Clyffy MCP orchestrator contract | Done | `docs/CLYFFY_MCP_ORCHESTRATOR.md` | Index and project through sync worker |
+| CLY-AI-007 | Intelligence | Markdown memory de-heavy rule | Done | `docs/ai/INTELLIGENCE_LAYER_MODERNIZATION.md`, validator body-size warnings | Move future memory into generated context packs and typed projections |
+| CLY-AI-008 | Intelligence | SurrealDB dynamic projection model | Done | `docs/ai/SURREALDB_INTELLIGENCE_PROJECTION_V2.md`, projection schema proposal | Build dry-run sync worker and Warden UI read model |
 | CLY-CODE-001 | Clyffe Code | Workspace tier model | Done | `docs/CLYFFE_CODE_TURNKEY_SERVICE_SPEC.md` | Use Premium Pilot as first internal proof |
 | CLY-CODE-002 | Clyffe Code | Upgrade request flow | Planned | resource concepts documented | Add request-only action first |
 | CLY-CODE-003 | Clyffe Code | Customer-safe template | Planned | operator VM `116` exists | Create clean template later |
