@@ -73,6 +73,9 @@ clyffy_touchpoint:
 
 Keep touchpoints short. They should route agents to the source of truth,
 not copy the source of truth.
+`docs/ai/INTELLIGENCE_LAYER_MODERNIZATION.md` is the controlling rule for
+keeping Markdown as touchpoints while generated Postgres/Qdrant/SurrealDB
+surfaces carry the intelligence workload.
 
 ### v1 → v2 migration
 
@@ -91,6 +94,8 @@ concepts per spec 09 §3.
 - One registry owns tool names and endpoint contracts.
 - Markdown touchpoints explain how an agent should navigate to that registry.
 - Markdown touchpoint sync is described in `docs/ai/TOUCHPOINT_SYNC_PATTERN.md`.
+- Markdown must not become the agent memory database; generated projections and
+  context packs handle that work.
 - Warden tools are operator-facing.
 - Clyffe tools are customer-safe and tenant-scoped.
 - Proxmox tools must be wrapped behind Warden policy and audit.
@@ -126,6 +131,11 @@ mcp.workspace.<workspace_slug>-gateway
 Examples: `mcp.workspace.clyffy-master-gateway`,
 `mcp.workspace.wardenclyffe-infra-gateway`. See spec 14 §4 for the gateway
 contract.
+
+For WardenClyffe, `mcp.workspace.clyffy-master-gateway` is the planned main
+Clyffy MCP orchestrator front door. It organizes Authentik, Warden, OPNsense,
+Bifrost, Observatory, Qdrant, SurrealDB, and future minion leaves while Warden
+retains infrastructure execution authority.
 
 ## References
 

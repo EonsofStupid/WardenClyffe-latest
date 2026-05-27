@@ -41,6 +41,14 @@ Use this order when you need architecture or agent context:
 1. `docs/ai/WARDENCLYFFE_BASE_SKILL.md`
 2. `docs/ai/MCP_MESH_TOUCHPOINTS.md`
 3. `docs/ai/INTELLIGENCE_TOUCHPOINTS.md`
+3a. `docs/ai/INTELLIGENCE_LAYER_MODERNIZATION.md` for the rule that Markdown
+    is a touchpoint layer, not the intelligence store
+3b. `docs/ai/SURREALDB_INTELLIGENCE_PROJECTION_V2.md` for the dynamic
+    SurrealDB projection and context-pack plan
+3c. `docs/SURREALDB_PUBLIC_SELF_HOSTING_PLAN.md` for the public-safe
+    self-hosted SurrealDB route, auth, backup, and Warden proxy posture
+3d. `docs/SURREALDB_SELF_HOSTED_RUNBOOK.md` for the live LXC `104` service,
+    backup, restore, and cloud export/import gate
 4. `docs/WARDENCLYFFE_MODULE_MAP.md`
 5. `docs/WARDENCLYFFE_NAMING_CONVENTIONS.md`
 6. `docs/HYPERMODULAR_DDD_FOLDER_STRUCTURE.md`
@@ -50,10 +58,12 @@ Use this order when you need architecture or agent context:
 10. `docs/WARDEN_ESTABLISHMENT_POAM.md` for done/needed POA&M status and next live milestones
 11. `docs/WARDEN_OPERATOR_CAPSULE.md` for the Linux-first operator workspace and secret-handling capsule
 12. `docs/WARDEN_DEVSTATION_AND_CLYFFE_CODE.md` for the private VS Code VM and future hosted coding service
-13. `docs/MASTER_CLYFFY_ROLLOUT_PLAN.md` for master.clyffy.ai, Postgres update, and Clyffy route work
-13a. `docs/CLYFFY_DYNAMIC_UI_SPEC.md` for dynamic Clyffy/Clyffe UI work
-13b. `docs/CLYFFY_DYNAMIC_UI_POAM.md` for Clyffy UI milestones and sprints
-13c. `docs/CLYFFE_CODE_TURNKEY_SERVICE_SPEC.md` for Clyffe Code managed workspace product work
+13. `docs/WARDEN_SHARED_STORAGE_PLAN.md` for the server1 400 GB hot-tier storage boundary and server2 migration direction
+14. `docs/MASTER_CLYFFY_ROLLOUT_PLAN.md` for master.clyffy.ai, Postgres update, and Clyffy route work
+13a. `docs/CLYFFY_MCP_ORCHESTRATOR.md` for the main Clyffy MCP orchestrator and foundation service boundaries
+13b. `docs/CLYFFY_DYNAMIC_UI_SPEC.md` for dynamic Clyffy/Clyffe UI work
+13c. `docs/CLYFFY_DYNAMIC_UI_POAM.md` for Clyffy UI milestones and sprints
+13d. `docs/CLYFFE_CODE_TURNKEY_SERVICE_SPEC.md` for Clyffe Code managed workspace product work
 14. `docs/FOUNDATION_APP_RESEARCH_2026_05.md` for primary-source app-stack research
 15. `docs/WARDEN_CLYFFE_ARCHITECTURE.md`
 16. `docs/PROXMOX_FREE_CHEATSHEET.md` for Proxmox management work
@@ -97,7 +107,10 @@ Do not let wrappers become new authorities. Update the base files under
 
 Markdown files with `clyffy_touchpoint` frontmatter (v2 shape per
 `wardenclyffe/docs/decisions/0033-touchpoint-protocol.md`) are intentional
-touchpoints for agents and the MCP mesh tooling. The v1 `wardenclyffe_touchpoint`
+touchpoints for agents and the MCP mesh tooling. They are not the intelligence
+database. Product truth belongs in Postgres/Warden APIs, retrieval belongs in
+Qdrant, graph projection belongs in SurrealDB, and run history belongs in
+Warden task/audit/trace records. The v1 `wardenclyffe_touchpoint`
 shape is deprecated; the v1 → v2 migration window is documented in ADR 0033 §10.
 Touchpoints should describe:
 

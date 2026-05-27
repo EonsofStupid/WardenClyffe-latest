@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wardenclyffe.local/schemas/intelligence/clyffy-touchpoint.v2.schema.json",
+  "title": "Clyffy Touchpoint v2",
+  "type": "object",
+  "required": [
+    "version",
+    "workspace_id",
+    "project_key",
+    "persona",
+    "kind",
+    "owner",
+    "mesh_registry"
+  ],
+  "properties": {
+    "version": {
+      "const": 2
+    },
+    "workspace_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9.-]*[a-z0-9]$"
+    },
+    "project_key": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9.-]*[a-z0-9]$"
+    },
+    "persona": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "type": "string",
+      "minLength": 1
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1
+    },
+    "module": {
+      "type": "string"
+    },
+    "mesh_registry": {
+      "type": "string"
+    },
+    "reads": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sync": {
+      "type": "object",
+      "properties": {
+        "qdrant": {
+          "type": "boolean"
+        },
+        "surreal": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "observability": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

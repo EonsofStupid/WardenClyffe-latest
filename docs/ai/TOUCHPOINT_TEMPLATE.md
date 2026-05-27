@@ -66,7 +66,11 @@ Purpose:
 - Which actions are safe for agents.
 - Which actions need operator approval.
 - Where to go next.
+- Which generated store or projection carries memory, if any.
 ```
+
+Keep the body short. A touchpoint is a manifest and routing surface, not a
+session log, memory dump, inventory snapshot, or customer record.
 
 ## Required fields per ADR 0033 §2
 
@@ -90,8 +94,9 @@ ADR 0033 §5 for the inheritance rule.
 
 ## Validation
 
-Run `scripts/foundation/validate-touchpoints.py` (planned per ADR 0033 §9)
-to catch drift. The validator enforces the v2 shape and warns on
+Run `scripts/foundation/validate-touchpoints.py`
+to catch drift. The validator enforces the v2 shape, reports oversized
+sync-enabled touchpoints, and warns on
 remaining v1 (`namespace_id` / `wardenclyffe_touchpoint:`) files until the
 deprecation window closes.
 
@@ -101,4 +106,5 @@ deprecation window closes.
 - ADR 0031 — Workspace Identity
 - ADR 0032 — MCP Federation Three-Layer
 - Spec 09 — Context Mesh and Naming
+- `docs/ai/INTELLIGENCE_LAYER_MODERNIZATION.md`
 - Runbook `wardenclyffe/docs/runbooks/mcp-2026-alignment-checkpoint.md`
