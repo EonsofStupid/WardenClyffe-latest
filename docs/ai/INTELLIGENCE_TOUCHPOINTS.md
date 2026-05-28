@@ -87,3 +87,13 @@ The nested Warden repo already includes intelligence scaffolding:
 Use those as the reference pattern while this root repo is being organized,
 but do not copy old Markdown-memory habits forward. Promote typed projections
 and generated context packs instead.
+
+## Codex Chat Capture
+
+`docs/ai/CODEX_INTELLIGENCE_SYNC_TOUCHPOINT.md` routes the home-local
+`wardenclyffe-intelligence-sync` Codex plugin into the same intake path:
+redacted hook events land in `wardenclyffe/.codex/memory-spool/events.jsonl`,
+then `wardenclyffe/scripts/chat-dump-build.py` produces the canonical
+append-only raw dump. The plugin must remain an intake layer; reviewable
+candidate extraction and promotion stay with the existing intelligence
+pipeline.
