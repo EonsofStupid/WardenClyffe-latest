@@ -60,25 +60,46 @@ function Invoke-LoggedCommand {
 }
 
 function New-WorkspaceSpec {
-    Write-ActionLog -Step "workspace_spec" -Message "building target workspace list"
+    # Authoritative 6-repo plan per docs/ai/HUGGINGFACE_WORKSPACE_TOUCHPOINT.md.
+    # Locked 2026-05-29 (operator decision via Sub-batch C of WardenClyffe-latest absorption).
+    # Earlier 3-repo plan (clyffy-master, wardenclyffe-clyffy, wardenclyffe-evals) was superseded.
+    Write-ActionLog -Step "workspace_spec" -Message "building target workspace list (6 repos per touchpoint)"
     return @(
         [pscustomobject]@{
-            Name = "clyffy-master"
+            Name = "clyffy-ai-lab"
             Type = "space"
             SpaceSdk = "gradio"
-            Purpose = "Master Clyffy SDK surface and intelligence-layer contract."
+            Purpose = "Operator-facing demo surface for Clyffy AI features."
         },
         [pscustomobject]@{
-            Name = "wardenclyffe-clyffy"
+            Name = "clyffy-rro-lab"
             Type = "space"
             SpaceSdk = "gradio"
-            Purpose = "Go-based WardenClyffe turnkey enterprise AI variant."
+            Purpose = "Reason-ready object pipeline demo and inspection UI."
         },
         [pscustomobject]@{
             Name = "wardenclyffe-evals"
             Type = "dataset"
             SpaceSdk = ""
             Purpose = "Prompt/eval cases, redacted traces, and golden outputs."
+        },
+        [pscustomobject]@{
+            Name = "clyffy-kb-seed"
+            Type = "dataset"
+            SpaceSdk = ""
+            Purpose = "Sanitized knowledge-base seed corpus."
+        },
+        [pscustomobject]@{
+            Name = "clyffy-embedder-bakeoff"
+            Type = "dataset"
+            SpaceSdk = ""
+            Purpose = "Embedding/reranking benchmark inputs and results."
+        },
+        [pscustomobject]@{
+            Name = "clyffy-runtime-notebooks"
+            Type = "space"
+            SpaceSdk = "gradio"
+            Purpose = "Runtime experiments. Switch Type to 'model' when artifacts become model-shaped."
         }
     )
 }
