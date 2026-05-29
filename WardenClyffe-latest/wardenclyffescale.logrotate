@@ -1,0 +1,10 @@
+/var/log/wardenclyffescale/wardenclyffescale.log {
+    daily
+    rotate 7
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+    size 50M
+}

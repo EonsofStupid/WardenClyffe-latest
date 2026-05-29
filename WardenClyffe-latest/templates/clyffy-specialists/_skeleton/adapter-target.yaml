@@ -1,0 +1,62 @@
+# Per-client wrapper hints — read by the MCP client renderer
+# (docs/MCP_CLIENT_NORMALIZATION_SPEC.md, "Renderer").
+#
+# These fields populate the new `wrapper:` block per server in
+# wardenclyffe/registry/context-mesh.yaml when this specialist is
+# registered. The renderer never reads this file directly; it reads the
+# registry. This file is what the registry-extension PR will copy from
+# when adding this specialist's `wrapper:` block.
+
+schema_version: 1
+
+specialist_id: "mcp.<project>.<namespace>"
+
+# Which agent clients should this specialist appear in by default.
+# Empty list = all installed clients per client_targets block.
+visible_to:
+  - claude-desktop
+  - claude-code
+  - cursor
+  - codex
+  - gemini
+
+# stdio invocation when the client launches the specialist as a subprocess.
+# The renderer substitutes ${endpoint_url}, ${endpoint_env},
+# ${workspace_slug}, ${home}, ${tmpfs_runtime_dir} into these fields.
+stdio:
+  command: "${home}/.local/bin/wc-mcp-bridge"
+  args:
+    - "--upstream-env"
+    - "<MCP_ENDPOINT_ENV_VAR_NAME>"
+    - "--name"
+    - "<namespace>"
+  env:
+    "<MCP_ENDPOINT_ENV_VAR_NAME>": "${endpoint_url}"
+
+# Streamable HTTP target when the specialist supports it directly. The
+# renderer prefers sHTTP over stdio when both are declared, per ADR 0030.
+streamable_http:
+  url_env: "<MCP_ENDPOINT_ENV_VAR_NAME>"
+  auth: "oauth2.1"
+  audience: "mcp.<project>.<namespace>"
+
+# Set true once mcp.clyffy-master.gateway is live and this specialist
+# should be reached through the gateway rather than directly. The
+# renderer hides direct entries once `via_gateway: true`.
+via_gateway: false
+
+# Bridge selection for the stopgap stdio↔HTTP adapter (per
+# docs/MCP_CLIENT_NORMALIZATION_SPEC.md Piece 3):
+# - none          : the specialist already speaks MCP wire (e.g. Auth-K, rykv)
+# - http-tools    : the specialist speaks REST-shaped /tools (e.g. clyffy-dean)
+# - op-envelope   : the specialist speaks the WardenClyffe op envelope only
+bridge: "http-tools"
+
+# Per-client gotcha notes. The renderer copies these into the emitted
+# config file as comments where the client format supports them.
+notes:
+  claude_desktop: ""
+  claude_code: ""
+  cursor: ""
+  codex: ""
+  gemini: ""
