@@ -123,6 +123,53 @@ otherwise it consumes the WardenClyffe ADRs.
 
 ---
 
+## Comprehensive WardenClyffe ecosystem orientation
+
+This is the deep cross-repo reading sequence absorbed from the prior root
+`AGENTS.md` (the dumping-ground contract removed during Batch 2 of the
+WardenClyffe-latest absorption). Use it when you need to understand the
+WHOLE ecosystem (Master Clyffy + WardenClyffe engine + the future
+WardenClyffeScale Rust component), not just Master-Clyffy work. Paths
+below reflect post-absorption locations.
+
+ 1. `../wardenclyffe/docs/ai/WARDENCLYFFE_BASE_SKILL.md`
+ 2. `../wardenclyffe/docs/ai/MCP_MESH_TOUCHPOINTS.md`
+ 3. `../wardenclyffe/docs/ai/INTELLIGENCE_TOUCHPOINTS.md`
+    - 3a. `../wardenclyffe/docs/ai/INTELLIGENCE_LAYER_MODERNIZATION.md` — Markdown is touchpoint layer, not intelligence store
+    - 3b. `../wardenclyffe/docs/ai/SURREALDB_INTELLIGENCE_PROJECTION_V2.md` — dynamic SurrealDB projection + context-pack plan
+    - 3c. `../wardenclyffe/docs/SURREALDB_PUBLIC_SELF_HOSTING_PLAN.md` — public-safe self-hosted SurrealDB route + auth + backup
+    - 3d. `../wardenclyffe/docs/SURREALDB_SELF_HOSTED_RUNBOOK.md` — live LXC 104 service + backup/restore + cloud import gate
+ 4. `../wardenclyffe/docs/WARDENCLYFFE_MODULE_MAP.md`
+ 5. `../wardenclyffe/docs/WARDENCLYFFE_NAMING_CONVENTIONS.md`
+ 6. `../wardenclyffe/docs/HYPERMODULAR_DDD_FOLDER_STRUCTURE.md`
+ 7. `../wardenclyffe/docs/HOST_FLEET_AND_ONBOARDING.md` — host onboarding and fleet work
+ 8. `../wardenclyffe/docs/PUBLIC_IP_HOMEBASE_FOUNDATION.md` — public IP, domain, edge, Tailscale-exit
+ 9. `../wardenclyffe/docs/FOUNDATION_SERVICE_MATRIX.md` — VM/LXC app choices and configuration gates
+ 10. `../wardenclyffe/docs/WARDEN_ESTABLISHMENT_POAM.md` — done/needed POA&M and next live milestones
+ 11. `../wardenclyffe/docs/WARDEN_OPERATOR_CAPSULE.md` — Linux-first operator workspace + secret-handling capsule
+ 12. `../wardenclyffe/docs/WARDEN_DEVSTATION_AND_CLYFFE_CODE.md` — private VS Code VM + future hosted coding service
+ 13. `../wardenclyffe/docs/WARDEN_REMOTE_AGENT_STREAMS.md` — Codex/Claude remote stream launch + app-server gates
+ 14. `../wardenclyffe/docs/WARDEN_SHARED_STORAGE_PLAN.md` — server1 400 GiB hot-tier storage + server2 migration
+ 15. `../wardenclyffe/docs/MASTER_CLYFFY_ROLLOUT_PLAN.md` — master.clyffy.ai, Postgres update, Clyffy route
+    - 15a. `docs/CLYFFY_MCP_ORCHESTRATOR.md` — Clyffy MCP orchestrator + foundation service boundaries
+    - 15b. `docs/CLYFFY_DYNAMIC_UI_SPEC.md` — dynamic Clyffy/Clyffe UI work
+    - 15c. `docs/CLYFFY_DYNAMIC_UI_POAM.md` — Clyffy UI milestones + sprints
+    - 15d. `docs/CLYFFE_CODE_TURNKEY_SERVICE_SPEC.md` — Clyffe Code managed workspace product
+ 16. `../wardenclyffe/docs/FOUNDATION_APP_RESEARCH_2026_05.md` — primary-source app-stack research
+ 17. `../wardenclyffe/docs/WARDEN_CLYFFE_ARCHITECTURE.md`
+ 18. `../wardenclyffe/docs/PROXMOX_FREE_CHEATSHEET.md` — Proxmox management work
+ 19. `../wardenclyffe/docs/WARDENCLYFFE_BACKEND_OPTIONS_2026_05.md` — backend evaluation (MariaDB / Postgres / SurrealDB / Qdrant / Dragonfly / distributed SQL)
+ 20. `../wardenclyffe/docs/GO_WARDEN_ABSORPTION_PLAN.md` — folding Go Warden into root direction
+ 21. `../wardenclyffe/docs/WARDEN_CLYFFE_PILOT_ROADMAP.md`
+ 22. `../wardenclyffe/modules/README.md` — root product module scaffold (absorbed Batch 3, now lives inside wardenclyffe)
+ 23. `../wardenclyffe/AGENTS.md` — WardenClyffe engine canonical context
+ 24. `../wardenclyffe/registry/context-mesh.yaml` — current Context Mesh / MCP registry (v3+ per ADR 0030)
+ 25. `../wardenclyffe/docs/runbooks/mcp-2026-alignment-checkpoint.md` — MCP 2026 alignment record + gap matrix + 10 resolved decisions + phased Phase 1–9 execution plan
+ 26. `../wardenclyffe/docs/specs/14-mcp-federation-and-workspace.md` — L0+L1+L2 MCP federation model (workspace publish, gateway, leaf contracts)
+ 27. `../wardenclyffe/docs/decisions/0030-mcp-2026-baseline.md`, `0031-workspace-identity.md`, `0033-touchpoint-protocol.md` — May 2026 protocol bar / workspace identity model / v2 touchpoint frontmatter shape
+
+---
+
 ## Boundary rules
 
 - **Master Clyffy = brain + UI + federation gateway.** WardenClyffe = body.
@@ -140,6 +187,41 @@ otherwise it consumes the WardenClyffe ADRs.
   variable names only.
 - **Repo-relative paths in committed text.** Use `docs/...` not
   `W:\projects\Master-Clyffy\docs\...` or `/workspace/warden-storage/...`.
+
+---
+
+## Intelligence layer rule
+
+Absorbed from the prior root `AGENTS.md` "MCP And Intelligence Rule"
+section. The brief boundary-rule line above ("Markdown is touchpoint /
+routing layer — NOT intelligence store") is the headline; this is the
+full elaboration.
+
+Markdown files with `clyffy_touchpoint` frontmatter (v2 per ADR 0033) are
+intentional touchpoints for agents and the MCP mesh tooling. They are
+**NOT the intelligence database.** Product truth belongs in Postgres /
+Warden APIs, retrieval belongs in Qdrant, graph projection belongs in
+SurrealDB, and run history belongs in Warden task / audit / trace records.
+
+The v1 `wardenclyffe_touchpoint` shape is deprecated; the v1 → v2 migration
+window is documented in ADR 0033 §10 (active workstream: Task #10 / Phase 8
+of the alignment runbook).
+
+Touchpoints should describe:
+
+- what the file owns,
+- which registry or source of truth it defers to,
+- which agents should read it,
+- what must not be changed from that file,
+- which workspace (`workspace_id`) and `project_key` it routes intelligence
+  writes to.
+
+Do not hardcode a second tool registry in prose. The canonical MCP / server
+/ tool registry is `../wardenclyffe/registry/context-mesh.yaml` (v3+ per
+ADR 0030). The MCP capability bar for new servers is **ADR 0030**; the
+federation model is **spec 14 + ADR 0032**; the workspace identity model
+(and the partial-equivalence rule that prevents conflating SurrealDB `ns`
+with workspace slug) is **ADR 0031**.
 
 ---
 
