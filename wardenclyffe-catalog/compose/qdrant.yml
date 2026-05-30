@@ -1,0 +1,250 @@
+# Wardenclyffe template: Qdrant
+# https://qdrant.tech/
+#
+# Vector database. Best-in-class HNSW similarity search, payload filtering,
+# hybrid retrieval (dense + sparse + multi-vector). Used in Wardenclyffe /
+# DevPulse for: AI memory storage, RRO Tri-Graph vector layer, embedding
+# similarity search for the Harrier-embedder pipeline.
+#
+# Standalone use:
+#   1. Generate the API key in x-warden.secrets, put in .env
+#   2. docker compose up -d
+#   3. Verify: curl -H 'api-key: $QDRANT_API_KEY' http://localhost:6333/healthz
+#   4. Web dashboard at http://localhost:6333/dashboard (will prompt for API key)
+#
+# Internal-only by default — the open-source Qdrant image has no built-in
+# rate limiting or DoS protection. Apps connect over the internal network.
+
+x-warden:
+  name: qdrant
+  version: 0.1.0
+  upstream_version: "v1.17.1"
+  category: database
+  description: "Vector database — HNSW similarity search, payload filtering, hybrid retrieval"
+  homepage: https://qdrant.tech/
+  license: Apache-2.0
+  source:
+    type: original
+    from: wardenclyffe
+    url: ""
+    modifications: |
+      - Authored 2026-05-05 from Qdrant v1.17 official security guide and docs
+      - API key auth enabled by default (env-injected, not config-mounted)
+      - Bound to 127.0.0.1 on the LXC (docs explicitly recommend this)
+      - read_only filesystem with mounted volumes for storage + snapshots
+      - Non-root user (1000:1000) per Qdrant security guide
+      - Healthcheck via curl /healthz (no api-key required for /healthz)
+      - Separate volume for snapshots, snapshot-friendly layout
+
+  ports:
+    - internal: 6333
+      external: 6333
+      protocol: http
+      public: false
+      label: "Qdrant REST API + Dashboard"
+      fqdn_var: WARDEN_FQDN
+    - internal: 6334
+      external: 6334
+      protocol: grpc
+      public: false
+      label: "Qdrant gRPC API"
+      fqdn_var: WARDEN_FQDN
+
+  health:
+    primary:
+      type: http
+      path: /healthz
+      port: 6333
+      method: GET
+      expect_status: [200]
+      interval_sec: 30
+      timeout_sec: 5
+      grace_period_sec: 30
+      retries: 3
+    detailed:
+      - type: http
+        path: /readyz
+        port: 6333
+        label: "ready"
+        shows_in_ui: true
+      - type: http
+        path: /livez
+        port: 6333
+        label: "live"
+        shows_in_ui: true
+
+  secrets:
+    - name: QDRANT_API_KEY
+      type: random_alphanumeric
+      length: 48
+      description: "API key required on every REST/gRPC request. Required for /dashboard access too."
+      rotatable: true
+      rotation_strategy: "Update env var, restart container. All clients need new key."
+    - name: QDRANT_READ_ONLY_API_KEY
+      type: random_alphanumeric
+      length: 48
+      description: "Optional read-only key. Use for monitoring and for clients that only query."
+      rotatable: true
+      rotation_strategy: "Update env var, restart container."
+
+  bootstrap:
+    initial_setup_path: /dashboard
+    description: "Web dashboard at /dashboard. Will prompt for API key on first visit."
+    expires: "Indefinite"
+    notes: |
+      First-time setup:
+      
+      1. Visit http://<host>:6333/dashboard
+      2. Enter the QDRANT_API_KEY when prompted
+      3. Create your first collection via dashboard or API:
+      
+         curl -X PUT 'http://<host>:6333/collections/devpulse_memory' \
+           -H 'api-key: <key>' \
+           -H 'Content-Type: application/json' \
+           -d '{
+             "vectors": {
+               "dense": { "size": 1024, "distance": "Cosine" }
+             },
+             "sparse_vectors": { "sparse": {} }
+           }'
+      
+      For Harrier (Microsoft harrier-oss-v1-0.6b) embeddings: vector size 1024,
+      distance Cosine. Hybrid search uses both dense + sparse from same model.
+    warden_can_open: true
+
+  configurable:
+    - name: QDRANT_LOG_LEVEL
+      default: INFO
+      type: enum
+      allowed: [TRACE, DEBUG, INFO, WARN, ERROR]
+      description: "Logging verbosity"
+    - name: QDRANT__SERVICE__HOST
+      default: "0.0.0.0"
+      type: string
+      description: "Bind address inside the container (container is on internal network)"
+    - name: QDRANT__SERVICE__HTTP_PORT
+      default: "6333"
+      type: integer
+      description: "REST API port"
+    - name: QDRANT__SERVICE__GRPC_PORT
+      default: "6334"
+      type: integer
+      description: "gRPC API port"
+    - name: QDRANT__SERVICE__ENABLE_TLS
+      default: "false"
+      type: enum
+      allowed: ["true", "false"]
+      description: "Enable in-container TLS. Usually false — terminate TLS at Traefik instead."
+    - name: QDRANT__STORAGE__OPTIMIZERS__DEFAULT_SEGMENT_NUMBER
+      default: "0"
+      type: integer
+      description: "0 = auto. Tune if you have unusual scaling needs."
+    - name: QDRANT__TELEMETRY_DISABLED
+      default: "true"
+      type: enum
+      allowed: ["true", "false"]
+      description: "Disable anonymous telemetry to Qdrant. Default off for self-hosted."
+
+  depends_on:
+    required: []
+    optional:
+      - service: harrier-embedder
+        reason: "TEI container running microsoft/harrier-oss-v1-0.6b for text→vector"
+        auto_wire: false
+      - service: backup-target
+        reason: "Periodic snapshot upload to off-host storage (B2, S3)"
+        auto_wire: false
+
+  resources:
+    minimum:
+      cpu_cores: 2
+      ram_mb: 2048
+      disk_gb: 20
+    recommended:
+      cpu_cores: 4
+      ram_mb: 8192
+      disk_gb: 100
+    scale_per:
+      metric: "vectors"
+      ram_mb_per_unit: 0.0008
+      cpu_cores_per_1000: 0
+      notes: |
+        ~800KB RAM per 1K vectors (1024-dim) with HNSW in memory.
+        Qdrant supports on-disk vectors for scaling beyond RAM at cost of latency.
+
+  backup:
+    strategy: qdrant_snapshot
+    volumes:
+      - qdrant-storage
+      - qdrant-snapshots
+    databases: []
+    exclude_volumes: []
+    pre_backup_hook: |
+      # Trigger a fresh snapshot of all collections via API
+      curl -X POST 'http://127.0.0.1:6333/snapshots' \
+        -H "api-key: $QDRANT_API_KEY"
+    post_restore_hook: ""
+
+  upgrade:
+    strategy: stop_start
+    pre_upgrade_hook: |
+      # Snapshot all collections before upgrading
+      curl -X POST 'http://127.0.0.1:6333/snapshots' \
+        -H "api-key: $QDRANT_API_KEY"
+    pull_images: true
+    restart_order: [qdrant]
+    post_upgrade_hook: ""
+    rollback_strategy: snapshot
+    breaking_changes_doc: https://github.com/qdrant/qdrant/releases
+
+# ---------------------------------------------------------------------------
+# Docker Compose services
+# ---------------------------------------------------------------------------
+
+services:
+
+  qdrant:
+    image: qdrant/qdrant:v1.17.1
+    restart: unless-stopped
+    # Run as non-root per Qdrant security guide
+    user: "1000:1000"
+    # Read-only root FS, only volumes are writable
+    read_only: true
+    tmpfs:
+      - /tmp
+    environment:
+      QDRANT__SERVICE__API_KEY: ${QDRANT_API_KEY}
+      QDRANT__SERVICE__READ_ONLY_API_KEY: ${QDRANT_READ_ONLY_API_KEY:-}
+      QDRANT__LOG_LEVEL: ${QDRANT_LOG_LEVEL:-INFO}
+      QDRANT__SERVICE__HOST: ${QDRANT__SERVICE__HOST:-0.0.0.0}
+      QDRANT__SERVICE__HTTP_PORT: ${QDRANT__SERVICE__HTTP_PORT:-6333}
+      QDRANT__SERVICE__GRPC_PORT: ${QDRANT__SERVICE__GRPC_PORT:-6334}
+      QDRANT__SERVICE__ENABLE_TLS: ${QDRANT__SERVICE__ENABLE_TLS:-false}
+      QDRANT__TELEMETRY_DISABLED: ${QDRANT__TELEMETRY_DISABLED:-true}
+    ports:
+      # Bind to localhost on the LXC. Apps reach Qdrant via the internal
+      # network (10.0.0.x), NOT the public IP.
+      - "127.0.0.1:6333:6333"
+      - "127.0.0.1:6334:6334"
+    volumes:
+      - qdrant-storage:/qdrant/storage
+      - qdrant-snapshots:/qdrant/snapshots
+    healthcheck:
+      # /healthz does NOT require api-key, so this works without injecting one
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:6333/healthz"]
+      start_period: 20s
+      interval: 30s
+      retries: 3
+      timeout: 5s
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+        reservations:
+          memory: 1G
+
+volumes:
+  qdrant-storage:
+    driver: local
+  qdrant-snapshots:
+    driver: local

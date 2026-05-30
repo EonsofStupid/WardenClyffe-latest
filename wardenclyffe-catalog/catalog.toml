@@ -1,0 +1,21 @@
+[catalog]
+id = "wardenclyffe-catalog"
+name = "WardenClyffe Deployment Catalog"
+schema_version = "0.1.0"
+status = "workspace-scaffold"
+
+[owners]
+operator = "Warden"
+customer_projection = "Clyffe"
+
+[paths]
+compose = "compose"
+edge = "edge"
+examples = "examples"
+tests = "tests"
+
+[rules]
+secret_values_allowed = false
+runtime_state_allowed = false
+public_ports_default = false
+source_provenance_required = true
