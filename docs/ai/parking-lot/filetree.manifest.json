@@ -1,0 +1,235 @@
+{
+  "boundaries": {
+    ".agents": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": ".agents",
+      "workspace_id": null
+    },
+    ".claude": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": ".claude",
+      "workspace_id": null
+    },
+    ".codewardenclyffe": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": ".codewardenclyffe",
+      "workspace_id": null
+    },
+    ".codex": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": ".codex",
+      "workspace_id": null
+    },
+    ".cursor": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": ".cursor",
+      "workspace_id": null
+    },
+    ".github": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": ".github",
+      "workspace_id": null
+    },
+    "WardenClyffe-module1": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "WardenClyffe-module1",
+      "workspace_id": null
+    },
+    "WardenClyffe-module2": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "WardenClyffe-module2",
+      "workspace_id": null
+    },
+    "apps": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "apps",
+      "workspace_id": null
+    },
+    "archive": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "archive",
+      "workspace_id": null
+    },
+    "contracts": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "contracts",
+      "workspace_id": null
+    },
+    "data": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "data",
+      "workspace_id": null
+    },
+    "docs": {
+      "depth": 1,
+      "has_agents": true,
+      "is_module": false,
+      "name": "docs",
+      "workspace_id": null
+    },
+    "examples": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "examples",
+      "workspace_id": null
+    },
+    "infra": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "infra",
+      "workspace_id": null
+    },
+    "mediastack": {
+      "depth": 1,
+      "has_agents": true,
+      "is_module": false,
+      "name": "mediastack",
+      "workspace_id": null
+    },
+    "modules": {
+      "depth": 1,
+      "has_agents": true,
+      "is_module": false,
+      "name": "modules",
+      "workspace_id": null
+    },
+    "modules/clyffe": {
+      "depth": 2,
+      "has_agents": true,
+      "is_module": false,
+      "name": "clyffe",
+      "workspace_id": null
+    },
+    "modules/warden": {
+      "depth": 2,
+      "has_agents": true,
+      "is_module": false,
+      "name": "warden",
+      "workspace_id": null
+    },
+    "ops": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "ops",
+      "workspace_id": null
+    },
+    "packages": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "packages",
+      "workspace_id": null
+    },
+    "packages-go": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "packages-go",
+      "workspace_id": null
+    },
+    "schemas": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "schemas",
+      "workspace_id": null
+    },
+    "scripts": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "scripts",
+      "workspace_id": null
+    },
+    "secrets": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "secrets",
+      "workspace_id": null
+    },
+    "services": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "services",
+      "workspace_id": null
+    },
+    "tools": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "tools",
+      "workspace_id": null
+    },
+    "vendor": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "vendor",
+      "workspace_id": null
+    },
+    "wardenclyffe": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "wardenclyffe",
+      "workspace_id": null
+    },
+    "wardenclyffe-catalog": {
+      "depth": 1,
+      "has_agents": true,
+      "is_module": false,
+      "name": "wardenclyffe-catalog",
+      "workspace_id": null
+    },
+    "wardenclyffedisk": {
+      "depth": 1,
+      "has_agents": true,
+      "is_module": false,
+      "name": "wardenclyffedisk",
+      "workspace_id": null
+    },
+    "wardenclyffenet": {
+      "depth": 1,
+      "has_agents": true,
+      "is_module": false,
+      "name": "wardenclyffenet",
+      "workspace_id": null
+    },
+    "web": {
+      "depth": 1,
+      "has_agents": true,
+      "is_module": false,
+      "name": "web",
+      "workspace_id": null
+    }
+  }
+}

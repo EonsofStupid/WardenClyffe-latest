@@ -1,0 +1,21 @@
+---
+description: Forced pre-creation boundary/duplicate review for WardenClyffe.
+alwaysApply: true
+---
+
+# WardenClyffe Boundary-Guard Rule (forced)
+
+During development, **before creating any new folder, module, package, service,
+or domain boundary**, run the duplicate check first so a new boundary is not a
+duplicate of an existing one.
+
+Follow `docs/ai/WARDENCLYFFE_BOUNDARY_GUARD_SKILL.md`.
+
+```bash
+python scripts/foundation/boundary-guard-tree.py --snapshot
+python scripts/foundation/boundary-guard-tree.py --diff
+python scripts/foundation/boundary-guard-tree.py --check "<proposed/path>"
+```
+
+Exit code `2` means a likely duplicate — reuse the existing boundary. Creating a
+genuinely new domain requires operator approval.
