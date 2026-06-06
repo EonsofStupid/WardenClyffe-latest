@@ -43,7 +43,8 @@ Verified on 2026-05-22:
 | IP | `10.0.0.114/24` |
 | Public route | none |
 | On boot | enabled |
-| SSH alias | `warden-capsule` |
+| SSH aliases | `warden-capsule`, `capsule.clyffy.ai`, `operator.clyffy.ai` |
+| Public jump | `ssh.clyffy.ai` DNS-only to homebase public IP |
 | Primary user | `wardenop`, sudo by approved command group only |
 | Secret mount | `/run/warden-secrets` on tmpfs |
 | Working tree | `/workspace/WardenClyffe-latest` |
@@ -52,12 +53,30 @@ Verified on 2026-05-22:
 | Baseline status | `warden-capsule-status` |
 
 Windows PowerShell is now a launcher/bridge only for Warden live infrastructure
-work. The permanent operator shell is:
+work. The permanent operator shell is the domain-friendly capsule target:
+
+```bash
+ssh capsule.clyffy.ai
+cd /workspace/WardenClyffe-latest
+```
+
+The compatibility alias remains:
 
 ```bash
 ssh warden-capsule
-cd /workspace/WardenClyffe-latest
 ```
+
+For headless agent launch from a desktop client:
+
+```cmd
+scripts\local\open-warden-capsule-claude.cmd
+scripts\local\open-warden-capsule-codex.cmd
+```
+
+Those launchers SSH to `capsule.clyffy.ai`, enter
+`/workspace/WardenClyffe-latest`, and start the agent inside the capsule. The
+agent runtime is therefore Linux-first and secret-contained while the desktop
+is only the display/keyboard layer.
 
 ## What Smart Teams Use
 
@@ -78,7 +97,9 @@ The common pattern across serious infra teams is:
 ### Network
 
 - Internal `vmbr1` only.
-- No public DNS record.
+- No public DNS record to the capsule's private IP.
+- The public-friendly path is `ssh.clyffy.ai` as a DNS-only jump record, then
+  SSH config routes `capsule.clyffy.ai` privately to `10.0.0.114`.
 - No inbound route from Cloudflare/Caddy.
 - Allow egress only to required systems:
   - Proxmox host/internal services.

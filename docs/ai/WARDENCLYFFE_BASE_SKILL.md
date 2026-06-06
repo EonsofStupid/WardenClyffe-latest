@@ -53,12 +53,20 @@ Use this order when sources disagree:
 10. `docs/WARDEN_OPERATOR_CAPSULE.md`.
 11. `docs/WARDEN_DEVSTATION_AND_CLYFFE_CODE.md`.
 12. `docs/MASTER_CLYFFY_ROLLOUT_PLAN.md`.
-13. `docs/FOUNDATION_APP_RESEARCH_2026_05.md`.
-14. `docs/WARDEN_CLYFFE_ARCHITECTURE.md`.
-15. `docs/WARDEN_CLYFFE_PILOT_ROADMAP.md`.
-16. `wardenclyffe/REGISTRY.md` and `wardenclyffe/registry/context-mesh.yaml`
+13. `docs/CLYFFY_MCP_ORCHESTRATOR.md`.
+14. `docs/CLYFFY_DYNAMIC_UI_SPEC.md`.
+15. `docs/CLYFFY_DYNAMIC_UI_POAM.md`.
+16. `docs/CLYFFE_CODE_TURNKEY_SERVICE_SPEC.md`.
+17. `docs/FOUNDATION_APP_RESEARCH_2026_05.md`.
+18. `docs/WARDEN_CLYFFE_ARCHITECTURE.md`.
+19. `docs/WARDEN_CLYFFE_PILOT_ROADMAP.md`.
+20. `wardenclyffe/REGISTRY.md` and `wardenclyffe/registry/context-mesh.yaml`
    for the Go-side Warden/intelligence mesh.
-17. Wrapper files such as `CLAUDE.md` and `.cursor/rules/*.mdc`.
+21. `docs/ai/INTELLIGENCE_LAYER_MODERNIZATION.md` for the Markdown-as-touchpoint,
+   generated-stores-as-memory rule.
+22. `docs/ai/SURREALDB_INTELLIGENCE_PROJECTION_V2.md` for the dynamic
+   SurrealDB projection and context-pack plan.
+23. Wrapper files such as `CLAUDE.md` and `.cursor/rules/*.mdc`.
 
 Wrappers are pointers. They are not authorities.
 

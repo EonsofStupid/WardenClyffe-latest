@@ -55,9 +55,35 @@ Warden also owns private operator workspaces:
 - **Warden Operator Capsule** is the secret-sensitive shell for bootstrap and
   host/operator work.
 - **Warden Devstation** is the private hosted VS Code/Cursor/Codex/Claude
-  workstation for daily development.
+  workstation for daily development, including a localhost-bound code-server
+  browser IDE reached through SSH forwarding.
 
 These are not customer workspaces.
+
+### Clyffy MCP Orchestrator
+
+Clyffy is the main MCP orchestrator and assistant runtime for WardenClyffe. It
+does not replace Warden authority or Clyffe customer boundaries. It organizes
+the tool mesh, workspace memory, agent handoffs, Qdrant retrieval, SurrealDB
+graph projections, and Clyffy Master assistant workflows.
+
+The dedicated Clyffy Master runtime is the future `clyffy-master` service
+tracked in `docs/CLYFFY_MCP_ORCHESTRATOR.md` and
+`docs/MASTER_CLYFFY_ROLLOUT_PLAN.md`.
+
+The boundary is:
+
+```text
+OPNsense = network truth
+Authentik = human identity truth
+Better Auth = app-local auth/session/API layer
+Warden = infrastructure/control truth
+Bifrost = controlled bridge/orchestration gateway
+Clyffy = MCP orchestrator and assistant runtime
+Postgres = product truth
+Qdrant = retrieval memory
+SurrealDB = graph/reasoning projection
+```
 
 ### Clyffe
 

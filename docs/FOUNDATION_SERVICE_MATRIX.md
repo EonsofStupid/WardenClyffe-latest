@@ -10,6 +10,8 @@ wardenclyffe_touchpoint:
     - docs/WARDEN_CLYFFE_PILOT_ROADMAP.md
     - docs/PUBLIC_IP_HOMEBASE_FOUNDATION.md
     - docs/WARDEN_ESTABLISHMENT_POAM.md
+    - docs/SURREALDB_PUBLIC_SELF_HOSTING_PLAN.md
+    - docs/SURREALDB_SELF_HOSTED_RUNBOOK.md
     - docs/MASTER_CLYFFY_ROLLOUT_PLAN.md
     - docs/FOUNDATION_APP_RESEARCH_2026_05.md
     - wardenclyffe/docs/infra-state.md
@@ -45,6 +47,10 @@ The foundation stack is directionally solid:
 See `docs/FOUNDATION_APP_RESEARCH_2026_05.md` for the primary-source research
 behind these app choices.
 
+`docs/CLYFFY_MCP_ORCHESTRATOR.md` is the orchestrator boundary that ties these
+services together. Clyffy is the main MCP orchestrator; Warden is still the
+infrastructure/control authority.
+
 The foundation is not customer-service ready until OPNsense, Authentik, Caddy,
 DNS, backups, and Warden audit are configured as gates below.
 
@@ -55,7 +61,7 @@ DNS, backups, and Warden audit are configured as gates below.
 | `101` | `buffer` | Apt-Cacher-NG estate package cache | Keep | document cache policy and backup if config matters | internal utility only |
 | `102` | `warden` | Warden Go server manager, public at `warden.rrflow.ai` | Keep, then absorb into Rust/root Warden direction | OIDC with Authentik, Proxmox reconciler cron, audit hardening, backup config, Clyffe-safe API boundary | operator-useful, not customer-ready |
 | `103` | `authentik` | Identity provider | Keep for foundation | passkey enrolment, recovery codes, realm separation, OIDC clients, policy bindings, custom claims, step-ca cert, blueprints, backups, Infisical mirrors | good choice once configured |
-| `104` | `surreal` | AI state and graph/reasoning projection | Keep as AI plane, not product truth | backup, root rotation, schema cleanup, sync contracts, cloud/mirror decision | not customer truth; safe as internal AI projection |
+| `104` | `surreal` | AI state and graph/reasoning projection | Keep as AI plane, not product truth | root rotation, schema cleanup, sync contracts, public-safe Warden proxy route, cloud export/import after endpoint resumes | local backups and persistence fixed; publish only through Caddy/Auth/Warden policy proxy |
 | `105` | `nomad` | Scheduler, scope unclear | Park until scope is documented | decide what belongs in Nomad vs systemd/LXC-native; verify network gateway anomaly | not a customer foundation until scoped |
 | `106` | `qdrant` | Vector store | Keep | collections, snapshot schedule, mirror decision, ingestion pipeline from approved docs/touchpoints | solid for KB/search once scoped |
 | `107` | `harrier` | TEI embedder | Keep if bakeoff confirms | run embedder bakeoff, wire into prompt/KB pipeline, cap resource use | internal AI utility |
@@ -64,9 +70,9 @@ DNS, backups, and Warden audit are configured as gates below.
 | `110` | `clyffy-pg-master` | Postgres control-plane/userdata candidate | Keep as product truth direction | migrations, backup, replication/mirror strategy, ownership schema | correct foundation DB direction |
 | `111` | `edge` | Intended OPNsense network boundary | Keep if audit confirms config | live config audit, WAN/LAN mapping, WireGuard, ACL groups, Unbound split-horizon, firewall rules, config backups, Warden API token | required before real customers |
 | `112` | `clyffy-bifrost` | LLM gateway | Keep | provider keys, Observatory wrapping, analytics, rate limits | internal AI service until tenant policy exists |
-| `113` | `observatory` | Helicone fork / LLM observability | Keep if maintained internally | OIDC gate, deploy completion, trace ingestion, retention, backups | useful for AIaaS operations |
+| `113` | `observatory` | WardenClyffe-owned Helicone-like LLM observability | Keep if maintained internally | OIDC gate through Authentik, deploy completion, trace ingestion, retention, backups, Better Auth boundary if embedded in apps | useful for AIaaS operations |
 | `114` | `warden-operator-capsule` | Secret-safe Linux operator capsule | Keep | brokered secrets, restricted operator path, audit hardening | internal operator-only |
-| `116` | `warden-devstation-01` | Private VS Code/Cursor/Codex/Claude devstation | Keep | Remote-SSH daily workflow, snapshot/backup policy, WardenNet access | internal operator-only; Clyffe Code seed pattern |
+| `116` | `warden-devstation-01` | Private VS Code/Cursor/Codex/Claude devstation with SSH-tunneled code-server | Keep | backup policy, WardenNet access, future Warden UI lifecycle controls | internal operator-only; Clyffe Code seed pattern |
 | `115` | proposed `clyffy-edge` | Dedicated Caddy public edge | Build next | provision LXC, move Caddy off VM `501`, render routes from registry, health probes, rollback | required for customer domains |
 | `120` | proposed `clyffy-portal` | Clyffe/Clyffy customer/master surface | Build later | depends on identity, DNS, edge, CA, Warden API, Postgres schema | not started |
 | `500/501` | `fozzy` / `Fozzy` | dead legacy Coolify/Traefik/Caddy edge dependency | Replace | stop depending on it for public routing; migrate routes to LXC `115`; audit public forwards | not acceptable as final foundation |
@@ -84,8 +90,10 @@ DNS, backups, and Warden audit are configured as gates below.
 | Product data | Postgres | Best boring source of truth for tenants, tickets, CRM, inventory, RBAC, audit, workflows | Do not put Warden/Clyffe customer truth in SurrealDB or Qdrant |
 | AI retrieval | Qdrant | Purpose-built vector retrieval for docs, KB, prompts, and project memory | Do not expose raw vector memory directly to customers |
 | AI graph/projection | SurrealDB | Useful for AI state, graph context, and reasoning projections | Do not let it become the billing/ticket/customer source of truth |
+| AI context public route | SurrealDB behind Warden proxy | Gives agents and operator tools a real HTTPS endpoint without exposing raw database authority | Do not publish LXC `104:8000` directly |
 | Secrets | Infisical -> OS keyring | Good separation between canonical secrets and local runtime resolution | Do not commit local `.env`, PATs, root cert keys, or live responses |
 | Observability | Observatory/Helicone for LLM plus OTel/Grafana/Loki-class infra telemetry | Needed to operate AIaaS and customer services with confidence | Do not ship customer services without logs, metrics, traces, and restore drills |
+| App-local auth | Better Auth in Clyffy/minions | Gives Clyffy/minions their own secure session/API layer while Authentik remains SSO | Do not let app-local auth become a second human identity source of truth |
 
 Current Postgres note: the live LXC `110` is Postgres 17. That is acceptable
 for the pilot if patched and backed up. New production packaging should target

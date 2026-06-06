@@ -13,6 +13,31 @@ wardenclyffe_touchpoint:
 
 This is not a final decision. It is the current option map for WardenClyffe.
 
+## Current Recommendation
+
+Use Postgres as the dedicated Warden/Clyffe product-truth backend. That is the
+boring, modern control-plane choice for tenants, RBAC, inventory, tickets, CRM,
+KB, workflow state, route intent, billing references, and audit.
+
+The bleeding-edge move is not replacing Postgres with a novelty database. It is
+using a clear polyglot backend where each datastore has one job:
+
+| Role | Default | Why |
+|---|---|---|
+| Product truth | Postgres 18 target, Postgres 17 live until migration drill | relational integrity, RLS, JSONB, UUIDv7, migrations, audit |
+| Cache/session/locks | Dragonfly | Redis/Memcached-compatible, high-throughput ephemeral state |
+| Events/jobs | NATS JetStream | durable streams, pull consumers, replay, lifecycle events |
+| Vector retrieval | Qdrant | vector/hybrid retrieval and tenant-filtered payloads |
+| AI graph projection | SurrealDB | graph, realtime, vector/full-text projection for agent context |
+| Observability/usage analytics | ClickHouse later | logs, traces, session replay, high-volume aggregates |
+| Files/artifacts | S3/R2/MinIO-compatible object storage | attachments, reports, backups metadata, build artifacts |
+| Distributed SQL option | CockroachDB/Yugabyte/Citus later | only if active-active or tenant scale demands it |
+
+MariaDB stays valuable for WardenClyffeScale and managed MySQL/MariaDB service
+offerings. It should not be the default Warden/Clyffe product-control database
+unless a code spike proves tenant isolation, audit, and migrations are at least
+as clean as Postgres.
+
 ## Current Local Evidence
 
 | Evidence | Meaning |
