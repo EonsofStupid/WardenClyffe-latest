@@ -1,0 +1,13 @@
+{
+  "name": "@wardenclyffe/workspace",
+  "private": true,
+  "version": "0.0.0",
+  "description": "WardenClyffe monorepo — Go services + TypeScript (React/Svelte) apps and shared packages.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=24"
+  }
+}
