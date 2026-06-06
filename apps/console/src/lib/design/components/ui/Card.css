@@ -1,0 +1,13 @@
+.ui-card {
+  background: var(--wc-surface); border: 1px solid var(--wc-border);
+  border-radius: var(--wc-radius); overflow: hidden;
+}
+.ui-card[data-elevation="raised"] { box-shadow: var(--wc-shadow); }
+.ui-card[data-elevation="subtle"] { box-shadow: var(--wc-shadow-sm); }
+.ui-card__header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: var(--wc-s3) var(--wc-s4); border-bottom: 1px solid var(--wc-border);
+  background: var(--wc-surface-2);
+}
+.ui-card__header h3 { margin: 0; font-size: var(--wc-fs-md); font-weight: 600; }
+.ui-card__body { padding: var(--wc-s4); }

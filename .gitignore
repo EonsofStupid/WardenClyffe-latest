@@ -2,9 +2,19 @@
 /target/
 *.rs.bk
 
+# JS / Node / build output
+node_modules/
+dist/
+build/
+.next/
+.turbo/
+*.tsbuildinfo
+
 # IDE files
 .idea/
 .vscode/
+!.vscode/
+!.vscode/extensions.json
 *.swp
 *.swo
 *~
@@ -29,9 +39,17 @@ ops/exports/
 *.db
 *.db-journal
 
-# Environment files
+# Environment files & secrets (NEVER commit)
 .env
-.env.local
+.env.*
+*.env
+secrets/*
+!secrets/README.md
+!secrets/*.example
+*.smb
+*.cred
+*.credential
+/run/warden-secrets
 
 
 # SQL dump files

@@ -1,0 +1,8 @@
+.ui-field { display: flex; flex-direction: column; gap: var(--wc-s1); }
+.ui-field__label { font-size: var(--wc-fs-xs); color: var(--wc-text-dim); }
+.ui-field__input {
+  font-family: inherit; font-size: var(--wc-fs-sm); color: var(--wc-text);
+  background: var(--wc-bg-elev); border: 1px solid var(--wc-border);
+  border-radius: var(--wc-radius-sm); padding: var(--wc-s2) var(--wc-s3);
+}
+.ui-field__input[data-focused="true"] { outline: 2px solid var(--wc-primary); outline-offset: 0; }

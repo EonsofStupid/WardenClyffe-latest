@@ -1,0 +1,84 @@
+// Typed client for warden-api. Same-origin in dev via the Vite proxy.
+
+export type Workspace = {
+  id: string;
+  stable_id: string;
+  tenant_id: string | null;
+  kind: string;
+  state: string;
+  vmid: number | null;
+  hostname: string | null;
+  tier: string | null;
+  cores: number | null;
+  memory_mb: number | null;
+  disk_gb: number | null;
+  ip_cidr: string | null;
+  ssh_alias: string | null;
+  spec: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
+export type SchemaInfo = { name: string; tables: number };
+export type TableInfo = { schema: string; name: string; columns: number; rows_estimate: number; size_bytes: number };
+export type ColumnInfo = { name: string; type: string; nullable: boolean; default: string | null; is_primary_key: boolean; position: number };
+export type RowPage = { columns: string[]; rows: Record<string, unknown>[]; total: number; limit: number; offset: number };
+export type QueryResult = { columns: string[]; rows: Record<string, unknown>[]; count: number };
+export type ProvisionResult = { action_request_id: string; resource: Workspace };
+
+export type Platform = { stable_id: string; kind: string; api_endpoint: string | null; network_name: string | null; managed: boolean; credential_ref: string | null; state: string; note: string | null };
+export type Designation = "connector" | "plugin" | "platform" | "core";
+export type FoundationService = {
+  stable_id: string; name: string; role: string; designation: Designation; audiences: string[];
+  platform: string | null; vmid: number | null;
+  endpoint: string | null; auth_required: boolean; credential_ref: string | null;
+  keep_decision: string | null; customer_ready: boolean; owed: string[]; state: string;
+};
+export type IntelProbe = { stable_id: string; role: string; endpoint: string | null; reachable: boolean; http_status?: number; credential_gated: boolean; credential_ref: string | null; detail: string };
+export type ClyffyHome = {
+  orchestrator: string; persona: string;
+  summary: { platforms: number; services: number; services_by_role: Record<string, number>; services_by_designation?: Record<string, number>; config_items_owed: number; credential_gated_services: number };
+  platforms: Platform[]; intelligence: IntelProbe[]; note: string;
+};
+
+async function req<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(path, {
+    headers: { "Content-Type": "application/json" },
+    ...init,
+  });
+  const text = await res.text();
+  const body = text ? JSON.parse(text) : null;
+  if (!res.ok) {
+    const msg = body?.error?.message ?? res.statusText;
+    throw new Error(msg);
+  }
+  return body as T;
+}
+
+export const api = {
+  health: () => req<{ status: string; service: string }>("/healthz"),
+  workspaces: () => req<{ items: Workspace[]; count: number }>("/api/warden/workspaces"),
+  provision: (input: { tier: string; repo?: string; region?: string }) =>
+    req<ProvisionResult>("/api/warden/provision", { method: "POST", body: JSON.stringify(input) }),
+
+  schemas: () => req<{ items: SchemaInfo[] }>("/api/warden/data/schemas"),
+  tables: (schema: string) => req<{ items: TableInfo[] }>(`/api/warden/data/schemas/${schema}/tables`),
+  columns: (schema: string, table: string) =>
+    req<{ schema: string; table: string; columns: ColumnInfo[] }>(`/api/warden/data/tables/${schema}/${table}`),
+  rows: (schema: string, table: string, limit = 50, offset = 0) =>
+    req<RowPage>(`/api/warden/data/tables/${schema}/${table}/rows?limit=${limit}&offset=${offset}`),
+  query: (sql: string) =>
+    req<QueryResult>("/api/warden/data/query", { method: "POST", body: JSON.stringify({ sql }) }),
+
+  clyffyHome: () => req<ClyffyHome>("/api/clyffy/home"),
+  clyffyServices: () => req<{ items: FoundationService[]; count: number }>("/api/clyffy/services"),
+  clyffyPlugins: () => req<{ designation: string; audience: string; items: FoundationService[]; count: number }>("/api/clyffy/plugins"),
+  clyffyConnectors: () => req<{ designation: string; audience: string; items: FoundationService[]; count: number }>("/api/clyffy/connectors"),
+  clyffyIntelligence: () => req<{ plane: string; probes: IntelProbe[] }>("/api/clyffy/intelligence"),
+};
+
+export function cell(v: unknown): string {
+  if (v === null || v === undefined) return "∅";
+  if (typeof v === "object") return JSON.stringify(v);
+  return String(v);
+}
