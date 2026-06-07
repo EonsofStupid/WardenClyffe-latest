@@ -1,0 +1,18 @@
+.ui-popover {
+  background: var(--wc-bg-elev);
+  border: 1px solid var(--wc-border);
+  border-radius: var(--wc-radius);
+  box-shadow: var(--wc-shadow);
+  padding: var(--wc-s1);
+  min-width: 10rem;
+}
+.ui-menu { outline: none; display: flex; flex-direction: column; gap: 2px; }
+.ui-menuitem {
+  cursor: pointer;
+  padding: var(--wc-s2) var(--wc-s3);
+  border-radius: var(--wc-radius-sm);
+  font-size: var(--wc-fs-sm);
+  color: var(--wc-text);
+  outline: none;
+}
+.ui-menuitem[data-focused] { background: var(--wc-surface); }

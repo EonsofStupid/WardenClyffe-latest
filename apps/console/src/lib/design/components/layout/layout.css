@@ -1,0 +1,31 @@
+/* Layout primitives — Grid (2-D) + Flex (1-D), token-driven spacing only. */
+.ui-stack { display: flex; flex-direction: column; }
+.ui-cluster { display: flex; flex-direction: row; flex-wrap: wrap; }
+.ui-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(var(--ui-grid-min, 16rem), 100%), 1fr)); }
+
+/* shared token-scale gap */
+[data-gap="0"] { gap: 0; }
+[data-gap="1"] { gap: var(--wc-s1); }
+[data-gap="2"] { gap: var(--wc-s2); }
+[data-gap="3"] { gap: var(--wc-s3); }
+[data-gap="4"] { gap: var(--wc-s4); }
+[data-gap="5"] { gap: var(--wc-s5); }
+[data-gap="6"] { gap: var(--wc-s6); }
+[data-gap="7"] { gap: var(--wc-s7); }
+
+/* Stack alignment (cross axis = horizontal) */
+.ui-stack[data-align="start"] { align-items: flex-start; }
+.ui-stack[data-align="center"] { align-items: center; }
+.ui-stack[data-align="end"] { align-items: flex-end; }
+.ui-stack[data-align="stretch"] { align-items: stretch; }
+
+/* Cluster main-axis justify */
+.ui-cluster[data-justify="start"] { justify-content: flex-start; }
+.ui-cluster[data-justify="center"] { justify-content: center; }
+.ui-cluster[data-justify="end"] { justify-content: flex-end; }
+.ui-cluster[data-justify="between"] { justify-content: space-between; }
+/* Cluster cross-axis align */
+.ui-cluster[data-valign="start"] { align-items: flex-start; }
+.ui-cluster[data-valign="center"] { align-items: center; }
+.ui-cluster[data-valign="end"] { align-items: flex-end; }
+.ui-cluster[data-valign="baseline"] { align-items: baseline; }
