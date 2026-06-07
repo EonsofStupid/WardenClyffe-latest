@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { api, type ProvisionResult } from "../lib/api";
-import { Card, Button, Field, Select, Badge } from "../lib/design";
+import { api, type ProvisionResult } from "../../../../lib/api";
+import { Card, Button, Field, Select, Badge } from "../../../../lib/design";
 
 const TIERS = [
   { id: "starter", label: "Starter · 2-4 vCPU · 8 GiB" },
@@ -9,7 +9,7 @@ const TIERS = [
   { id: "power", label: "Power · 24-32 vCPU · 64 GiB" },
 ];
 
-export function OrderDevstation() {
+export function OrderDevstationView() {
   const [tier, setTier] = useState("builder");
   const [repo, setRepo] = useState("");
   const [region, setRegion] = useState("us-wi");

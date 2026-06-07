@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { api } from "../lib/api";
-import { Workspaces } from "../views/Workspaces";
-import { DataBrowser } from "../views/DataBrowser";
-import { OrderDevstation } from "../views/OrderDevstation";
-import { Foundation } from "../views/Foundation";
 import { AppShell, Sidebar, NavItem, Badge } from "../lib/design";
+import { FoundationView } from "../domains/warden/mesh";
+import { WorkspacesView, OrderDevstationView } from "../domains/warden/fleet";
+import { DataBrowserView } from "../domains/warden/data";
 
 type Tab = "foundation" | "workspaces" | "data" | "order";
 const NAV: { id: Tab; label: string }[] = [
@@ -54,10 +53,10 @@ export function App() {
 
   return (
     <AppShell sidebar={sidebar}>
-      {tab === "foundation" && <Foundation />}
-      {tab === "workspaces" && <Workspaces />}
-      {tab === "data" && <DataBrowser />}
-      {tab === "order" && <OrderDevstation />}
+      {tab === "foundation" && <FoundationView />}
+      {tab === "workspaces" && <WorkspacesView />}
+      {tab === "data" && <DataBrowserView />}
+      {tab === "order" && <OrderDevstationView />}
     </AppShell>
   );
 }

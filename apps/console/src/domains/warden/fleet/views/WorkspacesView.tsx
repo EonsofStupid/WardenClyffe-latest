@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { api, type Workspace } from "../lib/api";
-import { Card, Badge } from "../lib/design";
+import { api, type Workspace } from "../../../../lib/api";
+import { Card, Badge } from "../../../../lib/design";
 
-export function Workspaces() {
+export function WorkspacesView() {
   const [items, setItems] = useState<Workspace[]>([]);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);

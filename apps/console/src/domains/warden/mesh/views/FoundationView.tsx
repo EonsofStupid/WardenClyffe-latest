@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { api, type ClyffyHome, type FoundationService } from "../lib/api";
-import { Card, Badge } from "../lib/design";
+import { api, type ClyffyHome, type FoundationService } from "../../../../lib/api";
+import { Card, Badge } from "../../../../lib/design";
 
 const ROLE_LABEL: Record<string, string> = {
   sql: "Postgres", vector: "Qdrant", graph: "SurrealDB", identity: "Authentik",
@@ -20,7 +20,7 @@ const DESIGNATION_TONE = {
   plugin: "info", connector: "brand", platform: "neutral", core: "success",
 } as const;
 
-export function Foundation() {
+export function FoundationView() {
   const [home, setHome] = useState<ClyffyHome | null>(null);
   const [services, setServices] = useState<FoundationService[]>([]);
   const [err, setErr] = useState<string | null>(null);

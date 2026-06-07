@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { api, cell, type SchemaInfo, type TableInfo, type ColumnInfo, type RowPage, type QueryResult } from "../lib/api";
-import { Card, DataTable, Button, Badge } from "../lib/design";
+import { api, cell, type SchemaInfo, type TableInfo, type ColumnInfo, type RowPage, type QueryResult } from "../../../../lib/api";
+import { Card, DataTable, Button, Badge } from "../../../../lib/design";
 
 // Our own Go-backed, Supabase-inspired data browser.
-export function DataBrowser() {
+export function DataBrowserView() {
   const [schemas, setSchemas] = useState<SchemaInfo[]>([]);
   const [schema, setSchema] = useState<string>("");
   const [tables, setTables] = useState<TableInfo[]>([]);
