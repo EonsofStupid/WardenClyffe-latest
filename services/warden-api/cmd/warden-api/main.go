@@ -18,7 +18,7 @@ import (
 	"github.com/wardenclyffe/warden-api/internal/audit"
 	"github.com/wardenclyffe/warden-api/internal/automation"
 	"github.com/wardenclyffe/warden-api/internal/clyffy"
-	"github.com/wardenclyffe/warden-api/internal/dbadmin"
+	"github.com/wardenclyffe/warden-api/internal/data"
 	"github.com/wardenclyffe/warden-api/internal/fleet"
 	"github.com/wardenclyffe/warden-api/internal/platform"
 )
@@ -40,7 +40,7 @@ func main() {
 	auditSink := audit.New(pool)
 	fleetStore := fleet.NewStore(pool)
 	automationSvc := automation.NewService(pool, fleetStore, auditSink)
-	dbadminStore := dbadmin.NewStore(pool)
+	dataStore := data.NewStore(pool)
 
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
@@ -59,7 +59,7 @@ func main() {
 
 	fleet.NewHandler(fleetStore).Routes(r)
 	automation.NewHandler(automationSvc).Routes(r)
-	dbadmin.NewHandler(dbadminStore).Routes(r)
+	data.NewHandler(dataStore).Routes(r)
 	clyffy.NewHandler(clyffy.NewStore(pool)).Routes(r)
 
 	srv := &http.Server{

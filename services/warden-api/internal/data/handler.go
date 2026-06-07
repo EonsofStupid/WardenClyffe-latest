@@ -1,4 +1,4 @@
-package dbadmin
+package data
 
 import (
 	"errors"

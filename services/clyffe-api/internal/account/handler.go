@@ -1,4 +1,4 @@
-package portal
+package account
 
 import (
 	"net/http"
@@ -59,8 +59,8 @@ func (h *Handler) home(w http.ResponseWriter, r *http.Request) {
 		"portal":  "clyffe",
 		"persona": "clyffe-customer",
 		"summary": map[string]any{
-			"accounts":        len(accounts),
-			"orders":          len(orders),
+			"accounts":         len(accounts),
+			"orders":           len(orders),
 			"orders_by_status": byStatus,
 		},
 		"accounts": accounts,

@@ -1,8 +1,8 @@
-// Package dbadmin is WardenClyffe's own Go-based, Supabase-inspired Postgres
+// Package data is WardenClyffe's own Go-based, Supabase-inspired Postgres
 // management layer. It powers the UI-driven data browser: schemas, tables,
 // columns, rows, and safe read-only SQL. It only exposes the WardenClyffe
 // schemas and never executes mutating SQL.
-package dbadmin
+package data
 
 import (
 	"context"

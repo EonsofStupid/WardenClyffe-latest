@@ -1,11 +1,11 @@
-// Package portal is the customer-facing Clyffe surface for WardenClyffe.
+// Package account is the customer-facing Clyffe surface for WardenClyffe.
 //
 // Boundary: Clyffe is the customer plane. This store reads ONLY customer-safe
 // data — account identity (warden_core.tenants) and the customer's own orders
 // (clyffe_core.orders). It must never read operator-only schemas
 // (warden_infra, warden_audit) or surface secrets; per the Clyffe boundary
 // rule, operator data is reachable only through sanitized Warden endpoints.
-package portal
+package account
 
 import (
 	"context"

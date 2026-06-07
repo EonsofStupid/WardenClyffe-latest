@@ -18,8 +18,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
+	"github.com/wardenclyffe/clyffe-api/internal/account"
 	"github.com/wardenclyffe/clyffe-api/internal/platform"
-	"github.com/wardenclyffe/clyffe-api/internal/portal"
 )
 
 func main() {
@@ -50,7 +50,7 @@ func main() {
 		platform.JSON(w, http.StatusOK, map[string]any{"status": "ok", "service": "clyffe-api"})
 	})
 
-	portal.NewHandler(portal.NewStore(pool)).Routes(r)
+	account.NewHandler(account.NewStore(pool)).Routes(r)
 
 	srv := &http.Server{
 		Addr:              cfg.Addr,

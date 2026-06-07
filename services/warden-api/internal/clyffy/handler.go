@@ -102,15 +102,15 @@ func (h *Handler) home(w http.ResponseWriter, r *http.Request) {
 		"orchestrator": "warden-clyffy",
 		"persona":      "clyffy-master",
 		"summary": map[string]any{
-			"platforms":        len(platforms),
-			"services":         len(services),
-			"services_by_role": byRole,
-			"services_by_designation": byDesignation,
-			"config_items_owed": owedTotal,
+			"platforms":                 len(platforms),
+			"services":                  len(services),
+			"services_by_role":          byRole,
+			"services_by_designation":   byDesignation,
+			"config_items_owed":         owedTotal,
 			"credential_gated_services": credentialGated,
 		},
 		"platforms":    platforms,
 		"intelligence": probes,
-		"note": "Clyffy reads Warden's captured foundation model. Live managed-service connections require Infisical credentials referenced per service.",
+		"note":         "Clyffy reads Warden's captured foundation model. Live managed-service connections require Infisical credentials referenced per service.",
 	})
 }

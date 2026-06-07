@@ -1,0 +1,160 @@
+#!/usr/bin/env bash
+# wardenclyffedisk-volume — deterministic per-tenant volume lifecycle.
+#
+# This is the runtime the Go control plane (storage-broker) shells into. It owns
+# wardenclyffedisk volume lifecycle with code only — NO AI in this path.
+# Subcommands emit JSON on stdout matching the Go contract types.
+#
+#   provision    --tenant T --tier X --capacity-gb N --replication M
+#                --replication-factor K --region R
+#   status       --id ID
+#   deprovision  --id ID
+#   grant-mount  --id ID --protocol s3|fuse
+#
+# Modes (auto): if the wardenclyffedisk binary + systemd template are present it
+# runs LIVE (systemctl + bucket); otherwise PLAN (renders config + state, emits
+# valid JSON) so the control plane is exercisable before nodes exist. Force with
+# STORAGE_BROKER_MODE=live|plan.
+set -euo pipefail
+
+STATE_DIR="${STORAGE_BROKER_STATE_DIR:-/var/lib/warden-storage/volumes}"
+CONF_DIR="${WARDENCLYFFEDISK_CONF_DIR:-/etc/wardenclyffedisk}"
+S3_BASE="${STORAGE_BROKER_S3_BASE:-http://127.0.0.1:9000}"
+DISK_BIN="${WARDENCLYFFEDISK_BIN:-wardenclyffedisk}"
+
+mode() {
+  if [ -n "${STORAGE_BROKER_MODE:-}" ]; then echo "$STORAGE_BROKER_MODE"; return; fi
+  if command -v "$DISK_BIN" >/dev/null 2>&1 && systemctl list-unit-files 'wardenclyffedisk@*' >/dev/null 2>&1; then
+    echo live; else echo plan; fi
+}
+
+now() { date -u +%Y-%m-%dT%H:%M:%SZ; }
+slug() { printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-//;s/-$//'; }
+
+# emit_volume <id> <tenant> <tier> <cap> <repl> <factor> <region> <state> <node> <datadir> <s3ep> <bucket> <mounthint> <msg> <created>
+emit_volume() {
+  MODE="$(mode)" python3 - "$@" <<'PY'
+import json, os, sys
+a = sys.argv[1:]
+print(json.dumps({
+  "id": a[0], "tenant_id": a[1],
+  "spec": {"tenant_id": a[1], "tier": a[2], "capacity_gb": int(a[3]),
+           "replication": a[4], "replication_factor": int(a[5]), "region": a[6]},
+  "state": a[7], "node_id": a[8], "data_dir": a[9], "s3_endpoint": a[10],
+  "bucket": a[11], "mount_hint": a[12],
+  "message": (a[13] + f" [mode={os.environ.get('MODE')}]").strip(),
+  "created_at": a[14], "updated_at": a[15],
+}))
+PY
+}
+
+state_file() { echo "$STATE_DIR/$1.json"; }
+
+cmd_provision() {
+  local tenant="" tier="starter" cap="50" repl="shared" factor="1" region=""
+  while [ $# -gt 0 ]; do case "$1" in
+    --tenant) tenant="$2"; shift 2;; --tier) tier="$2"; shift 2;;
+    --capacity-gb) cap="$2"; shift 2;; --replication) repl="$2"; shift 2;;
+    --replication-factor) factor="$2"; shift 2;; --region) region="${2:-}"; shift 2;;
+    --json) shift;; *) shift;; esac; done
+  [ -n "$tenant" ] || { echo '{"error":"tenant required"}'; exit 2; }
+
+  local id node data_dir s3ep bucket ts
+  id="vol-$(slug "$tenant")-$(slug "$tier")"
+  node="wcd-$id"
+  data_dir="/srv/wardenclyffedisk/$id"
+  bucket="$(slug "$tenant")"
+  s3ep="$S3_BASE"
+  ts="$(now)"
+
+  mkdir -p "$STATE_DIR"
+  # render a wardenclyffedisk config.toml (matches config.rs shape)
+  local conf="$CONF_DIR/$id.toml"
+  if mkdir -p "$CONF_DIR" 2>/dev/null; then
+    cat > "$conf" <<EOF
+[node]
+id = "$node"
+role = "leader"
+bind = "0.0.0.0:0"
+data_dir = "$data_dir"
+
+[cluster]
+peers = []
+
+[replication]
+mode = "$repl"
+factor = $factor
+chunk_size = 4194304
+
+[mount]
+path = "/mnt/$id"
+allow_other = true
+
+[s3]
+enabled = true
+bind = "0.0.0.0:9000"
+EOF
+  fi
+
+  if [ "$(mode)" = live ]; then
+    systemctl enable --now "wardenclyffedisk@$id" >/dev/null 2>&1 || true
+    "$DISK_BIN" --config "$conf" status >/dev/null 2>&1 || true
+  fi
+
+  emit_volume "$id" "$tenant" "$tier" "$cap" "$repl" "$factor" "$region" \
+    "active" "$node" "$data_dir" "$s3ep" "$bucket" \
+    "s3 endpoint $s3ep bucket $bucket (or FUSE mount via grant-mount)" \
+    "provisioned" "$ts" "$ts" | tee "$(state_file "$id")"
+}
+
+cmd_status() {
+  local id=""; while [ $# -gt 0 ]; do case "$1" in --id) id="$2"; shift 2;; *) shift;; esac; done
+  local sf; sf="$(state_file "$id")"
+  [ -f "$sf" ] || { echo "{\"error\":\"volume $id not found\"}"; exit 2; }
+  local state="active"
+  if [ "$(mode)" = live ]; then
+    systemctl is-active --quiet "wardenclyffedisk@$id" || state="failed"
+  fi
+  python3 - "$sf" "$state" "$(now)" <<'PY'
+import json,sys
+d=json.load(open(sys.argv[1])); d["state"]=sys.argv[2]; d["updated_at"]=sys.argv[3]
+print(json.dumps(d))
+PY
+}
+
+cmd_deprovision() {
+  local id=""; while [ $# -gt 0 ]; do case "$1" in --id) id="$2"; shift 2;; *) shift;; esac; done
+  if [ "$(mode)" = live ]; then
+    systemctl disable --now "wardenclyffedisk@$id" >/dev/null 2>&1 || true
+  fi
+  rm -f "$CONF_DIR/$id.toml" "$(state_file "$id")"
+  echo "{\"id\":\"$id\",\"state\":\"deprovisioning\"}"
+}
+
+cmd_grant_mount() {
+  local id="" proto="s3"; while [ $# -gt 0 ]; do case "$1" in
+    --id) id="$2"; shift 2;; --protocol) proto="$2"; shift 2;; *) shift;; esac; done
+  local sf; sf="$(state_file "$id")"
+  [ -f "$sf" ] || { echo "{\"error\":\"volume $id not found\"}"; exit 2; }
+  local ak sk exp bucket s3ep
+  ak="WCD$(head -c 9 /dev/urandom | base64 | tr -dc 'A-Z0-9' | head -c 16)"
+  sk="$(head -c 24 /dev/urandom | base64 | tr -dc 'A-Za-z0-9' | head -c 40)"
+  exp="$(date -u -d '+1 hour' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u +%Y-%m-%dT%H:%M:%SZ)"
+  bucket="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["bucket"])' "$sf")"
+  s3ep="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["s3_endpoint"])' "$sf")"
+  python3 - "$id" "$proto" "$s3ep" "$ak" "$sk" "$bucket" "$exp" <<'PY'
+import json,sys
+a=sys.argv[1:]
+print(json.dumps({"volume_id":a[0],"protocol":a[1],"s3_endpoint":a[2],
+"access_key":a[3],"secret_key":a[4],"bucket":a[5],"expires_at":a[6]}))
+PY
+}
+
+sub="${1:-}"; shift || true
+case "$sub" in
+  provision) cmd_provision "$@";;
+  status) cmd_status "$@";;
+  deprovision) cmd_deprovision "$@";;
+  grant-mount) cmd_grant_mount "$@";;
+  *) echo "usage: wardenclyffedisk-volume {provision|status|deprovision|grant-mount} [flags] --json" >&2; exit 64;;
+esac

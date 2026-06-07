@@ -33,7 +33,7 @@ type ProvisionInput struct {
 
 // ProvisionResult is returned to the caller (and to clyffe-api).
 type ProvisionResult struct {
-	ActionRequestID string         `json:"action_request_id"`
+	ActionRequestID string          `json:"action_request_id"`
 	Resource        *fleet.Resource `json:"resource"`
 }
 

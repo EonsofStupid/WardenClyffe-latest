@@ -123,14 +123,14 @@ func (st *Store) ListPlatforms(ctx context.Context) ([]Platform, error) {
 
 // IntelProbe is a live reachability result for an intelligence-plane service.
 type IntelProbe struct {
-	StableID      string  `json:"stable_id"`
-	Role          string  `json:"role"`
-	Endpoint      *string `json:"endpoint"`
-	Reachable     bool    `json:"reachable"`
-	HTTPStatus    int     `json:"http_status,omitempty"`
-	CredentialGated bool  `json:"credential_gated"`
-	CredentialRef *string `json:"credential_ref"`
-	Detail        string  `json:"detail"`
+	StableID        string  `json:"stable_id"`
+	Role            string  `json:"role"`
+	Endpoint        *string `json:"endpoint"`
+	Reachable       bool    `json:"reachable"`
+	HTTPStatus      int     `json:"http_status,omitempty"`
+	CredentialGated bool    `json:"credential_gated"`
+	CredentialRef   *string `json:"credential_ref"`
+	Detail          string  `json:"detail"`
 }
 
 // IntelligenceStatus probes the intelligence-plane services (vector/graph/
@@ -147,9 +147,9 @@ func (st *Store) IntelligenceStatus(ctx context.Context) ([]IntelProbe, error) {
 	defer rows.Close()
 
 	type row struct {
-		id, role string
+		id, role       string
 		endpoint, cred *string
-		auth bool
+		auth           bool
 	}
 	var list []row
 	for rows.Next() {
