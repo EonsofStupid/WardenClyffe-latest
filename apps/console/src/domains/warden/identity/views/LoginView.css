@@ -1,0 +1,116 @@
+/* LoginView — coldlight aurora sign-in. Inputs are glass that the moving
+   aurora shows through, so they blend into the background. Animation is pure
+   GPU transform (no JS, no layout); disabled under reduced-motion. */
+.login {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--wc-bg);
+  overflow: hidden;
+}
+
+/* --- animated, seamless looping aurora --- */
+.login__aurora {
+  position: absolute;
+  inset: -25%;
+  z-index: 0;
+  filter: blur(80px) saturate(135%);
+  opacity: 0.6;
+  pointer-events: none;
+}
+.login__blob {
+  position: absolute;
+  width: 55%;
+  height: 55%;
+  border-radius: 50%;
+  will-change: transform;
+}
+.login__blob--a {
+  top: 2%;
+  left: 6%;
+  background: radial-gradient(circle at 50% 50%, oklch(68% 0.17 255 / 0.9), transparent 62%);
+  animation: login-drift-a 30s ease-in-out infinite;
+}
+.login__blob--b {
+  bottom: 4%;
+  right: 8%;
+  background: radial-gradient(circle at 50% 50%, oklch(70% 0.13 230 / 0.85), transparent 62%);
+  animation: login-drift-b 42s ease-in-out infinite;
+}
+.login__blob--c {
+  top: 34%;
+  left: 38%;
+  background: radial-gradient(circle at 50% 50%, oklch(72% 0.15 165 / 0.7), transparent 62%);
+  animation: login-drift-c 52s ease-in-out infinite;
+}
+/* 0% == 100% => seamless loop */
+@keyframes login-drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(22%, 14%, 0) scale(1.18); }
+}
+@keyframes login-drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
+  50% { transform: translate3d(-18%, -12%, 0) scale(0.92); }
+}
+@keyframes login-drift-c {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(0.95); }
+  50% { transform: translate3d(-14%, 18%, 0) scale(1.2); }
+}
+
+/* --- glass card; fields blend into the aurora --- */
+.login__card {
+  position: relative;
+  z-index: 1;
+  width: min(92vw, 24rem);
+  padding: var(--wc-s6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--wc-s4);
+  background: oklch(25% 0.02 265 / 0.4);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid oklch(65% 0.03 265 / 0.3);
+  border-radius: var(--wc-radius-lg);
+  box-shadow: var(--wc-shadow);
+}
+.login__brand {
+  text-align: center;
+  font-size: var(--wc-fs-xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--wc-s2);
+}
+.login__brand small {
+  display: block;
+  font-weight: 500;
+  font-size: var(--wc-fs-xs);
+  color: var(--wc-text-dim);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.login__field { display: flex; flex-direction: column; gap: var(--wc-s1); }
+.login__field label { font-size: var(--wc-fs-xs); color: var(--wc-text-dim); }
+.login__field input {
+  font: inherit;
+  font-size: var(--wc-fs-md);
+  color: var(--wc-text);
+  background: oklch(98% 0.01 265 / 0.06);
+  border: 0;
+  border-bottom: 1px solid oklch(70% 0.03 265 / 0.4);
+  border-radius: var(--wc-radius-sm) var(--wc-radius-sm) 0 0;
+  padding: var(--wc-s2);
+  outline: none;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+.login__field input::placeholder { color: var(--wc-text-dim); }
+.login__field input[data-focused],
+.login__field input:focus {
+  border-bottom-color: oklch(68% 0.17 255);
+  background: oklch(98% 0.01 265 / 0.1);
+}
+.login__error { margin: 0; color: oklch(72% 0.16 25); font-size: var(--wc-fs-sm); }
+
+@media (prefers-reduced-motion: reduce) {
+  .login__blob { animation: none; }
+}

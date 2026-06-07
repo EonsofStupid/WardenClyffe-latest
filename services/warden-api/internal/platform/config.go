@@ -10,15 +10,22 @@ type Config struct {
 	Addr     string // listen address, e.g. ":8081"
 	DBURL    string // postgres connection string
 	LogLevel string
+
+	// Operator bootstrap credential for the identity context. Dev defaults;
+	// in production these come from Infisical and OIDC supersedes them.
+	OperatorUser string
+	OperatorPass string
 }
 
 // LoadConfig reads configuration from the environment with sane local defaults
 // matching the devstation Postgres provisioned for development.
 func LoadConfig() Config {
 	return Config{
-		Addr:     env("WARDEN_API_ADDR", ":8081"),
-		DBURL:    env("WARDEN_DB_URL", "postgres://warden:warden_dev_local@127.0.0.1:5432/wardenclyffe?sslmode=disable"),
-		LogLevel: env("WARDEN_LOG_LEVEL", "info"),
+		Addr:         env("WARDEN_API_ADDR", ":8081"),
+		DBURL:        env("WARDEN_DB_URL", "postgres://warden:warden_dev_local@127.0.0.1:5432/wardenclyffe?sslmode=disable"),
+		LogLevel:     env("WARDEN_LOG_LEVEL", "info"),
+		OperatorUser: env("WARDEN_OPERATOR_USER", "operator"),
+		OperatorPass: env("WARDEN_OPERATOR_PASS", "warden-dev"),
 	}
 }
 

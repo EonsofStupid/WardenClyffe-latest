@@ -20,6 +20,7 @@ import (
 	"github.com/wardenclyffe/warden-api/internal/clyffy"
 	"github.com/wardenclyffe/warden-api/internal/data"
 	"github.com/wardenclyffe/warden-api/internal/fleet"
+	"github.com/wardenclyffe/warden-api/internal/identity"
 	"github.com/wardenclyffe/warden-api/internal/platform"
 )
 
@@ -57,6 +58,7 @@ func main() {
 		platform.JSON(w, http.StatusOK, map[string]any{"status": "ok", "service": "warden-api"})
 	})
 
+	identity.NewHandler(identity.NewStore(cfg.OperatorUser, cfg.OperatorPass)).Routes(r)
 	fleet.NewHandler(fleetStore).Routes(r)
 	automation.NewHandler(automationSvc).Routes(r)
 	data.NewHandler(dataStore).Routes(r)
