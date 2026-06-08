@@ -1,0 +1,28 @@
+# Warden edge — serves the operator console at warden.rrflow.ai.
+#   - static SPA (vite build output) from /srv/warden-console
+#   - /api/* reverse-proxied to warden-api (:8081)
+# TLS via ACME (HTTP-01) by default; use the Cloudflare DNS plugin if the edge
+# sits behind Cloudflare for rrflow.ai. Keep secrets in Infisical, not here.
+
+warden.rrflow.ai {
+	encode zstd gzip
+
+	# Operator API + identity (login/me/logout) -> warden-api
+	handle /api/* {
+		reverse_proxy 127.0.0.1:8081
+	}
+
+	# Single-page app: serve the built console, fall back to index.html
+	handle {
+		root * /srv/warden-console
+		try_files {path} /index.html
+		file_server
+	}
+
+	header {
+		# boring, safe defaults
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+}
