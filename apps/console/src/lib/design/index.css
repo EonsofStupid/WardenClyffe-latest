@@ -7,6 +7,7 @@
 @import "./components/layout/layout.css";
 @import "./components/shell/shell.css";
 @import "./components/ui/Button.css";
+@import "./components/ui/Surface.css";
 @import "./components/ui/Card.css";
 @import "./components/ui/Badge.css";
 @import "./components/ui/Field.css";

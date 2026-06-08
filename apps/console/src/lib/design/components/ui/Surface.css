@@ -1,0 +1,33 @@
+/* Coldlight surface treatments — shared by Surface and Card via [data-surface]. */
+.ui-surface {
+  background: var(--wc-surface);
+  border: 1px solid var(--wc-border);
+  border-radius: var(--wc-radius);
+}
+
+[data-surface="flat"] {
+  background: var(--wc-bg-elev);
+  box-shadow: none;
+}
+[data-surface="raised"] {
+  background: var(--wc-surface);
+  box-shadow: var(--wc-elev-raised);
+}
+[data-surface="embossed"] {
+  /* top-lit gradient + inset highlight reads as raised metal/glass */
+  background: linear-gradient(180deg, var(--wc-surface-3), var(--wc-surface));
+  border-color: oklch(46% 0.03 265);
+  box-shadow: var(--wc-elev-emboss);
+}
+[data-surface="sunken"] {
+  background: var(--wc-bg);
+  border-color: oklch(34% 0.03 265);
+  box-shadow: var(--wc-elev-sunken);
+}
+[data-surface="glass"] {
+  background: var(--wc-glass-bg);
+  border-color: var(--wc-glass-border);
+  box-shadow: var(--wc-elev-raised);
+  backdrop-filter: blur(var(--wc-glass-blur)) saturate(140%);
+  -webkit-backdrop-filter: blur(var(--wc-glass-blur)) saturate(140%);
+}

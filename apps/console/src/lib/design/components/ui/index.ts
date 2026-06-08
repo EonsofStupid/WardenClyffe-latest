@@ -1,6 +1,8 @@
 // WardenClyffe UI component library (src/lib/design/components/ui).
 export { Button } from "./Button";
 export type { ButtonProps, ButtonVariant } from "./Button";
+export { Surface } from "./Surface";
+export type { SurfaceProps, SurfaceVariant } from "./Surface";
 export { Card } from "./Card";
 export type { CardProps } from "./Card";
 export { Badge } from "./Badge";

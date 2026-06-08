@@ -1,0 +1,7 @@
+.metric-card__value {
+  font-size: var(--wc-fs-xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--wc-text);
+}
