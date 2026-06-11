@@ -2,7 +2,7 @@
 # Run the WardenClyffe dev stack on the devstation:
 #   - warden-api   (Go) on :8081 — operator plane, backed by local Postgres
 #   - clyffe-api   (Go) on :8082 — customer plane, customer-safe reads only
-#   - console      (React/Vite) on :5173, proxying /api -> warden-api
+#   - console      (TanStack Start, root src/) on :5173, proxying /api -> warden-api
 #
 # View it: from your laptop, SSH local-forward 5173 to the devstation, then
 # open http://127.0.0.1:5173
@@ -31,6 +31,6 @@ cleanup() { kill "$WARDEN_PID" "$CLYFFE_PID" 2>/dev/null || true; }
 trap cleanup EXIT
 
 echo "[dev] starting console on :5173 ..."
-cd "$ROOT/apps/console"
+cd "$ROOT"
 [ -d node_modules ] || npm install --no-audit --no-fund
 exec npm run dev

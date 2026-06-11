@@ -21,9 +21,9 @@ Serves the operator console publicly. Boring static SPA + API proxy via Caddy.
 
 1. **Build the console** (vite static output):
    ```bash
-   cd apps/console && npm ci && npm run build      # -> apps/console/dist
+   npm ci && npm run build                         # root src/ app -> dist/
    sudo mkdir -p /srv/warden-console
-   sudo rsync -a --delete apps/console/dist/ /srv/warden-console/
+   sudo rsync -a --delete dist/ /srv/warden-console/
    ```
 2. **Run warden-api** on the edge host (or proxy to it): `:8081` (identity +
    data). Operator credential comes from Infisical (`WARDEN_OPERATOR_PASS`); the

@@ -1,13 +1,29 @@
 {
-  "name": "@wardenclyffe/workspace",
+  "name": "@wardenclyffe/web",
   "private": true,
-  "version": "0.0.0",
-  "description": "WardenClyffe monorepo — Go services + TypeScript (React/Svelte) apps and shared packages.",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "engines": {
-    "node": ">=24"
+  "version": "0.1.0",
+  "type": "module",
+  "description": "WardenClyffe web — TanStack Start + React + ColdLight (OKLCH/rem). Root src/domains app.",
+  "workspaces": ["packages/*"],
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5173",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 5173"
+  },
+  "dependencies": {
+    "@tanstack/react-router": "^1.95.0",
+    "@tanstack/react-start": "^1.95.0",
+    "react": "^18.3.1",
+    "react-aria-components": "^1.5.0",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@tanstack/router-plugin": "^1.95.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
   }
 }
