@@ -69,6 +69,23 @@ context rather than hard-blocking, so the agent reviews before proceeding.
    existing boundary, add the decision touchpoint there). If genuinely new,
    establish the domain deliberately and record it.
 
+## Planning-Time Review (locked 2026-06-12)
+
+Boundary-guard is not only a pre-creation hook — it is part of **planning**:
+any plan or spec that changes the file tree runs `--check` on every proposed
+path and cites the resulting boundary in the plan item. Plans whose filetree
+deltas were not reviewed against existing boundaries are incomplete.
+
+## Turnkey Distribution (locked 2026-06-12)
+
+The guard travels with the product. The foundation scripts
+(`boundary-guard-tree.py`, `boundary-guard-hook.py`, `parking-lot-capture.py`,
+`validate-touchpoints.py`) are **part of the workspace template**: they are
+automatically copied into every provisioned user devstation/service (golden
+template + `.pulse` app updates keep them current). This is the internal
+control guidance — every workspace, customer or operator, carries the same
+filetree review so duplicates are caught everywhere, not just in this repo.
+
 ## Domain Identification
 
 A boundary maps to a domain via the same rule the parking-lot capture uses:

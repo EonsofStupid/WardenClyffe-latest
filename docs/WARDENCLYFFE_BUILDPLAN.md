@@ -27,6 +27,20 @@ this is what gets built, in order, each item with a verify step. Style:
 Golden patterns = the naming conventions + structure standard; every item lands
 in their shapes. Principle: configure first what is 10x costlier to retrofit.
 
+## Process rules (locked 2026-06-12 — see parking-lot + boundary-guard skills)
+
+1. **Second pass allowed and preferred** when it yields better-quality or
+   better-structured code; capture what it changed. (This plan's own second
+   pass added this section + the boundary citations below.)
+2. **Scaffold-first** when it helps: folders per the structure standard before
+   implementation code.
+3. **Every item cites its boundary**; items without one are not plannable —
+   boundary-guard `--check` runs on all filetree deltas during planning to
+   remove duplicates.
+4. The foundation scripts ship in the **workspace template** (auto-copied to
+   every user devstation/service; `.pulse`-updated) so the same filetree
+   control travels with the product.
+
 ## Verified baseline (2026-06-12)
 
 Green: 4 Go services build+vet; frontend builds (TanStack Start SSR, domains
@@ -53,19 +67,20 @@ monolithic api.ts · G10 no backups/restore drill.
 
 ## P1 — Product seam (visible slice: live intelligence data)
 
-| # | Item | Verify |
-|---|---|---|
-| P1-1 | Sync worker v1 (cron: validator JSON → Surreal + Qdrant upserts, content-hash idempotent, per SURREALDB_INTELLIGENCE_PROJECTION_V2) | decisions queryable via `cortex-intelligence`; rerun = no-op |
-| P1-2 | PG cutover to Warden VM (snapshot + dumps preflight per rollout plan; repoint `WARDEN_DB_URL`/`CLYFFE_DB_URL`) | stack runs against 102; 110 read-only drained |
-| P1-3 | Backups + restore drill (Proxmox schedule, `pg_dump` timer, W sync) | one successful restore, documented |
-| P1-4 | Declarative devstation → `clyffe-code-workspace-template` (cloud-init + host YAML + systemd; clone-#47 test) | clean clone boots with zero hand-edits |
+| # | Item | Boundary | Verify |
+|---|---|---|---|
+| P1-1 | Sync worker v1 (cron: validator JSON → Surreal + Qdrant upserts, content-hash idempotent, per SURREALDB_INTELLIGENCE_PROJECTION_V2) | new `services/<name>` — **name pending operator approval** (candidate: `intelligence-sync`); boundary-guard before creation | decisions queryable via `cortex-intelligence`; rerun = no-op |
+| P1-2 | PG cutover to Warden VM (snapshot + dumps preflight per rollout plan; repoint `WARDEN_DB_URL`/`CLYFFE_DB_URL`) | `services/*/internal/platform/config.go`, ops runbook | stack runs against 102; 110 read-only drained |
+| P1-3 | Backups + restore drill (Proxmox schedule, `pg_dump` timer, W sync) | `modules/warden/infrastructure/devstation/` (runbook + units) | one successful restore, documented |
+| P1-4 | Declarative devstation → `clyffe-code-workspace-template` (cloud-init + host YAML + systemd; clone-#47 test). **Includes the foundation scripts + plugins auto-copied per user/service** (process rule 4) | `modules/warden/infrastructure/devstation/` | clean clone boots with zero hand-edits, guard scripts present |
 
 ## P2 — Surfaces (visible slice: customer logs in, sees their devstation)
 
-Connect & Launch UI (per code-workspaces decision + June-2026 auth catalog) ·
-Clyffy chat boundary (overlay + pop-out) · OIDC at auth.rrflow.ai replacing
-bootstrap (Admin↔Customer switch for hades) · `.pulse` v1 schema
-(`schemas/pulse/pulse-packet.v1.schema.json`) + first signed packet.
+Connect & Launch UI → `src/domains/admin/` (customer plane folds here) ·
+Clyffy chat boundary (overlay + pop-out) → `src/domains/clyffy/` ·
+OIDC at auth.rrflow.ai replacing bootstrap → `services/warden-api/internal/identity/` ·
+`.pulse` v1 schema → `schemas/pulse/pulse-packet.v1.schema.json` (**folder name
+pending operator approval**) + first signed packet.
 
 ## P3 — Scale
 

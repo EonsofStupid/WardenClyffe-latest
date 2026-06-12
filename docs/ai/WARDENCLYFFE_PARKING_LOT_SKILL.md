@@ -102,6 +102,22 @@ edit it; the worker projects it; staleness/duplication is reported back in
 Warden. Keep each decision terse — the touchpoint is a manifest, not a
 transcript (validator warns past 1200 sync words).
 
+## Plan Quality Rules (locked 2026-06-12)
+
+1. **Second pass is allowed and preferred.** If a plan or its code could use
+   another pass that yields better-quality or better-structured code, take it.
+   A revision pass is part of the process, not a failure of the first pass —
+   capture what the second pass changed and why.
+2. **Scaffold-first.** When it helps execution, fully scaffold the folders
+   (per the structure standard) before writing implementation code, so the
+   shape is reviewable before it is filled.
+3. **Cite boundaries in plans.** Every plan/spec item names the repo-relative
+   boundary it lands in. An item with no cited boundary is not plannable —
+   resolve the boundary (via boundary-guard) first.
+4. **Filetree review is part of planning.** Any plan that changes the file
+   tree includes a boundary-guard review (`--check` each new path) against
+   existing boundaries to remove duplicates before approval.
+
 ## Source Of Truth
 
 - Decisions & rationale: the decision touchpoints under
