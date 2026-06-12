@@ -59,8 +59,8 @@ monolithic api.ts · G10 no backups/restore drill.
 | # | Item | Names / boundary | Verify |
 |---|---|---|---|
 | P0-1 | CI gate | `.github/workflows/ci.yml`: per-module `go build/vet/test`, `npm run build`, `validate-touchpoints.py --strict` | red PR fails, green merges |
-| P0-2 | Migrations runner (own, tiny) | `services/warden-api/cmd/warden-migrate` (operator-approved 2026-06-12) over `data/schema/sql/000N_*.sql` + `warden_core.schema_migrations` | fresh DB → `warden-migrate up` rebuilds identically, idempotent rerun |
-| P0-3 | Identity + RLS | migration 0006 per IDENTITY_TENANCY_SPEC (`subjects`, `subject_tenant`, `identity.*` fns, `trg_*`, RLS); Go `internal/identity` create/verify; seed hades (jessay@gmail.com, customer + super_admin) | `identity.create_customer` round-trip; RLS blocks cross-tenant read |
+| P0-2 | Migrations runner (own, tiny). **2nd-pass find:** `warden_core.schema_migrations` ledger already exists in 0001 and every migration self-registers — runner = read dir, diff vs ledger, apply pending in tx | `services/warden-api/cmd/warden-migrate` (operator-approved 2026-06-12) | fresh DB → `warden-migrate up` rebuilds identically, idempotent rerun |
+| P0-3 | Identity + RLS. **2nd-pass find:** `warden_core.subjects` ALREADY EXISTS in 0001 (kind enum, `external_id` = Authentik sub, email) — migration 0006 **extends** it (citext unique email, `email_verified_at`, status, `subject_tenant` w/ role, `identity.*` fns, `trg_*`, RLS, uuidv7 for new rows) — not green-field | migration 0006 + `internal/identity`; seed hades (jessay@gmail.com, customer + super_admin) | `identity.create_customer` round-trip; RLS blocks cross-tenant read |
 | P0-4 | **Visible:** Cortex PR2+PR3 pulled forward | `internal/mesh` endpoints + `/admin` ControlLayerView + IntelligenceLayerView per CORTEX_CONTROL_LAYER_SPEC | operator sees both layers + connect snippets in the console |
 | P0-5 | Merge `codex/*` → `main` behind CI (foreign WIP committed as-is first, own label) | — | `main` green, branch retired |
 | P0-OP | **Operator key-turns (parallel):** Infisical machine-identity gate; stand up PG on Warden VM (Proxmox) | — | `/run/warden-secrets` populated; `10.0.0.102:5432` open |
@@ -90,6 +90,26 @@ sweep (CI-enforced after) + `api.ts` split to per-context `.svc.ts` ·
 Cortex Streamable HTTP + OAuth 2.1 (ADR 0030 bar → formal-mcp) ·
 `ConstraintBackend` (llguidance/XGrammar local, native structured outputs
 hosted) when Blackwell lands.
+
+## Locked integration pins (2nd-pass research, sourced 2026-06-12)
+
+| Need | Pin | The gotcha that bites |
+|---|---|---|
+| OIDC (Authentik) | `coreos/go-oidc/v3` v3.18.0 + x/oauth2 | issuer = per-app slug URL **with trailing slash** (exact-match); `groups` claim via `profile` scope mapping |
+| Postgres | pgx/v5 ≥ v5.9.2 security floor (**have v5.10.0 ✓**) | RLS context = tx-scoped `set_config('app.current_tenant',$1,true)` — never session `SET` on a pool; RLS skips table owner → dedicated non-owner app role |
+| SurrealDB (intelligence-sync) | official `surrealdb.go` v1.4.0 (server v2.0→v3.1.4) | README "beta" badge is stale; pin exact server minor |
+| Qdrant (intelligence-sync) | official `go-client` v1.18.2 | **gRPC-only, port 6334** (REST 6333 is the read-only plugin path); pin client to server minor |
+| MCP phase-2 | official `modelcontextprotocol/go-sdk` v1.6.1 (GA) | needs Go 1.25+; migrating our hand-rolled stdio = port handlers into `ToolHandlerFor`, then HTTP is a transport swap |
+| CI | `actions/setup-go@v6`, `go-version-file: go.work`, `cache-dependency-path: '**/go.sum'`; single Go job loop + parallel npm job | default cache key only hashes root go.mod — under-keys workspaces |
+
+**2nd-pass boundary finds:** the storage context (`storage-broker-client` +
+Rust `wardenclyffedisk`) is REAL and tested end-to-end (memory store) — the
+per-tenant W-volume product already has its Go↔Rust seam; its POA&M items
+(Postgres store, provisioner wiring, retire-SMB) interlock with P1/P2 here.
+`WARDENCLYFFE_OFFICIAL_BASELINE.md` confirms the data-plane topology (Warden
+VM = PG+Surreal; new Clyffy VM = Qdrant+Surreal; Surreal-Cloud export plan)
+but its `apps/`-anchored frontend section is superseded (root `src/`, operator
+2026-06-11) — noted in that doc.
 
 ## Alpha definition of done (locked 2026-06-12 — "truly established, move on")
 

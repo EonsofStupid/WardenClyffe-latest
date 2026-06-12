@@ -42,6 +42,13 @@
       "name": ".github",
       "workspace_id": null
     },
+    ".tanstack": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": ".tanstack",
+      "workspace_id": null
+    },
     "WardenClyffe-module1": {
       "depth": 1,
       "has_agents": false,
@@ -54,13 +61,6 @@
       "has_agents": false,
       "is_module": false,
       "name": "WardenClyffe-module2",
-      "workspace_id": null
-    },
-    "apps": {
-      "depth": 1,
-      "has_agents": false,
-      "is_module": false,
-      "name": "apps",
       "workspace_id": null
     },
     "archive": {
@@ -89,13 +89,6 @@
       "has_agents": true,
       "is_module": false,
       "name": "docs",
-      "workspace_id": null
-    },
-    "examples": {
-      "depth": 1,
-      "has_agents": false,
-      "is_module": false,
-      "name": "examples",
       "workspace_id": null
     },
     "infra": {
@@ -154,6 +147,13 @@
       "name": "packages-go",
       "workspace_id": null
     },
+    "plugins": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "plugins",
+      "workspace_id": null
+    },
     "schemas": {
       "depth": 1,
       "has_agents": false,
@@ -182,6 +182,13 @@
       "name": "services",
       "workspace_id": null
     },
+    "src": {
+      "depth": 1,
+      "has_agents": false,
+      "is_module": false,
+      "name": "src",
+      "workspace_id": null
+    },
     "tools": {
       "depth": 1,
       "has_agents": false,
@@ -208,20 +215,6 @@
       "has_agents": true,
       "is_module": false,
       "name": "wardenclyffe-catalog",
-      "workspace_id": null
-    },
-    "wardenclyffedisk": {
-      "depth": 1,
-      "has_agents": true,
-      "is_module": false,
-      "name": "wardenclyffedisk",
-      "workspace_id": null
-    },
-    "wardenclyffenet": {
-      "depth": 1,
-      "has_agents": true,
-      "is_module": false,
-      "name": "wardenclyffenet",
       "workspace_id": null
     },
     "web": {

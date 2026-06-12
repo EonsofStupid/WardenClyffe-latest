@@ -38,6 +38,11 @@ Coldlight-specific token values + component inventory are filled in **on ingest*
 
 ## 2. Canonical frontend structure
 
+> **Superseded 2026-06-11 (operator):** the frontend is anchored at repo-root
+> `src/` with domains `landing/warden/clyffy/admin` and `<context>.svc.ts`
+> colocation — see `docs/ai/WARDENCLYFFE_STRUCTURE_STANDARD.md`. The token
+> pipeline (§3) and data-plane topology (§4–5) below remain authoritative.
+
 One canonical frontend app (anchored under `apps/`, not a top-level
 `wardenclyffe/` — that name is the Go repo).
 
