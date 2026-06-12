@@ -162,8 +162,12 @@ Legend in Findings: **v1/v2** = touchpoint shape; **AUTH** = treat as authority;
    `docs/ai/parking-lot/decisions/docs-wardenclyffe-naming-conventions-md.md`.
 3. **⚠ P1-C — `RUNNING_THE_STACK.md` is stale vs code** (`dbadmin`/`portal`/old
    React tree). High-traffic doc; will mislead. Rewrite after Pass 3.
-4. **⚠ P1-D — Postgres version is ambiguous.** "17" (LXC 110, #7/#9) vs "18.4
-   verified" (devstation-local, #11) vs "18 local" (#8). Confirm 1 vs 2 instances.
+4. **✅ P1-D — RESOLVED BY DIRECTION 2026-06-12.** Product Postgres = our own DB
+   on the **Warden VM** (Proxmox-managed). Live check: 102:5432 closed (target,
+   pending stand-up), 110:5432 open (legacy, drain), 127.0.0.1 dev-only. Captured →
+   `decisions/modules-warden-infrastructure.md`. Also corrected: **W root is OFF
+   the SMB server** — customer-devstation-owned storage (hades / jessay@gmail.com,
+   also super_admin); 10.0.0.117 is legacy. → `decisions/modules-warden-bounded-contexts-storage.md`.
 5. **P1-E — Auth/roles/impersonation = clear spec, zero build (#11).** This is
    goal #1 (auth.rrflow.ai → founder/super_admin → impersonate). No impersonate
    fn yet; RLS context-setting is the seam.
