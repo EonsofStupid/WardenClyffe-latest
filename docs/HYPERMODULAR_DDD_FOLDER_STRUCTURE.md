@@ -55,26 +55,29 @@ Do not place real product code in `WardenClyffe-module1/` or
 `WardenClyffe-module2/`. Those are currently AI/runtime payloads and need a
 separate classification pass.
 
-## DDD Layer Rules
+## DDD Layer Rules — SUPERSEDED (2026-06-11)
 
-Each bounded context may grow this internal shape when code lands:
+> **Demoted by operator ruling (P1-B).** The per-context
+> `domain/application/infrastructure/interface/tests` interior below is
+> **historical** and must not be used for new code. The law for context
+> internals is the **flat v2 shape** in
+> `docs/ai/WARDENCLYFFE_STRUCTURE_STANDARD.md`
+> (`<context>.go` / `service.go` / `handler.go`; React
+> `types.ts` / `<context>.svc.ts` / `components/` / `views/` / `index.ts`).
+> The root scaffold and the idempotent naming rules in THIS doc remain valid.
+
+Historical shape (do not use):
 
 ```text
 <context>/
-  domain/          entities, value objects, domain services
-  application/     use cases, commands, queries, policies
-  infrastructure/  adapters for Proxmox, DBs, queues, object storage, MCP
-  interface/       handlers, DTOs, API models, forms
-  tests/           fixtures and contract tests
-  README.md        context purpose and boundaries
+  domain/  application/  infrastructure/  interface/  tests/
 ```
 
-Keep imports inward:
+Import direction (still the rule, expressed in the flat shape):
 
 ```text
-interface -> application -> domain
-infrastructure -> application/domain through traits/interfaces
-domain -> no infrastructure imports
+handler -> service -> <context> (domain + store);  platform is leaf infra
+domain code imports no transport
 ```
 
 ## Idempotent Naming Rules

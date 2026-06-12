@@ -155,8 +155,11 @@ Legend in Findings: **v1/v2** = touchpoint shape; **AUTH** = treat as authority;
    IDE tile only. Captured → `docs/ai/parking-lot/decisions/docs-wardenclyffe-naming-conventions-md.md`.
    **Follow-up:** demote `DevForge`-as-product in `WARDEN_DEVSTATION_TURNKEY_WARDENNET_PLAN.md`
    (`service.devforge-template`) and record the layering in `WARDENCLYFFE_NAMING_CONVENTIONS.md`.
-2. **⚠ P1-B — Two conflicting structure authorities.** #16 (v1, `domain/
-   application/...`) vs #15 (v2, flat). Code follows #15. One must be demoted.
+2. **✅ P1-B — RESOLVED 2026-06-11 (flat v2 wins).** Authorities revised in place:
+   NAMING_CONVENTIONS → v2 frontmatter + locked names + vars/functions/triggers law;
+   STRUCTURE_STANDARD → root `src/`, TanStack Start, 4 frontend domains, landing
+   convention; HYPERMODULAR per-context interior demoted to historical. Captured →
+   `docs/ai/parking-lot/decisions/docs-wardenclyffe-naming-conventions-md.md`.
 3. **⚠ P1-C — `RUNNING_THE_STACK.md` is stale vs code** (`dbadmin`/`portal`/old
    React tree). High-traffic doc; will mislead. Rewrite after Pass 3.
 4. **⚠ P1-D — Postgres version is ambiguous.** "17" (LXC 110, #7/#9) vs "18.4

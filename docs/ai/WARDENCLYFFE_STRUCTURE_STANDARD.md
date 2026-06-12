@@ -25,12 +25,23 @@ Boring, predictable, kebab-case dirs, no synonyms (see naming conventions).
 
 ## Domains & canonical contexts
 
+Backend (Go `internal/<context>` + `modules/`):
+
 | Domain | Contexts (canonical) |
 |---|---|
 | `warden` (operator) | `fleet`, `automation`, `audit`, `proxmox`, `mesh`, `identity`, `data`, `storage` |
 | `clyffe` (customer) | `account`, `services`, `support`, `knowledge-base`, `storage` |
 | `clyffy` (assistant) | `overview` (orchestrator surface only — never a schema/service authority) |
 | `shared` | `contracts`, `primitives`, `observability` |
+
+Frontend (`src/domains/`, locked 2026-06-11) is exactly four domains:
+
+| Domain | Surface |
+|---|---|
+| `landing` | public site — sections load dynamically (see React layout) |
+| `warden` | operator/infrastructure views |
+| `clyffy` | assistant surface (chat boundary: overlay + pop-out) |
+| `admin` | authenticated shell + role gate; customer plane folded here for now |
 
 Context names are identical across `modules/`, Go `internal/<context>`, and React
 `domains/<domain>/<context>`. Adding a context = add it in all three.
@@ -56,11 +67,16 @@ Rules:
 - HTTP routes: `/api/<domain>/<context>[/...]`. Clyffe routes expose only
   customer-safe data.
 
-## React layout (strict)
+## React layout (strict — revised 2026-06-11: root `src/`, TanStack Start)
+
+The web app lives at repo-root `src/` (NOT `apps/`). Framework = TanStack Start
+(file-based routes + SSR); design = ColdLight (OKLCH/rem) + React Aria Components.
 
 ```text
-apps/<app>/src/
-  app/                              shell + providers (App.tsx, main.tsx)
+src/
+  routes/                           TanStack Start file routes — thin URL -> view
+    __root.tsx                      providers + outlet (imports lib/design css)
+  router.tsx                        router instance (routeTree.gen.ts is generated)
   lib/                              cross-cutting: design/ (coldlight), api client
   domains/<domain>/<context>/
     types.ts                        domain types (mirror Go contract)
@@ -69,6 +85,13 @@ apps/<app>/src/
     views/<Name>View.tsx (+ .css)   screen; composes components + svc
     index.ts                        barrel
 ```
+
+Dynamic landing convention (locked 2026-06-11): a landing section is a folder
+`src/domains/landing/sections/<NN>-<slug>/` containing `section.meta.ts`
+(exports `meta: { slug, navLabel, order, enabled }`), `section.tsx` (exports
+`Section`), optional `section.css`. `landing.registry.ts` discovers them via
+`import.meta.glob`, filters `enabled`, sorts by `order`; `LandingView` renders
+them and builds nav. Add a section = drop a folder. No manual wiring.
 
 Rules:
 - Components are `PascalCase.tsx`; screens are `PascalCaseView.tsx`. Services are
