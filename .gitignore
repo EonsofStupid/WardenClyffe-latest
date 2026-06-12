@@ -55,3 +55,9 @@ secrets/*
 # SQL dump files
 *.sql
 wardenclyffedisk/target/
+
+# TanStack Start generated artifacts
+src/routeTree.gen.ts
+.tanstack/
+.nitro/
+.output/
