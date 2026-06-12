@@ -35,7 +35,7 @@ logs/
 ops/exports/
 
 # State and WAL data (production data)
-/data/
+/data/*
 *.db
 *.db-journal
 
@@ -63,5 +63,5 @@ src/routeTree.gen.ts
 .output/
 
 # the canonical schema IS source — exempt it from the data/ ignore
-!data/schema/
-!data/schema/**
+!/data/schema/
+!/data/schema/sql/*.sql
