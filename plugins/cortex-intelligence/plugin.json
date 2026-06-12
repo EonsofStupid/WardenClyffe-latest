@@ -1,0 +1,13 @@
+{
+  "name": "Cortex — Intelligence layer",
+  "slug": "cortex-intelligence",
+  "kind": "intelligence",
+  "version": "0.1.0",
+  "mcp_id": "mcp.workspace.clyffy-master.intelligence",
+  "entry": { "command": "cortex-mcp", "args": ["intelligence"] },
+  "transports": ["stdio"],
+  "requires": {
+    "secrets": ["CORTEX_SURREAL_USER", "CORTEX_SURREAL_PASS", "CORTEX_QDRANT_API_KEY"],
+    "network": ["10.0.0.104:8000 (SurrealDB, self-hosted)", "10.0.0.106:6333 (Qdrant)"]
+  }
+}

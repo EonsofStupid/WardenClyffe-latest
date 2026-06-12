@@ -65,6 +65,15 @@ func (c *Catalog) readResource(uri string) (string, error) {
 	return string(b), nil
 }
 
+// readRepoFile reads one repo-relative file.
+func readRepoFile(root, rel string) (string, error) {
+	b, err := os.ReadFile(filepath.Join(root, rel))
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}
+
 // decisionKeys lists project_keys from the decisions dir (filename = key).
 func decisionKeys(dir string) ([]string, error) {
 	entries, err := os.ReadDir(dir)

@@ -22,7 +22,24 @@ func main() {
 		log.Fatalf("cortex-mcp: %v", err)
 	}
 
-	cat := catalog.New(cfg)
+	// One binary, two plugin catalogs (the W plugin template ships both):
+	//   cortex-mcp control       -> control layer (default)
+	//   cortex-mcp intelligence  -> direct self-hosted Qdrant + SurrealDB reads
+	layer := "control"
+	if len(os.Args) > 1 {
+		layer = os.Args[1]
+	}
+
+	var cat protocol.Catalog
+	switch layer {
+	case "control":
+		cat = catalog.New(cfg)
+	case "intelligence":
+		cat = catalog.NewIntelligence(cfg, platform.LoadIntelligenceConfig())
+	default:
+		log.Fatalf("cortex-mcp: unknown layer %q (control|intelligence)", layer)
+	}
+
 	srv := protocol.NewServer(cat)
 
 	// stdio transport: JSON-RPC messages, one per line, stdin -> stdout.
