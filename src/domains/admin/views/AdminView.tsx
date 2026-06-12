@@ -12,6 +12,8 @@ export function AdminView() {
       <p>Signed in as {operator?.username ?? "—"} ({operator?.role ?? "—"}).</p>
       <nav className="admin-nav">
         <a href="/warden">Warden (infrastructure)</a>
+        <a href="/admin/control">Control layer</a>
+        <a href="/admin/intelligence">Intelligence layer</a>
       </nav>
     </section>
   );

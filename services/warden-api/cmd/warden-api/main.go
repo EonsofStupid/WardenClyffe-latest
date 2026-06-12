@@ -21,6 +21,7 @@ import (
 	"github.com/wardenclyffe/warden-api/internal/data"
 	"github.com/wardenclyffe/warden-api/internal/fleet"
 	"github.com/wardenclyffe/warden-api/internal/identity"
+	"github.com/wardenclyffe/warden-api/internal/mesh"
 	"github.com/wardenclyffe/warden-api/internal/platform"
 )
 
@@ -62,6 +63,7 @@ func main() {
 	fleet.NewHandler(fleetStore).Routes(r)
 	automation.NewHandler(automationSvc).Routes(r)
 	data.NewHandler(dataStore).Routes(r)
+	mesh.NewHandler(mesh.NewStore(cfg.RepoRoot)).Routes(r)
 	clyffy.NewHandler(clyffy.NewStore(pool)).Routes(r)
 
 	srv := &http.Server{

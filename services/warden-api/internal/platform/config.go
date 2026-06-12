@@ -15,6 +15,9 @@ type Config struct {
 	// in production these come from Infisical and OIDC supersedes them.
 	OperatorUser string
 	OperatorPass string
+
+	// RepoRoot locates repo-authored sources (registry, validator) for mesh.
+	RepoRoot string
 }
 
 // LoadConfig reads configuration from the environment with sane local defaults
@@ -26,6 +29,7 @@ func LoadConfig() Config {
 		LogLevel:     env("WARDEN_LOG_LEVEL", "info"),
 		OperatorUser: env("WARDEN_OPERATOR_USER", "operator"),
 		OperatorPass: env("WARDEN_OPERATOR_PASS", "warden-dev"),
+		RepoRoot:     env("WARDEN_REPO_ROOT", "/workspace/WardenClyffe-latest"),
 	}
 }
 
