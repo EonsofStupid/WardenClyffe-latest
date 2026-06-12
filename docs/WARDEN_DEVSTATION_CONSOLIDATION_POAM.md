@@ -279,4 +279,7 @@ without explicit operator approval.
 | 2026-06-10 | W-drive general projects MCP | `mcp.global.projects` | operator |
 | 2026-06-11 | turnkey VM+capsule research brief | `WARDEN_TURNKEY_VM_CAPSULE_RESEARCH_2026_06.md` | operator |
 | 2026-06-11 | product naming layering (P1-A) | `Clyffe Code` (product) / `Devstation` (VM) / `DevForge` (web IDE) | operator |
+| 2026-06-12 | migrations runner | `services/warden-api/cmd/warden-migrate` | operator |
+| 2026-06-12 | sync worker service | `services/intelligence-sync` | operator |
+| 2026-06-12 | .pulse schema home | `schemas/pulse/pulse-packet.v1.schema.json` | operator |
 | 2026-06-11 | Clyffy family separation | `Clyffy`=persona / `Clyffy-Go`=template+orchestrator / `Clyffy-Dean`=Proxmox ops agent | operator |

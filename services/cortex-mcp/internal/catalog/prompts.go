@@ -78,12 +78,17 @@ Follow these steps exactly; do not skip or reorder:
 Structure (see docs/specs/CORTEX_CONTROL_LAYER_SPEC.md as the model):
 1. v2 clyffy_touchpoint frontmatter; UPPER_SNAKE filename under docs/specs/.
 2. Acceptance criteria FIRST, written from the operator's seat (verifiable).
-3. Components: exact paths + named files per the structure standard; functions
+3. Minimal requirements: an explicit section stating the smallest complete
+   outcome — every spec carries one; contexts ship complete (colocated
+   types/svc/views) or not at all.
+4. Components: exact paths + named files per the structure standard; functions
    and endpoints named per the naming law (<schema>.<verb>_<object>,
-   Verb/VerbObject methods, <domain>.<verb>_<object> tools).
-4. Build order: one PR per component, each with its own verify step.
-5. Non-goals: state what this spec deliberately excludes.
-6. Capture the spec itself via cortex.commit_decision, then run
+   Verb/VerbObject methods, <domain>.<verb>_<object> tools). New names (vars,
+   files, services) are presented to the operator for approval before use.
+5. Build order: one PR per component, each with its own verify step. A second
+   pass is preferred when it improves quality/structure — capture its changes.
+6. Non-goals: state what this spec deliberately excludes.
+7. Capture the spec itself via cortex.commit_decision, then run
    cortex.validate_touchpoints and resolve any warnings.`, nil
 
 	default:

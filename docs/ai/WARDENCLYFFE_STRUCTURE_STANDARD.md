@@ -96,6 +96,9 @@ them and builds nav. Add a section = drop a folder. No manual wiring.
 Rules:
 - Components are `PascalCase.tsx`; screens are `PascalCaseView.tsx`. Services are
   `<context>.svc.ts`; types are `types.ts`. Always colocated with the context.
+- **A context ships complete or not at all** (locked 2026-06-12): `types.ts` +
+  `<context>.svc.ts` + `components/` + `views/` + `index.ts` land together,
+  utils colocated — no file spray, no half-contexts, no shared grab-bag dirs.
 - Views/components import **only** from `lib/design` (coldlight) for UI —
   OKLCH/rem/clamp tokens, RAC, CSS Grid (2-D) + Flexbox (1-D), `ui-*` classes.
 - No business logic in React; data comes from `<context>.svc.ts` calling Go.

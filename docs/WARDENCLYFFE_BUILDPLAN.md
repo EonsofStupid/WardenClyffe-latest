@@ -59,7 +59,7 @@ monolithic api.ts · G10 no backups/restore drill.
 | # | Item | Names / boundary | Verify |
 |---|---|---|---|
 | P0-1 | CI gate | `.github/workflows/ci.yml`: per-module `go build/vet/test`, `npm run build`, `validate-touchpoints.py --strict` | red PR fails, green merges |
-| P0-2 | Migrations runner (own, tiny) | `services/warden-api/cmd/warden-migrate` over `data/schema/sql/000N_*.sql` + `warden_core.schema_migrations` | fresh DB → `warden-migrate up` rebuilds identically, idempotent rerun |
+| P0-2 | Migrations runner (own, tiny) | `services/warden-api/cmd/warden-migrate` (operator-approved 2026-06-12) over `data/schema/sql/000N_*.sql` + `warden_core.schema_migrations` | fresh DB → `warden-migrate up` rebuilds identically, idempotent rerun |
 | P0-3 | Identity + RLS | migration 0006 per IDENTITY_TENANCY_SPEC (`subjects`, `subject_tenant`, `identity.*` fns, `trg_*`, RLS); Go `internal/identity` create/verify; seed hades (jessay@gmail.com, customer + super_admin) | `identity.create_customer` round-trip; RLS blocks cross-tenant read |
 | P0-4 | **Visible:** Cortex PR2+PR3 pulled forward | `internal/mesh` endpoints + `/admin` ControlLayerView + IntelligenceLayerView per CORTEX_CONTROL_LAYER_SPEC | operator sees both layers + connect snippets in the console |
 | P0-5 | Merge `codex/*` → `main` behind CI (foreign WIP committed as-is first, own label) | — | `main` green, branch retired |
@@ -69,7 +69,7 @@ monolithic api.ts · G10 no backups/restore drill.
 
 | # | Item | Boundary | Verify |
 |---|---|---|---|
-| P1-1 | Sync worker v1 (cron: validator JSON → Surreal + Qdrant upserts, content-hash idempotent, per SURREALDB_INTELLIGENCE_PROJECTION_V2) | new `services/<name>` — **name pending operator approval** (candidate: `intelligence-sync`); boundary-guard before creation | decisions queryable via `cortex-intelligence`; rerun = no-op |
+| P1-1 | Sync worker v1 (cron: validator JSON → Surreal + Qdrant upserts, content-hash idempotent, per SURREALDB_INTELLIGENCE_PROJECTION_V2) | `services/intelligence-sync` (operator-approved 2026-06-12) | decisions queryable via `cortex-intelligence`; rerun = no-op |
 | P1-2 | PG cutover to Warden VM (snapshot + dumps preflight per rollout plan; repoint `WARDEN_DB_URL`/`CLYFFE_DB_URL`) | `services/*/internal/platform/config.go`, ops runbook | stack runs against 102; 110 read-only drained |
 | P1-3 | Backups + restore drill (Proxmox schedule, `pg_dump` timer, W sync) | `modules/warden/infrastructure/devstation/` (runbook + units) | one successful restore, documented |
 | P1-4 | Declarative devstation → `clyffe-code-workspace-template` (cloud-init + host YAML + systemd; clone-#47 test). **Includes the foundation scripts + plugins auto-copied per user/service** (process rule 4) | `modules/warden/infrastructure/devstation/` | clean clone boots with zero hand-edits, guard scripts present |
@@ -79,8 +79,8 @@ monolithic api.ts · G10 no backups/restore drill.
 Connect & Launch UI → `src/domains/admin/` (customer plane folds here) ·
 Clyffy chat boundary (overlay + pop-out) → `src/domains/clyffy/` ·
 OIDC at auth.rrflow.ai replacing bootstrap → `services/warden-api/internal/identity/` ·
-`.pulse` v1 schema → `schemas/pulse/pulse-packet.v1.schema.json` (**folder name
-pending operator approval**) + first signed packet.
+`.pulse` v1 schema → `schemas/pulse/pulse-packet.v1.schema.json`
+(operator-approved 2026-06-12) + first signed packet.
 
 ## P3 — Scale
 
@@ -90,6 +90,22 @@ sweep (CI-enforced after) + `api.ts` split to per-context `.svc.ts` ·
 Cortex Streamable HTTP + OAuth 2.1 (ADR 0030 bar → formal-mcp) ·
 `ConstraintBackend` (llguidance/XGrammar local, native structured outputs
 hosted) when Blackwell lands.
+
+## Alpha definition of done (locked 2026-06-12 — "truly established, move on")
+
+1. Login → role switch works: identity context live (subjects + RLS), hades
+   seeded, Admin↔Customer.
+2. CI green on `main` (builds + vet + strict validator as merge law).
+3. `warden-migrate` rebuilds the DB from zero on any clone.
+4. **Both plugins connected in Claude Desktop** — `cortex-control` +
+   `cortex-intelligence` visible, intelligence returning LIVE Surreal/Qdrant
+   data (post Infisical key-turn).
+5. `/admin` shows Control + Intelligence layers: active plugins, status,
+   connect snippets.
+6. Sync worker projecting; decisions queryable through the intelligence plugin.
+7. One backup restore drill passed.
+8. Every spec carries a "Minimal requirements" section; contexts ship complete
+   (colocated types/svc/views) or not at all.
 
 ## Deliberate non-goals (until a second customer demands them)
 
