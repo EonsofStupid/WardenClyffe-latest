@@ -58,7 +58,7 @@ func main() {
 		platform.JSON(w, http.StatusOK, map[string]any{"status": "ok", "service": "warden-api"})
 	})
 
-	identity.NewHandler(identity.NewStore(cfg.OperatorUser, cfg.OperatorPass)).Routes(r)
+	identity.NewHandler(identity.NewStore(cfg.OperatorUser, cfg.OperatorPass), identity.NewAccounts(pool)).Routes(r)
 	fleet.NewHandler(fleetStore).Routes(r)
 	automation.NewHandler(automationSvc).Routes(r)
 	data.NewHandler(dataStore).Routes(r)
