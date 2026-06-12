@@ -61,3 +61,7 @@ src/routeTree.gen.ts
 .tanstack/
 .nitro/
 .output/
+
+# the canonical schema IS source — exempt it from the data/ ignore
+!data/schema/
+!data/schema/**
