@@ -1,0 +1,22 @@
+# wardenclyffedisk@<volume-id>.service — one managed per-tenant disk node.
+# Instantiated by the deterministic volume scripts; the Go control plane never
+# touches systemd directly. Bytes/replication are owned by the Rust engine.
+[Unit]
+Description=WardenClyffeDisk volume %i (managed per-tenant storage node)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/wardenclyffedisk --config /etc/wardenclyffedisk/%i.toml mount --mountpoint /mnt/%i
+Restart=on-failure
+RestartSec=3
+# Least privilege: data + config only.
+ReadWritePaths=/srv/wardenclyffedisk /mnt
+StateDirectory=wardenclyffedisk
+ProtectSystem=strict
+ProtectHome=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

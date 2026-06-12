@@ -1,0 +1,21 @@
+---
+description: Forced WardenClyffe parking-lot/planning capture mode.
+alwaysApply: true
+---
+
+# WardenClyffe Parking-Lot Rule (forced)
+
+Whenever the conversation turns to planning, scoping, roadmaps, sprints, POAMs,
+trade-offs, or **locking in** any dependency, feature, capability, library,
+service, protocol, schema, or boundary — enter Parking-Lot mode, even if the
+operator never typed `/parkinglot`.
+
+Follow `docs/ai/WARDENCLYFFE_PARKING_LOT_SKILL.md`.
+
+When a decision is locked in, capture it via
+`scripts/foundation/parking-lot-capture.py` (it writes a v2 `clyffy_touchpoint`
+that the sync worker projects into Qdrant + SurrealDB). Never write to a
+database by hand.
+
+Before creating any new folder/boundary, defer to the boundary-guard rule and
+`docs/ai/WARDENCLYFFE_BOUNDARY_GUARD_SKILL.md`.

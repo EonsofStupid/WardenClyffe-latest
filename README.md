@@ -44,6 +44,7 @@ Canonical alignment docs:
 | **[WardenClyffeScale](#wardenclyffescale--database-replication)** | MariaDB/MySQL replication, clustering, and load balancing | Existing component |
 | **[WardenClyffeDisk](#wardenclyffedisk--distributed-filesystem)** | Disk sharing and replication across networks | Existing component |
 | **[WardenClyffeNet](#wardenclyffenet--private-networking)** | Secure private networking across the internet | Existing component |
+| **[Mediastack](mediastack/README.md)** | Hades-owned private media VM for premium community members and invited friends (invite-only, isolated network) | Scaffold |
 
 ---
 

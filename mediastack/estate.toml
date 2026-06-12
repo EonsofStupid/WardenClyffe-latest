@@ -1,0 +1,47 @@
+# Mediastack estate descriptor — machine-readable boundary manifest.
+# This is the top-tier boundary for the Hades-owned private media VM.
+# Mirrors and is reconciled against:
+#   wardenclyffe/registry/context-mesh.yaml  (estate: mediastack, project: homelab-mediastack)
+#   wardenclyffe-catalog/SCHEMA.md            (category: media -> estate: mediastack rules)
+
+[estate]
+id = "mediastack"
+name = "Mediastack"
+kind = "estate-boundary"
+status = "scaffold"
+summary = "Private, invite-only media VM on its own isolated network. Serves premium Discord community members and personally invited friends."
+
+# Ownership — Hades owns this realm outright. Warden retains infrastructure
+# execution authority (Proxmox/host/network), but the estate, its members,
+# and its media surface are Hades-governed.
+[ownership]
+owner = "hades"
+steward = "hades"
+access = "invite-only"
+audience = "premium-community"
+member_sources = ["discord-premium", "invited-friends"]
+infrastructure_authority = "warden"   # Warden executes infra; Hades governs the estate
+
+[boundary]
+network = "isolated"                   # dedicated VM on its own network segment
+default_visibility = "internal"        # no public routes unless an explicit deploy-time override
+public_routes = false
+data_plane = "mediastack-private"
+
+# MCP federation roots (authoritative copy lives in the context-mesh registry).
+[mcp]
+estate_mcp_root = "mcp.estate.mediastack"
+project = "homelab-mediastack"
+project_mcp_root = "mcp.project.homelab-mediastack"
+sub_mcp_server = "mcp.project.homelab-mediastack.mediastack"
+policy_root = "policy.estate.mediastack"
+
+[sources]
+overview = "mediastack/README.md"
+ownership = "mediastack/OWNERSHIP.md"
+agent_contract = "mediastack/AGENTS.md"
+architecture = "mediastack/docs/ARCHITECTURE.md"
+access_policy = "mediastack/docs/ACCESS_POLICY.md"
+network = "mediastack/docs/NETWORK.md"
+mcp = "mediastack/mcp/README.md"
+catalog = "mediastack/catalog/README.md"

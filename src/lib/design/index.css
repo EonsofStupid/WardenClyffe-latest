@@ -1,0 +1,20 @@
+/* WardenClyffe design system — aggregate stylesheet (coldlight).
+   Import order matters: primitives -> semantic engine -> base -> layout
+   -> shell -> components. */
+@import "./styles/tokens.css";
+@import "./styles/semantic.css";
+@import "./styles/base.css";
+@import "./components/layout/layout.css";
+@import "./components/shell/shell.css";
+@import "./components/ui/Button.css";
+@import "./components/ui/Surface.css";
+@import "./components/ui/Card.css";
+@import "./components/ui/Badge.css";
+@import "./components/ui/Field.css";
+@import "./components/ui/Select.css";
+@import "./components/ui/Table.css";
+@import "./components/ui/Tabs.css";
+@import "./components/ui/Dialog.css";
+@import "./components/ui/Menu.css";
+@import "./components/ui/Tooltip.css";
+@import "./components/ui/Switch.css";

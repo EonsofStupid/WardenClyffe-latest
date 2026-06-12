@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# storage-verify — the OVERSEER surface. Deterministic health/drift checks over
+# all managed volumes, emitted as JSON. This is the ONLY place AI touches
+# storage: an AI overseer reads this report to raise awareness to the operator.
+# AI never provisions, mounts, or deletes — that is code (wardenclyffedisk-volume).
+#
+#   storage-verify            human summary + non-zero exit if anything unhealthy
+#   storage-verify --json     machine report for the overseer
+set -euo pipefail
+STATE_DIR="${STORAGE_BROKER_STATE_DIR:-/var/lib/warden-storage/volumes}"
+JSON=0; [ "${1:-}" = "--json" ] && JSON=1
+
+python3 - "$STATE_DIR" "$JSON" <<'PY'
+import json, os, subprocess, sys, glob
+state_dir, as_json = sys.argv[1], sys.argv[2] == "1"
+def template_installed():
+    try:
+        r = subprocess.run(["systemctl","list-unit-files","wardenclyffedisk@.service"],
+                           capture_output=True, text=True)
+        return r.returncode == 0 and "wardenclyffedisk@.service" in r.stdout
+    except FileNotFoundError:
+        return False
+
+PLAN = os.environ.get("STORAGE_BROKER_MODE") == "plan" or not template_installed()
+
+def unit_active(vid):
+    if PLAN:
+        return None  # systemd not managing these volumes (plan mode)
+    try:
+        return subprocess.run(["systemctl","is-active","--quiet",f"wardenclyffedisk@{vid}"]).returncode == 0
+    except FileNotFoundError:
+        return None
+report, unhealthy = [], 0
+for f in sorted(glob.glob(os.path.join(state_dir, "*.json"))):
+    try: v = json.load(open(f))
+    except Exception as e:
+        report.append({"file": f, "ok": False, "issue": f"unreadable: {e}"}); unhealthy += 1; continue
+    checks = {}
+    checks["state_active"] = v.get("state") == "active"
+    ua = unit_active(v["id"]); checks["unit_active"] = (ua if ua is not None else "n/a(plan)")
+    cap = v.get("spec", {}).get("capacity_gb", 0); checks["capacity_set"] = cap > 0
+    ok = checks["state_active"] and checks["capacity_set"] and checks["unit_active"] in (True, "n/a(plan)")
+    if not ok: unhealthy += 1
+    report.append({"id": v["id"], "tenant": v.get("tenant_id"), "ok": ok, "checks": checks})
+out = {"overseer": "storage-verify", "volumes": len(report), "unhealthy": unhealthy, "report": report}
+if as_json:
+    print(json.dumps(out, indent=2))
+else:
+    print(f"storage-verify: {out['volumes']} volume(s), {unhealthy} unhealthy")
+    for r in report:
+        print(f"  {'OK ' if r.get('ok') else 'BAD'} {r.get('id','?')} tenant={r.get('tenant')} {r.get('checks', r.get('issue',''))}")
+sys.exit(1 if unhealthy else 0)
+PY

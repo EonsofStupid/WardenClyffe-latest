@@ -20,5 +20,5 @@ Current access contracts:
   helper commands.
 - `operator-capsule/README.md` for the Linux-first Warden operator workspace,
   agent CLIs, and brokered secret-file handling.
-- `devstation/README.md` for the private VS Code/Cursor/Codex/Claude VM and
-  future Clyffe Code workspace template.
+- `devstation/README.md` for the private VS Code/Cursor/Codex/Claude VM,
+  SSH-tunneled hosted editor, and future Clyffe Code workspace template.

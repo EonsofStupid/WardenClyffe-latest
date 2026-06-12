@@ -1,0 +1,10 @@
+{
+  "name": "Cortex — Control layer",
+  "slug": "cortex-control",
+  "kind": "control",
+  "version": "0.1.0",
+  "mcp_id": "mcp.workspace.clyffy-master.cortex",
+  "entry": { "command": "cortex-mcp", "args": ["control"] },
+  "transports": ["stdio"],
+  "requires": { "secrets": [], "network": [] }
+}

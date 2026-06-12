@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "cortex-intelligence": {
+      "command": "ssh",
+      "args": ["warden-devstation", "/workspace/warden-storage/plugins/bin/cortex-mcp", "intelligence"]
+    }
+  }
+}

@@ -1,0 +1,8 @@
+go 1.25.0
+
+use (
+	./services/clyffe-api
+	./services/cortex-mcp
+	./services/storage-broker-client
+	./services/warden-api
+)

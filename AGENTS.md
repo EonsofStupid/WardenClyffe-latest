@@ -39,8 +39,21 @@ the task is explicitly about the Go Warden repo.
 Use this order when you need architecture or agent context:
 
 1. `docs/ai/WARDENCLYFFE_BASE_SKILL.md`
+1a. `docs/ai/WARDENCLYFFE_PARKING_LOT_SKILL.md` — FORCED planning/decision-capture
+    mode (auto-entered on any planning turn; locks deps/features/capabilities into
+    the SurrealDB intelligence layer via decision touchpoints)
+1b. `docs/ai/WARDENCLYFFE_BOUNDARY_GUARD_SKILL.md` — FORCED pre-creation review
+    (file-tree watch + duplicate check before any new boundary/folder)
 2. `docs/ai/MCP_MESH_TOUCHPOINTS.md`
 3. `docs/ai/INTELLIGENCE_TOUCHPOINTS.md`
+3a. `docs/ai/INTELLIGENCE_LAYER_MODERNIZATION.md` for the rule that Markdown
+    is a touchpoint layer, not the intelligence store
+3b. `docs/ai/SURREALDB_INTELLIGENCE_PROJECTION_V2.md` for the dynamic
+    SurrealDB projection and context-pack plan
+3c. `docs/SURREALDB_PUBLIC_SELF_HOSTING_PLAN.md` for the public-safe
+    self-hosted SurrealDB route, auth, backup, and Warden proxy posture
+3d. `docs/SURREALDB_SELF_HOSTED_RUNBOOK.md` for the live LXC `104` service,
+    backup, restore, and cloud export/import gate
 4. `docs/WARDENCLYFFE_MODULE_MAP.md`
 5. `docs/WARDENCLYFFE_NAMING_CONVENTIONS.md`
 6. `docs/HYPERMODULAR_DDD_FOLDER_STRUCTURE.md`
@@ -51,6 +64,10 @@ Use this order when you need architecture or agent context:
 11. `docs/WARDEN_OPERATOR_CAPSULE.md` for the Linux-first operator workspace and secret-handling capsule
 12. `docs/WARDEN_DEVSTATION_AND_CLYFFE_CODE.md` for the private VS Code VM and future hosted coding service
 13. `docs/MASTER_CLYFFY_ROLLOUT_PLAN.md` for master.clyffy.ai, Postgres update, and Clyffy route work
+13a. `docs/CLYFFY_MCP_ORCHESTRATOR.md` for the main Clyffy MCP orchestrator and foundation service boundaries
+13b. `docs/CLYFFY_DYNAMIC_UI_SPEC.md` for dynamic Clyffy/Clyffe UI work
+13c. `docs/CLYFFY_DYNAMIC_UI_POAM.md` for Clyffy UI milestones and sprints
+13d. `docs/CLYFFE_CODE_TURNKEY_SERVICE_SPEC.md` for Clyffe Code managed workspace product work
 14. `docs/FOUNDATION_APP_RESEARCH_2026_05.md` for primary-source app-stack research
 15. `docs/WARDEN_CLYFFE_ARCHITECTURE.md`
 16. `docs/PROXMOX_FREE_CHEATSHEET.md` for Proxmox management work
@@ -59,7 +76,12 @@ Use this order when you need architecture or agent context:
 19. `docs/WARDEN_CLYFFE_PILOT_ROADMAP.md`
 20. `modules/README.md` for the root product module scaffold
 21. `wardenclyffe/AGENTS.md` when working with or borrowing from the Go Warden repo
-22. `wardenclyffe/registry/context-mesh.yaml` for current Context Mesh/MCP registry shape
+22. `wardenclyffe/registry/context-mesh.yaml` for current Context Mesh/MCP registry shape (v3+ per ADR 0030)
+23. `wardenclyffe/docs/runbooks/mcp-2026-alignment-checkpoint.md` for the MCP 2026 alignment record, gap matrix, 10 resolved decisions, and the phased Phase 1–9 execution plan
+24. `wardenclyffe/docs/specs/14-mcp-federation-and-workspace.md` for the L0+L1+L2 MCP federation model (workspace publish-upward, gateway, leaf contracts)
+25. `wardenclyffe/docs/decisions/0030-mcp-2026-baseline.md` for the May 2026 protocol capability bar every new MCP server must meet
+26. `wardenclyffe/docs/decisions/0031-workspace-identity.md` for the workspace identity model and the SurrealDB-ns partial-equivalence rule
+27. `wardenclyffe/docs/decisions/0033-touchpoint-protocol.md` for the v2 `clyffy_touchpoint` frontmatter shape (replaces v1 `namespace_id` with `workspace_id`)
 
 ## Agent Wrapper Rule
 
@@ -70,6 +92,26 @@ tools:
 - `.cursor/rules/wardenclyffe-intelligence.mdc`
 - `.cursor/skills/wardenclyffe-base/SKILL.md`
 - `.agents/skills/wardenclyffe-base/SKILL.md`
+
+The **parking-lot** and **boundary-guard** skills are authored once under
+`docs/ai/` and wrapped for every agent family (Claude, Codex, Cursor, generic
+`.agents`):
+
+- `docs/ai/WARDENCLYFFE_PARKING_LOT_SKILL.md` (source) →
+  `.claude/skills/parking-lot/`, `.agents/skills/parking-lot/`,
+  `.cursor/skills/parking-lot/`, `.codex/skills/parking-lot/`,
+  `.cursor/rules/parking-lot.mdc`
+- `docs/ai/WARDENCLYFFE_BOUNDARY_GUARD_SKILL.md` (source) →
+  `.claude/skills/boundary-guard/`, `.agents/skills/boundary-guard/`,
+  `.cursor/skills/boundary-guard/`, `.codex/skills/boundary-guard/`,
+  `.cursor/rules/boundary-guard.mdc`
+
+Forcing is wired in `.claude/settings.json`: a `UserPromptSubmit` hook
+(`scripts/foundation/parking-lot-hook.py`) auto-enters parking-lot mode on
+planning/decision language, and a `PreToolUse` hook
+(`scripts/foundation/boundary-guard-hook.py`) runs the duplicate check before a
+new folder is created. Cursor uses the always-apply rules; Codex/other agents
+use the `description` triggers.
 
 Do not let wrappers become new authorities. Update the base files under
 `docs/ai/` first, then adjust wrappers only if their pointer text changes.
@@ -87,13 +129,24 @@ Do not let wrappers become new authorities. Update the base files under
 
 ## MCP And Intelligence Rule
 
-Markdown files with `wardenclyffe_touchpoint` frontmatter are intentional
-touchpoints for agents and future MCP mesh tooling. They should describe:
+Markdown files with `clyffy_touchpoint` frontmatter (v2 shape per
+`wardenclyffe/docs/decisions/0033-touchpoint-protocol.md`) are intentional
+touchpoints for agents and the MCP mesh tooling. They are not the intelligence
+database. Product truth belongs in Postgres/Warden APIs, retrieval belongs in
+Qdrant, graph projection belongs in SurrealDB, and run history belongs in
+Warden task/audit/trace records. The v1 `wardenclyffe_touchpoint`
+shape is deprecated; the v1 → v2 migration window is documented in ADR 0033 §10.
+Touchpoints should describe:
 
 - what the file owns,
 - which registry or source of truth it defers to,
 - which agents should read it,
-- what must not be changed from that file.
+- what must not be changed from that file,
+- which workspace (`workspace_id`) and project_key it routes intelligence writes to.
 
 Do not hardcode a second tool registry in prose. The current registry source
-is `wardenclyffe/registry/context-mesh.yaml` until a root registry is promoted.
+is `wardenclyffe/registry/context-mesh.yaml` (v3+ per ADR 0030) until a root
+registry is promoted. The MCP capability bar for new servers is **ADR 0030**;
+the federation model is **spec 14 + ADR 0032**; the workspace identity model
+(and the partial-equivalence rule that prevents conflating SurrealDB `ns` with
+workspace slug) is **ADR 0031**.

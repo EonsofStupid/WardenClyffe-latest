@@ -1,0 +1,48 @@
+/* StorageView — page layout via CSS Grid (2-D), tokens for all space/type/color. */
+.storage-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wc-s5);
+  padding: var(--wc-s6);
+  max-width: 72rem;
+  margin-inline: auto;
+}
+.storage-head h1 {
+  font-size: var(--wc-fs-xl);
+  color: var(--wc-text);
+  margin: 0 0 var(--wc-s1);
+}
+.storage-head p {
+  font-size: var(--wc-fs-sm);
+  color: var(--wc-text-dim);
+  margin: 0;
+}
+.storage-error {
+  font-size: var(--wc-fs-sm);
+  color: oklch(72% 0.16 var(--wc-hue-danger));
+  background: oklch(40% 0.06 var(--wc-hue-danger) / 0.25);
+  border: 1px solid oklch(60% 0.12 var(--wc-hue-danger));
+  border-radius: var(--wc-radius);
+  padding: var(--wc-s2) var(--wc-s3);
+  margin: 0;
+}
+.storage-tiers,
+.storage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: var(--wc-s4);
+}
+.storage-sub {
+  font-size: var(--wc-fs-lg);
+  color: var(--wc-text);
+  margin: var(--wc-s2) 0 0;
+}
+.tier-blurb {
+  font-size: var(--wc-fs-sm);
+  color: var(--wc-text-dim);
+  margin: 0 0 var(--wc-s3);
+}
+.storage-empty {
+  font-size: var(--wc-fs-sm);
+  color: var(--wc-text-dim);
+}

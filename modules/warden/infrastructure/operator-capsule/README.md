@@ -19,13 +19,40 @@ Use this runbook for the permanent Linux-first Warden operator workspace.
 From Windows Terminal, Cursor, VS Code, or another SSH client:
 
 ```bash
-ssh warden-capsule
+ssh capsule.clyffy.ai
 cd /workspace/WardenClyffe-latest
 warden-capsule-status
 ```
 
+Compatibility alias:
+
+```bash
+ssh warden-capsule
+```
+
 PowerShell is only a launcher/bridge for live Warden infrastructure work. Do
 the actual operator work from inside `warden-capsule`.
+
+## Headless Agent Launch
+
+Use these local launchers when you want the desktop to be only the client while
+Claude Code or Codex runs inside the capsule:
+
+```cmd
+scripts\local\open-warden-capsule-claude.cmd
+scripts\local\open-warden-capsule-codex.cmd
+```
+
+Equivalent manual commands:
+
+```bash
+ssh capsule.clyffy.ai -t "cd /workspace/WardenClyffe-latest && claude"
+ssh capsule.clyffy.ai -t "cd /workspace/WardenClyffe-latest && codex"
+```
+
+`capsule.clyffy.ai` is an SSH config alias. It does not publish
+`10.0.0.114` in public DNS. The public hop is `ssh.clyffy.ai`; the private hop
+is LXC `114`.
 
 ## Agent Auth
 

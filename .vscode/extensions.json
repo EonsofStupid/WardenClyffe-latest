@@ -1,0 +1,18 @@
+{
+  "recommendations": [
+    "ms-vscode-remote.remote-ssh",
+    "ms-vscode-remote.remote-ssh-edit",
+    "golang.go",
+    "svelte.svelte-vscode",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "redhat.vscode-yaml",
+    "ms-python.python"
+  ],
+  "unwantedRecommendations": [
+    "rust-lang.rust-analyzer",
+    "tamasfe.even-better-toml",
+    "bmewburn.vscode-intelephense-client"
+  ]
+}

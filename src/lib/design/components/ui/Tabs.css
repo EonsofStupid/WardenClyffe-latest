@@ -1,0 +1,19 @@
+.ui-tabs { display: flex; flex-direction: column; gap: var(--wc-s4); }
+.ui-tablist {
+  display: flex;
+  gap: var(--wc-s1);
+  border-bottom: 1px solid var(--wc-border);
+}
+.ui-tab {
+  appearance: none;
+  cursor: pointer;
+  padding: var(--wc-s2) var(--wc-s3);
+  font-size: var(--wc-fs-sm);
+  color: var(--wc-text-dim);
+  border-bottom: 2px solid transparent;
+  outline: none;
+}
+.ui-tab[data-hovered] { color: var(--wc-text); }
+.ui-tab[data-selected] { color: var(--wc-text); border-bottom-color: oklch(68% 0.17 var(--wc-hue-brand)); }
+.ui-tab[data-focus-visible] { outline: 2px solid oklch(68% 0.17 var(--wc-hue-brand)); outline-offset: 2px; border-radius: var(--wc-radius-sm); }
+.ui-tabpanel { outline: none; }

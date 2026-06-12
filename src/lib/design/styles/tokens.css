@@ -1,0 +1,56 @@
+/* WardenClyffe design tokens — PRIMITIVES.
+   Color = OKLCH. Spacing = rem. Typography = fluid clamp(). */
+:root {
+  /* ---- surfaces / neutrals (OKLCH, hue 265) ---- */
+  --wc-bg:        oklch(19% 0.02 265);
+  --wc-bg-elev:   oklch(23% 0.025 265);
+  --wc-surface:   oklch(27% 0.03 265);
+  --wc-surface-2: oklch(32% 0.035 265);
+  --wc-surface-3: oklch(37% 0.04 265);
+  --wc-border:    oklch(42% 0.03 265);
+  --wc-text:      oklch(97% 0.01 265);
+  --wc-text-dim:  oklch(73% 0.02 265);
+
+  /* ---- tone hues (single source for variant colors) ---- */
+  --wc-hue-brand:   255;
+  --wc-hue-neutral: 265;
+  --wc-hue-success: 165;
+  --wc-hue-warning:  85;
+  --wc-hue-danger:   25;
+  --wc-hue-info:    230;
+
+  /* ---- rem spacing scale ---- */
+  --wc-s1: 0.25rem;  --wc-s2: 0.5rem;  --wc-s3: 0.75rem;
+  --wc-s4: 1rem;     --wc-s5: 1.5rem;  --wc-s6: 2rem;  --wc-s7: 3rem;
+
+  --wc-radius-sm: 0.375rem;
+  --wc-radius:    0.625rem;
+  --wc-radius-lg: 0.875rem;
+
+  /* ---- fluid clamp typography ---- */
+  --wc-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --wc-mono: ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, monospace;
+
+  --wc-fs-xs:  clamp(0.72rem, 0.68rem + 0.2vw, 0.8rem);
+  --wc-fs-sm:  clamp(0.82rem, 0.78rem + 0.25vw, 0.92rem);
+  --wc-fs-md:  clamp(0.95rem, 0.9rem + 0.3vw, 1.05rem);
+  --wc-fs-lg:  clamp(1.15rem, 1.05rem + 0.6vw, 1.45rem);
+  --wc-fs-xl:  clamp(1.5rem, 1.25rem + 1.4vw, 2.25rem);
+
+  --wc-shadow:    0 1px 2px oklch(0% 0 0 / 0.3), 0 8px 24px oklch(0% 0 0 / 0.25);
+  --wc-shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.3);
+
+  /* ---- surface elevation treatments (coldlight) ---- */
+  /* raised: floats above the page */
+  --wc-elev-raised:  0 1px 2px oklch(0% 0 0 / 0.35), 0 10px 28px oklch(0% 0 0 / 0.30);
+  /* embossed: lit from top, sits proud of the surface */
+  --wc-elev-emboss:  inset 0 1px 0 oklch(100% 0 0 / 0.08), inset 0 -1px 0 oklch(0% 0 0 / 0.35), 0 1px 2px oklch(0% 0 0 / 0.40);
+  /* sunken: pressed into the surface */
+  --wc-elev-sunken:  inset 0 2px 6px oklch(0% 0 0 / 0.45), inset 0 -1px 0 oklch(100% 0 0 / 0.04);
+  --wc-edge-light:   oklch(100% 0 0 / 0.06);
+
+  /* ---- glass / morphism ---- */
+  --wc-glass-bg:     oklch(28% 0.03 265 / 0.45);
+  --wc-glass-border: oklch(72% 0.03 265 / 0.30);
+  --wc-glass-blur:   16px;
+}

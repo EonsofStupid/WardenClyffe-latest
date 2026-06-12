@@ -1,0 +1,10 @@
+.ui-tooltip {
+  background: var(--wc-surface-2);
+  color: var(--wc-text);
+  border: 1px solid var(--wc-border);
+  border-radius: var(--wc-radius-sm);
+  padding: var(--wc-s1) var(--wc-s2);
+  font-size: var(--wc-fs-xs);
+  box-shadow: var(--wc-shadow-sm);
+  max-width: 18rem;
+}

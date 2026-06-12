@@ -1,0 +1,4 @@
+# Append to ~/.codex/config.toml
+[mcp_servers.cortex_control]
+command = "ssh"
+args = ["warden-devstation", "/workspace/warden-storage/plugins/bin/cortex-mcp", "control"]

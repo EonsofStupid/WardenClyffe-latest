@@ -1,0 +1,29 @@
+/* WardenClyffe design tokens — SEMANTIC + VARIANT ENGINE.
+   Maps tone (brand/neutral/success/warning/danger/info) to a set of OKLCH
+   role colors. Components set [data-tone]; variants read these role vars so a
+   single component supports every color without bespoke CSS. */
+
+[data-tone] {
+  /* defaults overridden per-tone below */
+  --tone-solid-bg:    var(--wc-primary);
+  --tone-solid-press: var(--wc-primary-press);
+  --tone-solid-fg:    var(--wc-on-primary);
+  --tone-text:        oklch(82% 0.12 var(--tone-hue));
+  --tone-line:        oklch(60% 0.12 var(--tone-hue));
+  --tone-soft-bg:     oklch(40% 0.06 var(--tone-hue) / 0.35);
+  --tone-dot:         oklch(75% 0.15 var(--tone-hue));
+}
+
+[data-tone="brand"]   { --tone-hue: var(--wc-hue-brand);
+  --tone-solid-bg: oklch(68% 0.17 255); --tone-solid-press: oklch(60% 0.17 255); --tone-solid-fg: oklch(99% 0.005 255); }
+[data-tone="neutral"] { --tone-hue: var(--wc-hue-neutral);
+  --tone-solid-bg: var(--wc-surface-2); --tone-solid-press: var(--wc-surface); --tone-solid-fg: var(--wc-text);
+  --tone-text: var(--wc-text); --tone-line: var(--wc-border); --tone-dot: var(--wc-text-dim); }
+[data-tone="success"] { --tone-hue: var(--wc-hue-success);
+  --tone-solid-bg: oklch(72% 0.15 165); --tone-solid-press: oklch(64% 0.15 165); --tone-solid-fg: oklch(20% 0.03 165); }
+[data-tone="warning"] { --tone-hue: var(--wc-hue-warning);
+  --tone-solid-bg: oklch(80% 0.14 85);  --tone-solid-press: oklch(72% 0.14 85);  --tone-solid-fg: oklch(22% 0.04 85); }
+[data-tone="danger"]  { --tone-hue: var(--wc-hue-danger);
+  --tone-solid-bg: oklch(64% 0.20 25);  --tone-solid-press: oklch(56% 0.20 25);  --tone-solid-fg: oklch(99% 0.01 25); }
+[data-tone="info"]    { --tone-hue: var(--wc-hue-info);
+  --tone-solid-bg: oklch(70% 0.13 230); --tone-solid-press: oklch(62% 0.13 230); --tone-solid-fg: oklch(99% 0.01 230); }

@@ -1,0 +1,30 @@
+/* VolumeCard — layout only; all color/space/type via coldlight tokens (rem,
+   OKLCH, clamp). Grid for the facts (2-D), flex for the actions (1-D). */
+.vol-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--wc-s2) var(--wc-s4);
+  margin: 0 0 var(--wc-s3);
+}
+.vol-facts dt {
+  font-size: var(--wc-fs-xs);
+  color: var(--wc-text-dim);
+  margin: 0 0 0.125rem;
+}
+.vol-facts dd {
+  margin: 0;
+  font-size: var(--wc-fs-sm);
+  color: var(--wc-text);
+  font-family: var(--wc-mono);
+}
+.vol-hint {
+  font-size: var(--wc-fs-xs);
+  color: var(--wc-text-dim);
+  margin: 0 0 var(--wc-s3);
+  line-height: 1.45;
+}
+.vol-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--wc-s2);
+}

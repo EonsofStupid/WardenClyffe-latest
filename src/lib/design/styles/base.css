@@ -1,0 +1,43 @@
+/* Base reset + app layout + small utilities (token-driven). */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  background: var(--wc-bg);
+  color: var(--wc-text);
+  font-family: var(--wc-font);
+  font-size: var(--wc-fs-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--wc-primary); }
+code, pre, .mono { font-family: var(--wc-mono); }
+
+.app { display: grid; grid-template-columns: clamp(13rem, 18vw, 17rem) 1fr; height: 100%; }
+@media (max-width: 720px) { .app { grid-template-columns: 1fr; } .sidebar { display: none; } }
+
+.sidebar {
+  background: var(--wc-bg-elev); border-right: 1px solid var(--wc-border);
+  padding: var(--wc-s5) var(--wc-s4); display: flex; flex-direction: column; gap: var(--wc-s2);
+}
+.brand { font-size: var(--wc-fs-lg); font-weight: 700; letter-spacing: -0.01em; margin-bottom: var(--wc-s4); }
+.brand small { display:block; color: var(--wc-text-dim); font-weight: 500; font-size: var(--wc-fs-xs); }
+
+.navitem {
+  appearance: none; border: 0; text-align: left; cursor: pointer; background: transparent;
+  color: var(--wc-text-dim); padding: var(--wc-s2) var(--wc-s3); border-radius: var(--wc-radius-sm);
+  font-size: var(--wc-fs-sm); font-family: inherit;
+}
+.navitem[data-active="true"] { background: var(--wc-surface); color: var(--wc-text); }
+.navitem:hover { color: var(--wc-text); }
+
+.main { overflow: auto; padding: var(--wc-s6) clamp(var(--wc-s4), 4vw, var(--wc-s7)); }
+.page-title { font-size: var(--wc-fs-xl); font-weight: 700; margin: 0 0 var(--wc-s2); letter-spacing: -0.02em; }
+.page-sub { color: var(--wc-text-dim); margin: 0 0 var(--wc-s6); font-size: var(--wc-fs-sm); }
+
+.grid-cards { display: grid; gap: var(--wc-s4); grid-template-columns: repeat(auto-fill, minmax(min(20rem,100%), 1fr)); }
+.row { display: flex; gap: var(--wc-s3); align-items: center; flex-wrap: wrap; }
+.spread { display:flex; justify-content: space-between; align-items: center; gap: var(--wc-s3); }
+.muted { color: var(--wc-text-dim); }
+.kv { display:grid; grid-template-columns: auto 1fr; gap: var(--wc-s1) var(--wc-s4); font-size: var(--wc-fs-sm); }
+.kv dt { color: var(--wc-text-dim); }
+.kv dd { margin: 0; }
