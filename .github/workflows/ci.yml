@@ -1,0 +1,50 @@
+# WardenClyffe CI — the law's enforcement arm (buildplan P0-1).
+# Go workspace: single job looping modules (go.work). Web: parallel job.
+# Touchpoints: inventory now; flip to --strict after the v1->v2 sweep (P3) —
+# 55 v1-deprecation warnings would fail --strict today.
+name: ci
+
+on:
+  push:
+    branches: [main, "codex/**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.work
+          cache-dependency-path: "**/go.sum"
+      - name: build, vet, test every workspace module
+        run: |
+          set -euo pipefail
+          for m in services/clyffe-api services/storage-broker-client services/warden-api services/cortex-mcp; do
+            echo "=== $m ==="
+            ( cd "$m" && go build ./... && go vet ./... && go test ./... )
+          done
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+
+  touchpoints:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: touchpoint inventory (strict deferred until v1 sweep)
+        run: python3 scripts/foundation/validate-touchpoints.py
