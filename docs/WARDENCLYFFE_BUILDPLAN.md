@@ -76,11 +76,39 @@ monolithic api.ts · G10 no backups/restore drill.
 
 ## P2 — Surfaces (visible slice: customer logs in, sees their devstation)
 
-Connect & Launch UI → `src/domains/admin/` (customer plane folds here) ·
-Clyffy chat boundary (overlay + pop-out) → `src/domains/clyffy/` ·
-OIDC at auth.rrflow.ai replacing bootstrap → `services/warden-api/internal/identity/` ·
-`.pulse` v1 schema → `schemas/pulse/pulse-packet.v1.schema.json`
-(operator-approved 2026-06-12) + first signed packet.
+### Done (2026-06-13) — login → see + manage the layers
+
+| # | Item | Boundary | Verify |
+|---|---|---|---|
+| P2-A | W root organized: `W:/README.md` (root law) + `projects/{wardenclyffe,clyffy-go,devpulse,makers}/PROJECT.md` landing pads (keys = registry `project_key`) | `/workspace/warden-storage` (W root, devstation-owned, off SMB) | each home declares source-of-truth + clone status; mirrors `memory/projects/` |
+| P2-B | `plugin.v1` master contract — JSON-Schema every `plugin.json` (control, intelligence, future Dean minions) validates against | `schemas/contracts/plugin.v1.schema.json` (operator-approved) | both shipped manifests validate green (Draft 2020-12) |
+| P2-C | `/login` route + `RequireOperator` guard wrapping the admin routes; post-login redirect to `/admin` | `src/routes/login.tsx`, `src/domains/warden/identity/RequireOperator.tsx` | anon → `/login`; authed → `/admin`; tsc + vite build green |
+| P2-D | Intelligence layer **manageable**: `GET /mesh/projection` (read plan) + operator-gated `POST /mesh/sync/run` (trigger worker); UI "Run sync" panel; reusable `platform.RequireOperator` middleware | `services/warden-api/internal/mesh`, `internal/platform/http.go`, `src/domains/admin/intelligence` | live: read OK; POST 401 anon / 200 operator; re-run idempotent (47 unchanged) |
+
+### Remaining open (planned, strict-pattern)
+
+**Buildable now (no external gate):**
+- **Connect & Launch UI** → `src/domains/admin/` (customer plane). Pre-typed
+  auth commands (Claude Code/Codex/gh/Gemini, June-2026 catalog) surfaced from
+  Go; dumb React. Minimal req: one card per tool, copy-snippet, no secrets.
+- **Clyffy chat boundary** (overlay + pop-out) → `src/domains/clyffy/`.
+  Colocated `types.ts`/`clyffy.svc.ts`/views; ships complete or not at all.
+- **`.pulse` v1 schema** → `schemas/pulse/pulse-packet.v1.schema.json`
+  (operator-approved 2026-06-12) + first signed packet. Sits beside
+  `schemas/contracts/` under the one `schemas/` root.
+- **`.mcpb` master bundles** for both W plugins (one-click Claude Desktop add)
+  — research current `.mcpb` manifest format first (version-sensitive); ship
+  `plugins/cortex-control/cortex-control.mcpb` alongside the connect snippets.
+
+**Gated on an operator key-turn (cannot be done from this environment):**
+- **OIDC at auth.rrflow.ai** replacing the bootstrap operator →
+  `services/warden-api/internal/identity/` (go-oidc v3.18.0, Authentik
+  trailing-slash issuer). Needs the Authentik app + client secret.
+- **Dean derivation contract doc** — needs **Clyffy-Go on W first** (E→W rule);
+  Dean's code lives on `E:` and the `projects/clyffy-go/` home is a declared
+  landing pad until Clyffy-Dean clones it.
+- **Live intelligence data** through `cortex-intelligence` — needs the
+  Infisical key-turn → `/run/warden-secrets` (Qdrant/Surreal creds).
 
 ## P3 — Scale
 

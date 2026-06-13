@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wardenclyffe.dev/schemas/contracts/plugin.v1.schema.json",
+  "title": "WardenClyffe plugin manifest (v1)",
+  "description": "The master contract every plugin.json validates against. cortex-control is the master control-layer plugin; Clyffy-Dean minions DERIVE from it and must satisfy this same shape. Secrets are REFERENCES only — values never live in a package (they materialize at /run/warden-secrets on the devstation). See plugins/README.md and docs/specs/CORTEX_CONTROL_LAYER_SPEC.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "slug", "kind", "version", "mcp_id", "entry", "transports", "requires"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human label, e.g. 'Cortex — Control layer'."
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      "description": "kebab-case package id; matches the plugins/<slug>/ directory name."
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["control", "intelligence", "minion"],
+      "description": "control = orchestration/law/capture; intelligence = retrieval (Qdrant/Surreal); minion = Dean-derived specialist."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "SemVer. Bumped by .pulse packets; minions track the master's minor."
+    },
+    "mcp_id": {
+      "type": "string",
+      "pattern": "^mcp\\.[a-z0-9]+(\\.[a-z0-9-]+)+$",
+      "description": "Context Mesh grammar: mcp.<scope>.<path...>. e.g. mcp.workspace.clyffy-master.cortex"
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "args"],
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Executable name; one shared binary may serve many plugins (cortex-mcp does)."
+        },
+        "args": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Layer/selector args, e.g. [\"control\"] or [\"intelligence\"]."
+        }
+      }
+    },
+    "transports": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "enum": ["stdio", "streamable-http"] },
+      "description": "Supported MCP transports. stdio today; streamable-http added at the ADR 0030 bar (OAuth 2.1, server card) to reach status formal-mcp."
+    },
+    "requires": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["secrets", "network"],
+      "properties": {
+        "secrets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "description": "Infisical secret REF (UPPER_SNAKE env name) — never a value."
+          },
+          "description": "Secret references only. Values materialize at /run/warden-secrets on the devstation."
+        },
+        "network": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Human-readable egress targets the plugin needs, e.g. '10.0.0.106:6333 (Qdrant)'."
+        }
+      }
+    }
+  }
+}

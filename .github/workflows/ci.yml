@@ -48,3 +48,7 @@ jobs:
           python-version: "3.12"
       - name: touchpoint inventory (strict deferred until v1 sweep)
         run: python3 scripts/foundation/validate-touchpoints.py
+      - name: plugin manifests satisfy plugin.v1 contract
+        run: |
+          pip install --quiet jsonschema
+          python3 scripts/foundation/validate-plugins.py

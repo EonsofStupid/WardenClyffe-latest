@@ -18,6 +18,11 @@ plugins/<plugin-slug>/
   README.md                    what it serves + how to verify
 ```
 
+Every `plugin.json` MUST validate against the master contract
+`schemas/contracts/plugin.v1.schema.json`. `cortex-control` is the master
+control-layer plugin; Clyffy-Dean minions **derive** from it and satisfy the
+same contract. (Draft 2020-12; CI validates on change.)
+
 Rules:
 - `kind`: `control` | `intelligence` | `minion`.
 - **Secrets never live in a package** — `requires.secrets` lists Infisical

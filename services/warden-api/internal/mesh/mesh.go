@@ -7,6 +7,7 @@ import (
 	"bufio"
 	"context"
 	"encoding/json"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -30,11 +31,19 @@ type ConnectDescriptors struct {
 	ClaudeCode    string `json:"claude_code"`
 }
 
-// Store reads the registry and the validator inventory from the repo.
-type Store struct{ repoRoot string }
+// Store reads the registry and the validator inventory from the repo, and the
+// intelligence-sync projection plan + binary from W.
+type Store struct {
+	repoRoot     string
+	syncPlanPath string
+	syncBin      string
+}
 
-// NewStore returns a mesh store rooted at the repo.
-func NewStore(repoRoot string) *Store { return &Store{repoRoot: repoRoot} }
+// NewStore returns a mesh store rooted at the repo, reading the sync projection
+// plan and triggering the sync binary at the given W paths.
+func NewStore(repoRoot, syncPlanPath, syncBin string) *Store {
+	return &Store{repoRoot: repoRoot, syncPlanPath: syncPlanPath, syncBin: syncBin}
+}
 
 // ListPlugins parses servers + gateways out of context-mesh.yaml (line scan;
 // registry shape is ours and stable).
@@ -147,4 +156,35 @@ func (s *Store) IntelligenceInventory(ctx context.Context) (map[string]any, erro
 		"summary": map[string]int{"total": len(items), "v2": v2, "v1_deprecated": v1, "sync_enabled": sync, "with_warnings": warn},
 		"items":   items,
 	}, nil
+}
+
+// ReadProjection returns the intelligence-sync projection plan from W as-is.
+// A missing plan (sync never run) is reported distinctly so the UI can say so
+// rather than erroring.
+func (s *Store) ReadProjection() (any, bool, error) {
+	b, err := os.ReadFile(s.syncPlanPath)
+	if os.IsNotExist(err) {
+		return nil, false, nil
+	}
+	if err != nil {
+		return nil, false, err
+	}
+	var plan any
+	if err := json.Unmarshal(b, &plan); err != nil {
+		return nil, false, err
+	}
+	return plan, true, nil
+}
+
+// RunSync executes the deployed intelligence-sync binary, then returns the
+// freshly written projection plan. The worker is content-hash idempotent, so a
+// re-run with no source changes is a no-op (all rows "unchanged").
+func (s *Store) RunSync(ctx context.Context) (any, error) {
+	cmd := exec.CommandContext(ctx, s.syncBin)
+	cmd.Dir = s.repoRoot
+	if out, err := cmd.CombinedOutput(); err != nil {
+		return nil, fmt.Errorf("intelligence-sync run failed (%v): %s", err, strings.TrimSpace(string(out)))
+	}
+	plan, _, err := s.ReadProjection()
+	return plan, err
 }

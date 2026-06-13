@@ -59,11 +59,18 @@ func main() {
 		platform.JSON(w, http.StatusOK, map[string]any{"status": "ok", "service": "warden-api"})
 	})
 
-	identity.NewHandler(identity.NewStore(cfg.OperatorUser, cfg.OperatorPass), identity.NewAccounts(pool)).Routes(r)
+	idStore := identity.NewStore(cfg.OperatorUser, cfg.OperatorPass)
+	// operatorAuthz gates mutating mesh routes: a valid bearer with operator role.
+	operatorAuthz := func(token string) bool {
+		op, ok := idStore.Validate(token)
+		return ok && op.Role == "operator"
+	}
+
+	identity.NewHandler(idStore, identity.NewAccounts(pool)).Routes(r)
 	fleet.NewHandler(fleetStore).Routes(r)
 	automation.NewHandler(automationSvc).Routes(r)
 	data.NewHandler(dataStore).Routes(r)
-	mesh.NewHandler(mesh.NewStore(cfg.RepoRoot)).Routes(r)
+	mesh.NewHandler(mesh.NewStore(cfg.RepoRoot, cfg.SyncPlanPath, cfg.SyncBin), operatorAuthz).Routes(r)
 	clyffy.NewHandler(clyffy.NewStore(pool)).Routes(r)
 
 	srv := &http.Server{

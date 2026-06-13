@@ -18,6 +18,12 @@ type Config struct {
 
 	// RepoRoot locates repo-authored sources (registry, validator) for mesh.
 	RepoRoot string
+
+	// SyncPlanPath is the intelligence-sync projection plan on W (read by the
+	// mesh projection endpoint). SyncBin is the deployed intelligence-sync
+	// binary the sync-run endpoint executes — both default to the W layout.
+	SyncPlanPath string
+	SyncBin      string
 }
 
 // LoadConfig reads configuration from the environment with sane local defaults
@@ -30,6 +36,8 @@ func LoadConfig() Config {
 		OperatorUser: env("WARDEN_OPERATOR_USER", "operator"),
 		OperatorPass: env("WARDEN_OPERATOR_PASS", "warden-dev"),
 		RepoRoot:     env("WARDEN_REPO_ROOT", "/workspace/WardenClyffe-latest"),
+		SyncPlanPath: env("SYNC_PLAN_PATH", "/workspace/warden-storage/registry/projection-plan.json"),
+		SyncBin:      env("WARDEN_SYNC_BIN", "/workspace/warden-storage/plugins/bin/intelligence-sync"),
 	}
 }
 
