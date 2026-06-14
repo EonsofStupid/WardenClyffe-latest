@@ -1,0 +1,42 @@
+# Infisical Agent config for the Warden devstation — the no-leak secret pipeline.
+# Sourced format (CLI 0.43.x): https://infisical.com/docs/integrations/platforms/infisical-agent
+#
+# The agent authenticates with the devstation machine identity (Universal Auth),
+# keeps the access token refreshed, and renders ALL project secrets to a single
+# root-only dotenv on the /run tmpfs. Nothing is written to disk or chat.
+#
+# Installed to /etc/warden/agent-config.yaml by install-devstation-turnkey.sh.
+infisical:
+  address: "https://app.infisical.com" # canonical source (FOUNDATION_APP_RESEARCH); set if self-hosted
+  exit-after-auth: false
+  revoke-credentials-on-shutdown: false
+  retry-strategy:
+    max-retries: 5
+    base-delay: "200ms"
+    max-delay: "5s"
+
+auth:
+  type: "universal-auth"
+  config:
+    # Root-only credential files derived from /etc/warden/infisical-mi.env by the
+    # installer. The client secret never lives in this config nor in the repo.
+    client-id: "/etc/warden/infisical/client-id"
+    client-secret: "/etc/warden/infisical/client-secret"
+    remove_client_secret_on_read: false
+
+sinks:
+  # Refreshed access token — consumers (apiKeyHelper, etc.) read it from here.
+  - type: "file"
+    config:
+      path: "/run/warden-secrets/.infisical-token"
+
+templates:
+  # Renders every secret in the project/env to one dotenv the services source.
+  - source-path: "/etc/warden/secrets.tmpl"
+    destination-path: "/run/warden-secrets/warden.env"
+    config:
+      polling-interval: "60s"
+      execute:
+        # Lock down perms on each render; signal that secrets are fresh.
+        command: "/usr/local/bin/warden-secrets-refresh-hook"
+        timeout: 15

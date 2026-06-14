@@ -18,7 +18,9 @@ import (
 	"github.com/wardenclyffe/warden-api/internal/audit"
 	"github.com/wardenclyffe/warden-api/internal/automation"
 	"github.com/wardenclyffe/warden-api/internal/clyffy"
+	"github.com/wardenclyffe/warden-api/internal/connect"
 	"github.com/wardenclyffe/warden-api/internal/data"
+	"github.com/wardenclyffe/warden-api/internal/edge"
 	"github.com/wardenclyffe/warden-api/internal/fleet"
 	"github.com/wardenclyffe/warden-api/internal/identity"
 	"github.com/wardenclyffe/warden-api/internal/mesh"
@@ -71,6 +73,8 @@ func main() {
 	automation.NewHandler(automationSvc).Routes(r)
 	data.NewHandler(dataStore).Routes(r)
 	mesh.NewHandler(mesh.NewStore(cfg.RepoRoot, cfg.SyncPlanPath, cfg.SyncBin), operatorAuthz).Routes(r)
+	edge.NewHandler(edge.NewStore(pool), operatorAuthz).Routes(r)
+	connect.NewHandler(connect.NewStore(cfg.RepoRoot), operatorAuthz).Routes(r)
 	clyffy.NewHandler(clyffy.NewStore(pool)).Routes(r)
 
 	srv := &http.Server{

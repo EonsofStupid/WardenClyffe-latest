@@ -1,0 +1,30 @@
+# Warden devstation secret broker — Infisical Agent.
+# Authenticates with the devstation machine identity, keeps the token fresh, and
+# materializes project secrets to /run/warden-secrets (tmpfs, root-only). This is
+# the no-leak path: secrets live only on /run, never on disk or in chat.
+# Installed + enabled by install-devstation-turnkey.sh.
+[Unit]
+Description=Warden devstation Infisical Agent (secret broker)
+Documentation=https://infisical.com/docs/integrations/platforms/infisical-agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# /run/warden-secrets is created on /run (tmpfs) with 0700, cleared on stop.
+RuntimeDirectory=warden-secrets
+RuntimeDirectoryMode=0700
+ExecStartPre=/usr/local/bin/warden-secrets-preflight
+ExecStart=/usr/local/bin/infisical agent --config /etc/warden/agent-config.yaml --silent
+Restart=on-failure
+RestartSec=5s
+# Hardening: the broker needs network + read /etc/warden + write /run only.
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/run/warden-secrets
+ProtectHome=true
+ReadOnlyPaths=/etc/warden
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

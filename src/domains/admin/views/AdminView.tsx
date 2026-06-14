@@ -12,8 +12,10 @@ export function AdminView() {
       <p>Signed in as {operator?.username ?? "—"} ({operator?.role ?? "—"}).</p>
       <nav className="admin-nav">
         <a href="/warden">Warden (infrastructure)</a>
+        <a href="/admin/connect">Connect &amp; Launch</a>
         <a href="/admin/control">Control layer</a>
         <a href="/admin/intelligence">Intelligence layer</a>
+        <a href="/admin/edge">Public IPs</a>
       </nav>
     </section>
   );

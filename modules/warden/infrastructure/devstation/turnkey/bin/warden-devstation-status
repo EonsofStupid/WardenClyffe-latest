@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# warden-devstation-status — the devstation acceptance gate. Asserts the secret
+# broker, the materialized secrets, the W mount, the data plane, and the plugin
+# binaries. Prints a PASS/FAIL table; exits non-zero if any required check fails.
+# Never prints secret values — only presence and counts.
+set -uo pipefail
+
+SECRETS_DIR="${WARDEN_SECRETS_DIR:-/run/warden-secrets}"
+W_ROOT="${WARDEN_STORAGE:-/workspace/warden-storage}"
+PLUGINS_BIN="$W_ROOT/plugins/bin"
+DB_HOST="${WARDEN_DB_HOST:-127.0.0.1}"; DB_PORT="${WARDEN_DB_PORT:-5432}"
+
+fails=0
+row() { # name  ok(0/1)  detail
+  if [ "$2" -eq 0 ]; then printf '  [PASS] %-22s %s\n' "$1" "${3:-}";
+  else printf '  [FAIL] %-22s %s\n' "$1" "${3:-}"; fails=$((fails+1)); fi
+}
+
+echo "warden-devstation-status"
+
+# 1. secret broker active
+if command -v systemctl >/dev/null 2>&1 && systemctl is-active --quiet infisical-agent.service; then
+  row "secret broker" 0 "infisical-agent.service active"
+else
+  row "secret broker" 1 "infisical-agent.service not active (run install-devstation-turnkey.sh)"
+fi
+
+# 2. access token materialized
+[ -s "$SECRETS_DIR/.infisical-token" ] && row "infisical token" 0 || row "infisical token" 1 "$SECRETS_DIR/.infisical-token missing"
+
+# 3. secrets dotenv materialized
+if [ -s "$SECRETS_DIR/warden.env" ]; then
+  row "secrets rendered" 0 "$(grep -c '=' "$SECRETS_DIR/warden.env") keys in warden.env"
+else
+  row "secrets rendered" 1 "$SECRETS_DIR/warden.env missing (broker not authenticated?)"
+fi
+
+# 4. W drive mounted/owned + writable
+if [ -d "$W_ROOT" ] && [ -w "$W_ROOT" ]; then
+  row "W storage" 0 "$W_ROOT writable"
+else
+  row "W storage" 1 "$W_ROOT not present/writable"
+fi
+
+# 5. plugin binaries present
+if [ -x "$PLUGINS_BIN/cortex-mcp" ] && [ -x "$PLUGINS_BIN/intelligence-sync" ]; then
+  row "plugin binaries" 0 "cortex-mcp + intelligence-sync"
+else
+  row "plugin binaries" 1 "$PLUGINS_BIN missing cortex-mcp/intelligence-sync"
+fi
+
+# 6. data plane reachable
+if command -v pg_isready >/dev/null 2>&1; then
+  if pg_isready -h "$DB_HOST" -p "$DB_PORT" >/dev/null 2>&1; then
+    row "postgres" 0 "$DB_HOST:$DB_PORT accepting"
+  else
+    row "postgres" 1 "$DB_HOST:$DB_PORT unreachable"
+  fi
+else
+  row "postgres" 1 "pg_isready not installed"
+fi
+
+echo
+if [ "$fails" -eq 0 ]; then echo "RESULT: PASS"; exit 0
+else echo "RESULT: FAIL ($fails check(s)) — see above"; exit 1; fi
