@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${EUID}" -ne 0 ]]; then
+  echo "error: run with sudo" >&2
+  exit 1
+fi
+if [[ "$(hostname)" != "warden-devstation-01" ]]; then
+  echo "error: this bootstrap is restricted to warden-devstation-01" >&2
+  exit 1
+fi
+
+read -r -p "Infisical Universal Auth client ID: " client_id
+read -r -s -p "Infisical Universal Auth client secret: " client_secret
+printf '\n'
+if [[ -z "$client_id" || -z "$client_secret" ]]; then
+  unset client_id client_secret
+  echo "error: both values are required" >&2
+  exit 1
+fi
+
+umask 077
+install -d -o root -g root -m 0700 /etc/credstore.encrypted
+systemd-creds setup >/dev/null
+tmp_dir="$(mktemp -d /etc/credstore.encrypted/.infisical-bootstrap.XXXXXX)"
+id_tmp="$tmp_dir/infisical-client-id"
+secret_tmp="$tmp_dir/infisical-client-secret"
+cleanup() {
+  rm -rf -- "$tmp_dir"
+  unset client_id client_secret
+}
+trap cleanup EXIT
+
+printf '%s' "$client_id" |
+  systemd-creds encrypt --name=infisical-client-id --with-key=host - "$id_tmp" >/dev/null
+printf '%s' "$client_secret" |
+  systemd-creds encrypt --name=infisical-client-secret --with-key=host - "$secret_tmp" >/dev/null
+unset client_id client_secret
+
+install -o root -g root -m 0600 "$id_tmp" /etc/credstore.encrypted/infisical-client-id
+install -o root -g root -m 0600 "$secret_tmp" /etc/credstore.encrypted/infisical-client-secret
+systemctl daemon-reload
+systemctl enable --now warden-infisical-agent.service
+
+for _ in {1..20}; do
+  if [[ -s /run/warden-secrets/infisical-access-token ]]; then
+    exec /usr/local/bin/warden-infisical-status
+  fi
+  sleep 1
+done
+
+systemctl --no-pager --full status warden-infisical-agent.service || true
+echo "error: Infisical agent did not produce its token sink" >&2
+exit 1

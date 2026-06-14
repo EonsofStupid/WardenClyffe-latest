@@ -1,0 +1,37 @@
+[Unit]
+Description=Warden Devstation Infisical machine identity agent
+Documentation=https://infisical.com/docs/integrations/platforms/infisical-agent
+Wants=network-online.target
+After=network-online.target
+ConditionPathExists=/etc/credstore.encrypted/infisical-client-id
+ConditionPathExists=/etc/credstore.encrypted/infisical-client-secret
+
+[Service]
+Type=simple
+User=wardenop
+Group=wardenop
+UMask=0077
+LoadCredentialEncrypted=infisical-client-id:/etc/credstore.encrypted/infisical-client-id
+LoadCredentialEncrypted=infisical-client-secret:/etc/credstore.encrypted/infisical-client-secret
+RuntimeDirectory=warden-secrets
+RuntimeDirectoryMode=0700
+RuntimeDirectoryPreserve=yes
+ExecStart=/usr/local/bin/infisical agent --config /etc/warden/infisical/agent-config.yaml --silent
+Restart=on-failure
+RestartSec=10s
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectClock=yes
+ProtectControlGroups=yes
+ProtectHome=yes
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectSystem=strict
+ReadWritePaths=/run/warden-secrets
+RestrictSUIDSGID=yes
+
+[Install]
+WantedBy=multi-user.target

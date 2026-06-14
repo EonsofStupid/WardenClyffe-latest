@@ -1,0 +1,18 @@
+infisical:
+  address: "https://app.infisical.com"
+  exit-after-auth: false
+  revoke-credentials-on-shutdown: true
+  retry-strategy:
+    max-retries: 5
+    max-delay: "30s"
+    base-delay: "1s"
+auth:
+  type: "universal-auth"
+  config:
+    client-id: "/run/credentials/warden-infisical-agent.service/infisical-client-id"
+    client-secret: "/run/credentials/warden-infisical-agent.service/infisical-client-secret"
+    remove_client_secret_on_read: false
+sinks:
+  - type: "file"
+    config:
+      path: "/run/warden-secrets/infisical-access-token"

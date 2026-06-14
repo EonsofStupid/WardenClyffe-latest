@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${EUID}" -ne 0 ]]; then
+  exec sudo -n /usr/local/bin/warden-infisical-status
+fi
+
+unit="warden-infisical-agent.service"
+client_id="/etc/credstore.encrypted/infisical-client-id"
+client_secret="/etc/credstore.encrypted/infisical-client-secret"
+token_sink="/run/warden-secrets/infisical-access-token"
+
+printf 'provider=infisical\n'
+printf 'auth_method=universal-auth\n'
+printf 'machine_identity=warden-devstation-01\n'
+
+if ! command -v infisical >/dev/null 2>&1; then
+  printf 'status=cli_missing\n'
+  exit 1
+fi
+printf 'cli_version=%s\n' "$(infisical --version | head -n 1)"
+
+if [[ ! -f "/etc/systemd/system/${unit}" ]]; then
+  printf 'status=machine_identity_not_installed\n'
+  exit 1
+fi
+
+if [[ ! -s "$client_id" || ! -s "$client_secret" ]]; then
+  printf 'credentials=missing\n'
+  printf 'status=machine_identity_credentials_missing\n'
+  exit 1
+fi
+printf 'credentials=encrypted_at_rest\n'
+
+if ! systemctl is-active --quiet "$unit"; then
+  printf 'service=%s\n' "$(systemctl is-active "$unit" 2>/dev/null || true)"
+  printf 'status=machine_identity_inactive\n'
+  exit 1
+fi
+printf 'service=active\n'
+
+if [[ ! -s "$token_sink" ]]; then
+  printf 'token_sink=missing_or_empty\n'
+  printf 'status=machine_identity_token_missing\n'
+  exit 1
+fi
+
+printf 'token_sink=present mode=%s owner=%s size=%s\n' \
+  "$(stat -c '%a' "$token_sink")" \
+  "$(stat -c '%U:%G' "$token_sink")" \
+  "$(stat -c '%s' "$token_sink")"
+printf 'status=machine_identity_active\n'

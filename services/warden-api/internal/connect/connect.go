@@ -1,12 +1,13 @@
 // Package connect is the devstation click-to-auth surface ("Connect & Launch").
-// It reports per-tool authentication state and activates auth from a single
-// operator-supplied credential, writing secrets ONLY to root-only paths or the
-// git credential store — never to logs, chat, or the repo.
-//
-// This is the supply point for the one live credential the devstation needs:
-// a working Infisical machine-identity client secret (or PAT), from which the
-// secret broker materializes everything else (GitHub PAT, DB creds) to
-// /run/warden-secrets.
+// It does NOT define its own secret pattern — it DRIVES the authority installed
+// on the devstation and described by W:/configuration:
+//   - warden-infisical-bootstrap   encrypts the MI creds (systemd-creds) and
+//                                   starts warden-infisical-agent.service
+//   - warden-infisical-status      the Infisical state machine
+//   - warden-devstation-status     host/workspace/tools/git
+//   - /run/warden-secrets          volatile runtime keyring (token sink)
+// Secrets are never logged, never written to W, never placed in plaintext on
+// disk — the bootstrap encrypts them at rest with systemd-creds.
 package connect
 
 import (
@@ -20,8 +21,8 @@ import (
 	"time"
 )
 
-// Store activates and inspects devstation auth. repoRoot locates the turnkey
-// installer; home locates per-user credential files.
+// Store activates and inspects devstation auth by shelling the authoritative
+// helpers. repoRoot is the git verification cwd; home locates per-user creds.
 type Store struct {
 	repoRoot string
 	home     string
@@ -39,52 +40,61 @@ type ToolStatus struct {
 	Detail    string `json:"detail"`
 }
 
-const secretsDir = "/run/warden-secrets"
-
-// Status reports auth state across the tools the devstation brokers.
+// Status reports auth state across the tools the devstation brokers, reading
+// the authority (warden-infisical-status) — not a private notion of state.
 func (s *Store) Status(ctx context.Context) []ToolStatus {
 	out := []ToolStatus{}
 
-	// Infisical secret broker: service active + secrets materialized.
-	brokerActive := systemctlActive(ctx, "infisical-agent.service")
-	keys := countEnvKeys(filepath.Join(secretsDir, "warden.env"))
+	// Infisical: the authoritative state machine. connected only when active.
+	infStatus := infisicalStatus(ctx)
 	out = append(out, ToolStatus{
 		Tool:      "infisical",
-		Connected: brokerActive && keys > 0,
-		Detail:    fmt.Sprintf("broker=%v, secrets=%d", brokerActive, keys),
+		Connected: infStatus == "machine_identity_active",
+		Detail:    infStatus,
 	})
 
 	// GitHub: a usable credential (git credential store or gh login).
 	ghDetail, ghOK := githubState(s.home)
 	out = append(out, ToolStatus{Tool: "github", Connected: ghOK, Detail: ghDetail})
 
-	// Claude Code / Codex / Gemini: presence of their credential files.
+	// Claude Code / Codex / Gemini: provider-owned credential files (user profile).
 	out = append(out, fileStatus("claude-code", filepath.Join(s.home, ".claude", ".credentials.json")))
 	out = append(out, fileStatus("codex", filepath.Join(s.home, ".codex", "auth.json")))
 	out = append(out, fileStatus("gemini", filepath.Join(s.home, ".gemini", "oauth_creds.json")))
 	return out
 }
 
-// ActivateInfisical writes the machine identity (root-only) and runs the
-// turnkey installer so the broker authenticates. Returns the installer/status
-// output. The client secret is passed via stdin, never via argv or logs.
+// InfisicalInput is the activate payload. ClientSecret is required; ClientID
+// falls back to the existing machine-identity reference.
+type InfisicalInput struct {
+	ClientSecret string `json:"client_secret"`
+	ClientID     string `json:"client_id"`
+}
+
+// ActivateInfisical drives the authoritative warden-infisical-bootstrap
+// non-interactively: it feeds the client id + secret on stdin (the helper's two
+// read prompts), so the creds are encrypted with systemd-creds and the agent
+// starts. The secret is never an argv, never logged, never written to W.
 func (s *Store) ActivateInfisical(ctx context.Context, in InfisicalInput) (string, error) {
-	env, err := s.composeMIEnv(in)
-	if err != nil {
-		return "", err
+	clientID := strings.TrimSpace(in.ClientID)
+	if clientID == "" {
+		clientID = readEnvFile(filepath.Join(s.home, ".infisical-mi.env"))["INFISICAL_CLIENT_ID"]
 	}
-	// Write /etc/warden/infisical-mi.env (root-only) from stdin.
-	if out, err := runStdin(ctx, env, "sudo", "install", "-m", "0600", "/dev/stdin", "/etc/warden/infisical-mi.env"); err != nil {
-		return out, fmt.Errorf("write machine identity: %w", err)
+	if clientID == "" {
+		return "", fmt.Errorf("client_id not supplied and not found in machine-identity reference")
 	}
-	installer := filepath.Join(s.repoRoot, "modules", "warden", "infrastructure",
-		"devstation", "turnkey", "bin", "install-devstation-turnkey.sh")
-	out, err := run(ctx, s.repoRoot, "sudo", installer)
+	if strings.TrimSpace(in.ClientSecret) == "" {
+		return "", fmt.Errorf("client_secret is required")
+	}
+	// warden-infisical-bootstrap reads client id then client secret, in order.
+	stdin := clientID + "\n" + in.ClientSecret + "\n"
+	out, err := runStdin(ctx, 120*time.Second, stdin, "sudo", "-n", "/usr/local/bin/warden-infisical-bootstrap")
 	return out, err
 }
 
-// ActivateGitHub configures the git credential store with a PAT and verifies it
-// against origin. The token is written only to ~/.git-credentials (0600).
+// ActivateGitHub configures the git credential store with a PAT (provider-owned
+// local state) and verifies it against origin. Per the authority, static PATs
+// are break-glass; the durable path is the GitHub secret brokered by Infisical.
 func (s *Store) ActivateGitHub(ctx context.Context, token string) (string, error) {
 	token = strings.TrimSpace(token)
 	if token == "" {
@@ -95,56 +105,20 @@ func (s *Store) ActivateGitHub(ctx context.Context, token string) (string, error
 	if err := os.WriteFile(credPath, []byte(line), 0o600); err != nil {
 		return "", fmt.Errorf("write git credentials: %w", err)
 	}
-	if _, err := run(ctx, s.repoRoot, "git", "config", "--global", "credential.helper", "store"); err != nil {
+	if _, err := run(ctx, 20*time.Second, s.repoRoot, "git", "config", "--global", "credential.helper", "store"); err != nil {
 		return "", err
 	}
-	// Verify without exposing the token: ls-remote uses the stored credential.
-	out, err := run(ctx, s.repoRoot, "git", "ls-remote", "--heads", "origin")
+	out, err := run(ctx, 30*time.Second, s.repoRoot, "git", "ls-remote", "--heads", "origin")
 	if err != nil {
 		return "github credential written, but verification failed: " + out, err
 	}
 	return "github connected; origin reachable", nil
 }
 
-// InfisicalInput is the activate payload. ClientSecret is required; the rest
-// fall back to the existing ~/.infisical-mi.env values.
-type InfisicalInput struct {
-	ClientSecret string `json:"client_secret"`
-	ClientID     string `json:"client_id"`
-	ProjectID    string `json:"project_id"`
-	Env          string `json:"env"`
-	APIURL       string `json:"api_url"`
-}
+// --- helpers (no secret values are ever returned in output) ---
 
-// composeMIEnv merges the supplied values over the existing MI env so the
-// operator can paste only the rotated client secret.
-func (s *Store) composeMIEnv(in InfisicalInput) (string, error) {
-	if strings.TrimSpace(in.ClientSecret) == "" {
-		return "", fmt.Errorf("client_secret is required")
-	}
-	cur := readEnvFile(filepath.Join(s.home, ".infisical-mi.env"))
-	pick := func(v, key string) string {
-		if strings.TrimSpace(v) != "" {
-			return v
-		}
-		return cur[key]
-	}
-	var b strings.Builder
-	b.WriteString("# Warden devstation machine identity (written by Connect & Launch).\n")
-	fmt.Fprintf(&b, "INFISICAL_CLIENT_ID=%s\n", pick(in.ClientID, "INFISICAL_CLIENT_ID"))
-	fmt.Fprintf(&b, "INFISICAL_CLIENT_SECRET=%s\n", in.ClientSecret)
-	fmt.Fprintf(&b, "INFISICAL_PROJECT_ID=%s\n", pick(in.ProjectID, "INFISICAL_PROJECT_ID"))
-	fmt.Fprintf(&b, "INFISICAL_ENV=%s\n", pick(in.Env, "INFISICAL_ENV"))
-	if u := pick(in.APIURL, "INFISICAL_API_URL"); u != "" {
-		fmt.Fprintf(&b, "INFISICAL_API_URL=%s\n", u)
-	}
-	return b.String(), nil
-}
-
-// --- helpers (no secret values are ever returned in errors) ---
-
-func run(ctx context.Context, dir string, name string, args ...string) (string, error) {
-	c, cancel := context.WithTimeout(ctx, 90*time.Second)
+func run(ctx context.Context, d time.Duration, dir, name string, args ...string) (string, error) {
+	c, cancel := context.WithTimeout(ctx, d)
 	defer cancel()
 	cmd := exec.CommandContext(c, name, args...)
 	cmd.Dir = dir
@@ -152,8 +126,8 @@ func run(ctx context.Context, dir string, name string, args ...string) (string, 
 	return strings.TrimSpace(string(out)), err
 }
 
-func runStdin(ctx context.Context, stdin string, name string, args ...string) (string, error) {
-	c, cancel := context.WithTimeout(ctx, 30*time.Second)
+func runStdin(ctx context.Context, d time.Duration, stdin, name string, args ...string) (string, error) {
+	c, cancel := context.WithTimeout(ctx, d)
 	defer cancel()
 	cmd := exec.CommandContext(c, name, args...)
 	cmd.Stdin = bytes.NewBufferString(stdin)
@@ -161,29 +135,23 @@ func runStdin(ctx context.Context, stdin string, name string, args ...string) (s
 	return strings.TrimSpace(string(out)), err
 }
 
-func systemctlActive(ctx context.Context, unit string) bool {
-	out, _ := run(ctx, "", "systemctl", "is-active", unit)
-	return out == "active"
-}
-
-func countEnvKeys(path string) int {
-	b, err := os.ReadFile(path)
-	if err != nil {
-		return 0
-	}
-	n := 0
-	for _, ln := range strings.Split(string(b), "\n") {
-		ln = strings.TrimSpace(ln)
-		if ln != "" && !strings.HasPrefix(ln, "#") && strings.Contains(ln, "=") {
-			n++
+// infisicalStatus parses the `status=` line of the authoritative
+// warden-infisical-status helper (e.g. machine_identity_credentials_missing).
+func infisicalStatus(ctx context.Context) string {
+	out, _ := run(ctx, 15*time.Second, "", "/usr/local/bin/warden-infisical-status")
+	for _, ln := range strings.Split(out, "\n") {
+		if v, ok := strings.CutPrefix(strings.TrimSpace(ln), "status="); ok {
+			return v
 		}
 	}
-	return n
+	if out == "" {
+		return "status_unavailable"
+	}
+	return "unknown"
 }
 
 func fileStatus(tool, path string) ToolStatus {
-	st, err := os.Stat(path)
-	if err == nil && st.Size() > 0 {
+	if st, err := os.Stat(path); err == nil && st.Size() > 0 {
 		return ToolStatus{Tool: tool, Connected: true, Detail: "credential present"}
 	}
 	return ToolStatus{Tool: tool, Connected: false, Detail: "no credential"}
