@@ -1,15 +1,18 @@
 /* Base reset + app layout + small utilities (token-driven). */
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; margin: 0; }
+html { color-scheme: dark; background: #12141c; }
 body {
-  background: var(--wc-bg);
-  color: var(--wc-text);
-  font-family: var(--wc-font);
-  font-size: var(--wc-fs-md);
+  background: #12141c;
+  background: var(--wc-bg, #12141c);
+  color: #f3f4f8;
+  color: var(--wc-text, #f3f4f8);
+  font-family: var(--wc-font, ui-sans-serif, system-ui, sans-serif);
+  font-size: var(--wc-fs-md, 1rem);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
-a { color: var(--wc-primary); }
+a { color: var(--wc-primary, #6b8cff); }
 code, pre, .mono { font-family: var(--wc-mono); }
 
 .app { display: grid; grid-template-columns: clamp(13rem, 18vw, 17rem) 1fr; height: 100%; }

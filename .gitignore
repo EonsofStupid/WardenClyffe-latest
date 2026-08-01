@@ -62,6 +62,9 @@ src/routeTree.gen.ts
 .nitro/
 .output/
 
+# Local pre-release stack PIDs/logs
+.dev-pids/
+
 # the canonical schema IS source — exempt it from the data/ ignore
 !/data/schema/
 !/data/schema/sql/*.sql

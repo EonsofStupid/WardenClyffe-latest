@@ -25,6 +25,7 @@ import (
 	"github.com/wardenclyffe/warden-api/internal/identity"
 	"github.com/wardenclyffe/warden-api/internal/mesh"
 	"github.com/wardenclyffe/warden-api/internal/platform"
+	"github.com/wardenclyffe/warden-api/internal/proxmox"
 )
 
 func main() {
@@ -76,6 +77,8 @@ func main() {
 	edge.NewHandler(edge.NewStore(pool), operatorAuthz).Routes(r)
 	connect.NewHandler(connect.NewStore(cfg.RepoRoot), operatorAuthz).Routes(r)
 	clyffy.NewHandler(clyffy.NewStore(pool)).Routes(r)
+	// Slice 0: Proxmox substrate inventory + task-true start/stop.
+	proxmox.NewHandler(proxmox.NewService(proxmox.LoadConfig(), pool, auditSink)).Routes(r)
 
 	srv := &http.Server{
 		Addr:              cfg.Addr,

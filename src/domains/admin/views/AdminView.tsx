@@ -11,7 +11,10 @@ export function AdminView() {
       <h1>Admin</h1>
       <p>Signed in as {operator?.username ?? "—"} ({operator?.role ?? "—"}).</p>
       <nav className="admin-nav">
-        <a href="/warden">Warden (infrastructure)</a>
+        <a href="/admin/proxmox">
+          <strong>Proxmox fleet (Slice 0)</strong> — live inventory + start/stop
+        </a>
+        <a href="/warden">Warden overview</a>
         <a href="/admin/connect">Connect &amp; Launch</a>
         <a href="/admin/control">Control layer</a>
         <a href="/admin/intelligence">Intelligence layer</a>

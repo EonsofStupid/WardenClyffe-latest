@@ -48,6 +48,17 @@ workspace surface.
 The current operator VM is a Builder proof. Premium Pilot is the first target
 offer once host resources and rollback are verified.
 
+## Customer UI mock (redline)
+
+Interactive product mock in the root web app (no live provision):
+
+- `/clyffe/code` — workspaces list, double‑click Open
+- `/clyffe/code/order` — order tier + agents
+- `/clyffe/code/$id` — detail / start / stop
+- `/clyffe/code/$id/open` — Connect theater (customer vs behind-the-scenes)
+
+Source: `src/domains/clyffe/code/`. Marked MOCK UI until wired to Warden tasks.
+
 ## MVP Customer Actions
 
 - Create workspace from approved template.

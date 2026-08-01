@@ -1,15 +1,29 @@
 /* WardenClyffe design tokens — PRIMITIVES.
-   Color = OKLCH. Spacing = rem. Typography = fluid clamp(). */
+   Color = OKLCH with hex fallbacks (older browsers / first paint).
+   Spacing = rem. Typography = fluid clamp(). */
 :root {
-  /* ---- surfaces / neutrals (OKLCH, hue 265) ---- */
+  /* ---- surfaces / neutrals (hex first, then OKLCH) ---- */
+  --wc-bg:        #12141c;
   --wc-bg:        oklch(19% 0.02 265);
+  --wc-bg-elev:   #171a24;
   --wc-bg-elev:   oklch(23% 0.025 265);
+  --wc-surface:   #1e2230;
   --wc-surface:   oklch(27% 0.03 265);
+  --wc-surface-2: #262b3c;
   --wc-surface-2: oklch(32% 0.035 265);
+  --wc-surface-3: #2f3548;
   --wc-surface-3: oklch(37% 0.04 265);
+  --wc-border:    #3a4156;
   --wc-border:    oklch(42% 0.03 265);
+  --wc-text:      #f3f4f8;
   --wc-text:      oklch(97% 0.01 265);
+  --wc-text-dim:  #a8adbb;
   --wc-text-dim:  oklch(73% 0.02 265);
+  --wc-primary:   #6b8cff;
+  --wc-primary-press: #5576e8;
+  --wc-on-primary: #0b0d14;
+  --wc-brand:     #6b8cff;
+  --wc-on-brand:  #0b0d14;
 
   /* ---- tone hues (single source for variant colors) ---- */
   --wc-hue-brand:   255;

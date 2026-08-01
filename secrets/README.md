@@ -1,46 +1,67 @@
-# secrets/
+# Secrets (never commit real values)
 
-Project-root home for environment/credential files on the Warden Devstation
-(`warden-devstation-01`, 10.0.0.116). **Everything in this directory except this
-README and `*.example` files is git-ignored** (see root `.gitignore`).
+This directory is gitignored except `README.md` and `*.example` files.
 
-> There is currently **no `.env` on this VM that contains secret *values*.**
-> The real secrets live in **Infisical** and are materialized at runtime to the
-> root-only tmpfs `/run/warden-secrets/` (currently empty). This directory holds
-> the **config** envs + templates so we stop re-discovering them.
+## Infisical (preferred on this host)
 
-## Files
+CLI is expected to be logged in (`infisical user`). Project id defaults to the
+Clyffy/Warden Infisical project used by storage client.
 
-| File | Source | Contains secrets? |
-|------|--------|-------------------|
-| `warden-storage-client.env` | copy of `/etc/warden/storage-client.env` | No — config only |
-| `proxmox.env` (you create from `.example`) | Infisical / operator | **Yes** — keep local only |
-
-## W drive (shared storage) — how it is actually backed
-
-The W drive is a **SMB share**, brokered, with the password in Infisical:
-
-```
-SMB server     : 10.0.0.117   share: warden-storage
-mount path     : /workspace/warden-storage
-broker         : warden-storage-broker (10.0.0.114, ssh-forced-command)
-Infisical proj : 4a897376-3cbd-4aeb-8550-c7d3ed7ad113   env: dev
-Infisical path : /warden/shared-storage/01
-secret name    : WARDEN_SHARED_STORAGE_01_SMB_PASSWORD
-runtime cred   : /run/warden-secrets/warden-shared-storage-01.smb (root-only tmpfs)
+```bash
+make sync-secrets
+# writes secrets/proxmox.env from Infisical keys (never commits)
 ```
 
-## Proxmox access — secret references
+**Required Infisical keys** (env `dev`, path `/`):
 
+| Infisical key | Maps to |
+|---------------|---------|
+| `PROXMOX_TOKEN_ID` | `PROXMOX_TOKEN_ID` |
+| `PROXMOX_TOKEN_SECRET` | `PROXMOX_TOKEN_SECRET` |
+| `PROXMOX_HOST` (optional) | else `SERVER1_TAILNET_IP` or `10.0.0.1` |
+| `PROXMOX_NODE` (optional) | else `server1` |
+| `PROXMOX_PORT` (optional) | else `8006` |
+| `PROXMOX_VERIFY_TLS` (optional) | else `false` |
+
+If tokens are missing in Infisical, create them once (PVE API token UI → set in Infisical), then re-run `make sync-secrets`.
+
+## Proxmox (Slice 0 — required for live inventory)
+
+```bash
+make sync-secrets
+# or manual:
+cp secrets/proxmox.env.example secrets/proxmox.env
+# Edit secrets/proxmox.env — fill token from Infisical / PVE token UI
 ```
-PROXMOX_HOST=10.0.0.1  PROXMOX_PORT=8006  PROXMOX_NODE=server1
-PROXMOX_TOKEN_ID / PROXMOX_TOKEN_SECRET  -> Infisical (not on disk)
+
+| Variable | Safe to log? | Notes |
+|----------|--------------|--------|
+| `PROXMOX_HOST` | yes | e.g. `10.0.0.1` |
+| `PROXMOX_PORT` | yes | `8006` |
+| `PROXMOX_NODE` | yes | e.g. `server1` |
+| `PROXMOX_VERIFY_TLS` | yes | lab often `false` |
+| `PROXMOX_TOKEN_ID` | **no** | `user@realm!tokenid` |
+| `PROXMOX_TOKEN_SECRET` | **no** | secret |
+
+Create token in Proxmox: Datacenter → Permissions → API Tokens.  
+Privilege Separation often off for early automation; tighten later.
+
+warden-api loads `secrets/proxmox.env` automatically when  
+`WARDEN_REPO_ROOT` points at the repo (default on devstation).
+
+## Operator bootstrap (console login)
+
+Dev defaults (override in env for real deploys):
+
+```text
+WARDEN_OPERATOR_USER=operator
+WARDEN_OPERATOR_PASS=warden-dev
 ```
 
-Read-only first probe: `GET https://10.0.0.1:8006/api2/json/version`.
+## Storage client (optional)
 
-## To make secrets available locally
+`warden-storage-client.env` — see example if present.
 
-1. Authenticate Infisical on this devstation: `infisical login`
-   (project id above, env `dev`), **or**
-2. Drop a populated `proxmox.env` here (copy `proxmox.env.example`).
+## Production
+
+Infisical → keyring / `/run/warden-secrets`. Never paste secrets into chat or git.
