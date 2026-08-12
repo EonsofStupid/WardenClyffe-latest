@@ -16,7 +16,7 @@ esac
 if [[ -z "${WORKDIR}" ]]; then
   case "${PROFILE}" in
     devstation)
-      WORKDIR="/workspace/warden-storage/projects/WardenClyffe-latest"
+      WORKDIR="/workspace/warden-storage/projects/shippin-platform"
       ;;
     capsule)
       WORKDIR="/workspace/WardenClyffe-latest"

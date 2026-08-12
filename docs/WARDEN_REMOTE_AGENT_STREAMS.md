@@ -46,7 +46,7 @@ Verified on 2026-05-27:
 
 | Target | Alias | Runtime | Workspace |
 |---|---|---|---|
-| Warden Devstation | `devstation.clyffy.ai` | `codex-cli 0.133.0`, Claude Code `2.1.148`, `tmux 3.6` | `/workspace/warden-storage/projects/WardenClyffe-latest` |
+| Warden Devstation | `devstation.clyffy.ai` | `codex-cli 0.133.0`, Claude Code `2.1.148`, `tmux 3.6` | `/workspace/warden-storage/projects/shippin-platform` |
 | Warden Operator Capsule | `capsule.clyffy.ai` | `codex-cli 0.133.0`, Claude Code `2.1.148`, `tmux 3.5a` | `/workspace/WardenClyffe-latest` |
 
 Launchers:

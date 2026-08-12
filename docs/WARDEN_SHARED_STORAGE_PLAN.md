@@ -65,7 +65,7 @@ Verified on 2026-05-27:
 | Workstation WSL symlink | `~/warden-storage` resolves to `/mnt/warden/storage` |
 | Workstation WSL remount | `warden-storage unmount && warden-storage mount` passed through the capsule/Infisical broker |
 | Workstation WSL write test | write/read/delete passed under `scratch/`; temporary CIFS credential file absent after mount |
-| Shared project path | `/mnt/warden/storage/projects/WardenClyffe-latest` |
+| Shared project path | `/mnt/warden/storage/projects/shippin-platform` |
 | Shared project root commit | verify with `git rev-parse --short HEAD` after each sync |
 | Shared nested Go Warden commit | verify with `git -C wardenclyffe rev-parse --short HEAD` after each sync |
 | Shared root Git status | full SMB status timed out after 30s on 2026-05-27; commit and changed-file hashes verified |
@@ -73,9 +73,9 @@ Verified on 2026-05-27:
 | Devstation mount | `/workspace/warden-storage` mounted and reads the same project path |
 | Devstation remount | enabled `warden-storage.service` restarted cleanly and remounted through the restricted capsule broker |
 | Devstation write test | write/read/delete passed under `scratch/`; temporary CIFS credential file absent after mount |
-| Workstation Windows native drive | `W:` maps to `\\10.0.0.117\warden-storage`; `W:\projects\WardenClyffe-latest` exists; write/read/delete passed |
+| Workstation Windows native drive | `W:` maps to `\\10.0.0.117\warden-storage`; `W:\projects\shippin-platform` exists; write/read/delete passed |
 | Workstation Windows turnkey installer | `scripts/local/install-warden-windows-ssot.cmd` maps `W:`, installs `ssh devstation`, verifies the project path, and opens Explorer |
-| Capsule access | no kernel mount; brokered `smbclient` can read `projects/WardenClyffe-latest/AGENTS.md`; devstation uses a forced-command broker key |
+| Capsule access | no kernel mount; brokered `smbclient` can read `projects/shippin-platform/AGENTS.md`; devstation uses a forced-command broker key |
 
 ## Storage Module Contract
 

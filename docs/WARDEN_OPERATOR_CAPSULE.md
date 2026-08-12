@@ -164,7 +164,7 @@ Verified on 2026-05-27:
 - The broker accepts only the original command `warden-storage-read-secret`.
   Plain manual SSH to that broker key is rejected.
 - A brokered `smbclient` check read
-  `projects/WardenClyffe-latest/AGENTS.md` from
+  `projects/shippin-platform/AGENTS.md` from
   `//10.0.0.117/warden-storage` using an Infisical-sourced temporary credential
   file that was removed after use.
 - Do not make the capsule a daily coding workspace. It is for

@@ -5,7 +5,7 @@ param(
   [string]$BrokerHost = "warden-capsule",
   [string]$DevstationHost = "devstation",
   [string]$SshIdentityFile = "~/.ssh/warden_foundation_01_ed25519",
-  [string]$ProjectRelativePath = "projects\WardenClyffe-latest",
+  [string]$ProjectRelativePath = "projects\shippin-platform",
   [switch]$NoSshConfig,
   [switch]$NoOpen,
   [switch]$Force

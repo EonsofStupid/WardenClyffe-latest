@@ -3,7 +3,7 @@ set -euo pipefail
 
 TARGET="${1:-all}"
 CANONICAL_MOUNT="${WARDEN_STORAGE_CANONICAL_MOUNT:-/workspace/warden-storage}"
-PROJECT_PATH="${WARDEN_STORAGE_PROJECT_PATH:-${CANONICAL_MOUNT}/projects/WardenClyffe-latest}"
+PROJECT_PATH="${WARDEN_STORAGE_PROJECT_PATH:-${CANONICAL_MOUNT}/projects/shippin-platform}"
 
 usage() {
   cat <<'USAGE'
@@ -52,7 +52,7 @@ REMOTE
 
 local_check() {
   local mount_path="${WARDEN_LOCAL_STORAGE_MOUNT:-/mnt/warden/storage}"
-  local project_path="${mount_path}/projects/WardenClyffe-latest"
+  local project_path="${mount_path}/projects/shippin-platform"
   echo "target=local"
   echo "host=$(hostname)"
   echo "mount_path=${mount_path}"
@@ -94,7 +94,7 @@ if (-not $mapping) {
 $drive = Get-PSDrive -Name W -PSProvider FileSystem
 "available_gib=$([math]::Round($drive.Free / 1GB, 1))"
 "used_gib=$([math]::Round($drive.Used / 1GB, 1))"
-$project = "W:\projects\WardenClyffe-latest"
+$project = "W:\projects\shippin-platform"
 "project_path=$project"
 "project_present=$((Test-Path -LiteralPath $project).ToString().ToLowerInvariant())"
 '

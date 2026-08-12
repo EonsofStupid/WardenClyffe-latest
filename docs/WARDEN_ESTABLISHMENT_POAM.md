@@ -80,8 +80,8 @@ Verified on 2026-05-22 and updated through the 2026-05-26 edge/storage work:
 | Remote agent streams | Codex/Claude launch through SSH into devstation/capsule using `scripts/agents/warden-agent-stream.sh`; both hosts have `tmux`; Codex app-server remote mode documented as experimental |
 | Shared storage | `warden-shared-storage-01`, LXC `117`, `10.0.0.117`, 400 GiB on `local-lvm`, internal-only SMB/CIFS share `warden-storage` |
 | Workstation WSL storage mount | `warden-storage status` shows `/mnt/warden/storage` mounted from `//10.0.0.117/warden-storage`; `~/warden-storage` resolves there |
-| Workstation Windows storage mount | `W:` maps to `\\10.0.0.117\warden-storage`; `W:\projects\WardenClyffe-latest` exists; endpoint installer verifies write/read/delete |
-| Shared project authority | `/mnt/warden/storage/projects/WardenClyffe-latest`; verify root and nested commits after each sync; full SMB Git status can time out |
+| Workstation Windows storage mount | `W:` maps to `\\10.0.0.117\warden-storage`; `W:\projects\shippin-platform` exists; endpoint installer verifies write/read/delete |
+| Shared project authority | `/mnt/warden/storage/projects/shippin-platform`; verify root and nested commits after each sync; full SMB Git status can time out |
 | Clyffy dynamic UI planning | spec and sprint POA&M created |
 | Clyffy MCP orchestrator | boundary captured; gateway planned in registry |
 | Current public homebase | `104.176.44.101` |
@@ -149,7 +149,7 @@ Verified on 2026-05-22 and updated through the 2026-05-26 edge/storage work:
 | WDN-DEV-005 | Devstation | Initial rollback snapshot captured | Done | `initial-devstation-toolchain-20260522` | Add recurring backup policy before relying on VM as sole work storage |
 | WDN-DEV-006 | Devstation | Private browser IDE established | Done | `code-server`, `warden-devstation-code` | Keep SSH-tunneled only |
 | WDN-DEV-007 | Devstation | Friendly local editor aliases | Done | `ssh devstation` and `ssh devstation.clyffy.ai` reach VM `116` | Use in VS Code/Cursor Remote-SSH |
-| WDN-DEV-010 | Devstation | Warden agent workspace launch UI | Done | Go Warden `/agent-workspaces`; local launchers target `/workspace/warden-storage/projects/WardenClyffe-latest` | Convert copy-command launchers into audited open-intent tasks later |
+| WDN-DEV-010 | Devstation | Warden agent workspace launch UI | Done | Go Warden `/agent-workspaces`; local launchers target `/workspace/warden-storage/projects/shippin-platform` | Convert copy-command launchers into audited open-intent tasks later |
 | WDN-DEV-011 | Devstation | Remote agent stream contract | Done | `docs/WARDEN_REMOTE_AGENT_STREAMS.md`, `scripts/agents/warden-agent-stream.sh`, Codex/Claude verified on devstation/capsule | Add Warden task/audit-backed open-intent actions |
 | WDN-DEV-008 | Devstation | Snapshot/backup policy | Planned | initial snapshot exists; no recurring backup policy yet | Add before relying on VM as sole work storage |
 | WDN-DEV-009 | Devstation | WardenNet/WireGuard access path | Planned | currently SSH via `server1` jump | Add private VPN/ZTNA path later |
@@ -159,7 +159,7 @@ Verified on 2026-05-22 and updated through the 2026-05-26 edge/storage work:
 | WDN-STOR-004 | Shared storage | Read-only preflight helper created and run | Done | `scripts/storage/preflight-warden-shared-storage-01.sh`, passed on 2026-05-26 | Re-run immediately before any disk/storage write |
 | WDN-STOR-005 | Shared storage | 400 GiB storage service provisioned | Done | LXC `117`, `warden-shared-storage-01`, `/srv/warden/storage`, SMB share `warden-storage` | Keep as bootstrap tier until server2 is ready |
 | WDN-STOR-006 | Shared storage | Local WSL mount verified | Done | `/mnt/warden/storage`, `~/warden-storage` symlink, write/read/delete smoke test passed | Use `warden-storage status/mount/path/unmount` |
-| WDN-STOR-007 | Shared storage | Shared project synced and reconciled | Done | `/mnt/warden/storage/projects/WardenClyffe-latest`; rev-parse checks pass; full SMB `git status` can time out | Treat as sync/artifact authority; use devstation-local clone for heavy Git |
+| WDN-STOR-007 | Shared storage | Shared project synced and reconciled | Done | `/mnt/warden/storage/projects/shippin-platform`; rev-parse checks pass; full SMB `git status` can time out | Treat as sync/artifact authority; use devstation-local clone for heavy Git |
 | WDN-STOR-008 | Shared storage | Devstation mount verified | Done | `/workspace/warden-storage`, `warden-storage.service` enabled/active, restart/remount passed | Authenticate `gh` before GitHub write/push work |
 | WDN-STOR-011 | Shared storage | Capsule storage bridge verified | Done | brokered `smbclient` read plus restricted devstation broker key | Keep capsule secret-sensitive; do not force daily coding there |
 | WDN-STOR-012 | Shared storage | Boring client command installed | Done | `/usr/local/bin/warden-storage`, `/etc/warden/storage-client.env`, no temporary credential file left behind | Promote this client shape into Warden UI task/audit later |
