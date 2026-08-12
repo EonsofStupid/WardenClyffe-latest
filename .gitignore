@@ -68,3 +68,6 @@ src/routeTree.gen.ts
 # the canonical schema IS source — exempt it from the data/ ignore
 !/data/schema/
 !/data/schema/sql/*.sql
+
+# built service binaries
+services/shippin-auth/shippin-auth
