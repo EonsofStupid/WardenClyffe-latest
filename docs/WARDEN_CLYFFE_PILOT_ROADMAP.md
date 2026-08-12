@@ -55,7 +55,7 @@ Core modules:
 - `warden-proxmox`: Proxmox API client and task adapter.
 - `warden-inventory`: node, guest, storage, network, and ownership records.
 - `warden-audit`: immutable action/task log.
-- `warden-api`: operator and customer-scoped HTTP API.
+- `shippin-api`: operator and customer-scoped HTTP API.
 
 ## Phase 2: Clyffe Customer Panel
 

@@ -297,7 +297,7 @@ Warden is established for the two-server pilot when:
 8. Clyffe can show customer-safe assigned services without direct Proxmox
    access.
 
-## Build Status Update — 2026-06-04 (warden-api + console foundation)
+## Build Status Update — 2026-06-04 (shippin-api + console foundation)
 
 What is now BUILT on the devstation (`warden-devstation-01`), superseding earlier
 "not started" notes for these items. Run with `bash scripts/dev/run-stack.sh`;
@@ -306,7 +306,7 @@ see `docs/RUNNING_THE_STACK.md`.
 | Item | Status | Evidence |
 |---|---|---|
 | Postgres control-plane schema | **built (dev)** | `data/schema/sql/0001..0003`, 8 canonical schemas on local Postgres 18; managed LXC 110 pending Infisical creds |
-| warden-api (Go) | **built** | `services/warden-api` — chi+pgx; fleet, automation (order→provision→audit), audit, dbadmin |
+| shippin-api (Go) | **built** | `services/shippin-api` — chi+pgx; fleet, automation (order→provision→audit), audit, dbadmin |
 | Supabase-style data layer (our Go) | **built** | `internal/dbadmin` — schemas/tables/columns/rows + read-only SQL; mutations blocked, non-managed schemas 403 |
 | Foundation capture | **built** | `shippin_infra.platforms`/`services` capture Coolify (headless Docker) + Proxmox + all 18 matrix services, Infisical credential refs only |
 | Warden Clyffy orchestrator | **built** | `internal/clyffy` — `/api/clyffy/{home,services,platforms,intelligence,plugins,connectors}`; live intelligence-plane probe |
@@ -316,7 +316,7 @@ see `docs/RUNNING_THE_STACK.md`.
 
 Blocked on Infisical authentication from the devstation (managed Postgres LXC
 110, Qdrant API key `/warden/qdrant/01`, SurrealDB root, Coolify API): point
-warden-api at managed Postgres; create the Qdrant collection + touchpoint
+shippin-api at managed Postgres; create the Qdrant collection + touchpoint
 ingestion; connect the SurrealDB `clyffy` intelligence plane; deploy RRD.
 
 ## References

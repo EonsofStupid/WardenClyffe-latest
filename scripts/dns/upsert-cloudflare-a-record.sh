@@ -172,7 +172,7 @@ payload="$(
       content: $content,
       ttl: 1,
       proxied: $proxied,
-      comment: "WardenClyffe managed DNS record"
+      comment: "Shippin managed DNS record"
     }'
 )"
 
