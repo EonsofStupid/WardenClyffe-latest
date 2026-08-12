@@ -4,6 +4,7 @@ use (
 	./services/clyffe-api
 	./services/cortex-mcp
 	./services/intelligence-sync
+	./services/shippin-auth
 	./services/storage-broker-client
 	./services/shippin-api
 )
