@@ -52,7 +52,7 @@ export function OrderDevstationView() {
               <dt>tier</dt><dd>{result.resource.tier}</dd>
             </dl>
             <p className="muted" style={{ marginTop: "0.75rem", fontSize: "var(--wc-fs-xs)" }}>
-              Recorded in <code>warden_core.action_requests</code> + <code>warden_infra.resources</code>, audited in <code>warden_audit.events</code>.
+              Recorded in <code>shippin_core.action_requests</code> + <code>shippin_infra.resources</code>, audited in <code>shippin_audit.events</code>.
             </p>
           </Card>
         )}

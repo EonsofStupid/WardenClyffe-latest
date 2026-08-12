@@ -45,26 +45,26 @@ else
 fi
 
 echo "-- go modules --"
-( cd services/warden-api && go mod download )
+( cd services/shippin-api && go mod download )
 ( cd services/clyffe-api && go mod download )
 echo "  go mods downloaded"
 
 echo "-- postgres --"
 if pg_isready -h 127.0.0.1 -p 5432 >/dev/null 2>&1; then
   echo "  postgres accepting connections"
-  if psql "postgres://warden:warden_dev_local@127.0.0.1:5432/wardenclyffe?sslmode=disable" -c 'select 1' >/dev/null 2>&1; then
-    echo "  wardenclyffe db reachable as warden"
+  if psql "postgres://shippin:shippin_dev_local@127.0.0.1:5432/shippin_mesh?sslmode=disable" -c 'select 1' >/dev/null 2>&1; then
+    echo "  shippin_mesh db reachable as shippin"
   else
-    echo "  WARN: cannot query wardenclyffe as warden (check role/db/password)"
+    echo "  WARN: cannot query shippin_mesh as shippin (check role/db/password)"
   fi
 else
   echo "  WARN: postgres not ready on 127.0.0.1:5432"
 fi
 
 echo "-- build binaries once --"
-( cd services/warden-api && go build -o /tmp/warden-api ./cmd/warden-api )
+( cd services/shippin-api && go build -o /tmp/shippin-api ./cmd/shippin-api )
 ( cd services/clyffe-api && go build -o /tmp/clyffe-api ./cmd/clyffe-api )
-echo "  /tmp/warden-api /tmp/clyffe-api"
+echo "  /tmp/shippin-api /tmp/clyffe-api"
 
 echo
 echo "Next:"

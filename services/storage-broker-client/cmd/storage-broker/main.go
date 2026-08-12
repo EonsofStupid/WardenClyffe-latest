@@ -1,6 +1,6 @@
 // Command storage-broker is the Go control plane for managed per-tenant
 // storage. It turns purchases into wardenclyffedisk volumes via deterministic
-// scripts and exposes a small HTTP control API that warden-api/clyffe-api call.
+// scripts and exposes a small HTTP control API that shippin-api/clyffe-api call.
 // It holds NO data-plane authority — bytes live in the Rust disk (S3/FUSE).
 package main
 
@@ -16,9 +16,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
-	"github.com/wardenclyffe/storage-broker-client/internal/disk"
-	"github.com/wardenclyffe/storage-broker-client/internal/platform"
-	"github.com/wardenclyffe/storage-broker-client/internal/volume"
+	"github.com/shippin/storage-broker-client/internal/disk"
+	"github.com/shippin/storage-broker-client/internal/platform"
+	"github.com/shippin/storage-broker-client/internal/volume"
 )
 
 func main() {

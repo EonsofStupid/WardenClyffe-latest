@@ -59,8 +59,8 @@ Authentik group (built blueprint plan in the designation + auth work):
 | **Customer** (`/clyffe`) | customer | "My services" — assigned workspaces (DevForge, devstations), tier, status, billing refs, support. NO Proxmox, NO operator data. |
 | **Admin** (`/warden`) | operator (Hades) | Warden infrastructure: every **host** with its **kind clearly labelled** (proxmox / coolify / baremetal / …), platforms, services, designation (connector/plugin), intelligence plane, audit, route intent, the IP-migration state. |
 
-Host/platform-kind visibility is **built** (`warden_infra.platforms.kind`,
-`warden_infra.services.role/designation`); the admin Foundation view already
+Host/platform-kind visibility is **built** (`shippin_infra.platforms.kind`,
+`shippin_infra.services.role/designation`); the admin Foundation view already
 renders it. This plan extends it with the customer surface + login gating.
 
 ## 3. WardenNet — branded Tailscale (Headscale) + OPNsense failsafe
@@ -95,7 +95,7 @@ warden-api built here; reconciled from the repo by `scripts/dev/warden-reconcile
 
 **Migration (104 → 204), Warden-owned, zero-downtime via WardenNet:**
 
-1. **(confirm C1)** Acquire `204.x.x.x`; record both IPs in `warden_infra` as a
+1. **(confirm C1)** Acquire `204.x.x.x`; record both IPs in `shippin_infra` as a
    tracked migration (route intent owned by Warden).
 2. Bring up the new edge on `204.x.x.x` (Caddy LXC 115) **in parallel** with the
    `104.176.44.101` edge. Both front the same internal services over WardenNet.
@@ -115,7 +115,7 @@ WardenNet, not the public IP.
 Make the devstation a true operational space where Clyffy (empowered by Codex /
 Cursor / Claude / Gemini / Antigravity) can work, with clean privilege separation:
 
-- **Identity:** `warden_core.subjects.subject_kind = ai` for Clyffy/agents (built);
+- **Identity:** `shippin_core.subjects.subject_kind = ai` for Clyffy/agents (built);
   AI auth via `ai_bridge.identity_grants` (radius / client_cert / password_failsafe,
   IP-bound) — built schema, blueprints pending Authentik.
 - **Secrets:** brokered to `/run/warden-secrets` tmpfs via the `warden-secret-*`
@@ -162,12 +162,12 @@ core), and per-customer `service.devforge.<id>` rows on provision.
 
 ## 7. Data-model additions (capture these in Warden)
 
-- `warden_infra.platforms`: ensure `headscale`/`wardennet` represented (network platform).
-- `warden_infra.services`: add `service.wardennet` (connector, network),
+- `shippin_infra.platforms`: ensure `headscale`/`wardennet` represented (network platform).
+- `shippin_infra.services`: add `service.wardennet` (connector, network),
   `service.devforge-template` (core), `service.rrd` (built).
-- A small `warden_infra.ip_migrations` table (from_ip, to_ip, state, started_at,
+- A small `shippin_infra.ip_migrations` table (from_ip, to_ip, state, started_at,
   cutover_at) so the `104→204` migration is first-class and auditable.
-- `warden_audit.events`: every migration + provision step (built sink).
+- `shippin_audit.events`: every migration + provision step (built sink).
 
 ## 8. Sequenced delivery
 

@@ -1,51 +1,51 @@
--- WardenClyffe canonical schema — migration 0007
--- Public IP INVENTORY: the addresses WardenClyffe owns/routes, so the operator
+-- Shippin canonical schema — migration 0007
+-- Public IP INVENTORY: the addresses Shippin owns/routes, so the operator
 -- can add and update them and assign them to hosts. The existing
--- warden_infra.ip_migrations (0004) stays as the TRANSITION log between
+-- shippin_infra.ip_migrations (0004) stays as the TRANSITION log between
 -- addresses; this table is the inventory those transitions reference.
--- Apply: psql -h 127.0.0.1 -U warden -d wardenclyffe -f data/schema/sql/0007_public_ips.sql
+-- Apply: psql -h 127.0.0.1 -U shippin -d shippin_mesh -f data/schema/sql/0007_public_ips.sql
 -- Idempotent.
 
 BEGIN;
 
 DO $$ BEGIN
-    CREATE TYPE warden_infra.public_ip_role AS ENUM
+    CREATE TYPE shippin_infra.public_ip_role AS ENUM
         ('ingress','egress','exit','reserved');
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
-    CREATE TYPE warden_infra.public_ip_status AS ENUM
+    CREATE TYPE shippin_infra.public_ip_status AS ENUM
         ('active','reserved','released');
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-CREATE TABLE IF NOT EXISTS warden_infra.public_ips (
+CREATE TABLE IF NOT EXISTS shippin_infra.public_ips (
     id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     address         inet NOT NULL UNIQUE,
     provider        text,                                  -- who announces it (DC/ISP/cloud)
-    host_id         uuid REFERENCES warden_infra.hosts(id),-- assigned host, if any
-    role            warden_infra.public_ip_role   NOT NULL DEFAULT 'reserved',
-    status          warden_infra.public_ip_status NOT NULL DEFAULT 'reserved',
+    host_id         uuid REFERENCES shippin_infra.hosts(id),-- assigned host, if any
+    role            shippin_infra.public_ip_role   NOT NULL DEFAULT 'reserved',
+    status          shippin_infra.public_ip_status NOT NULL DEFAULT 'reserved',
     label           text,                                  -- human name, e.g. 'homebase-ingress'
     note            text,
     created_at      timestamptz NOT NULL DEFAULT now(),
     updated_at      timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX IF NOT EXISTS public_ips_host_idx   ON warden_infra.public_ips(host_id);
-CREATE INDEX IF NOT EXISTS public_ips_status_idx ON warden_infra.public_ips(status);
+CREATE INDEX IF NOT EXISTS public_ips_host_idx   ON shippin_infra.public_ips(host_id);
+CREATE INDEX IF NOT EXISTS public_ips_status_idx ON shippin_infra.public_ips(status);
 
-DROP TRIGGER IF EXISTS set_updated_at ON warden_infra.public_ips;
-CREATE TRIGGER set_updated_at BEFORE UPDATE ON warden_infra.public_ips
-  FOR EACH ROW EXECUTE FUNCTION warden_core.set_updated_at();
+DROP TRIGGER IF EXISTS set_updated_at ON shippin_infra.public_ips;
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON shippin_infra.public_ips
+  FOR EACH ROW EXECUTE FUNCTION shippin_core.set_updated_at();
 
 -- Seed the verified homebase ingress IP (PUBLIC_IP_HOMEBASE_FOUNDATION) so the
 -- inventory is non-empty on a clean clone. Re-running is a no-op.
-INSERT INTO warden_infra.public_ips (address, role, status, label, note)
+INSERT INTO shippin_infra.public_ips (address, role, status, label, note)
 VALUES ('104.176.44.101'::inet, 'ingress', 'active', 'devstation-egress',
         'Verified devstation egress / homebase candidate; MI Trusted-IP allowlist target.')
 ON CONFLICT (address) DO NOTHING;
 
-INSERT INTO warden_core.schema_migrations(version) VALUES ('0007_public_ips')
+INSERT INTO shippin_core.schema_migrations(version) VALUES ('0007_public_ips')
   ON CONFLICT (version) DO NOTHING;
 
 COMMIT;

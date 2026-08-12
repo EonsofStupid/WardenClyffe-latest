@@ -32,7 +32,7 @@ Proxmox API → Warden inventory → one task-true action → poll UPID → audi
 1. Go `internal/proxmox` client (token auth, TLS verify optional).
 2. Live inventory: nodes + guests (qemu + lxc) with power state.
 3. One action pair: **start** and **stop** a guest (task-true).
-4. `warden_core.action_requests` row per action; `warden_audit.events` append.
+4. `shippin_core.action_requests` row per action; `shippin_audit.events` append.
 5. Thin React Warden view: list guests + start/stop + task status.
 6. Clear degradation when `PROXMOX_*` credentials missing (no silent fake inventory).
 

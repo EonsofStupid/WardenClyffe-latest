@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/wardenclyffe/clyffe-api/internal/platform"
+	"github.com/shippin/clyffe-api/internal/platform"
 )
 
 // Handler exposes the customer portal under /api/clyffe.

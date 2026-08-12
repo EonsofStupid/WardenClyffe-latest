@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/wardenclyffe/storage-broker-client/internal/contract"
+	"github.com/shippin/storage-broker-client/internal/contract"
 )
 
 type Service struct {
@@ -22,7 +22,7 @@ func NewService(d contract.Driver, s Store) *Service {
 	return &Service{driver: d, store: s, now: time.Now}
 }
 
-// PurchaseInput is what the control plane (warden-api/clyffe-api) sends when a
+// PurchaseInput is what the control plane (shippin-api/clyffe-api) sends when a
 // customer buys storage.
 type PurchaseInput struct {
 	TenantID string        `json:"tenant_id"`

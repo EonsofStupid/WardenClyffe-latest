@@ -5,14 +5,14 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/wardenclyffe/storage-broker-client/internal/contract"
+	"github.com/shippin/storage-broker-client/internal/contract"
 )
 
 // ErrNotFound is returned when a volume id is unknown.
 var ErrNotFound = errors.New("volume not found")
 
 // Store persists volume control-plane truth. The memory store ships now; a
-// Postgres store (warden_core/clyffe_core) drops in behind the same interface.
+// Postgres store (shippin_core/clyffe_core) drops in behind the same interface.
 type Store interface {
 	Put(ctx context.Context, v *contract.Volume) error
 	Get(ctx context.Context, id string) (*contract.Volume, error)

@@ -7,7 +7,7 @@ import "os"
 //
 // Boundary: clyffe-api is the customer-facing plane. In production its DBURL
 // should use a least-privilege role scoped to the customer-safe schemas
-// (warden_core.tenants, clyffe_*), never the operator infra schemas.
+// (shippin_core.tenants, clyffe_*), never the operator infra schemas.
 type Config struct {
 	Addr     string // listen address, e.g. ":8082"
 	DBURL    string // postgres connection string
@@ -19,7 +19,7 @@ type Config struct {
 func LoadConfig() Config {
 	return Config{
 		Addr:     env("CLYFFE_API_ADDR", ":8082"),
-		DBURL:    env("CLYFFE_DB_URL", "postgres://warden:warden_dev_local@127.0.0.1:5432/wardenclyffe?sslmode=disable"),
+		DBURL:    env("CLYFFE_DB_URL", "postgres://shippin:shippin_dev_local@127.0.0.1:5432/shippin_mesh?sslmode=disable"),
 		LogLevel: env("CLYFFE_LOG_LEVEL", "info"),
 	}
 }

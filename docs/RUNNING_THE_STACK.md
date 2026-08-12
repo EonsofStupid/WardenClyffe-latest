@@ -10,9 +10,9 @@ management layer. Warden is the operator plane; Clyffe is the customer plane.
 data/schema/sql/0001_init.sql      canonical Postgres schema (8 schemas)
 services/warden-api/               Go server (chi + pgx), port :8081 — OPERATOR plane
   internal/platform                config, pgx pool, http helpers, CORS
-  internal/fleet                   warden_infra.resources (workspaces)
+  internal/fleet                   shippin_infra.resources (workspaces)
   internal/automation              plan -> action_request -> provision
-  internal/audit                   append-only warden_audit.events
+  internal/audit                   append-only shippin_audit.events
   internal/dbadmin                 Supabase-style data API (our own, in Go)
   internal/clyffy                  Clyffy orchestrator (reads captured foundation)
 services/clyffe-api/               Go server (chi + pgx), port :8082 — CUSTOMER plane
@@ -25,8 +25,8 @@ apps/console/                      React + Vite + React-Aria-Components, port :5
 ```
 
 Boundary: `clyffe-api` holds no infrastructure authority and reads only
-customer-safe data (`warden_core.tenants`, `clyffe_*`); it never touches
-`warden_infra` / `warden_audit`.
+customer-safe data (`shippin_core.tenants`, `clyffe_*`); it never touches
+`shippin_infra` / `shippin_audit`.
 
 ## Prerequisites (already provisioned on warden-devstation-01)
 

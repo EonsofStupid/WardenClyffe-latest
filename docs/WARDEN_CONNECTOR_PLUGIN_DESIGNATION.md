@@ -33,7 +33,7 @@ first-class, database-backed, UI-visible designation.
 - The AI-only rule exists only as prose: "never expose raw vector memory"
   (`docs/FOUNDATION_APP_RESEARCH_2026_05.md`), SurrealDB/Qdrant are AI-plane not
   product truth (`docs/FOUNDATION_SERVICE_MATRIX.md`). Prose is not enforceable.
-- `warden_core.subjects.subject_kind` already enumerates
+- `shippin_core.subjects.subject_kind` already enumerates
   `('operator','customer','service','ai')` (`data/schema/sql/0001_init.sql`) — we
   have the *principals* but no *access class* binding services to them.
 
@@ -43,7 +43,7 @@ connectors vs. capability-scoped internal plugins).
 
 ## The designation taxonomy
 
-Every captured service (`warden_infra.services`) carries a **designation** and an
+Every captured service (`shippin_infra.services`) carries a **designation** and an
 explicit **audiences** set. Designation is the access class; audiences are the
 principal kinds permitted (subset of `operator`, `ai`, `customer`).
 
@@ -69,9 +69,9 @@ Warden owns infrastructure (connectors), Clyffy owns intelligence projections
 ## Privilege model (enforceable)
 
 ```
-principal kinds            warden_core.subjects.subject_kind = operator | customer | service | ai
-service access class       warden_infra.services.designation  = connector | plugin | platform | core
-service audiences          warden_infra.services.audiences[]  ⊆ { operator, ai, customer }
+principal kinds            shippin_core.subjects.subject_kind = operator | customer | service | ai
+service access class       shippin_infra.services.designation  = connector | plugin | platform | core
+service audiences          shippin_infra.services.audiences[]  ⊆ { operator, ai, customer }
 AI identity + method        ai_bridge.identity_grants (radius | client_cert | password_failsafe, allowed_cidrs, policy)
 mesh scope / policy root    mcp.<scope>.<domain> + policy.<scope>.<domain>   (context-mesh grammar)
 ```
@@ -88,7 +88,7 @@ Rules:
 4. Deny precedence across scopes (`wardenclyffe/registry/context-mesh.yaml`
    `deny_precedence: true`).
 5. Credentials are referenced (Infisical path), never embedded
-   (`warden_infra.services.credential_ref`); brokered to `/run/warden-secrets`.
+   (`shippin_infra.services.credential_ref`); brokered to `/run/warden-secrets`.
 
 ## RRD — Reason Ready Daemon (the reranker plugin)
 
@@ -125,16 +125,16 @@ policy root-> policy.<scope>.<domain>
 tools      -> <domain>.<verb>_<object>                        e.g. qdrant.search_points, rrd.rerank
 ```
 
-A connector/plugin **is** a captured `warden_infra.services` row + (optionally) an
+A connector/plugin **is** a captured `shippin_infra.services` row + (optionally) an
 MCP server entry in `wardenclyffe/registry/context-mesh.yaml`. The service row is
 the system of record for access; the registry is the routing/scope record.
 
 ## Schema (this is established in code)
 
 `data/schema/sql/0003_designation.sql`:
-- `warden_infra.designation` enum: `connector | plugin | platform | core`.
-- `warden_infra.services.designation warden_infra.designation`.
-- `warden_infra.services.audiences text[]` (subset of operator/ai/customer), with
+- `shippin_infra.designation` enum: `connector | plugin | platform | core`.
+- `shippin_infra.services.designation shippin_infra.designation`.
+- `shippin_infra.services.audiences text[]` (subset of operator/ai/customer), with
   a CHECK that `plugin ⇒ audiences = {ai}` and `connector ⇒ operator,ai ⊆ audiences`.
 - Seeds classify the 18 captured services and add `service.rrd`.
 

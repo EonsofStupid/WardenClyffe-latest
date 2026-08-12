@@ -11,9 +11,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/wardenclyffe/cortex-mcp/internal/catalog"
-	"github.com/wardenclyffe/cortex-mcp/internal/platform"
-	"github.com/wardenclyffe/cortex-mcp/internal/protocol"
+	"github.com/shippin/cortex-mcp/internal/catalog"
+	"github.com/shippin/cortex-mcp/internal/platform"
+	"github.com/shippin/cortex-mcp/internal/protocol"
 )
 
 func main() {

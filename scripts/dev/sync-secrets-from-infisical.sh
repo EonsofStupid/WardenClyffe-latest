@@ -3,7 +3,7 @@
 # Never prints secret values.
 #
 # Requires: infisical CLI logged in (or INFISICAL_TOKEN / machine identity).
-# Default project: WARDEN_INFISICAL_PROJECT_ID or value from secrets/warden-storage-client.env
+# Default project: SHIPPIN_INFISICAL_PROJECT_ID or value from secrets/warden-storage-client.env
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
@@ -13,13 +13,13 @@ if ! command -v infisical >/dev/null 2>&1; then
   exit 1
 fi
 
-PROJECT_ID="${WARDEN_INFISICAL_PROJECT_ID:-}"
+PROJECT_ID="${SHIPPIN_INFISICAL_PROJECT_ID:-}"
 if [ -z "$PROJECT_ID" ] && [ -f secrets/warden-storage-client.env ]; then
   # shellcheck disable=SC1091
-  PROJECT_ID="$(grep -E '^WARDEN_INFISICAL_PROJECT_ID=' secrets/warden-storage-client.env | head -1 | cut -d= -f2- | tr -d "\"'")"
+  PROJECT_ID="$(grep -E '^SHIPPIN_INFISICAL_PROJECT_ID=' secrets/warden-storage-client.env | head -1 | cut -d= -f2- | tr -d "\"'")"
 fi
 PROJECT_ID="${PROJECT_ID:-4a897376-3cbd-4aeb-8550-c7d3ed7ad113}"
-ENV_NAME="${WARDEN_INFISICAL_ENV:-dev}"
+ENV_NAME="${SHIPPIN_INFISICAL_ENV:-dev}"
 
 echo "== Infisical sync =="
 echo "projectId=$PROJECT_ID env=$ENV_NAME (values not printed)"

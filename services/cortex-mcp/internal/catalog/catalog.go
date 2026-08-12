@@ -6,8 +6,8 @@ package catalog
 import (
 	"encoding/json"
 
-	"github.com/wardenclyffe/cortex-mcp/internal/platform"
-	"github.com/wardenclyffe/cortex-mcp/internal/protocol"
+	"github.com/shippin/cortex-mcp/internal/platform"
+	"github.com/shippin/cortex-mcp/internal/protocol"
 )
 
 // Catalog implements protocol.Catalog over the WardenClyffe repo.

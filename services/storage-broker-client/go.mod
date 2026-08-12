@@ -1,4 +1,4 @@
-module github.com/wardenclyffe/storage-broker-client
+module github.com/shippin/storage-broker-client
 
 go 1.25.0
 

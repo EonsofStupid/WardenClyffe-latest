@@ -1,9 +1,9 @@
 // Package account is the customer-facing Clyffe surface for WardenClyffe.
 //
 // Boundary: Clyffe is the customer plane. This store reads ONLY customer-safe
-// data — account identity (warden_core.tenants) and the customer's own orders
+// data — account identity (shippin_core.tenants) and the customer's own orders
 // (clyffe_core.orders). It must never read operator-only schemas
-// (warden_infra, warden_audit) or surface secrets; per the Clyffe boundary
+// (shippin_infra, shippin_audit) or surface secrets; per the Clyffe boundary
 // rule, operator data is reachable only through sanitized Warden endpoints.
 package account
 
@@ -44,7 +44,7 @@ type Order struct {
 // portal has something to render off the devstation.
 func (s *Store) ListAccounts(ctx context.Context) ([]Account, error) {
 	rows, err := s.db.Query(ctx,
-		`SELECT id, slug, name, created_at FROM warden_core.tenants ORDER BY created_at`)
+		`SELECT id, slug, name, created_at FROM shippin_core.tenants ORDER BY created_at`)
 	if err != nil {
 		return nil, err
 	}

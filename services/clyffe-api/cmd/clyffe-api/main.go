@@ -1,6 +1,6 @@
 // Command clyffe-api is the WardenClyffe customer-facing portal API.
 //
-// Unlike warden-api, it holds NO infrastructure authority. It serves the
+// Unlike shippin-api, it holds NO infrastructure authority. It serves the
 // customer portal, knowledge base, tickets, and CRM surfaces, reading only
 // customer-safe data. Operator/infra data is reached through sanitized Warden
 // endpoints, never directly.
@@ -18,8 +18,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
-	"github.com/wardenclyffe/clyffe-api/internal/account"
-	"github.com/wardenclyffe/clyffe-api/internal/platform"
+	"github.com/shippin/clyffe-api/internal/account"
+	"github.com/shippin/clyffe-api/internal/platform"
 )
 
 func main() {

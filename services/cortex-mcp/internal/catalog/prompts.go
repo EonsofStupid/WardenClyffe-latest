@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/wardenclyffe/cortex-mcp/internal/protocol"
+	"github.com/shippin/cortex-mcp/internal/protocol"
 )
 
 // ErrUnknownPrompt means the prompt name does not resolve.

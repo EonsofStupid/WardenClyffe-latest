@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/wardenclyffe/storage-broker-client/internal/contract"
+	"github.com/shippin/storage-broker-client/internal/contract"
 )
 
 type CLIDriver struct {

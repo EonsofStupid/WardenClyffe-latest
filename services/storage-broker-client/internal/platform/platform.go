@@ -1,5 +1,5 @@
 // Package platform holds config + HTTP helpers for storage-broker, mirroring
-// the warden-api conventions so the control plane stays consistent.
+// the shippin-api conventions so the control plane stays consistent.
 package platform
 
 import (

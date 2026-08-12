@@ -10,7 +10,7 @@ export function DataBrowserView() {
   const [table, setTable] = useState<string>("");
   const [cols, setCols] = useState<ColumnInfo[]>([]);
   const [page, setPage] = useState<RowPage | null>(null);
-  const [sql, setSql] = useState("select kind, state, count(*) from warden_infra.resources group by 1,2;");
+  const [sql, setSql] = useState("select kind, state, count(*) from shippin_infra.resources group by 1,2;");
   const [qres, setQres] = useState<QueryResult | null>(null);
   const [qerr, setQerr] = useState<string | null>(null);
 

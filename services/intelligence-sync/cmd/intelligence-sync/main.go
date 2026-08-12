@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/wardenclyffe/intelligence-sync/internal/project"
+	"github.com/shippin/intelligence-sync/internal/project"
 )
 
 func main() {

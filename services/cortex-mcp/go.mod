@@ -1,3 +1,3 @@
-module github.com/wardenclyffe/cortex-mcp
+module github.com/shippin/cortex-mcp
 
 go 1.25.0

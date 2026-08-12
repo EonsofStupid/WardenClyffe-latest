@@ -14,8 +14,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wardenclyffe/cortex-mcp/internal/platform"
-	"github.com/wardenclyffe/cortex-mcp/internal/protocol"
+	"github.com/shippin/cortex-mcp/internal/platform"
+	"github.com/shippin/cortex-mcp/internal/protocol"
 )
 
 // ErrMutationBlocked rejects non-read SurrealQL in v1.

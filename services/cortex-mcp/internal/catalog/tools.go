@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/wardenclyffe/cortex-mcp/internal/protocol"
+	"github.com/shippin/cortex-mcp/internal/protocol"
 )
 
 func schema(s string) json.RawMessage { return json.RawMessage(s) }

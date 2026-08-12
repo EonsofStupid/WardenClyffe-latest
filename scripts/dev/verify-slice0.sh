@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Prove Slice 0 endpoints are up. Does not perform start/stop (operator chooses guest).
 set -euo pipefail
-API="${WARDEN_API_URL:-http://127.0.0.1:8081}"
-CONSOLE="${WARDEN_CONSOLE_URL:-http://127.0.0.1:5173}"
+API="${SHIPPIN_API_URL:-http://127.0.0.1:8081}"
+CONSOLE="${SHIPPIN_CONSOLE_URL:-http://127.0.0.1:5173}"
 
 echo "== verify-slice0 =="
 echo "API=$API"

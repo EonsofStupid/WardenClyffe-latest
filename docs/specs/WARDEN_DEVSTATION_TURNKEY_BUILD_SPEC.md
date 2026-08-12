@@ -48,10 +48,10 @@ inventory row) or it is not installed.
 |---|---|---|
 | **Access authority (single source)** | `W:/configuration/` | `authority.yaml`, `providers/{infisical,runtime-keyring,ssh,github}.yaml`, `clients/{claude,codex}.yaml`, `agents/clyffy.yaml` — every AI-access grant is described here |
 | Secret broker (turnkey mirror of the installed authority) | `modules/warden/infrastructure/devstation/turnkey/` | `bin/warden-infisical-bootstrap`, `bin/warden-infisical-status`, `bin/warden-devstation-status`, `etc/warden/infisical/agent-config.yaml`, `systemd/warden-infisical-agent.service` (verbatim mirror of `/usr/local/bin` + `/etc` + the installed unit) |
-| Public-IP inventory | `services/warden-api/internal/edge` | table `warden_infra.public_ips` (0007); `ListIPs`/`CreateIP`/`UpdateIP`; `GET/POST/PATCH /api/warden/edge/ips` |
-| IP transition log | (existing) | `warden_infra.ip_migrations` (0004) — references inventory addresses |
+| Public-IP inventory | `services/warden-api/internal/edge` | table `shippin_infra.public_ips` (0007); `ListIPs`/`CreateIP`/`UpdateIP`; `GET/POST/PATCH /api/warden/edge/ips` |
+| IP transition log | (existing) | `shippin_infra.ip_migrations` (0004) — references inventory addresses |
 | Admin surface | `src/domains/admin/edge` | `EdgeView`, `edge.svc.ts`, `types.ts`; route `/admin/edge` |
-| Host/fleet truth | (existing) | `warden_infra.hosts`, `warden_infra.resources` |
+| Host/fleet truth | (existing) | `shippin_infra.hosts`, `shippin_infra.resources` |
 
 ## Provisioning checklist (clean clone → established)
 
@@ -79,9 +79,9 @@ inventory row) or it is not installed.
 
 ## How WardenClyffe assigns the correct host + public IP
 
-- **Host** comes from `warden_infra.hosts` / `resources` (the fleet). A new
+- **Host** comes from `shippin_infra.hosts` / `resources` (the fleet). A new
   devstation is a `resource_kind = 'devstation'` row bound to a `host_id`.
-- **Public IP** comes from `warden_infra.public_ips`: the operator adds the
+- **Public IP** comes from `shippin_infra.public_ips`: the operator adds the
   address (provider, role), then assigns it (`host_id`) and flips
   `status = active`. Re-homing an address is logged in `ip_migrations`
   (`planned → dual_homed → cutover → complete`). This is how a purchase

@@ -48,7 +48,7 @@ func LoadConfig() (Config, error) {
 	}
 	return Config{
 		RepoRoot:     root,
-		RegistryPath: filepath.Join(root, "wardenclyffe", "registry", "context-mesh.yaml"),
+		RegistryPath: filepath.Join(root, "shippin-mesh", "registry", "context-mesh.yaml"),
 		DecisionsDir: filepath.Join(root, "docs", "ai", "parking-lot", "decisions"),
 		PythonBin:    python,
 	}, nil

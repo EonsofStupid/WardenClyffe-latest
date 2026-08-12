@@ -24,7 +24,7 @@ export function WorkspacesView() {
   return (
     <div>
       <h1 className="page-title">Workspaces</h1>
-      <p className="page-sub">Fleet resources from <code>warden_infra.resources</code> — capsules &amp; devstations Warden provisions on Proxmox.</p>
+      <p className="page-sub">Fleet resources from <code>shippin_infra.resources</code> — capsules &amp; devstations Warden provisions on Proxmox.</p>
       {err && <Card title="Error"><span className="muted">{err}</span></Card>}
       {loading && <p className="muted">Loading…</p>}
       <div className="grid-cards">

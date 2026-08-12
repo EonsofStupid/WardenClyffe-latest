@@ -2,7 +2,7 @@
 # Stop processes started by run-stack / manual dev binaries on this host.
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-PIDDIR="${WARDEN_PID_DIR:-$ROOT/.dev-pids}"
+PIDDIR="${SHIPPIN_PID_DIR:-$ROOT/.dev-pids}"
 
 stop_pidfile() {
   local f="$1"
@@ -20,7 +20,7 @@ stop_pidfile() {
 }
 
 if [ -d "$PIDDIR" ]; then
-  stop_pidfile "$PIDDIR/warden-api.pid"
+  stop_pidfile "$PIDDIR/shippin-api.pid"
   stop_pidfile "$PIDDIR/clyffe-api.pid"
   stop_pidfile "$PIDDIR/console.pid"
 fi

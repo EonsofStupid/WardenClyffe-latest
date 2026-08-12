@@ -41,7 +41,7 @@ Warden (control plane) → provisions/manages → devstation (service)
 
 ```sql
 -- a human identity (operator or customer). hades is a row here.
-warden_core.subjects (
+shippin_core.subjects (
   id            uuid primary key default uuidv7(),
   email         citext unique not null,         -- == username
   display_name  text   not null,
@@ -50,8 +50,8 @@ warden_core.subjects (
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now()
 )
-warden_core.tenants ( id uuid pk default uuidv7(), slug citext unique, name text, ... )  -- exists
-warden_core.subject_tenant ( subject_id uuid, tenant_id uuid, role text, primary key (subject_id, tenant_id) )
+shippin_core.tenants ( id uuid pk default uuidv7(), slug citext unique, name text, ... )  -- exists
+shippin_core.subject_tenant ( subject_id uuid, tenant_id uuid, role text, primary key (subject_id, tenant_id) )
 identity.email_verification (
   id uuid pk default uuidv7(), subject_id uuid not null,
   token_hash bytea not null,        -- sha256(token); raw token returned once
@@ -64,7 +64,7 @@ identity.email_verification (
 
 1. `core.set_updated_at()` — BEFORE UPDATE: `NEW.updated_at = now()`.
 2. `core.touch_audit()` — AFTER INSERT/UPDATE/DELETE → append row to
-   `warden_audit.events` (actor, action, entity, before/after jsonb).
+   `shippin_audit.events` (actor, action, entity, before/after jsonb).
 3. `identity.issue_email_verification(subject)` — token = `encode(gen_random_bytes(32),'hex')`
    returned ONCE; store `digest(token,'sha256')`, `expires_at = now()+'24h'`, single-use.
 4. `identity.verify_email(token)` — match by hash, check unused+unexpired →

@@ -1,4 +1,4 @@
-module github.com/wardenclyffe/clyffe-api
+module github.com/shippin/clyffe-api
 
 go 1.25.0
 

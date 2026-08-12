@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/wardenclyffe/cortex-mcp/internal/protocol"
+	"github.com/shippin/cortex-mcp/internal/protocol"
 )
 
 // ErrUnknownResource means the cortex:// URI does not resolve.

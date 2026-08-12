@@ -278,7 +278,7 @@ fi
 cat > /etc/systemd/system/wardenclyffescale.service << EOF
 [Unit]
 Description=WardenClyffeScale - Distributed MariaDB Synchronization Manager
-Documentation=https://github.com/wardenclyffescale/wardenclyffescale
+Documentation=https://github.com/shippinscale/wardenclyffescale
 After=network.target mariadb.service
 Wants=mariadb.service
 

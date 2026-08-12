@@ -108,9 +108,9 @@ safe action names.
 Use product-bounded schemas:
 
 ```text
-warden_core
-warden_infra
-warden_audit
+shippin_core
+shippin_infra
+shippin_audit
 clyffe_core
 clyffe_support
 clyffe_kb
@@ -123,8 +123,8 @@ Use short table names inside schemas:
 ```text
 clyffe_support.tickets
 clyffe_kb.articles
-warden_infra.resources
-warden_audit.events
+shippin_infra.resources
+shippin_audit.events
 ```
 
 Avoid table names like `clyffe_support_clyffe_support_tickets`.
@@ -215,7 +215,7 @@ Database (PostgreSQL 18 baseline):
 functions: <schema>.<verb>_<object>     identity.verify_email, core.set_updated_at
 triggers:  trg_<purpose>                trg_audit, trg_set_updated_at, trg_email_reverify
 primary keys: uuid default uuidv7()
-tables: short nouns inside product-bounded schemas (warden_infra.resources)
+tables: short nouns inside product-bounded schemas (shippin_infra.resources)
 ```
 
 React / TypeScript:

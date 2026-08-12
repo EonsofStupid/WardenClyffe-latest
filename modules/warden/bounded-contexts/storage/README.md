@@ -31,7 +31,7 @@ SMB box (`10.0.0.117`) is a stopgap to be retired by this context.
   chunk store + replication (shared/quorum) + an **S3-compatible HTTP gateway**
   (axum) + CLI (mount/status/stats). This is the storage engine. Keep it Rust.
 - **Control intent (Go): `services/warden-api/internal/automation`** — already
-  does `plan → approve → execute` over `warden_core.action_requests`; the actual
+  does `plan → approve → execute` over `shippin_core.action_requests`; the actual
   resource bring-up is delegated to phase-2 executors.
 - **The seam was empty:** `services/provisioner` and `services/storage-broker-client`
   were placeholder dirs. This context fills `storage-broker-client`.
@@ -79,7 +79,7 @@ green via the Go API → script → JSON seam.
 
 ## POA&M (next, in order)
 
-1. **Persistence** — Postgres `Store` (`clyffe_core`/`warden_core`) replacing
+1. **Persistence** — Postgres `Store` (`clyffe_core`/`shippin_core`) replacing
    memory; volume rows + audit events on every transition.
 2. **Real nodes** — install `wardenclyffedisk` + the systemd template on the
    storage host; flip `STORAGE_BROKER_MODE=live`; provision a real volume.
