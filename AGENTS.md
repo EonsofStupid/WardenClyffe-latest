@@ -63,7 +63,9 @@ Use this order when you need architecture or agent context:
 10. `docs/WARDEN_ESTABLISHMENT_POAM.md` for done/needed POA&M status and next live milestones
 11. `docs/WARDEN_OPERATOR_CAPSULE.md` for the Linux-first operator workspace and secret-handling capsule
 12. `docs/WARDEN_DEVSTATION_AND_CLYFFE_CODE.md` for the private VS Code VM and future hosted coding service
-13. `docs/MASTER_CLYFFY_ROLLOUT_PLAN.md` for master.clyffy.ai, Postgres update, and Clyffy route work
+13. `docs/WARDEN_REMOTE_AGENT_STREAMS.md` for Codex/Claude remote stream launch and future app-server gates
+14. `docs/WARDEN_SHARED_STORAGE_PLAN.md` for the server1 400 GB hot-tier storage boundary and server2 migration direction
+15. `docs/MASTER_CLYFFY_ROLLOUT_PLAN.md` for master.clyffy.ai, Postgres update, and Clyffy route work
 13a. `docs/CLYFFY_MCP_ORCHESTRATOR.md` for the main Clyffy MCP orchestrator and foundation service boundaries
 13b. `docs/CLYFFY_DYNAMIC_UI_SPEC.md` for dynamic Clyffy/Clyffe UI work
 13c. `docs/CLYFFY_DYNAMIC_UI_POAM.md` for Clyffy UI milestones and sprints

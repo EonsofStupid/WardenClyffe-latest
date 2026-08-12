@@ -17,7 +17,7 @@ current Wisconsin server and the Virginia Cisco UCS C240 M5 build.
 | Stable id | Location | Hardware note | Role | Status |
 |---|---|---|---|---|
 | `host.us-wi.foundation-01` | Wisconsin | 88-core server, 128 GB RAM | first WardenClyffe foundation and AIaaS pilot | existing |
-| `host.us-va-cisco-01` | Virginia | Cisco UCS C240 M5, 96 cores | new Proxmox capacity and AIaaS expansion | building |
+| `host.us-va-cisco-01` | Virginia | Cisco UCS C240 M5/server2 build, 96 cores, 384 GB RAM target, storage-rich | new Proxmox capacity, AIaaS expansion, future storage-heavy authority | building |
 
 The exact provider, public IPs, secrets, and token values belong in secrets and
 host registry data, not in docs.
@@ -31,7 +31,7 @@ The current Wisconsin host is also the public homebase:
 | Public IP | `104.176.44.101` |
 | Public bridge | `vmbr0` |
 | Internal bridge | `vmbr1`, `10.0.0.1/24` |
-| Current public edge dependency | HTTP/HTTPS forwards to `10.0.0.100` |
+| Current public edge | HTTP/HTTPS forwards to LXC `115`, `clyffy-edge`, `10.0.0.115` |
 
 See `docs/PUBLIC_IP_HOMEBASE_FOUNDATION.md` for the domain, edge, and
 Tailscale-exit foundation notes.
@@ -70,11 +70,39 @@ roles:
   - aiaas-compute
 hardware:
   cpu_cores: 96
-  ram_gb: null
+  ram_gb: 384
+  storage_reported:
+    nvme_tb: 6.4
+    ssd:
+      count: 8
+      size_tb_each: 1.6
+    sas:
+      count: 6
+      size_tb_each: 1.6
 credentials:
   proxmox_api_token: platforms/proxmox/cisco-ucs-c240-m5-01/api-token
   ssh_key: ssh/warden-to-cisco-ucs-c240-m5-01
 ```
+
+## Shared Storage Boundary
+
+The near-term shared storage authority is a 400 GiB Warden hot tier carved from
+server1 and exposed internally as `warden-shared-storage-01` on LXC `117`
+(`10.0.0.117`).
+
+The workstation, Warden Operator Capsule, Warden Devstation, and main Clyffy VM
+are clients. The workstation external drive is not authoritative storage.
+
+Server2 should become the storage-heavy authority after its NVMe, SSD, SAS,
+memory, and Proxmox inventory are verified by Warden. Keep hot workspaces,
+active VM disks, and model caches on NVMe/SSD. Use SAS for backup, archive,
+cold dataset, artifact, and replication workloads.
+
+Local WSL should mount it at `/mnt/warden/storage` with `~/warden-storage` as a
+convenience symlink. Devstation/capsule/server-side clients use
+`/workspace/warden-storage`.
+
+See `docs/WARDEN_SHARED_STORAGE_PLAN.md`.
 
 ## Idempotent Onboarding Pipeline
 

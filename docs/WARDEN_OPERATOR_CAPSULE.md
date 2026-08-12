@@ -8,6 +8,7 @@ wardenclyffe_touchpoint:
   reads:
     - docs/WARDEN_ESTABLISHMENT_POAM.md
     - docs/HOST_FLEET_AND_ONBOARDING.md
+    - docs/WARDEN_REMOTE_AGENT_STREAMS.md
     - modules/warden/infrastructure/operator-capsule/README.md
     - modules/warden/infrastructure/operator-access/README.md
 ---
@@ -50,6 +51,7 @@ Verified on 2026-05-22:
 | Working tree | `/workspace/WardenClyffe-latest` |
 | Private exports | `/workspace/private-exports`, gitignored |
 | Agent CLIs | `codex`, `claude`, `infisical` installed under `wardenop` |
+| Stream multiplexer | `tmux 3.5a` |
 | Baseline status | `warden-capsule-status` |
 
 Windows PowerShell is now a launcher/bridge only for Warden live infrastructure
@@ -77,6 +79,10 @@ Those launchers SSH to `capsule.clyffy.ai`, enter
 `/workspace/WardenClyffe-latest`, and start the agent inside the capsule. The
 agent runtime is therefore Linux-first and secret-contained while the desktop
 is only the display/keyboard layer.
+
+The launchers use `scripts/agents/warden-agent-stream.sh`. The capsule now has
+`tmux`, so Codex/Claude streams can attach to persistent sessions just like the
+devstation.
 
 ## What Smart Teams Use
 
@@ -143,6 +149,26 @@ export WARDEN_SECRET_VIEW_ALLOWED=1
 - Repo `.gitignore` must exclude private exports and secret paths.
 - Any private export kept longer than bootstrap should be encrypted or moved to
   the secret backup location.
+
+### Shared Storage Bridge
+
+Verified on 2026-05-27:
+
+- The capsule remains an unprivileged LXC and does not kernel-mount
+  `/workspace/warden-storage`.
+- Use brokered `smbclient` or `rsync` for shared storage access from the
+  capsule.
+- Capsule hosts `/home/wardenop/bin/warden-storage-secret-broker` for
+  devstation remounts. The devstation key is restricted in `authorized_keys`
+  with `from="10.0.0.116"`, `restrict`, and a forced command.
+- The broker accepts only the original command `warden-storage-read-secret`.
+  Plain manual SSH to that broker key is rejected.
+- A brokered `smbclient` check read
+  `projects/WardenClyffe-latest/AGENTS.md` from
+  `//10.0.0.117/warden-storage` using an Infisical-sourced temporary credential
+  file that was removed after use.
+- Do not make the capsule a daily coding workspace. It is for
+  secret-sensitive operator work.
 
 ### Audit
 

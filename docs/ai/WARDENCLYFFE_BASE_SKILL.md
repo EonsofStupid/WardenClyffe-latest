@@ -52,21 +52,23 @@ Use this order when sources disagree:
 9. `docs/WARDEN_ESTABLISHMENT_POAM.md`.
 10. `docs/WARDEN_OPERATOR_CAPSULE.md`.
 11. `docs/WARDEN_DEVSTATION_AND_CLYFFE_CODE.md`.
-12. `docs/MASTER_CLYFFY_ROLLOUT_PLAN.md`.
-13. `docs/CLYFFY_MCP_ORCHESTRATOR.md`.
-14. `docs/CLYFFY_DYNAMIC_UI_SPEC.md`.
-15. `docs/CLYFFY_DYNAMIC_UI_POAM.md`.
-16. `docs/CLYFFE_CODE_TURNKEY_SERVICE_SPEC.md`.
-17. `docs/FOUNDATION_APP_RESEARCH_2026_05.md`.
-18. `docs/WARDEN_CLYFFE_ARCHITECTURE.md`.
-19. `docs/WARDEN_CLYFFE_PILOT_ROADMAP.md`.
-20. `wardenclyffe/REGISTRY.md` and `wardenclyffe/registry/context-mesh.yaml`
+12. `docs/WARDEN_REMOTE_AGENT_STREAMS.md`.
+13. `docs/WARDEN_CLOUDFLARE_DNS_FOUNDATION.md`.
+14. `docs/MASTER_CLYFFY_ROLLOUT_PLAN.md`.
+15. `docs/CLYFFY_MCP_ORCHESTRATOR.md`.
+16. `docs/CLYFFY_DYNAMIC_UI_SPEC.md`.
+17. `docs/CLYFFY_DYNAMIC_UI_POAM.md`.
+18. `docs/CLYFFE_CODE_TURNKEY_SERVICE_SPEC.md`.
+19. `docs/FOUNDATION_APP_RESEARCH_2026_05.md`.
+20. `docs/WARDEN_CLYFFE_ARCHITECTURE.md`.
+21. `docs/WARDEN_CLYFFE_PILOT_ROADMAP.md`.
+22. `wardenclyffe/REGISTRY.md` and `wardenclyffe/registry/context-mesh.yaml`
    for the Go-side Warden/intelligence mesh.
-21. `docs/ai/INTELLIGENCE_LAYER_MODERNIZATION.md` for the Markdown-as-touchpoint,
+23. `docs/ai/INTELLIGENCE_LAYER_MODERNIZATION.md` for the Markdown-as-touchpoint,
    generated-stores-as-memory rule.
-22. `docs/ai/SURREALDB_INTELLIGENCE_PROJECTION_V2.md` for the dynamic
+24. `docs/ai/SURREALDB_INTELLIGENCE_PROJECTION_V2.md` for the dynamic
    SurrealDB projection and context-pack plan.
-23. Wrapper files such as `CLAUDE.md` and `.cursor/rules/*.mdc`.
+25. Wrapper files such as `CLAUDE.md` and `.cursor/rules/*.mdc`.
 
 Wrappers are pointers. They are not authorities.
 

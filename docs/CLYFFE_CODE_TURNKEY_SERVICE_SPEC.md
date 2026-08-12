@@ -85,6 +85,7 @@ the Virginia host once it is registered.
 | Workspace VM | Proxmox VM cloned from clean template | Warden workspace scheduler |
 | Editor launch | VS Code/Cursor Remote-SSH | Clyffe Connect one-click open |
 | Browser fallback | private `code-server` tunnel | OIDC-gated browser IDE where allowed |
+| Agent launch | Warden `/agent-workspaces` copy-command launchers | audited open-intent actions through Warden tasks |
 | Dependency setup | repo scripts and devcontainer metadata | Warden preflight and project profiles |
 | Secrets | Infisical brokered to runtime files | Warden Secrets facade over Infisical/OpenBao-compatible broker |
 | Preview ports | SSH tunnel/manual | Warden-managed preview intent and edge routing |

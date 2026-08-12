@@ -40,10 +40,10 @@ Read-only checks on 2026-05-22 found:
 | Internal bridge | `vmbr1`, `10.0.0.1/24` |
 | Postgres VMID | LXC `110`, `clyffy-pg-master`, `10.0.0.110/24`, tags `adr0017;clyffy-master;pg;plane-b` |
 | Planned app VMID | LXC `120`, not present yet |
-| Planned edge VMID | LXC `115`, not present yet |
-| Legacy edge | VM `501`, still running but documented as dead/decommissioning |
+| Public edge VMID | LXC `115`, `clyffy-edge`, `10.0.0.115` |
+| Legacy edge | VM `501`, still running but removed from public NAT |
 | `master.clyffy.ai` public DNS | no public A record found |
-| `clyffy.ai` public DNS | Cloudflare proxied records exist, but origin route/cert is incomplete |
+| `clyffy.ai` public DNS | Cloudflare proxied records reach `clyffy-edge` `/healthz` |
 
 This means `master.clyffy.ai` cannot be completed by DNS alone. It needs the
 internal app target, edge route, TLS, and identity path to exist.
@@ -183,9 +183,9 @@ Goal: stop adding new routes to VM `501`.
 
 Preferred path:
 
-1. Build LXC `115` as the dedicated Caddy edge.
-2. Move current working routes from VM `501` to LXC `115`.
-3. Make PVE host firewall/NAT forward `:80` and `:443` to LXC `115`.
+1. LXC `115` is the dedicated Caddy edge.
+2. Current public HTTP/HTTPS routing has moved from VM `501` to LXC `115`.
+3. PVE host firewall/NAT forwards `:80` and `:443` to LXC `115`.
 4. Render Caddy routes from Warden route intent instead of hand-maintained
    one-off files.
 5. Add health checks and rollback for every hostname.
@@ -206,16 +206,19 @@ Cloudflare public record:
 master.clyffy.ai. A 104.176.44.101
 ```
 
-Helper script:
+Preferred helper script:
 
-```powershell
-.\scripts\upsert-master-clyffy-cloudflare.ps1
-.\scripts\upsert-master-clyffy-cloudflare.ps1 -Apply
+```bash
+scripts/dns/upsert-cloudflare-a-record.sh \
+  --zone-name clyffy.ai \
+  --name master.clyffy.ai \
+  --target 104.176.44.101
 ```
 
-The helper expects the Cloudflare token in `CLOUDFLARE_API_TOKEN` unless
-`-TokenEnv` is used. Run it without `-Apply` first; it does not read Infisical
-itself.
+The Linux helper reads the canonical Infisical secret
+`WARDEN_CLOUDFLARE_DNS_ADMIN` when `CLOUDFLARE_API_TOKEN` is not already set.
+Run it without `--apply` first. Apply only after the backend and edge route
+answer.
 
 Proxy mode should match the TLS and Caddy plan:
 

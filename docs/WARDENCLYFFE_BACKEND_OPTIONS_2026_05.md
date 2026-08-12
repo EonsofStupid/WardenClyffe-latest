@@ -122,11 +122,13 @@ This is the most boring SaaS/control-plane path.
 
 ### Track B: MariaDB-first product core
 
-Use MariaDB for Warden/Clyffe core to preserve existing Rust direction.
+This track is parked for the Warden/Clyffe product core.
 
 This is reasonable if the product center of gravity is database replication and
-managed MySQL/MariaDB services. It needs a deliberate tenant/RBAC pattern to
-match what Postgres RLS gives more naturally.
+managed MySQL/MariaDB services, but that is not the current foundation
+direction. It needs a deliberate tenant/RBAC pattern to match what Postgres RLS
+gives more naturally, and it should not be selected merely to preserve older
+Rust/MariaDB code.
 
 ### Track C: SurrealDB-heavy AI/control hybrid
 

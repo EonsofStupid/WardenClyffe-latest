@@ -8,6 +8,7 @@ wardenclyffe_touchpoint:
   reads:
     - docs/WARDEN_ESTABLISHMENT_POAM.md
     - docs/WARDEN_OPERATOR_CAPSULE.md
+    - docs/WARDEN_REMOTE_AGENT_STREAMS.md
     - docs/CLYFFE_CODE_TURNKEY_SERVICE_SPEC.md
     - modules/warden/infrastructure/devstation/README.md
 ---
@@ -52,6 +53,7 @@ Verified on 2026-05-22:
 | Memory | 16 GiB, balloon floor 8 GiB |
 | Disk | 160 GiB on `local-lvm` |
 | Workspace | `/workspace/WardenClyffe-latest` |
+| Shared workspace launch path | `/workspace/warden-storage/projects/WardenClyffe-latest` |
 | Status helper | `warden-devstation-status` |
 | Hosted editor helper | `warden-devstation-code-status` |
 | Initial snapshot | `initial-devstation-toolchain-20260522` |
@@ -79,13 +81,44 @@ The first devstation includes:
 - Private `code-server` hosted editor with Rust, Go, Python, YAML, and TOML
   extensions seeded.
 
+## Shared Storage
+
+The devstation keeps its local workspace at `/workspace/WardenClyffe-latest`.
+The Warden shared storage client path is mounted at:
+
+```text
+/workspace/warden-storage
+```
+
+Use that mount for portable project sync, artifacts, model/dataset caches, and
+agent-portable config. Do not move the devstation OS, personal auth state, or
+live database primary data onto the shared mount.
+
+Verified on 2026-05-27:
+
+| Check | Result |
+|---|---|
+| Mount | `//10.0.0.117/warden-storage` at `/workspace/warden-storage`, about `371 GiB` available |
+| Shared project | `/workspace/warden-storage/projects/WardenClyffe-latest` |
+| Shared project commit | verify with `git rev-parse --short HEAD` after each sync |
+| Shared project status | clean with `git status --short --ignore-submodules=dirty` |
+| Storage client | `/usr/local/bin/warden-storage` |
+| Storage config | `/etc/warden/storage-client.env`, no secrets |
+| Storage service | `warden-storage.service` enabled and active |
+| Storage broker | restricted `warden-storage-broker` SSH key to capsule forced command |
+| Codex CLI | `codex-cli 0.133.0` |
+| Claude Code | `2.1.148` |
+| Agent stream helper | `scripts/agents/warden-agent-stream.sh` |
+| Infisical CLI | `0.43.86` |
+| GitHub CLI auth | not logged in yet; run `gh auth login` from devstation before GitHub write/push work |
+
 ## Connection Model
 
 Use the local desktop only as the client:
 
 ```bash
 ssh warden-devstation
-cd /workspace/WardenClyffe-latest
+cd /workspace/warden-storage/projects/WardenClyffe-latest
 warden-devstation-status
 ```
 
@@ -93,7 +126,7 @@ For VS Code or Cursor:
 
 ```text
 Remote-SSH target: devstation.clyffy.ai
-Workspace: /workspace/WardenClyffe-latest
+Workspace: /workspace/warden-storage/projects/WardenClyffe-latest
 ```
 
 The legacy alias `warden-devstation` remains valid. The friendly
@@ -106,7 +139,22 @@ Local launch helpers:
 ```cmd
 scripts\local\open-warden-devstation-vscode.cmd
 scripts\local\open-warden-devstation-cursor.cmd
+scripts\local\open-warden-devstation-codex.cmd
+scripts\local\open-warden-devstation-claude.cmd
 ```
+
+Warden Go exposes the same first-class launch surface at `/agent-workspaces`.
+The page renders desktop-app, devstation-agent, and capsule-agent launch
+commands without exposing secrets.
+
+Agent launchers use `scripts/agents/warden-agent-stream.sh` so Codex and
+Claude Code run on the remote Linux host. On devstation that helper attaches
+to a persistent `tmux` session when available; on hosts without `tmux`, it
+falls back to a direct SSH TTY stream.
+
+See `docs/WARDEN_REMOTE_AGENT_STREAMS.md` for the full remote-agent contract,
+including why Codex CLI app-server remote mode remains experimental until
+Warden owns tunnel, token, session, and audit policy.
 
 For the private browser IDE:
 
@@ -117,7 +165,7 @@ ssh code.devstation.clyffy.ai
 Then open:
 
 ```text
-http://127.0.0.1:18080/?folder=/workspace/WardenClyffe-latest
+http://127.0.0.1:18080/?folder=/workspace/warden-storage/projects/WardenClyffe-latest
 ```
 
 `code.devstation.clyffy.ai` is an SSH config alias that forwards local desktop

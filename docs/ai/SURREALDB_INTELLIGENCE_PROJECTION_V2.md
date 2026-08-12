@@ -156,7 +156,8 @@ Warden should show:
 5. Run one read-only projection pass against local docs.
 6. Add Qdrant upsert behind a flag.
 7. Add Warden UI read models.
-8. Promote the schema into the Go/Rust Warden control plane after review.
+8. Promote the schema into the Go Warden control plane after review; any
+   future Rust consumer follows the Go-verified contract.
 
 ## Do Not Do
 

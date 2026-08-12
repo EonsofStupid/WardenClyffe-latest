@@ -25,7 +25,8 @@ customer-safe routes and service records through Warden APIs.
 
 ## Current Verified State
 
-Read-only probes on 2026-05-22 confirmed:
+Read-only probes on 2026-05-22 confirmed the host shape. The public edge route
+was cut over on 2026-05-26.
 
 | Item | Current fact |
 |---|---|
@@ -33,17 +34,19 @@ Read-only probes on 2026-05-22 confirmed:
 | Public IP | `104.176.44.101` |
 | Public bridge | `vmbr0`, `104.176.44.101/26`, gateway `104.176.44.126`, bridge port `nic0` |
 | Internal bridge | `vmbr1`, `10.0.0.1/24`, NAT out through `vmbr0` |
-| Current HTTP/HTTPS forward | PVE node firewall forwards `:80` and `:443` from `vmbr0` to `10.0.0.100` |
-| Current extra public forward | PVE node firewall forwards TCP `:5432` from `vmbr0` to `10.0.0.100`; this must be audited before it is treated as intentional |
+| Current HTTP/HTTPS forward | `warden-edge-nat.service` forwards `vmbr0:80` and `vmbr0:443` to LXC `115` / `10.0.0.115` |
+| Removed legacy public forward | VM `501` / `10.0.0.100` no longer receives public `:80`, `:443`, or `:5432` DNAT |
+| Public edge TLS | Caddy `v2.11.3` uses Cloudflare DNS-01 ACME with Let's Encrypt `E8` certs for `clyffy.ai`, `rrflow.ai`, `probablydns.com`, and `effing.ai` |
+| Rollback material | `/root/warden-edge-cutover/20260526T193646Z/rollback.sh` on `server1` |
 
 Current public probes:
 
 | FQDN | DNS state | Public probe | Notes |
 |---|---|---|---|
-| `warden.rrflow.ai` | A record to `104.176.44.101` | `303` to `/login` | Warden is reachable |
+| `warden.rrflow.ai` | A record to `104.176.44.101` | `200` login HTML via `clyffy-edge` -> `10.0.0.102:9006` | Warden is reachable |
 | `porter.rrflow.ai` | A record to `104.176.44.101` | `200` status response | Caddy/Porter is reachable |
 | `auth.rrflow.ai` | A record to `104.176.44.101` | `302` to Authentik flow | Authentik is reachable |
-| `clyffy.ai` | Cloudflare proxied records | `525` SSL handshake error | Origin/certificate/route is not foundation-complete |
+| `clyffy.ai` | Cloudflare proxied records | `200` at `/healthz` | Served by `clyffy-edge` with ACME DNS-01 origin TLS |
 | `master.clyffy.ai` | no public A record found | NXDOMAIN | not provisioned |
 | `observatory.clyffy.ai` | no public A record found | NXDOMAIN | not provisioned |
 | `clyffydb.probablydns.com` | A record to `104.176.44.101` | `401` from Kong | reachable but should be reviewed for public exposure |
@@ -51,11 +54,8 @@ Current public probes:
 ## Important Source Conflict
 
 The Go-side routing spec still describes Porter/Caddy on VM `501` as the live
-edge. `wardenclyffe/docs/infra-state.md` marks VM `501` / Fozzy as dead or
-decommissioning and says a new edge LXC is pending.
-
-Until this is reconciled, all domain work should treat the current public edge
-as functional but not final.
+edge. That is now stale. Public HTTP/HTTPS is on LXC `115` `clyffy-edge`; VM
+`501` is no longer in the public route path.
 
 ## Homebase Ingress Contract
 
@@ -89,6 +89,8 @@ overlay-only once Warden is reliable.
 Use the existing ADR direction until a newer ADR replaces it:
 
 - Cloudflare is the current public DNS provider for managed public records.
+- The canonical Warden Cloudflare DNS token is the Clyffy Infisical secret
+  `WARDEN_CLOUDFLARE_DNS_ADMIN`.
 - PowerDNS is the intended programmable authoritative source for internal zone
   truth.
 - OPNsense Unbound is the intended recursive and split-horizon resolver.
@@ -171,13 +173,13 @@ Do not remove Tailscale from a critical path until these gates pass:
 
 ## Foundation Work Order
 
-1. Reconcile VM `501`: either bless it as current edge or replace it with the
-   planned edge LXC.
-2. Remove or justify the public TCP `:5432` forward.
+1. Finish the Fozzy deletion gate now that public routing is on LXC `115`.
+2. Keep public TCP `:5432` removed unless Warden explicitly owns a future route.
 3. Create a Warden edge context that owns public ingress, route inventory, TLS,
    and domain health.
 4. Promote domain route data from Go-side registries into the root Warden model.
-5. Fix `clyffy.ai` before using it as a customer or master entry point.
+5. Use the verified Caddy/Cloudflare DNS-01 edge before adding customer or
+   master routes.
 6. Add Warden UI panels for domains, routes, certs, edge health, and public IP
    exposure.
 7. Add remote host onboarding for the Virginia server using read-only Proxmox
@@ -195,5 +197,5 @@ Key contract:
 - public Cloudflare `master.clyffy.ai` should target `104.176.44.101`.
 - internal PowerDNS `master.clyffy.ai` should target the app LXC on `vmbr1`.
 - the app target is planned as LXC `120` at `10.0.0.120`.
-- the clean public edge is planned as LXC `115`; VM `501` is only a conscious
-  temporary fallback.
+- the clean public edge is LXC `115`; VM `501` should not receive new public
+  routes.

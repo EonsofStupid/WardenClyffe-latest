@@ -59,7 +59,7 @@ DNS, backups, and Warden audit are configured as gates below.
 | VMID | Guest | Current role | Keep / replace | Configuration still owed | Customer-service readiness |
 |---|---|---|---|---|---|
 | `101` | `buffer` | Apt-Cacher-NG estate package cache | Keep | document cache policy and backup if config matters | internal utility only |
-| `102` | `warden` | Warden Go server manager, public at `warden.rrflow.ai` | Keep, then absorb into Rust/root Warden direction | OIDC with Authentik, Proxmox reconciler cron, audit hardening, backup config, Clyffe-safe API boundary | operator-useful, not customer-ready |
+| `102` | `warden` | Warden Go server manager, public at `warden.rrflow.ai` | Keep and make Go Warden the active implementation authority; Rust is parked/reference | OIDC with Authentik, Proxmox reconciler cron, audit hardening, backup config, Clyffe-safe API boundary | operator-useful, not customer-ready |
 | `103` | `authentik` | Identity provider | Keep for foundation | passkey enrolment, recovery codes, realm separation, OIDC clients, policy bindings, custom claims, step-ca cert, blueprints, backups, Infisical mirrors | good choice once configured |
 | `104` | `surreal` | AI state and graph/reasoning projection | Keep as AI plane, not product truth | root rotation, schema cleanup, sync contracts, public-safe Warden proxy route, cloud export/import after endpoint resumes | local backups and persistence fixed; publish only through Caddy/Auth/Warden policy proxy |
 | `105` | `nomad` | Scheduler, scope unclear | Park until scope is documented | decide what belongs in Nomad vs systemd/LXC-native; verify network gateway anomaly | not a customer foundation until scoped |
@@ -68,14 +68,14 @@ DNS, backups, and Warden audit are configured as gates below.
 | `108` | `clyffy-stepca` | Internal CA | Keep | cold-store root, ACME smoke test, backups, cert issuance runbooks, trust propagation | foundation-critical |
 | `109` | `clyffy-pdns` | PowerDNS authoritative | Keep | load all zones, Cloudflare sync job, API restriction, backups, DNSSEC/CAA/DS policy | solid once configured |
 | `110` | `clyffy-pg-master` | Postgres control-plane/userdata candidate | Keep as product truth direction | migrations, backup, replication/mirror strategy, ownership schema | correct foundation DB direction |
-| `111` | `edge` | Intended OPNsense network boundary | Keep if audit confirms config | live config audit, WAN/LAN mapping, WireGuard, ACL groups, Unbound split-horizon, firewall rules, config backups, Warden API token | required before real customers |
+| `111` | `edge` | Existing boundary VM; not the standalone Caddy service | Keep if audit confirms config | live config audit, WAN/LAN mapping, WireGuard, ACL groups, Unbound split-horizon, firewall rules, config backups, Warden API token | required before real customers |
 | `112` | `clyffy-bifrost` | LLM gateway | Keep | provider keys, Observatory wrapping, analytics, rate limits | internal AI service until tenant policy exists |
 | `113` | `observatory` | WardenClyffe-owned Helicone-like LLM observability | Keep if maintained internally | OIDC gate through Authentik, deploy completion, trace ingestion, retention, backups, Better Auth boundary if embedded in apps | useful for AIaaS operations |
 | `114` | `warden-operator-capsule` | Secret-safe Linux operator capsule | Keep | brokered secrets, restricted operator path, audit hardening | internal operator-only |
 | `116` | `warden-devstation-01` | Private VS Code/Cursor/Codex/Claude devstation with SSH-tunneled code-server | Keep | backup policy, WardenNet access, future Warden UI lifecycle controls | internal operator-only; Clyffe Code seed pattern |
-| `115` | proposed `clyffy-edge` | Dedicated Caddy public edge | Build next | provision LXC, move Caddy off VM `501`, render routes from registry, health probes, rollback | required for customer domains |
+| `115` | `clyffy-edge` | Dedicated standalone Caddy public edge | Keep | Caddy `v2.11.3`, Cloudflare DNS-01 ACME, `10.0.0.115`, public `80/443` active, `/healthz` and edge metadata OK, rollback and TLS snapshot captured | required for customer domains |
 | `120` | proposed `clyffy-portal` | Clyffe/Clyffy customer/master surface | Build later | depends on identity, DNS, edge, CA, Warden API, Postgres schema | not started |
-| `500/501` | `fozzy` / `Fozzy` | dead legacy Coolify/Traefik/Caddy edge dependency | Replace | stop depending on it for public routing; migrate routes to LXC `115`; audit public forwards | not acceptable as final foundation |
+| `500/501` | `fozzy` / `Fozzy` | dead legacy Coolify/Traefik/Caddy edge dependency | Ready to delete after dependency check | public `80/443/5432` removed from VM `501`; verify no private dependency remains | not acceptable as final foundation |
 
 ## App Choice Guidance
 
@@ -120,7 +120,7 @@ A mistaken identity claim can still be bounded by VLAN/firewall policy.
 
 ## Required Gates Before Customer Service
 
-1. Move public edge off dead VM `501` to dedicated Caddy LXC `115`.
+1. Delete/decommission VM `501` after confirming no private dependency remains.
 2. Audit/remove/justify public TCP `:5432` exposure.
 3. Confirm VM `111` OPNsense live config and make it the boundary authority.
 4. Configure WireGuard and split-horizon DNS through OPNsense Unbound.
