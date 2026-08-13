@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "../../../../lib/design";
 import { clyffeCodeService } from "../code.svc";
-import type { CustomerWorkspace } from "../types";
+import { AGENT_LABELS, type CustomerWorkspace } from "../types";
 import { ClyffeCodeShell } from "./ClyffeCodeShell";
 
 function StateLabel({ state }: { state: CustomerWorkspace["state"] }) {
@@ -106,7 +106,7 @@ export function ClyffeCodeHomeView() {
             <div className="cc-agents">
               {w.agents.map((a) => (
                 <span key={a} className="cc-agent">
-                  {a}
+                  {AGENT_LABELS[a] ?? a}
                 </span>
               ))}
             </div>

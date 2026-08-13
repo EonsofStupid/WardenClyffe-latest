@@ -3,15 +3,15 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Button, Card, Field, Select } from "../../../../lib/design";
 import { clyffeCodeService } from "../code.svc";
 import { TIER_OPTIONS } from "../mock-data";
-import type { AgentReady, WorkspaceTier } from "../types";
+import { AGENT_LABELS, ALL_AGENTS, type AgentReady, type WorkspaceTier } from "../types";
 import { ClyffeCodeShell } from "./ClyffeCodeShell";
 
-const AGENTS: { id: AgentReady; label: string }[] = [
-  { id: "claude", label: "Claude" },
-  { id: "codex", label: "Codex" },
-  { id: "grok", label: "Grok" },
-  { id: "cursor-remote", label: "Cursor remote" },
-];
+// Derived from the seat list rather than typed out again, so a seat can only be
+// offered here if the engine actually has an adapter for it.
+const AGENTS: { id: AgentReady; label: string }[] = ALL_AGENTS.map((id) => ({
+  id,
+  label: AGENT_LABELS[id],
+}));
 
 export function OrderWorkspaceView() {
   const nav = useNavigate();
@@ -19,7 +19,7 @@ export function OrderWorkspaceView() {
   const [tier, setTier] = useState<WorkspaceTier>("builder");
   const [repo, setRepo] = useState("");
   const [region, setRegion] = useState("us-east");
-  const [agents, setAgents] = useState<AgentReady[]>(["claude", "codex", "grok", "cursor-remote"]);
+  const [agents, setAgents] = useState<AgentReady[]>([...ALL_AGENTS]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 

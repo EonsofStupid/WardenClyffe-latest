@@ -43,7 +43,7 @@ export const clyffeCodeService = {
       region: input.region,
       repo: input.repo,
       connectTarget: "customer-devstation",
-      agents: input.agents.length ? input.agents : ["claude", "cursor-remote"],
+      agents: input.agents.length ? input.agents : ["claude", "cursor"],
       cores: t.cores,
       memoryGiB: t.memoryGiB,
       diskGiB: t.diskGiB,

@@ -18,6 +18,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -25,10 +27,11 @@ import (
 )
 
 type app struct {
-	db         *pgxpool.Pool
-	cookieName string
-	ttl        time.Duration
-	secure     bool
+	db           *pgxpool.Pool
+	cookieName   string
+	ttl          time.Duration
+	secure       bool
+	projectsRoot string
 }
 
 func env(key, fallback string) string {
@@ -51,10 +54,11 @@ func main() {
 		log.Fatalf("db: %v", err)
 	}
 	a := &app{
-		db:         pool,
-		cookieName: env("SHIPPIN_AUTH_COOKIE", "shippin_session"),
-		ttl:        ttl,
-		secure:     env("SHIPPIN_AUTH_SECURE_COOKIE", "1") == "1",
+		db:           pool,
+		cookieName:   env("SHIPPIN_AUTH_COOKIE", "shippin_session"),
+		ttl:          ttl,
+		secure:       env("SHIPPIN_AUTH_SECURE_COOKIE", "1") == "1",
+		projectsRoot: env("DEVFORGE_PROJECTS_ROOT", "/workspace/warden-storage/projects"),
 	}
 
 	mux := http.NewServeMux()
@@ -62,6 +66,7 @@ func main() {
 	mux.HandleFunc("GET /auth/login", a.loginForm)
 	mux.HandleFunc("POST /auth/login", a.login)
 	mux.HandleFunc("GET /auth/logout", a.logout)
+	mux.HandleFunc("GET /projects", a.chooser)
 	mux.HandleFunc("GET /auth/healthz", func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 	})
@@ -224,6 +229,99 @@ func (a *app) login(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteLaxMode,
 	})
 	http.Redirect(w, r, next, http.StatusFound)
+}
+
+type projectItem struct {
+	Name string
+	Path string
+}
+
+var chooserTmpl = template.Must(template.New("chooser").Parse(`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open a project — DevForge</title>
+<style>
+	:root { color-scheme: dark; }
+	* { box-sizing: border-box; margin: 0; }
+	body {
+		min-height: 100vh; padding: 4rem 1.5rem;
+		background: radial-gradient(1200px 600px at 20% -10%, #16233a 0%, #0b1220 55%, #070d18 100%);
+		color: #e6edf3; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+	}
+	.wrap { max-width: 880px; margin: 0 auto; }
+	header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: .35rem; }
+	h1 { font-size: 1.4rem; letter-spacing: .3px; }
+	.logout { color: #7f8ea3; font-size: .8rem; text-decoration: none; }
+	.logout:hover { color: #cbd5e1; }
+	p.sub { color: #8b98ab; font-size: .9rem; margin-bottom: 2rem; }
+	.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: .9rem; }
+	a.card {
+		display: block; padding: 1rem 1.1rem; text-decoration: none;
+		background: rgba(17, 26, 44, 0.85); border: 1px solid #223047; border-radius: 12px;
+		color: #e6edf3; transition: border-color .12s, transform .12s, background .12s;
+	}
+	a.card:hover { border-color: #3b82f6; background: rgba(23, 35, 58, 0.95); transform: translateY(-1px); }
+	.name { font-weight: 600; font-size: 1rem; }
+	.path { color: #6b7a90; font-size: .72rem; margin-top: .3rem; word-break: break-all; }
+	.empty { color: #8b98ab; }
+</style>
+</head>
+<body>
+<div class="wrap">
+	<header>
+		<h1>DevForge</h1>
+		<a class="logout" href="/auth/logout">Sign out</a>
+	</header>
+	<p class="sub">Choose a project to open.</p>
+	{{if .Items}}
+	<div class="grid">
+		{{range .Items}}<a class="card" href="/?folder={{.Path}}"><div class="name">{{.Name}}</div><div class="path">{{.Path}}</div></a>
+		{{end}}
+	</div>
+	{{else}}
+	<p class="empty">No projects found under the projects root.</p>
+	{{end}}
+</div>
+</body>
+</html>`))
+
+// chooser lists project folders under projectsRoot and links each to /?folder=<path>,
+// which the IDE opens directly. Session-gated (nginx also gates /projects).
+func (a *app) chooser(w http.ResponseWriter, r *http.Request) {
+	if a.subjectForRequest(r) == "" {
+		http.Redirect(w, r, "/auth/login?next=/projects", http.StatusFound)
+		return
+	}
+	entries, err := os.ReadDir(a.projectsRoot)
+	if err != nil {
+		http.Error(w, "cannot list projects", http.StatusInternalServerError)
+		return
+	}
+	items := make([]projectItem, 0, len(entries))
+	for _, e := range entries {
+		name := e.Name()
+		if strings.HasPrefix(name, ".") {
+			continue
+		}
+		isDir := e.IsDir()
+		if !isDir {
+			// Follow symlinks that point at directories.
+			if st, serr := os.Stat(filepath.Join(a.projectsRoot, name)); serr == nil {
+				isDir = st.IsDir()
+			}
+		}
+		if !isDir {
+			continue
+		}
+		items = append(items, projectItem{Name: name, Path: filepath.Join(a.projectsRoot, name)})
+	}
+	sort.Slice(items, func(i, j int) bool {
+		return strings.ToLower(items[i].Name) < strings.ToLower(items[j].Name)
+	})
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	_ = chooserTmpl.Execute(w, map[string]any{"Items": items})
 }
 
 func (a *app) logout(w http.ResponseWriter, r *http.Request) {

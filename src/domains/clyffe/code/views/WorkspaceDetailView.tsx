@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { Button, Card } from "../../../../lib/design";
 import { clyffeCodeService } from "../code.svc";
-import type { CustomerWorkspace } from "../types";
+import { AGENT_LABELS, type CustomerWorkspace } from "../types";
 import { ClyffeCodeShell } from "./ClyffeCodeShell";
 
 export function WorkspaceDetailView() {
@@ -123,7 +123,7 @@ export function WorkspaceDetailView() {
           <div className="cc-agents">
             {ws.agents.map((a) => (
               <span key={a} className="cc-agent">
-                {a}
+                {AGENT_LABELS[a] ?? a}
               </span>
             ))}
           </div>
