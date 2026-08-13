@@ -291,3 +291,162 @@
   border: 1px solid oklch(70% 0.1 85 / 0.4);
   color: oklch(90% 0.06 85);
 }
+
+/* --- Live engine chat -------------------------------------------------------
+   The transcript uses the Automaton palette (`--at-*`, vendored in
+   automaton-theme.css) rather than the Clyffe surface tokens, so a seat is the
+   same colour here as it is in the Zellij pane. The frame around it stays
+   Clyffe's. */
+
+.cc-detail-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--wc-s4);
+  margin-bottom: var(--wc-s5);
+}
+.cc-detail-head h1 {
+  margin: 0 0 0.2rem;
+}
+
+.cc-chat-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--wc-s4);
+  align-items: flex-end;
+}
+
+.cc-chat-hint {
+  font-size: var(--wc-fs-xs);
+  margin: var(--wc-s3) 0 0;
+}
+
+.cc-log {
+  font-family: var(--wc-font-mono, ui-monospace, "JetBrains Mono", monospace);
+  font-size: var(--wc-fs-sm);
+  line-height: 1.55;
+  background: var(--at-surface-sunken, #080b0f);
+  color: var(--at-text-primary, #f1f4f6);
+  border: 1px solid var(--at-border-hairline, #2e343a);
+  border-radius: var(--wc-radius-md, 8px);
+  padding: var(--wc-s4);
+  max-height: 52vh;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+}
+
+.cc-log-row {
+  display: grid;
+  grid-template-columns: 5.5rem 6.5rem 1fr;
+  gap: var(--wc-s3);
+  padding: 0.1rem 0;
+}
+.cc-log-row--dim {
+  color: var(--at-text-muted, #b1b7be);
+}
+.cc-log-row[data-tone="warn"] {
+  color: var(--at-status-warn, #fbcd67);
+}
+.cc-log-row[data-tone="danger"] {
+  color: var(--at-status-danger, #ffc0b8);
+}
+
+.cc-log-ts {
+  color: var(--at-text-muted, #b1b7be);
+  opacity: 0.7;
+}
+.cc-log-who {
+  font-weight: 600;
+}
+.cc-log-who--you {
+  color: var(--at-text-secondary, #d1d5da);
+}
+.cc-log-who--tool {
+  color: var(--at-accent-dim, #539f6a);
+}
+.cc-log-who--notice {
+  color: inherit;
+}
+.cc-log-text {
+  white-space: pre-wrap;
+}
+.cc-log-pre {
+  margin: 0;
+  white-space: pre-wrap;
+  color: var(--at-text-secondary, #d1d5da);
+}
+
+/* The stream is still open — a caret, not a spinner, because the line is live. */
+.cc-cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 1em;
+  margin-left: 0.15em;
+  vertical-align: text-bottom;
+  background: var(--at-accent-base, #72e797);
+  animation: cc-blink 1s steps(2, start) infinite;
+}
+@keyframes cc-blink {
+  to {
+    visibility: hidden;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cc-cursor {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+.cc-gaps {
+  margin: var(--wc-s4) 0 0;
+  padding-left: 1.1rem;
+  color: var(--at-status-warn, #fbcd67);
+  font-size: var(--wc-fs-sm);
+}
+
+.cc-refused {
+  margin-top: var(--wc-s4);
+  padding: var(--wc-s3) var(--wc-s4);
+  border: 1px solid var(--at-status-danger, #ffc0b8);
+  border-radius: var(--wc-radius-md, 8px);
+  color: var(--at-status-danger, #ffc0b8);
+  font-size: var(--wc-fs-sm);
+}
+.cc-refused ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.cc-error {
+  margin-top: var(--wc-s4);
+  color: var(--at-status-danger, #ffc0b8);
+  font-size: var(--wc-fs-sm);
+}
+
+.cc-composer {
+  margin-top: var(--wc-s4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--wc-s3);
+}
+.cc-composer-input {
+  width: 100%;
+  resize: vertical;
+  font: inherit;
+  color: var(--wc-text);
+  background: var(--wc-bg-elev);
+  border: 1px solid var(--wc-border);
+  border-radius: var(--wc-radius-md, 8px);
+  padding: var(--wc-s3);
+}
+.cc-composer-input:focus-visible {
+  outline: 2px solid var(--at-border-focus, #7ded9f);
+  outline-offset: 1px;
+}
+.cc-composer-actions {
+  display: flex;
+  gap: var(--wc-s3);
+  align-items: center;
+}

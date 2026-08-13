@@ -65,6 +65,15 @@ export function WorkspaceDetailView() {
           >
             Open (double‑click path)
           </Button>
+          <Button
+            tone="neutral"
+            variant="outline"
+            onClick={() =>
+              void nav({ to: "/clyffe/code/$workspaceId/chat", params: { workspaceId: ws.id } })
+            }
+          >
+            Chat with the box
+          </Button>
           {ws.state === "stopped" && (
             <Button
               tone="neutral"
