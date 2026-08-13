@@ -13,8 +13,8 @@ clyffy_touchpoint:
     - docs/CLYFFE_CODE_TURNKEY_SERVICE_SPEC.md
     - docs/WARDEN_DEVSTATION_AND_CLYFFE_CODE.md
     - docs/WARDEN_CLOUDFLARE_DNS_FOUNDATION.md
-    - ../automaton/docs/20-http-surface.md
-    - ../automaton/docs/19-capability-surface.md
+    - ../automaton/docs/24-http-surface.md
+    - ../automaton/docs/23-capability-surface.md
   sync:
     qdrant: true
     surreal: true
@@ -56,7 +56,7 @@ session's time.
 |---|---|---|
 | Multi-seat engine, five live seats | `automaton/engine` | claude, codex, grok, cursor green; gemini via Antigravity `agy` through the DevForge bridge |
 | Event journal as SSOT | `.automaton/sessions/<id>/events.jsonl` | NDJSON, append-only, one shape for every seat |
-| Capability layer | `automaton/docs/19` | a turn's spec is checked before spawn; safety/contract gaps refuse, the rest degrade loudly |
+| Capability layer | `automaton/docs/23` | a turn's spec is checked before spawn; safety/contract gaps refuse, the rest degrade loudly |
 | `automaton serve` | `automaton/engine/serve/` | HTTP + SSE, **loopback only**, bearer token, replay-then-follow |
 | Session follow across processes | `serve/tail.mjs` | a session started by a pane is followable by a browser — the cross-surface property already works at the transport layer |
 | Web chat, first cut | `src/domains/clyffe/code/views/WorkspaceChatView.tsx` | streams a real seat; **interim auth** — engine URL + token in `localStorage` |
@@ -217,7 +217,7 @@ browser mid-stream, and a reload rejoins it.
 - An internal home: workspaces, their state, their seats, and links to DevForge,
   the terminal, and the chat for each.
 - Seat readiness and the capability matrix surfaced from `/api/caps` — the panel
-  offers only what the engine can actually do (`automaton/docs/19`).
+  offers only what the engine can actually do (`automaton/docs/23`).
 
 *Done when:* one page answers "what do I have, and what can it do", with every
 answer read from a live engine rather than a constant.

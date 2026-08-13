@@ -4,7 +4,7 @@
  * Everything else in this domain is mock-first (`code.svc.ts`) because the
  * Warden API for provisioning does not exist yet. This one is not a mock: the
  * engine is real, and the events it returns are the same NDJSON the terminal
- * pane renders. See `automaton/docs/20-http-surface.md`.
+ * pane renders. See `automaton/docs/24-http-surface.md`.
  *
  * Connection details are read from Vite env for now. The real answer is that the
  * control plane hands out a per-workspace engine endpoint and a scoped token
