@@ -32,7 +32,7 @@ ssh:
     algorithm: ssh-ed25519
     fingerprint_sha256: SHA256:vSWJ9KW9M+1w2my9hlCsmpIRnCgk7ClMjmVCiJL39Xc
   credential_reference: ssh/warden-to-foundation-01
-  local_default_identity_file: ~/.ssh/warden_foundation_01_ed25519
+  local_default_identity_file: ~/.ssh/shippin_01_ed25519
   intended_uses:
     - host-local-proxmox-bootstrap
     - pct-qm-helper-commands
