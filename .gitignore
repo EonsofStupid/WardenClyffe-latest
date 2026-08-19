@@ -71,3 +71,6 @@ src/routeTree.gen.ts
 
 # built service binaries
 services/shippin-auth/shippin-auth
+
+# chatmirror — local AI session mirrors (never commit: may contain tokens)
+.chat/
