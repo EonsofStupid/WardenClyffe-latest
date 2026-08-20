@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "shippin.catalog-entry.v1",
+  "serviceId": "shippin.vaultix",
+  "displayName": "Vaultix",
+  "phase": "contract",
+  "owner": "vaultix",
+  "provenanceScope": "global",
+  "dataClassification": "secret-adjacent",
+  "auditRequired": true,
+  "billingClass": "included",
+  "capabilities": [
+    "vaultix.project.create",
+    "vaultix.secret.put",
+    "vaultix.secret.inject",
+    "vaultix.lesson.attach",
+    "vaultix.instance.list",
+    "vaultix.session.stepup",
+    "vaultix.link.manage",
+    "vaultix.link.import"
+  ],
+  "api": {
+    "stability": "draft",
+    "boundary": "Shippin panel talks only to this contract. It does not embed the upstream core's UI. Secret values never appear in catalog GET or lesson payloads. Upstream wire paths live only in panel/internal/core/wire.go.",
+    "routes": [
+      {
+        "method": "GET",
+        "path": "/api/v1/vaultix/health",
+        "purpose": "Control-plane liveness"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/vaultix/projects",
+        "purpose": "Create a tenant/project (idempotent on tenant id)"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/v1/vaultix/projects/{projectId}/secrets/{name}",
+        "purpose": "Put a secret value; response is metadata only"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/vaultix/inject",
+        "purpose": "Issue a short-lived inject handle for a workspace/DevForge run"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/vaultix/lessons",
+        "purpose": "Lesson ids the panel plays on the Lovable-to-vibe path"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/vaultix/instances",
+        "purpose": "Deployed Vaultix instances for the overview: name, host, health, secret count, last backup. Metadata only"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/vaultix/session/pin",
+        "purpose": "Set or change the per-user per-instance PIN; change requires the current PIN, recovery goes through Authentik re-auth"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/vaultix/session/stepup",
+        "purpose": "Verify per-user PIN inside an Authentik session; mint short-lived (~15 min) elevated session for one instance. Rate-limited, audited"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/vaultix/link",
+        "purpose": "Link an external migration source (source: infisical during beta); read-scoped credential stored encrypted server-side"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/vaultix/link",
+        "purpose": "Link status and last import time; never returns the credential"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/vaultix/import",
+        "purpose": "Run or re-run the one-way import from the linked source into Vaultix"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/v1/vaultix/link",
+        "purpose": "Unlink: delete stored credential, stop imports. Never touches the source side"
+      }
+    ]
+  },
+  "source": {
+    "repo": "projects/vaultix",
+    "upstream": {
+      "name": "Infisical",
+      "license": "MIT except ee/",
+      "note": "See docs/0001-mit-core-and-name.md. Do not ship Infisical ee/ as Vaultix."
+    }
+  },
+  "readinessGates": [
+    "Dedicated host (not the 1 GB Oracle box; not piled onto Zuul without RAM headroom)",
+    "MIT-core compose branded Vaultix at vaultix.shippin.cloud",
+    "Authentik OIDC",
+    "Export path from Infisical Cloud documented and tested",
+    "Panel adapter never returns secret values on GET",
+    "DevForge/workspace inject works without paste"
+  ],
+  "lessons": [
+    "vaultix.lesson.keys-are-not-chat",
+    "vaultix.lesson.one-project",
+    "vaultix.lesson.inject-not-paste",
+    "vaultix.lesson.rotate"
+  ]
+}

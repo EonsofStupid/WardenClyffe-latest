@@ -1,0 +1,9 @@
+[
+  {
+    "id": "vaultix-prod",
+    "name": "Vaultix (Zuul host)",
+    "host": "192.227.210.218",
+    "url": "http://127.0.0.1:8200",
+    "lastBackup": "cron 03:15 UTC -> /opt/vaultix/backups/"
+  }
+]

@@ -1,0 +1,89 @@
+# Vaultix — Infisical MIT core, pinned. No ee/ image extras.
+# Runtime on zuul host: /opt/vaultix/run
+# Public: https://vaultix.shippin.cloud  (Caddy → 127.0.0.1:8200)
+
+name: vaultix
+
+services:
+  backend:
+    image: docker.io/infisical/infisical:v0.162.19
+    restart: unless-stopped
+    env_file:
+      - /opt/vaultix/secrets/backend.env
+    environment:
+      NODE_ENV: production
+      SITE_URL: https://vaultix.shippin.cloud
+      TELEMETRY_ENABLED: "false"
+      ALLOW_SIGNUP: ${ALLOW_SIGNUP:-true}
+      SMTP_FROM_NAME: Vaultix
+      SMTP_FROM_ADDRESS: ${SMTP_FROM_ADDRESS:-vaultix@shippin.cloud}
+    ports:
+      - "127.0.0.1:8200:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:8080/api/status || exit 1"]
+      start_period: 90s
+      interval: 30s
+      retries: 5
+      timeout: 5s
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Panel adapter — shippin.vaultix.panel.v1. Caddy routes the Shippin panel
+  # here with Authentik forward auth; never exposed directly.
+  panel:
+    build: ../panel
+    restart: unless-stopped
+    env_file:
+      - /opt/vaultix/secrets/panel.env   # VAULTIX_PANEL_ENC_KEY, VAULTIX_LOCAL_CLIENT_ID/_SECRET
+    environment:
+      VAULTIX_PANEL_LISTEN: ":8201"
+      VAULTIX_PANEL_STATE: /var/lib/vaultix-panel/state.json
+      VAULTIX_PANEL_AUDIT: /var/lib/vaultix-panel/audit.jsonl
+      VAULTIX_PANEL_REGISTRY: /etc/vaultix-panel/instances.json
+      VAULTIX_LOCAL_URL: http://backend:8080
+    ports:
+      - "127.0.0.1:8201:8201"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:8201/api/v1/vaultix/health || exit 1"]
+      interval: 30s
+      retries: 3
+      timeout: 5s
+    volumes:
+      - panel-state:/var/lib/vaultix-panel
+      - /opt/vaultix/panel/instances.json:/etc/vaultix-panel/instances.json:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  redis:
+    image: docker.io/library/redis:7.4-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  db:
+    image: docker.io/library/postgres:16.6-alpine
+    restart: unless-stopped
+    env_file:
+      - /opt/vaultix/secrets/postgres.env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+
+volumes:
+  pg_data:
+  redis-data:
+  panel-state:
